@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="演算法 Algorithm 的定義 : A finite, definite, effective procedure, with some output. -- Donald Knuth,1968. A well-defined procedure for transforming some input to a desire output. -- Cormen et al. Introduc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 1 -- Introduction">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/09/30/Chapter%201%20%E2%80%93%20Introduction/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="演算法 Algorithm 的定義 : A finite, definite, effective procedure, with some output. -- Donald Knuth,1968. A well-defined procedure for transforming some input to a desire output. -- Cormen et al. Introduc">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/D4qCw7T.jpg">
+<meta property="article:published_time" content="2019-09-30T14:10:50.000Z">
+<meta property="article:modified_time" content="2021-08-30T14:10:57.789Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/D4qCw7T.jpg">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/09/30/Chapter%201%20%E2%80%93%20Introduction/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/09/30/Chapter%201%20%E2%80%93%20Introduction/","path":"2019/09/30/Chapter 1 – Introduction/","title":"Chapter 1 -- Introduction"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Chapter 1 -- Introduction | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#stable-matching-problem"><span class="nav-number">1.</span> <span class="nav-text">Stable Matching Problem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#random-matching-and-fixing-up"><span class="nav-number">2.</span> <span class="nav-text">Random Matching and Fixing up</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gale-shapley-algorithm----propose-and-reject"><span class="nav-number">3.</span> <span class="nav-text">Gale &amp; Shapley Algorithm -- Propose and Reject</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#convergence-of-gale-shapley-algorithm"><span class="nav-number">3.1.</span> <span class="nav-text">1. Convergence of Gale &amp; Shapley Algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#correctness-of-gale-shapley-algorithm"><span class="nav-number">3.2.</span> <span class="nav-text">2. Correctness of Gale &amp; Shapley Algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#male-optimality-of-gale-shapley-algorithm"><span class="nav-number">3.3.</span> <span class="nav-text">3. Male-Optimality of Gale &amp; Shapley Algorithm</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">4.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/09/30/Chapter%201%20%E2%80%93%20Introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Chapter 1 -- Introduction
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-09-30 22:10:50" itemprop="dateCreated datePublished" datetime="2019-09-30T22:10:50+08:00">2019-09-30</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 22:10:57" itemprop="dateModified" datetime="2021-08-30T22:10:57+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%B1%9F%E8%95%99%E5%A6%82-Algorithm/" itemprop="url" rel="index"><span itemprop="name">江蕙如 Algorithm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/09/30/Chapter%201%20%E2%80%93%20Introduction/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/09/30/Chapter 1 – Introduction/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>演算法 Algorithm 的定義 : <em>A finite, definite, effective procedure, with some output. -- Donald Knuth,1968.</em></p>
+<p><em>A well-defined procedure for transforming some input to a desire output. -- Cormen et al. Introduction to Algorithm</em></p>
+<p>整個演算法的分析步驟如下 : 1. 遇到自然且實際的問題待解決 2. 使用簡潔的方式描述問題 3. 找出一套演算法可以清楚、簡單的解決問題 4. 證明這套演算法是正確的，並且解決問題所花的時間必須在可接受的範圍內。</p>
+<span id="more"></span>
+<h2 id="stable-matching-problem">Stable Matching Problem</h2>
+<p>問題描述 :</p>
+<p>現在有 n 位男性與 n 位女性，雙方都清楚了解對方的情況下，要求每一位男( 女 )性都要依照自己的喜好對 n 位異性做出一個 ranking list 排序 ( 無平手狀況 )。而我們現在的工作就是要將雙方進行配對，而配對的條件是 : (1) Perfect matching : 一對一配對，不會有落單的人沒有被配對到 (2) Stable Matching : 被配對的雙方都是 Happy and Stable，意即，不存在一對男女互相喜歡對方更勝過於我們幫他們配對的對象。</p>
+<h2 id="random-matching-and-fixing-up">Random Matching and Fixing up</h2>
+<p>Step 1 : 先進行隨機配對 Step 2 : 當存在 unstable pair ，藉由交換配對來進行修正</p>
+<p>這樣的方式會有幾個問題，我們利用交換配對來進行修正，很有可能解決了某一對 unstable 狀況，但卻另外造成其他的 unstable。這樣的方式很容易造成無限迴圈。</p>
+<h2 id="gale-shapley-algorithm----propose-and-reject">Gale &amp; Shapley Algorithm -- Propose and Reject</h2>
+<p>Step 1 : 男性向女性 Propose Step 2 : 女性決定要 Accept 還是要 Reject</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">function stableMatching &#123;</span><br><span class="line">    Initialize all m ∈ M and w ∈ W to free </span><br><span class="line">    # 初始化所有人均為單身</span><br><span class="line">    while ∃ free man m who still has a woman w to propose to &#123;</span><br><span class="line">       w = first woman on m&#x27;s list to whom m has not yet proposed</span><br><span class="line">       # 男生要進行 Propose 必然會先從名單上最高分的女性進行 Propose</span><br><span class="line">       if w is free</span><br><span class="line">         (m, w) become engaged</span><br><span class="line">       # 如果女性單身，則配對</span><br><span class="line">       else some pair (m&#x27;, w) already exists</span><br><span class="line">         if w prefers m to m&#x27;</span><br><span class="line">            m&#x27; becomes free</span><br><span class="line">           (m, w) become engaged </span><br><span class="line">         else</span><br><span class="line">           (m&#x27;, w) remain engaged</span><br><span class="line">       # 若女性已被有配對，則比較兩位男性對於這女性的名單 ranking　高低來決定與誰配對</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>這個演算法有一個特別的地方在於中間會有 Deffered Decision Making 的過程，簡單來說就是男女雙方都可以有一個猶豫期來決定這個配對要繼續還是解除。待所有配對都進入這個猶豫期且不變後，才會正式確定全體配對。</p>
+<p>在這樣的演算法下，男性主動 Propose ,而女性被動的選擇是否要 Reject。對男性來說，最後的結果必然是最優化的結果，然而對於只能被動接受或拒絕的女性就未必會是最優化的結果。</p>
+<h3 id="convergence-of-gale-shapley-algorithm">1. Convergence of Gale &amp; Shapley Algorithm</h3>
+<p><strong>Claim : Gale &amp; Shapley Algorithm terminates after at most <span class="math inline">\(n^2\)</span> iterations.</strong></p>
+<p><strong><proof></strong></p>
+<p>我們要看 while loop 最多執行多少次，最直覺的方式就是看 free men 個數來決定，但這樣會非常難算，因為每一次的 iteration 都可能更動前幾次的狀態，使得男生可能在 free 或是 engaged 狀態跳來跳去。</p>
+<p>換一個角度來看，每一個 while loop 都一定會有男性向女性提出一個 propose，所以我們直接算最多可能有幾種 propose 可能。</p>
+<p>每一位男性最多可以提出 <span class="math inline">\(n\)</span> 個 propose，總共又有 <span class="math inline">\(n\)</span> 個男性，因此整個 while loop 最多可以執行 <span class="math inline">\(n^2\)</span> 次。</p>
+<h3 id="correctness-of-gale-shapley-algorithm">2. Correctness of Gale &amp; Shapley Algorithm</h3>
+<p>這裡先提出幾個對於 Gale &amp; Shapley Algorithm 的觀察 : * Observation 1 : 男生必然會從其 ranking list 最高分的女性開始 propose * Observation 2 : Free woman 必然會接受第一個 propose * Observation 3 : 男性交換配對的方向是一路從 high ranking 換到 low ranking，但女性則是從 low ranking 一路換到 high ranking</p>
+<p><strong>Claim : Gale &amp; Shapley Algorithm return a perfect matching.</strong></p>
+<p><strong><proof></strong></p>
+<p>假設 Gale &amp; Shapley Algorithm 最後會 return 一個 free man M。 在此假設下也必然至少存在一位 Free woman W，仍然沒有被 Proposed。從 observation 2 可以確定此 W 從來沒有被 proposed，當然包括 M 。 從上述兩個狀態來看，Gale &amp; Shapley Algorithm 會繼續執行 while loop 不會 return 。( <span class="math inline">\(\rightarrow\leftarrow\)</span> )</p>
+<p><strong>Claim : Gale &amp; Shapley Algorithm return a stable matching.</strong></p>
+<p><strong><proof></strong></p>
+<p>假設 Gale &amp; Shapley Algorithm 最後會 return 一個 unstable matching，意即，存在至少一對男女喜歡對方更勝於自己的配對。</p>
+<p>存在 instable pairs <span class="math inline">\((m,w)\)</span> 與 <span class="math inline">\((m&#39;,w&#39;)\)</span>，且 <span class="math inline">\(m\)</span> prefers <span class="math inline">\(w&#39;\)</span> to <span class="math inline">\(w\)</span> and <span class="math inline">\(w&#39;\)</span> prefers <span class="math inline">\(m\)</span> to <span class="math inline">\(m&#39;\)</span></p>
+<p><img src="https://i.imgur.com/D4qCw7T.jpg" /></p>
+<p>我們可以知道，在 Gale &amp; Shapley Algorithm 執行過後的配對會是最後一次 propose 的結果 ( 不管前面經過多少次配對或解開配對 )。</p>
+<p>Case 1 : <span class="math inline">\(m\)</span> 不曾 propose <span class="math inline">\(w&#39;\)</span> <span class="math inline">\(m\)</span> 最後停在 <span class="math inline">\(w\)</span> 的配對狀態，且未曾與 <span class="math inline">\(w&#39;\)</span> 配對過，則可確定在 <span class="math inline">\(m\)</span> 的 ranking list 上 <span class="math inline">\(w\)</span> 的名次必然在 <span class="math inline">\(w&#39;\)</span> 之前，也就是 <span class="math inline">\(m\)</span> prefers <span class="math inline">\(w\)</span> to <span class="math inline">\(w&#39;\)</span> ( <span class="math inline">\(\rightarrow\leftarrow\)</span> )</p>
+<p>Case 2 : <span class="math inline">\(m\)</span> 曾經 propose <span class="math inline">\(w&#39;\)</span> 既然 <span class="math inline">\(m\)</span> 曾經 propose <span class="math inline">\(w&#39;\)</span>，但最後卻與 <span class="math inline">\(w\)</span> 配對，則可確定當時 propose <span class="math inline">\(w&#39;\)</span> 時被拒絕，這樣也表示 <span class="math inline">\(w&#39;\)</span> 喜歡某人( 可能是 <span class="math inline">\(m&#39;\)</span> 也可能是另外一個 <span class="math inline">\(m&#39;&#39;\)</span> )勝過 <span class="math inline">\(m\)</span>。 若 <span class="math inline">\(m&#39;=m&#39;&#39;\)</span> ，則 <span class="math inline">\(w&#39;\)</span> prefers <span class="math inline">\(m&#39;\)</span> to <span class="math inline">\(m\)</span> ( <span class="math inline">\(\rightarrow\leftarrow\)</span> ) 若 <span class="math inline">\(m&#39;\neq m&#39;&#39;\)</span> ，則 <span class="math inline">\(w&#39;\)</span> 喜歡 <span class="math inline">\(m&#39;\)</span> 勝過 <span class="math inline">\(m&#39;&#39;\)</span>，根據Case 2的推導， <span class="math inline">\(w&#39;\)</span> 喜歡 <span class="math inline">\(m&#39;&#39;\)</span> 又勝過 <span class="math inline">\(m\)</span>，那麼 <span class="math inline">\(w&#39;\)</span> 喜歡 <span class="math inline">\(m&#39;\)</span> 必然勝過 <span class="math inline">\(m\)</span> ( <span class="math inline">\(\rightarrow\leftarrow\)</span> )</p>
+<h3 id="male-optimality-of-gale-shapley-algorithm">3. Male-Optimality of Gale &amp; Shapley Algorithm</h3>
+<p><strong>Claim : Assume <span class="math display">\[w^*=best(m)\]</span> is the best valid partner of m <span class="math inline">\(\Longrightarrow\)</span> Gale &amp; Shapley Algorithm return solution <span class="math display">\[S^* =\left\{(m, w^*)\ |\ \forall m\right\}\]</span> .</strong></p>
+<p>對每一個男性 m 來說，一定會存在一些女性是可能的配對對象，之所以稱之為「可能」，意即在這樣的配對下是有可能達到全體 stable matching 的狀態。而在這個 property 下，可以確定每一個男性最後配對的對象必然是可能對象中最好的那一個。而這個 propertｙ　也間接證明了，Gale &amp; Shapley Algorithm　return 的必是唯一解<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<p><strong><proof></strong></p>
+<p>假設某次執行 Gale &amp; Shapley Algorithm <span class="math inline">\(E\)</span> 時 solution <span class="math inline">\(S_E\)</span> 中存在一組配對女方並非男方的 Best valid partner。</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 既然女方並非男方的 Best valid partner,則可確定這配對中的男生，一定有被自己的 valid partner 拒絕的經驗</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> <span class="math inline">\(W.L.O.G\)</span> 假設 <span class="math inline">\(m\)</span> 是所有男性中第一個被 valid partner 拒絕的男性，則在 <span class="math inline">\(S_E\)</span> 中 <span class="math inline">\((m,w)\)</span>， <span class="math inline">\(w\neq w^*\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> <span class="math inline">\(\exists\)</span> a valid partner <span class="math inline">\(w&#39;\)</span> s.t. <span class="math inline">\(m\)</span> 被 <span class="math inline">\(w&#39;\)</span> 拒絕過 ，從 observation 3 可以確定第一個拒絕 <span class="math inline">\(m\)</span> 的 <span class="math inline">\(w&#39;=w^*\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> <span class="math inline">\(\exists\)</span> <span class="math inline">\(m&#39;\)</span> s.t. <span class="math inline">\(w^*\)</span> 喜歡他更勝於 <span class="math inline">\(m\)</span> <span class="math inline">\(\cdots\cdots( 1 )\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> <span class="math display">\[w^*\]</span> 是 <span class="math inline">\(m\)</span> 的 valid partner，那麼必然在某一次執行 <span class="math inline">\(E&#39;\)</span> 中的結果 <span class="math inline">\(S_{E&#39;}\)</span> 是 stable matching ，且 <span class="math inline">\((m,w^*)\in S_{E&#39;}\)</span>，而且在 <span class="math inline">\(S_{E&#39;}\)</span> 之中一定有一個 <span class="math inline">\(w&#39;&#39;\)</span> 與 <span class="math inline">\(m&#39;\)</span> 配對 <span class="math inline">\((m&#39;,w&#39;&#39;)\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> <span class="math inline">\(m\)</span> 之所以被 <span class="math display">\[w^*\]</span> 拒絕，是因為 <span class="math inline">\(m&#39;\)</span> 的緣故。也就是說在 <span class="math inline">\(m\)</span> 對 <span class="math display">\[w^*\]</span> propose 以前，<span class="math inline">\(m&#39;\)</span> 已先對 <span class="math display">\[w^*\]</span> propose。前面我們假設 <span class="math inline">\(m\)</span> 是第一個被 valid partner 拒絕的 Case，因此我們可以總結一下 : 1. 在 <span class="math inline">\(m\)</span> 對 <span class="math display">\[w^*\]</span> propose 的當下 ，<span class="math display">\[w^*\]</span> 已經先和 <span class="math inline">\(m&#39;\)</span> 配對，所以才會拒絕他 2. 在 <span class="math inline">\(m\)</span> 對 <span class="math display">\[w^*\]</span> propose 之前，<span class="math inline">\(m&#39;\)</span> 並未被任何的 valid partner 拒絕過 。( 因為 <span class="math inline">\(m\)</span> 被 <span class="math display">\[w^*\]</span> 拒絕是第一個 case )</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 從 <span class="math inline">\(m&#39;\)</span> 的 ranking ist 來看，排在 <span class="math display">\[w^*\]</span> 之前的都必然是 invalid partner，又 <span class="math inline">\(w&#39;&#39;\)</span> 是他的 valid partner，所以 <span class="math inline">\(w&#39;&#39;\)</span> 的 ranking 一定比 <span class="math display">\[w^*\]</span> 低</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> <span class="math inline">\(m&#39;\)</span> 喜歡 <span class="math display">\[w^*\]</span> 更勝於 <span class="math inline">\(w&#39;&#39;\)</span> <span class="math inline">\(\cdots\cdots( 2 )\)</span></p>
+<p>從 ( 1 ) ( 2 ) 來看，在 Stable Matching solution <span class="math inline">\(S_{E&#39;}\)</span> 中會存在一個 instable 的狀況 ( <span class="math inline">\(\rightarrow\leftarrow\)</span> )，得證。</p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>這個部分有個邏輯性的問題待釐清，Stable Matching 的解並不會是唯一解，但 Gale &amp; Shapley Algorithm 會吐出的是對男性來說最優的解，也就是 Gale &amp; Shapley Algorithm 的解是唯一的。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/09/30/Chapter%201%20%E2%80%93%20Introduction/" title="Chapter 1 -- Introduction">https://allen108108.github.io/blog/2019/09/30/Chapter 1 – Introduction/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/09/01/AI%20Cup%20Camp%20on%20ChatBot/" rel="prev" title="AI Cup Camp on ChatBot">
+                  <i class="fa fa-chevron-left"></i> AI Cup Camp on ChatBot
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/" rel="next" title="林軒田機器學習基石筆記 - 第一講、第二講">
+                  林軒田機器學習基石筆記 - 第一講、第二講 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

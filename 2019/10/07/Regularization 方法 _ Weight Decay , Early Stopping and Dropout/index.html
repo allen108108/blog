@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文內容節錄自Hung-yi Lee , Machine Learning(2017) 課程內容 : Tips for training DNN 本文圖片均來自於課程講義內容">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Regularization 方法 : Weight Decay , Early Stopping and Dropout">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/07/Regularization%20%E6%96%B9%E6%B3%95%20_%20Weight%20Decay%20,%20Early%20Stopping%20and%20Dropout/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文內容節錄自Hung-yi Lee , Machine Learning(2017) 課程內容 : Tips for training DNN 本文圖片均來自於課程講義內容">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/5UVk0lX.png">
+<meta property="og:image" content="https://i.imgur.com/jWfhiJl.png">
+<meta property="og:image" content="https://i.imgur.com/b0affPm.png">
+<meta property="og:image" content="https://i.imgur.com/Er4Wr15.png">
+<meta property="article:published_time" content="2019-10-06T18:59:16.000Z">
+<meta property="article:modified_time" content="2019-10-22T07:59:46.652Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/5UVk0lX.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/07/Regularization%20%E6%96%B9%E6%B3%95%20_%20Weight%20Decay%20,%20Early%20Stopping%20and%20Dropout/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/07/Regularization%20%E6%96%B9%E6%B3%95%20_%20Weight%20Decay%20,%20Early%20Stopping%20and%20Dropout/","path":"2019/10/07/Regularization 方法 _ Weight Decay , Early Stopping and Dropout/","title":"Regularization 方法 : Weight Decay , Early Stopping and Dropout"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Regularization 方法 : Weight Decay , Early Stopping and Dropout | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#weight-decay"><span class="nav-number">1.</span> <span class="nav-text">Weight-Decay</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#weight-decay-%E7%9A%84%E7%BC%BA%E9%BB%9E"><span class="nav-number">1.1.</span> <span class="nav-text">Weight-Decay 的缺點</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#early-stopping"><span class="nav-number">2.</span> <span class="nav-text">Early Stopping</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dropout"><span class="nav-number">3.</span> <span class="nav-text">Dropout</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/07/Regularization%20%E6%96%B9%E6%B3%95%20_%20Weight%20Decay%20,%20Early%20Stopping%20and%20Dropout/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Regularization 方法 : Weight Decay , Early Stopping and Dropout
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-07 02:59:16" itemprop="dateCreated datePublished" datetime="2019-10-07T02:59:16+08:00">2019-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 15:59:46" itemprop="dateModified" datetime="2019-10-22T15:59:46+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/07/Regularization%20%E6%96%B9%E6%B3%95%20_%20Weight%20Decay%20,%20Early%20Stopping%20and%20Dropout/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/07/Regularization 方法 _ Weight Decay , Early Stopping and Dropout/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li>本文內容節錄自Hung-yi Lee , <a target="_blank" rel="noopener" href="http://speech.ee.ntu.edu.tw/~tlkagk/courses_ML17_2.html">Machine Learning</a>(2017) 課程內容 : Tips for training DNN</li>
+<li>本文圖片均來自於課程講義內容</li>
+</ul>
+<span id="more"></span>
+<h2 id="weight-decay">Weight-Decay</h2>
+</blockquote>
+<p>Weight-Decay 其實就是我們最常說的 L1 / L2 regularization，但是為何加入了 regularizer 就會造成 weight decay ?</p>
+<p>我們拿 L2 regularization 為例</p>
+<p><span class="math inline">\(w_i^{t+1}\longleftarrow w_i^t-\eta\cdot \displaystyle{\frac{\partial L&#39;}{\partial w_i}}\)</span>，where <span class="math inline">\(L&#39;(\boldsymbol{W})=L(\boldsymbol{W})+\lambda\cdot\sum\limits_{n=1}^{N}(w_n^t)^2\)</span></p>
+<p><span class="math inline">\(\Longrightarrow w_i^{t+1}\longleftarrow w_i^t-\eta\cdot(\displaystyle{\frac{\partial L}{\partial w_i}}+2\lambda w_i^t)\)</span></p>
+<p><span class="math inline">\(\Longrightarrow w_i^{t+1}\longleftarrow (1-2\eta\lambda)w_i^t-\eta\cdot\displaystyle{\frac{\partial L}{\partial w_i}}\)</span></p>
+<p>從右邊第一項我們可以知道，進行參數更新時我們必然每一次都會將參數先乘上 <span class="math inline">\((1-2\eta\lambda)\)</span> 這一項，這會導致參數會遞減並往0靠近 ( 因為 <span class="math inline">\(1-2\eta\lambda&lt;1\)</span> )，這就是 weight decay 的精神所在。</p>
+<h3 id="weight-decay-的缺點">Weight-Decay 的缺點</h3>
+<p>Weight decay 在實務上並不常用，原因是他的整體效果其實並沒有辦法比類似 Early-Stopping 這樣的 regularization 來的優秀，再加上必須另外添加 regularizer ，又不像 SVM 將 regularizer 直接寫進演算法內部。</p>
+<h2 id="early-stopping">Early Stopping</h2>
+<p><img src="https://i.imgur.com/5UVk0lX.png" /></p>
+<p>在講到 overfitting 的時候我們很常會看到這樣的圖，從這樣的曲線圖我們可以知道，在訓練的過程中，最佳的時間點就是在 <span class="math inline">\(d_{vc}^*\)</span> 這裡停止訓練，就可以得到一個最佳的 model。</p>
+<p>然而我們怎麼知道 <span class="math inline">\(d_{vc}^*\)</span> 會在哪個時間點或是哪個 iteration 次數出現 ? 這就可以利用 Validation set 來做驗證。</p>
+<h2 id="dropout">Dropout</h2>
+<p>這是一個在 Deep Learning 中獨特的 regularization 方式，在每一層中隨機停掉一定 %數的 neurons 來進行訓練</p>
+<p><img src="https://i.imgur.com/jWfhiJl.png" /></p>
+<p>我們隨機停掉 neurons 換一個角度來說就是有很多多樣化的 neural network ，而將這些多樣化的 model 最後再統整起來 (Ensemble) 取得平均。</p>
+<p><img src="https://i.imgur.com/b0affPm.png" /></p>
+<p><font color="#8e8e8e">但這裡有一個數學上的問題存在，這些 neural networks 利用 <span class="math inline">\(p\%\)</span> 訓練所得到的 average weights 最後要拿到 test data 中，就必須要將 training 所得 weights 乘以 <span class="math inline">\(1-p\%\)</span> 才會是我們比較希望得到的結果。</p>
+<p>會有這樣的問題，直觀的來看，當我們進行 <span class="math inline">\(p\%\)</span> dropout 得到的權重，直接拿到沒有 dropout 的 test data 中，有可能會有 <span class="math inline">\(\displaystyle{\frac{1}{p\%}}\)</span> 倍數上的差異</p>
+<p><img src="https://i.imgur.com/Er4Wr15.png" /></p>
+<p>因此我們必須要將這些考量進去才能在 test data 上有合理的結果出現。</font></p>
+<p>( 不過寫這段是僅供參考，現在的 toolkit 已經將這些轉換都寫進 dropout code 中 )</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/07/Regularization%20%E6%96%B9%E6%B3%95%20_%20Weight%20Decay%20,%20Early%20Stopping%20and%20Dropout/" title="Regularization 方法 : Weight Decay , Early Stopping and Dropout">https://allen108108.github.io/blog/2019/10/07/Regularization 方法 _ Weight Decay , Early Stopping and Dropout/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%5B%E8%AB%96%E6%96%87%5D%20Network%20In%20Network/" rel="prev" title="[論文] Network In Network">
+                  <i class="fa fa-chevron-left"></i> [論文] Network In Network
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/" rel="next" title="卷積神經網路 (Convolutional Neural , CNN)">
+                  卷積神經網路 (Convolutional Neural , CNN) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第三講 : Types of Learning 機器學習基石第四講 : Feasibility of Learning 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林軒田機器學習基石筆記 - 第三講、第四講">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%89%E8%AC%9B%E3%80%81%E7%AC%AC%E5%9B%9B%E8%AC%9B/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第三講 : Types of Learning 機器學習基石第四講 : Feasibility of Learning 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/nmOVBQz.png">
+<meta property="og:image" content="https://i.imgur.com/gcF9CdZ.png">
+<meta property="og:image" content="https://i.imgur.com/phA4piY.png">
+<meta property="og:image" content="https://i.imgur.com/c4hPzQ4.png">
+<meta property="article:published_time" content="2019-09-30T14:14:23.000Z">
+<meta property="article:modified_time" content="2021-08-30T14:13:46.720Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/nmOVBQz.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%89%E8%AC%9B%E3%80%81%E7%AC%AC%E5%9B%9B%E8%AC%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%89%E8%AC%9B%E3%80%81%E7%AC%AC%E5%9B%9B%E8%AC%9B/","path":"2019/09/30/林軒田機器學習基石筆記 - 第三講、第四講/","title":"林軒田機器學習基石筆記 - 第三講、第四講"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>林軒田機器學習基石筆記 - 第三講、第四講 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#types-of-learning"><span class="nav-number">1.</span> <span class="nav-text">Types of Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#output-space"><span class="nav-number">1.1.</span> <span class="nav-text">Output Space</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#data-label"><span class="nav-number">1.2.</span> <span class="nav-text">Data Label</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#protocol"><span class="nav-number">1.3.</span> <span class="nav-text">Protocol</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#input-space"><span class="nav-number">1.4.</span> <span class="nav-text">Input Space</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#feasibility-of-learning"><span class="nav-number">2.</span> <span class="nav-text">Feasibility of Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#probability-error"><span class="nav-number">2.1.</span> <span class="nav-text">Probability &amp; error</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hoeffdings-inequality"><span class="nav-number">2.2.</span> <span class="nav-text">Hoeffding&#39;s Inequality</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">3.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%89%E8%AC%9B%E3%80%81%E7%AC%AC%E5%9B%9B%E8%AC%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          林軒田機器學習基石筆記 - 第三講、第四講
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-09-30 22:14:23" itemprop="dateCreated datePublished" datetime="2019-09-30T22:14:23+08:00">2019-09-30</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 22:13:46" itemprop="dateModified" datetime="2021-08-30T22:13:46+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9E%97%E8%BB%92%E7%94%B0-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3/" itemprop="url" rel="index"><span itemprop="name">林軒田 機器學習基石</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%89%E8%AC%9B%E3%80%81%E7%AC%AC%E5%9B%9B%E8%AC%9B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/09/30/林軒田機器學習基石筆記 - 第三講、第四講/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文為一系列課程之筆記，建議從" <a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文討論內容請參考: 機器學習基石第三講 : Types of Learning 機器學習基石第四講 : Feasibility of Learning</strong></p></li>
+<li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
+</ul>
+</blockquote>
+<hr />
+<span id="more"></span>
+<h2 id="types-of-learning">Types of Learning</h2>
+<p>在前文中，我們介紹了一種最簡單的機器學習模式 : <strong>簡單二元分類 (Perceptron)</strong> ，但機器學習的型態非常多，以下我們從<strong>輸出空間Output Space、目標標籤Data Lable、處理資料的方式Protocol以及輸入空間Input Space</strong>這幾個面向來討論</p>
+<h3 id="output-space"><strong>Output Space</strong></h3>
+<ul>
+<li><p>Binary classification : <span class="math inline">\(\mathbb{y}\in\left\{+1,-1\right\}\)</span> 許多的ML理論推導均由 binary classification 出發</p></li>
+<li><p>Multiclass classification : <span class="math inline">\(\mathbb{y}\in\left\{1,2,3,4,...,k\right\}\)</span> <span class="math inline">\(1,2,3,4,...,k\)</span> 為多種目標的「編號」，並非目標就是 <span class="math inline">\(1,2,3,4,...,k\)</span> &gt;以 Classify US coin by size &amp; mass 為例 &gt; <span class="math inline">\(\mathbb{y}\in\left\{1c,5c,10c,25c\right\}\)</span> or <span class="math inline">\(\left\{1,2,3,4\right\}\)</span></p>
+<p>binary classification 為 k=2 時的特例</p></li>
+<li><p>Regression : <span class="math inline">\(\mathbb{y}\in\mathbb{R}\)</span></p></li>
+<li><p>Structure Learning : <span class="math inline">\(\mathbb{y}\in\left\{Structural\ Sequence\right\}\)</span> &gt; <span class="math inline">\(\mathbb{X}:\left\{詞\right\}\rightarrow\mathbb{Y} :\left\{詞性\right\}\)</span> Multiclass classification <span class="math inline">\(\mathbb{X}:\left\{句子\right\}\rightarrow\mathbb{Y} :\left\{結構\right\}\)</span> Structure Learning</p></li>
+</ul>
+<h3 id="data-label"><strong>Data Label</strong></h3>
+<ul>
+<li><p>Supervised Learning ( 監督式學習 ) : 其實就是 Multiclass classification <span class="math inline">\(\mathbb{y}\in\left\{1,2,3,4,...,k\right\}\)</span></p></li>
+<li><p>Unsupervised Learning ( 非監督式學習 ) : <span class="math inline">\(unknown\ \mathbb{y}\)</span> &gt;在 Classify US coin by size &amp; mass 例子中，若不告知電腦目標值為多少，而讓其自行進行分類判斷，即為 Unsupervised Learning</p>
+<p>像 Clustering (分群)、Density estimation (密度估計)、Outlier detection ( 異常偵測 )均為 Unsupervised Learning範圍</p></li>
+<li><p>Semi-supervised Learning ( 半監督式學習 ) : &gt; 在 Classify US coin by size &amp; mass 例子中，若僅告知某幾個資料的分類為何，其餘讓電腦自行判斷，便為Semi-supervised Learning</p></li>
+<li><p>Reinforcement Learning ( 增強式學習 ) : <span class="math inline">\(\mathbb{y}\)</span> 仍不明確，但每一筆輸出都給予電腦回饋，讓系統逐漸學習者稱之。 增強式的學習是序列性、逐筆的學習，而前面的其它學習法幾乎都是整個資料集一次餵進去給電腦。</p></li>
+</ul>
+<h3 id="protocol"><strong>Protocol</strong></h3>
+<ul>
+<li>Batch Data 將資料成批的餵給電腦進行學習，學習出一個固定的 <span class="math inline">\(g\)</span></li>
+<li>Online Data 類似 PLA / Pocket 概念，資料不斷進來，電腦也不斷地調整 <span class="math inline">\(g\)</span></li>
+<li>Active Learning 系統會主動向使用者進行提問而來進行優化 <span class="math inline">\(g\)</span></li>
+</ul>
+<h3 id="input-space"><strong>Input Space</strong></h3>
+<ul>
+<li><p>Concrete Feature <span class="math inline">\(\mathbb{X}\)</span> 中帶有具體的描述 / 特徵稱為 concrete feature <span class="math inline">\(x_i\)</span>，通常由 domain knowledge 決定</p></li>
+<li><p>Raw Feature</p>
+<blockquote>
+<p>EX: 手寫辨識 將每一個手寫字分為256個畫素 ，依程度賦予其數值 <span class="math inline">\(\mathbb{X}\in\mathbb{R^{256}}\)</span></p>
+</blockquote></li>
+<li><p>Abstract Feature 特徵不具體 -- 像是USER_ID , Rating 或 item_ID - 因為沒有「物理」上的意義，因此這樣的問題在ML中相對困難。</p></li>
+</ul>
+<h2 id="feasibility-of-learning">Feasibility of Learning</h2>
+<p><img src="https://i.imgur.com/nmOVBQz.png" /></p>
+<p>討論機器學習的可行性，我們就從講義的這一個例子開頭吧!</p>
+<p>這樣的例子在一般的智力測驗中算是非常常見的題型之一，但是，好像都不會有人質疑這樣的題目是不是真的唯一解 ?<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>若從上面的例子來看，<span class="math inline">\(g(x)=+1 或是 -1\)</span>都是很合理的推測。</p>
+<p>這下糟糕了!</p>
+<p>那我們怎麼確保機器學習出來的模型可以被侷限住達到有效的預測 ? 而不會預測出來有無限多種可能性 ?</p>
+<h3 id="probability-error">Probability &amp; error</h3>
+<p>課程走到這，其實會覺得突然引進機率概念會覺得有點突兀、難理解。但是其實並不然，現實生活任何事件都是充滿機率概念，機器學習也不例外。</p>
+<p>我們手中有的 dataset 的取得以及分布、雜訊的生成、Model對未來資料的擬合精確度...等也都跟機率有關，所以在機器學習的研究進程中會將機率引入相對來說算是合情而且合理的。有了機率的概念，這表示不會百分之百精準，這時error的概念也會隨之而生。</p>
+<p>OK，既然可以理解了這兩個概念在機器學習理論上的定位後，就可以來討論上面的問題 :「機器學習的可行性在理論上的保證」</p>
+<h3 id="hoeffdings-inequality">Hoeffding's Inequality</h3>
+<p>給定某事件在母體中機率 <span class="math inline">\(\mu\)</span>，現有一抽樣，其樣本數 <span class="math inline">\(N\)</span>，此事件在樣本中機率<span class="math inline">\(\nu\)</span> 則 <span class="math inline">\(\mu\ 與\ \nu\)</span>之誤差大於 <span class="math inline">\(\epsilon\)</span> 的 機率不會超過 <span class="math inline">\(2e^{-2\epsilon^2N}\)</span> <strong><span class="math display">\[\mathbb{P}(|\mu-\nu|&gt;\epsilon) \leq 2e^{-2\epsilon^2N}\]</span></strong></p>
+<p><img src="https://i.imgur.com/gcF9CdZ.png" /></p>
+<p>我們把上面這樣的一個概念跟機器學習做一個類比:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>抽球</th>
+<th>ML</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>給定一個Bin，裡面裝滿綠球跟橘球</td>
+<td>給定一個<span class="math inline">\(h\)</span>，及一個Dataset <span class="math inline">\(\mathbb{D}\)</span></td>
+</tr>
+<tr class="even">
+<td>Bin內抽中橘球的機率為<span class="math inline">\(\mu\)</span>，樣本內抽中橘球的機率為<span class="math inline">\(\nu\)</span></td>
+<td>在<span class="math inline">\(\mathbb{D}\)</span>以外的資料中，<span class="math inline">\(h(\mathbb{X})\neq f(\mathbb{X})\)</span> 的機率為<span class="math inline">\(E_{out}(h)\)</span>，在<span class="math inline">\(\mathbb{D}\)</span>中的資料中，<span class="math inline">\(h(\mathbb{X})\neq f(\mathbb{X})\)</span> 的機率為<span class="math inline">\(E_{in}(h)\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mathbb{P}(\mid\mu-\nu\mid&gt;\epsilon) \leq 2e^{-2\epsilon^2N}\)</span></td>
+<td><span class="math inline">\(\mathbb{P}(\mid E_{out}(h)-E_{in}(h)\mid&gt;\epsilon) \leq 2e^{-2\epsilon^2N}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>從 Hoeffding's Inequality 可知道 : 樣本的數量 <span class="math inline">\(N\)</span> 越大，<span class="math inline">\(2e^{-2\epsilon^2N}\)</span>會越小<span class="math inline">\(\implies\)</span><span class="math inline">\(\mu\)</span> 與 <span class="math inline">\(\nu\)</span> 會越接近 ( <span class="math inline">\(E_{out}(h)\)</span> 與 <span class="math inline">\(E_{in}(h)\)</span> 會越接近 ) 只要 <span class="math inline">\(E_{out}(h)\)</span>足夠小， 我們便可以宣稱 <span class="math inline">\(h\)</span> 與 <span class="math inline">\(f\)</span> 夠接近了。</p>
+<p>看起來好像沒問題了?</p>
+<p>上述的理論出發點是「給定一個 <span class="math inline">\(h\)</span> 」，然而我們的 Hypothesis Set <span class="math inline">\(\mathbb{H}\)</span>裡面可不只裝一個 <span class="math inline">\(h\)</span> (可能 finite ,也可能 infinite) ，如何在這眾多的 <span class="math inline">\(h_k\)</span> 中選擇一個表現最好的來當我們要的 <span class="math inline">\(g\)</span> ?</p>
+<p>我們一樣先從單一的 <span class="math inline">\(h\)</span> 來看 Hoeffding's Inequality的意義是什麼?</p>
+<p><img src="https://i.imgur.com/phA4piY.png" /></p>
+<p><span class="math inline">\(D_k\)</span>代表的是母體中採樣樣本數量為 <span class="math inline">\(N\)</span> 的各種採樣組合</p>
+<p>Hoeffding告訴我們，只要採樣樣本數為 <span class="math inline">\(N\)</span> ，那麼「不好的採樣」 ( 意即<span class="math inline">\(E_{out}(h)-E_{in}(h)\mid&gt;\epsilon\)</span> ) 的機率一定會有一個上界 <span class="math inline">\(2e^{-2\epsilon^2N}\)</span>，從上圖來解釋，其實就是BAD的機率會有上界 <span class="math inline">\(2e^{-2\epsilon^2N}\)</span></p>
+<p>那麼把所有 hypothesis <span class="math inline">\(h_k\)</span>( 假設 <span class="math inline">\(\mathbb{H}\)</span> 為有限集 )攤開來看 <img src="https://i.imgur.com/c4hPzQ4.png" /></p>
+<p>在所有的 <span class="math inline">\(h_k\)</span> 之中，真正一個「好的採樣」，應該是不管機器選到哪一個 hypothesis <span class="math inline">\(h_k\)</span> ，都仍然是一個「好的採樣」 ( 意即<span class="math inline">\(E_{out}(h)-E_{in}(h)\mid&lt;\epsilon\)</span> )。上圖的 <span class="math inline">\(D_{1126}\)</span>便是一個如此的「好的採樣」。</p>
+<p>那我們仍然從 Hoeffiding's Inequality的角度來看 :</p>
+<p><span class="math inline">\(\mathbb{P} (|E_{out}(\mathbb{H})-E_{in}(\mathbb{H})|&gt;\epsilon)\)</span></p>
+<p><span class="math inline">\(=\mathbb{P} ((|E_{out}(h_1)-E_{in}(h_1)|&gt;\epsilon)\ or\ (|E_{out}(h_2)-E_{in}(h_2)|&gt;\epsilon)\ or\ ...or(|E_{out}(h_M)-E_{in}(h_M)|&gt;\epsilon))\)</span></p>
+<p><span class="math inline">\(\leq\mathbb{P} ((|E_{out}(h_1)-E_{in}(h_1)|&gt;\epsilon)\ +\ (|E_{out}(h_2)-E_{in}(h_2)|&gt;\epsilon)\ +\ ...+(|E_{out}(h_M)-E_{in}(h_M)|&gt;\epsilon))\)</span></p>
+<p><span class="math inline">\(\leq2Me^{-2\epsilon^2N}\)</span></p>
+<p>所以我們可以得到以下結論 : M 為有限數 , N夠大 ，<span class="math inline">\(E_{out}(h)\)</span> 與 <span class="math inline">\(E_{in}(h)\)</span> 會夠接近 <span class="math inline">\(\implies\)</span> M 為有限數 , N夠大 ， <span class="math inline">\(E_{in}(h)\rightarrow0\)</span>，則 <span class="math inline">\(E_{out}(h)\rightarrow0\)</span> <span class="math inline">\(\implies\)</span> 機器學習中，只要 M為有限數，樣本數夠多，我們盡可能的 找出<span class="math inline">\(E_{in}(h)\rightarrow0\)</span>，則便可確保<span class="math inline">\(E_{out}(h)\rightarrow0\)</span></p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>還有一種很常見的題目「1=2；2=4；3=8，請問4= ?」 大家正常都會非常快速的回答出「16」，而答案通常也是如此。 假設有一個函數 <span class="math inline">\(f\)</span> 滿足上面的條件，<span class="math inline">\(f(1)=2，f(2)=4，f(3)=8\)</span> 從座標的角度來看可以看做給定三點<span class="math inline">\((1,2) , (2,4) ,(3,8)\)</span>求過第四點<span class="math inline">\((4,y)\)</span>的曲線， 從這裡不難發現，給定任意四點，我都可以求出一個四次方程式<span class="math inline">\(f(x)=ax^3+bx^2+cx+d\)</span>通過這四點， 也就是說，不管我們給定哪一個<span class="math inline">\(y\)</span>值，都一定可以找到一個(或以上)的 <span class="math inline">\(f\)</span> 來對應。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%89%E8%AC%9B%E3%80%81%E7%AC%AC%E5%9B%9B%E8%AC%9B/" title="林軒田機器學習基石筆記 - 第三講、第四講">https://allen108108.github.io/blog/2019/09/30/林軒田機器學習基石筆記 - 第三講、第四講/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/" rel="prev" title="林軒田機器學習基石筆記 - 第一講、第二講">
+                  <i class="fa fa-chevron-left"></i> 林軒田機器學習基石筆記 - 第一講、第二講
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%BA%94%E8%AC%9B%E3%80%81%E7%AC%AC%E5%85%AD%E8%AC%9B/" rel="next" title="林軒田機器學習基石筆記 - 第五講、第六講">
+                  林軒田機器學習基石筆記 - 第五講、第六講 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

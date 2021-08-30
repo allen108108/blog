@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="Susan Li .(2019 , Apr 1). Building a Content Based Recommender System for Hotels in Seattle .Retrieved June 27,2019 ,from https:&#x2F;&#x2F;towardsdatascience.com&#x2F;building-a-content-based-recommender-system-for">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[文章] Building a Content Based Recommender System for Hotels in Seattle">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/[%E6%96%87%E7%AB%A0]%20Building%20a%20Content%20Based%20Recommender%20System%20for%20Hotels%20in%20Seattle/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="Susan Li .(2019 , Apr 1). Building a Content Based Recommender System for Hotels in Seattle .Retrieved June 27,2019 ,from https:&#x2F;&#x2F;towardsdatascience.com&#x2F;building-a-content-based-recommender-system-for">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/DdkI2Id.png">
+<meta property="og:image" content="https://i.imgur.com/WR6TKVh.png%20=190x">
+<meta property="og:image" content="https://i.imgur.com/uHtBp2Z.png">
+<meta property="og:image" content="https://i.imgur.com/IciTP1E.png">
+<meta property="og:image" content="https://i.imgur.com/KOhNIKV.png">
+<meta property="og:image" content="https://i.imgur.com/h2rvA3O.png">
+<meta property="og:image" content="https://i.imgur.com/2bNKk53.png">
+<meta property="og:image" content="https://i.imgur.com/zMKCOL7.png">
+<meta property="og:image" content="https://i.imgur.com/7jzxs8I.png">
+<meta property="og:image" content="https://i.imgur.com/c2qAdZs.png">
+<meta property="og:image" content="https://i.imgur.com/jce2019.png">
+<meta property="og:image" content="https://i.imgur.com/LvaXxit.png">
+<meta property="og:image" content="https://i.imgur.com/MtUA4ZT.png">
+<meta property="og:image" content="https://i.imgur.com/EtUqVEQ.png">
+<meta property="og:image" content="https://i.imgur.com/XUIiSfQ.png">
+<meta property="og:image" content="https://i.imgur.com/7SpTy3m.png">
+<meta property="og:image" content="https://i.imgur.com/L9q3u5h.png">
+<meta property="og:image" content="https://i.imgur.com/9aLzrUf.png">
+<meta property="og:image" content="https://i.imgur.com/hOzOTEl.jpg">
+<meta property="og:image" content="https://i.imgur.com/5RfElvE.png">
+<meta property="og:image" content="https://i.imgur.com/QUpPYV5.png">
+<meta property="article:published_time" content="2019-10-07T17:44:48.000Z">
+<meta property="article:modified_time" content="2021-08-30T14:16:55.232Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/DdkI2Id.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/[%E6%96%87%E7%AB%A0]%20Building%20a%20Content%20Based%20Recommender%20System%20for%20Hotels%20in%20Seattle/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/[%E6%96%87%E7%AB%A0]%20Building%20a%20Content%20Based%20Recommender%20System%20for%20Hotels%20in%20Seattle/","path":"2019/10/08/[文章] Building a Content Based Recommender System for Hotels in Seattle/","title":"[文章] Building a Content Based Recommender System for Hotels in Seattle"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[文章] Building a Content Based Recommender System for Hotels in Seattle | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#scenario"><span class="nav-number">1.</span> <span class="nav-text">Scenario</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-data"><span class="nav-number">2.</span> <span class="nav-text">The Data</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#eda"><span class="nav-number">3.</span> <span class="nav-text">EDA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#visualize-token-vocabulary-frequency-distribution-before-removing-stop-words"><span class="nav-number">3.1.</span> <span class="nav-text">Visualize Token (vocabulary) Frequency Distribution Before Removing Stop Words</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#visualize-token-vocabulary-frequency-distribution-after-removing-stop-words"><span class="nav-number">3.2.</span> <span class="nav-text">Visualize Token (vocabulary) Frequency Distribution After Removing Stop Words</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bigrams-frequency-distribution-before-removing-stop-word"><span class="nav-number">3.3.</span> <span class="nav-text">Bigrams Frequency Distribution Before Removing Stop Word</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bigrams-frequency-distribution-after-removing-stop-word"><span class="nav-number">3.4.</span> <span class="nav-text">Bigrams Frequency Distribution After Removing Stop Word</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trigrams-frequency-distribution-before-removing-stop-word"><span class="nav-number">3.5.</span> <span class="nav-text">Trigrams Frequency Distribution Before Removing Stop Word</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trigrams-frequency-distribution-after-removing-stop-word"><span class="nav-number">3.6.</span> <span class="nav-text">Trigrams Frequency Distribution After Removing Stop Word</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hotel-description-length-distribution"><span class="nav-number">3.7.</span> <span class="nav-text">Hotel Description Length Distribution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#preprocessing-hotel-description-text"><span class="nav-number">3.8.</span> <span class="nav-text">Preprocessing hotel description text</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#modeling"><span class="nav-number">4.</span> <span class="nav-text">Modeling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#recommendations"><span class="nav-number">5.</span> <span class="nav-text">Recommendations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">6.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/[%E6%96%87%E7%AB%A0]%20Building%20a%20Content%20Based%20Recommender%20System%20for%20Hotels%20in%20Seattle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [文章] Building a Content Based Recommender System for Hotels in Seattle
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-08 01:44:48" itemprop="dateCreated datePublished" datetime="2019-10-08T01:44:48+08:00">2019-10-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 22:16:55" itemprop="dateModified" datetime="2021-08-30T22:16:55+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%96%87%E7%AB%A0-Article/" itemprop="url" rel="index"><span itemprop="name">文章 Article</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/%5B%E6%96%87%E7%AB%A0%5D%20Building%20a%20Content%20Based%20Recommender%20System%20for%20Hotels%20in%20Seattle/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/[文章] Building a Content Based Recommender System for Hotels in Seattle/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://towardsdatascience.com/@actsusanli">Susan Li</a> .(2019 , Apr 1). <em>Building a Content Based Recommender System for Hotels in Seattle</em> .Retrieved June 27,2019 ,from https://towardsdatascience.com/building-a-content-based-recommender-system-for-hotels-in-seattle-d724f0a32070</p>
+<span id="more"></span>
+<p>推薦系統 ( Recommendation system )有一個眾所周知的問題，便是在 Cold Start Problem 上推薦系統無法有效地將推薦項目推送給使用者。在新用戶、新產品或是新網站、平台上，由於沒有足夠多的資料，推薦系統很難建構一個適用的 model 來進行推薦。</p>
+<p>此篇文章，作者 Susan Li 使用了 Content-Based Filter<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 來做為解決 Cold Start Problem 的方法，Content-Based Recommendation System 可以適用於各種不同的領域，而且沒有 Cold Start Problem，在產品、網站一開始上線後就可以做出有效的推薦。</p>
+<h2 id="scenario">Scenario</h2>
+<p>作者現在模擬一個情境，我們是一個新的 Online Travel Agency ( OTA ，類似於台灣易遊網、Hotels.com...)，且有數千家飯店旅館會在我們的平台銷售。由於我們是新的平台，並沒有太多用戶資料，我們要建立一套 Content-Based Recommendation System ，利用飯店本身的商品陳述來判斷是否符合使用者需求而進行精準的推薦投放。</p>
+<p>如何判斷用戶的需求 ? 作者使用了 Cosine Similarity<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 來將我們的資料與用戶所預定、瀏覽的酒店旅館進行 Cosine Similarity 計算，針對其值進行推薦酒店的排序及投放。</p>
+<h2 id="the-data">The Data</h2>
+<p>由於是虛擬情境，作者本身並沒有這些公共酒店旅館的資料，因此作者自行從西雅圖各飯店網站進行資料收集，一共收集了150多家的飯店資料，其中包含名稱、地址以及飯店描述。這些資料都可以在作者 <strong><a target="_blank" rel="noopener" href="https://github.com/susanli2016/Machine-Learning-with-Python/blob/master/Seattle_Hotels.csv">Github</a></strong> <i class="fa fa-github"></i> 上取得。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> nltk.corpus <span class="keyword">import</span> stopwords</span><br><span class="line"><span class="keyword">import</span> nltk</span><br><span class="line">nltk.download(<span class="string">&#x27;stopwords&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sklearn.metrics.pairwise <span class="keyword">import</span> linear_kernel</span><br><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer</span><br><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> TfidfVectorizer</span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> LatentDirichletAllocation</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> plotly.graph_objs <span class="keyword">as</span> go</span><br><span class="line"><span class="keyword">import</span> plotly.plotly <span class="keyword">as</span> py</span><br><span class="line"><span class="keyword">import</span> cufflinks</span><br><span class="line">pd.options.display.max_columns = <span class="number">30</span></span><br><span class="line"><span class="keyword">from</span> IPython.core.interactiveshell <span class="keyword">import</span> InteractiveShell</span><br><span class="line"><span class="keyword">import</span> plotly.figure_factory <span class="keyword">as</span> ff</span><br><span class="line">InteractiveShell.ast_node_interactivity = <span class="string">&#x27;all&#x27;</span></span><br><span class="line"><span class="keyword">from</span> plotly.offline <span class="keyword">import</span> iplot</span><br><span class="line">cufflinks.go_offline()</span><br><span class="line">cufflinks.set_config_file(world_readable=<span class="literal">True</span>, theme=<span class="string">&#x27;solar&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df = pd.read_csv(<span class="string">&#x27;Seattle_Hotels.csv&#x27;</span>, encoding=<span class="string">&quot;latin-1&quot;</span>)</span><br><span class="line">df.head()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;We have &#x27;</span>, <span class="built_in">len</span>(df), <span class="string">&#x27;hotels in the data&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/DdkI2Id.png" /> <img src="https://i.imgur.com/WR6TKVh.png%20=190x" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_description</span>(<span class="params">index</span>):</span></span><br><span class="line">    example = df[df.index == index][[<span class="string">&#x27;desc&#x27;</span>, <span class="string">&#x27;name&#x27;</span>]].values[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(example) &gt; <span class="number">0</span>:</span><br><span class="line">        <span class="built_in">print</span>(example[<span class="number">0</span>])</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Name:&#x27;</span>, example[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print_description(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/uHtBp2Z.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print_description(<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/IciTP1E.png" /></p>
+<h2 id="eda">EDA</h2>
+<p>首先主要針對各個描述中的共同字彙進行統計，並對照 <code>stop_words</code> 刪去前後的字彙進行比較。</p>
+<p>sklearn 中的 <code>CountVecorizer</code> 可以協助我們對於文本中的字彙進行分詞以及計算詞頻。但這樣的方法，有很大的侷限性，因為我們並不考慮上下文的關係，僅針對字彙進行詞頻計算，因此容易失去文本的語意。</p>
+<h3 id="visualize-token-vocabulary-frequency-distribution-before-removing-stop-words">Visualize Token (vocabulary) Frequency Distribution Before Removing Stop Words</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_top_n_words</span>(<span class="params">corpus, n=<span class="literal">None</span></span>):</span></span><br><span class="line">    vec = CountVectorizer().fit(corpus)</span><br><span class="line">    <span class="comment"># bag_of_words 傳回的是一個稀疏矩陣</span></span><br><span class="line">    bag_of_words = vec.transform(corpus)</span><br><span class="line">    <span class="comment"># 字彙在所有文本內出現的總次數，sum_words傳回的是一個一列的矩陣</span></span><br><span class="line">    sum_words = bag_of_words.<span class="built_in">sum</span>(axis=<span class="number">0</span>)  </span><br><span class="line">    <span class="comment"># vec.vocabulary_.items()傳回的是 tuple (word,index)</span></span><br><span class="line">    words_freq = [(word, sum_words[<span class="number">0</span>, idx]) <span class="keyword">for</span> word, idx <span class="keyword">in</span> vec.vocabulary_.items()]</span><br><span class="line">    words_freq =<span class="built_in">sorted</span>(words_freq, key = <span class="keyword">lambda</span> x: x[<span class="number">1</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> words_freq[:n]</span><br><span class="line">    </span><br><span class="line">common_words = get_top_n_words(df[<span class="string">&#x27;desc&#x27;</span>], <span class="number">20</span>)</span><br><span class="line">df1 = pd.DataFrame(common_words, columns = [<span class="string">&#x27;desc&#x27;</span> , <span class="string">&#x27;count&#x27;</span>])</span><br><span class="line">df1.groupby(<span class="string">&#x27;desc&#x27;</span>).<span class="built_in">sum</span>()[<span class="string">&#x27;count&#x27;</span>].sort_values().iplot(kind=<span class="string">&#x27;barh&#x27;</span>, yTitle=<span class="string">&#x27;Count&#x27;</span>, linecolor=<span class="string">&#x27;black&#x27;</span>, title=<span class="string">&#x27;Top 20 words in hotel description before removing stop words&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/KOhNIKV.png" /></p>
+<h3 id="visualize-token-vocabulary-frequency-distribution-after-removing-stop-words">Visualize Token (vocabulary) Frequency Distribution After Removing Stop Words</h3>
+<p>停用詞 ( Stop words ) 指的其實就是很頻繁會用到的詞彙，對於文本分析而言並沒有太大的幫助，因此在處理文本分析的過程中，通常會將其過濾掉。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_top_n_words</span>(<span class="params">corpus, n=<span class="literal">None</span></span>):</span></span><br><span class="line">    <span class="comment"># 濾掉英文的停用詞</span></span><br><span class="line">    vec = CountVectorizer(stop_words=<span class="string">&#x27;english&#x27;</span>).fit(corpus)</span><br><span class="line">    bag_of_words = vec.transform(corpus)</span><br><span class="line">    sum_words = bag_of_words.<span class="built_in">sum</span>(axis=<span class="number">0</span>) </span><br><span class="line">    words_freq = [(word, sum_words[<span class="number">0</span>, idx]) <span class="keyword">for</span> word, idx <span class="keyword">in</span> vec.vocabulary_.items()]</span><br><span class="line">    words_freq =<span class="built_in">sorted</span>(words_freq, key = <span class="keyword">lambda</span> x: x[<span class="number">1</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> words_freq[:n]</span><br><span class="line">    </span><br><span class="line">common_words = get_top_n_words(df[<span class="string">&#x27;desc&#x27;</span>], <span class="number">20</span>)</span><br><span class="line">df2 = pd.DataFrame(common_words, columns = [<span class="string">&#x27;desc&#x27;</span> , <span class="string">&#x27;count&#x27;</span>])</span><br><span class="line">df2.groupby(<span class="string">&#x27;desc&#x27;</span>).<span class="built_in">sum</span>()[<span class="string">&#x27;count&#x27;</span>].sort_values().iplot(kind=<span class="string">&#x27;barh&#x27;</span>, yTitle=<span class="string">&#x27;Count&#x27;</span>, linecolor=<span class="string">&#x27;black&#x27;</span>, title=<span class="string">&#x27;Top 20 words in hotel description after removing stop words&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/h2rvA3O.png" /></p>
+<h3 id="bigrams-frequency-distribution-before-removing-stop-word">Bigrams Frequency Distribution Before Removing Stop Word</h3>
+<p>N-Gram 是一種以統計為基礎語言模型的演算法，基本上就是以長度為 N 的滑窗對文本進行掃描，形成一個個長度為 N 的字段。而最常用的就是二元的 bigram 以及三元的 trigram。</p>
+<p>在<code>CountVectorizer</code> 裡面的參數 <code>ngram_rang=(min_n,max_n)</code> 指的就是我們要使用的 n-gram 的最小、最大 n 值。<code>ngram_rang=(2,2)</code> 就代表 n=2 ，亦即我們要使用的是 bigram。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_top_n_bigram</span>(<span class="params">corpus, n=<span class="literal">None</span></span>):</span></span><br><span class="line">    vec = CountVectorizer(ngram_range=(<span class="number">2</span>, <span class="number">2</span>)).fit(corpus)</span><br><span class="line">    bag_of_words = vec.transform(corpus)</span><br><span class="line">    sum_words = bag_of_words.<span class="built_in">sum</span>(axis=<span class="number">0</span>) </span><br><span class="line">    words_freq = [(word, sum_words[<span class="number">0</span>, idx]) <span class="keyword">for</span> word, idx <span class="keyword">in</span> vec.vocabulary_.items()]</span><br><span class="line">    words_freq =<span class="built_in">sorted</span>(words_freq, key = <span class="keyword">lambda</span> x: x[<span class="number">1</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> words_freq[:n]</span><br><span class="line">    </span><br><span class="line">common_words = get_top_n_bigram(df[<span class="string">&#x27;desc&#x27;</span>], <span class="number">20</span>)</span><br><span class="line">df3 = pd.DataFrame(common_words, columns = [<span class="string">&#x27;desc&#x27;</span> , <span class="string">&#x27;count&#x27;</span>])</span><br><span class="line">df3.groupby(<span class="string">&#x27;desc&#x27;</span>).<span class="built_in">sum</span>()[<span class="string">&#x27;count&#x27;</span>].sort_values(ascending=<span class="literal">False</span>).iplot(kind=<span class="string">&#x27;bar&#x27;</span>, yTitle=<span class="string">&#x27;Count&#x27;</span>, linecolor=<span class="string">&#x27;black&#x27;</span>, title=<span class="string">&#x27;Top 20 bigrams in hotel description before removing stop words&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/2bNKk53.png" /></p>
+<h3 id="bigrams-frequency-distribution-after-removing-stop-word">Bigrams Frequency Distribution After Removing Stop Word</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_top_n_bigram</span>(<span class="params">corpus, n=<span class="literal">None</span></span>):</span></span><br><span class="line">    vec = CountVectorizer(ngram_range=(<span class="number">2</span>, <span class="number">2</span>), stop_words=<span class="string">&#x27;english&#x27;</span>).fit(corpus)</span><br><span class="line">    bag_of_words = vec.transform(corpus)</span><br><span class="line">    sum_words = bag_of_words.<span class="built_in">sum</span>(axis=<span class="number">0</span>) </span><br><span class="line">    words_freq = [(word, sum_words[<span class="number">0</span>, idx]) <span class="keyword">for</span> word, idx <span class="keyword">in</span> vec.vocabulary_.items()]</span><br><span class="line">    words_freq =<span class="built_in">sorted</span>(words_freq, key = <span class="keyword">lambda</span> x: x[<span class="number">1</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> words_freq[:n]</span><br><span class="line">    </span><br><span class="line">common_words = get_top_n_bigram(df[<span class="string">&#x27;desc&#x27;</span>], <span class="number">20</span>)</span><br><span class="line">df4 = pd.DataFrame(common_words, columns = [<span class="string">&#x27;desc&#x27;</span> , <span class="string">&#x27;count&#x27;</span>])</span><br><span class="line">df4.groupby(<span class="string">&#x27;desc&#x27;</span>).<span class="built_in">sum</span>()[<span class="string">&#x27;count&#x27;</span>].sort_values(ascending=<span class="literal">False</span>).iplot(kind=<span class="string">&#x27;bar&#x27;</span>, yTitle=<span class="string">&#x27;Count&#x27;</span>, linecolor=<span class="string">&#x27;black&#x27;</span>, title=<span class="string">&#x27;Top 20 bigrams in hotel description After removing stop words&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/zMKCOL7.png" /></p>
+<h3 id="trigrams-frequency-distribution-before-removing-stop-word">Trigrams Frequency Distribution Before Removing Stop Word</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_top_n_trigram</span>(<span class="params">corpus, n=<span class="literal">None</span></span>):</span></span><br><span class="line">    vec = CountVectorizer(ngram_range=(<span class="number">3</span>, <span class="number">3</span>)).fit(corpus)</span><br><span class="line">    bag_of_words = vec.transform(corpus)</span><br><span class="line">    sum_words = bag_of_words.<span class="built_in">sum</span>(axis=<span class="number">0</span>) </span><br><span class="line">    words_freq = [(word, sum_words[<span class="number">0</span>, idx]) <span class="keyword">for</span> word, idx <span class="keyword">in</span> vec.vocabulary_.items()]</span><br><span class="line">    words_freq =<span class="built_in">sorted</span>(words_freq, key = <span class="keyword">lambda</span> x: x[<span class="number">1</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> words_freq[:n]</span><br><span class="line">    </span><br><span class="line">common_words = get_top_n_trigram(df[<span class="string">&#x27;desc&#x27;</span>], <span class="number">20</span>)</span><br><span class="line">df5 = pd.DataFrame(common_words, columns = [<span class="string">&#x27;desc&#x27;</span> , <span class="string">&#x27;count&#x27;</span>])</span><br><span class="line">df5.groupby(<span class="string">&#x27;desc&#x27;</span>).<span class="built_in">sum</span>()[<span class="string">&#x27;count&#x27;</span>].sort_values(ascending=<span class="literal">False</span>).iplot(kind=<span class="string">&#x27;bar&#x27;</span>, yTitle=<span class="string">&#x27;Count&#x27;</span>, linecolor=<span class="string">&#x27;black&#x27;</span>, title=<span class="string">&#x27;Top 20 trigrams in hotel description before removing stop words&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/7jzxs8I.png" /></p>
+<h3 id="trigrams-frequency-distribution-after-removing-stop-word">Trigrams Frequency Distribution After Removing Stop Word</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_top_n_trigram</span>(<span class="params">corpus, n=<span class="literal">None</span></span>):</span></span><br><span class="line">    vec = CountVectorizer(ngram_range=(<span class="number">3</span>, <span class="number">3</span>), stop_words=<span class="string">&#x27;english&#x27;</span>).fit(corpus)</span><br><span class="line">    bag_of_words = vec.transform(corpus)</span><br><span class="line">    sum_words = bag_of_words.<span class="built_in">sum</span>(axis=<span class="number">0</span>) </span><br><span class="line">    words_freq = [(word, sum_words[<span class="number">0</span>, idx]) <span class="keyword">for</span> word, idx <span class="keyword">in</span> vec.vocabulary_.items()]</span><br><span class="line">    words_freq =<span class="built_in">sorted</span>(words_freq, key = <span class="keyword">lambda</span> x: x[<span class="number">1</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> words_freq[:n]</span><br><span class="line">    </span><br><span class="line">common_words = get_top_n_trigram(df[<span class="string">&#x27;desc&#x27;</span>], <span class="number">20</span>)</span><br><span class="line">df6 = pd.DataFrame(common_words, columns = [<span class="string">&#x27;desc&#x27;</span> , <span class="string">&#x27;count&#x27;</span>])</span><br><span class="line">df6.groupby(<span class="string">&#x27;desc&#x27;</span>).<span class="built_in">sum</span>()[<span class="string">&#x27;count&#x27;</span>].sort_values(ascending=<span class="literal">False</span>).iplot(kind=<span class="string">&#x27;bar&#x27;</span>, yTitle=<span class="string">&#x27;Count&#x27;</span>, linecolor=<span class="string">&#x27;black&#x27;</span>, title=<span class="string">&#x27;Top 20 trigrams in hotel description after removing stop words&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/c2qAdZs.png" /></p>
+<p>從上圖可以看出 <code>pike place market</code> 幾乎一半以上的飯店都會提到，因為這是一個公共的農產貿易市場，也是熱門的觀光景點，因此也會成為各個旅館的重點宣傳之一。</p>
+<h3 id="hotel-description-length-distribution">Hotel Description Length Distribution</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">df[<span class="string">&#x27;word_count&#x27;</span>] = df[<span class="string">&#x27;desc&#x27;</span>].apply(<span class="keyword">lambda</span> x: <span class="built_in">len</span>(<span class="built_in">str</span>(x).split()))</span><br><span class="line"></span><br><span class="line">desc_lengths = <span class="built_in">list</span>(df[<span class="string">&#x27;word_count&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Number of descriptions:&quot;</span>,<span class="built_in">len</span>(desc_lengths),</span><br><span class="line">      <span class="string">&quot;\nAverage word count&quot;</span>, np.average(desc_lengths),</span><br><span class="line">      <span class="string">&quot;\nMinimum word count&quot;</span>, <span class="built_in">min</span>(desc_lengths),</span><br><span class="line">      <span class="string">&quot;\nMaximum word count&quot;</span>, <span class="built_in">max</span>(desc_lengths))</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/jce2019.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">df[<span class="string">&#x27;word_count&#x27;</span>].iplot(</span><br><span class="line">    kind=<span class="string">&#x27;hist&#x27;</span>,</span><br><span class="line">    bins = <span class="number">50</span>,</span><br><span class="line">    linecolor=<span class="string">&#x27;black&#x27;</span>,</span><br><span class="line">    xTitle=<span class="string">&#x27;word count&#x27;</span>,</span><br><span class="line">    yTitle=<span class="string">&#x27;count&#x27;</span>,</span><br><span class="line">    title=<span class="string">&#x27;Word Count Distribution in Hotel Description&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/LvaXxit.png" /></p>
+<h3 id="preprocessing-hotel-description-text">Preprocessing hotel description text</h3>
+<p>這一個部分，由於所有的資料都是作者特別去收集的，所以資料本身要做的 cleaning 動作並不多，資料本身不會有太多的 outlier 。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">REPLACE_BY_SPACE_RE = re.<span class="built_in">compile</span>(<span class="string">&#x27;[/()&#123;&#125;\[\]\|@,;]&#x27;</span>)</span><br><span class="line">BAD_SYMBOLS_RE = re.<span class="built_in">compile</span>(<span class="string">&#x27;[^0-9a-z #+_]&#x27;</span>)</span><br><span class="line">STOPWORDS = <span class="built_in">set</span>(stopwords.words(<span class="string">&#x27;english&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clean_text</span>(<span class="params">text</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        text: a string</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        return: modified initial string</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    text = text.lower() <span class="comment"># lowercase text</span></span><br><span class="line">    text = REPLACE_BY_SPACE_RE.sub(<span class="string">&#x27; &#x27;</span>, text) <span class="comment"># replace REPLACE_BY_SPACE_RE symbols by space in text. substitute the matched string in REPLACE_BY_SPACE_RE with space.</span></span><br><span class="line">    text = BAD_SYMBOLS_RE.sub(<span class="string">&#x27;&#x27;</span>, text) <span class="comment"># remove symbols which are in BAD_SYMBOLS_RE from text. substitute the matched string in BAD_SYMBOLS_RE with nothing. </span></span><br><span class="line">    text = <span class="string">&#x27; &#x27;</span>.join(word <span class="keyword">for</span> word <span class="keyword">in</span> text.split() <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> STOPWORDS) <span class="comment"># remove stopwors from text</span></span><br><span class="line">    <span class="keyword">return</span> text</span><br><span class="line">    </span><br><span class="line">df[<span class="string">&#x27;desc_clean&#x27;</span>] = df[<span class="string">&#x27;desc&#x27;</span>].apply(clean_text)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_description</span>(<span class="params">index</span>):</span></span><br><span class="line">    example = df[df.index == index][[<span class="string">&#x27;desc_clean&#x27;</span>, <span class="string">&#x27;name&#x27;</span>]].values[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(example) &gt; <span class="number">0</span>:</span><br><span class="line">        <span class="built_in">print</span>(example[<span class="number">0</span>])</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Name:&#x27;</span>, example[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">print_description(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/MtUA4ZT.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print_description(<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/EtUqVEQ.png" /></p>
+<h2 id="modeling">Modeling</h2>
+<ul>
+<li>對每一間飯店，創造 unigram, bigram, and trigram 的 TF-IDF matrix</li>
+<li>計算所有飯店的相似性</li>
+<li>定義一個函數，當我們輸入一間飯店名稱時，可以輸出前十名推薦飯店名單。</li>
+</ul>
+<p>這裡要特別提到的就是 TF-IDF (Term Frequency - InverseDocument Frequency),這是一個常用在資料探勘的加權技術。</p>
+<p>假設某一個字(詞)彙 <span class="math inline">\(W_i\)</span> 在某一篇文章 <span class="math inline">\(A_j\)</span> 中出現了 <span class="math inline">\(n_{ij}\)</span> 次，那麼</p>
+<p><span class="math display">\[
+TF_{ij}=\displaystyle{\frac{n_{ij}}{\sum\limits_{k}n_{kj}}}
+\]</span><br />
+又假設我們一共有 <span class="math inline">\(\mid D\mid\)</span> 個文本資料，此字(詞)彙 <span class="math inline">\(W_i\)</span> 在其中 <span class="math inline">\(D_i\)</span> 個文本都有出現過 <span class="math display">\[
+IDF_i=\log\displaystyle{\frac{\mid D\mid}{\mid D_i\mid}}
+\]</span></p>
+<p>從上面的定義我們可以發現如果有一個詞彙在某個特定文本出現比例極高 ( 高 <span class="math inline">\(TF_{ij}\)</span> )，但卻在所有文本中其他文本出現的比例很少 ( 高 <span class="math inline">\(IDF_i\)</span> )，則 <span class="math inline">\(TF_{ij}\times IDF_i\)</span> 即可產出很高的權重。所以利用 <span class="math inline">\(TF_{ij}\times IDF_i\)</span> 可篩選出足以進行判別的詞彙。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 將index改為飯店名稱</span></span><br><span class="line">df.set_index(<span class="string">&#x27;name&#x27;</span>, inplace = <span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tf = TfidfVectorizer(analyzer=<span class="string">&#x27;word&#x27;</span>, ngram_range=(<span class="number">1</span>, <span class="number">3</span>), min_df=<span class="number">0</span>, stop_words=<span class="string">&#x27;english&#x27;</span>)</span><br><span class="line"><span class="comment"># tfidf_matrix列出各文本內所有字的TFIDF值，且同時進行 normalized</span></span><br><span class="line"><span class="comment"># 第 i 列第 j 行的元素就是代表 詞彙 j 在 文本 i 的 TFIDF value </span></span><br><span class="line">tfidf_matrix = tf.fit_transform(df[<span class="string">&#x27;desc_clean&#x27;</span>])</span><br><span class="line"><span class="comment"># 第 i 列第 j 行的元素就是代表 詞彙 i 與 詞彙 j 的 cosine value</span></span><br><span class="line">cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)</span><br></pre></td></tr></table></figure>
+<p>這裡值得注意的是，<code>cosine Similarity</code> 在此處等同於 <code>liner_kernel</code></p>
+<p><span class="math display">\[
+\cos(x,y)=\displaystyle{\frac{x^Ty}{\|x\|\|y\|}}
+\]</span></p>
+<p><span class="math display">\[
+linear\_kernel (x,y)=x^Ty
+\]</span></p>
+<p>因為 <code>TfidfVectorizer</code> 有做 normalization ，所以長度均為 1，也因此兩者其實是一樣的東西 ( 就運算速度來說，linear_kernel 會快一些 )。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">indices = pd.Series(df.index)</span><br><span class="line"></span><br><span class="line">indices[:<span class="number">50</span>]</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/XUIiSfQ.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recommendations</span>(<span class="params">name, cosine_similarities = cosine_similarities</span>):</span></span><br><span class="line">    </span><br><span class="line">    recommended_hotels = []</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># gettin the index of the hotel that matches the name</span></span><br><span class="line">    <span class="comment"># 找出輸入飯店名稱的 index</span></span><br><span class="line">    idx = indices[indices == name].index[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># creating a Series with the similarity scores in descending order</span></span><br><span class="line">    <span class="comment"># 利用輸入飯店index，從 cosine similarity 矩陣找出這間飯店與其他飯店的 cosine similarity value 並且排序</span></span><br><span class="line">    score_series = pd.Series(cosine_similarities[idx]).sort_values(ascending = <span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># getting the indexes of the 10 most similar hotels except itself</span></span><br><span class="line">    <span class="comment"># 從這些排序後的 cosine similarity 取前10</span></span><br><span class="line">    top_10_indexes = <span class="built_in">list</span>(score_series.iloc[<span class="number">1</span>:<span class="number">11</span>].index)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># populating the list with the names of the top 10 matching hotels</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> top_10_indexes:</span><br><span class="line">        recommended_hotels.append(<span class="built_in">list</span>(df.index)[i])</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> recommended_hotels</span><br></pre></td></tr></table></figure>
+<h2 id="recommendations">Recommendations</h2>
+<p>試著輸入 " Hilton Seattle Airport &amp; Conference Center " 來看看推薦名單。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recommendations(<span class="string">&#x27;Hilton Seattle Airport &amp; Conference Center&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/7SpTy3m.png" /></p>
+<p>從我們輸出的推薦名單對比我們從 google 搜尋得到的推薦，有 3/4 的重疊。</p>
+<p><img src="https://i.imgur.com/L9q3u5h.png" /></p>
+<p>以下是 tripadvisor 的推薦，與我們的推薦名單也相似。</p>
+<p><img src="https://i.imgur.com/9aLzrUf.png" /></p>
+<p>換一個輸入來搜尋看看 " The Bacon Mansion Bed and Breakfast "</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recommendations(<span class="string">&quot;The Bacon Mansion Bed and Breakfast&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/hOzOTEl.jpg" /></p>
+<p>比對 google 搜尋得到的推薦，仍然有高度的重疊</p>
+<p><img src="https://i.imgur.com/5RfElvE.png" /></p>
+<p>但從 tripadvisor 的推薦名單中，就與我們的推薦名單重疊度不高。</p>
+<p><img src="https://i.imgur.com/QUpPYV5.png" /></p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>詳細介紹可參閱 : http://recommender-systems.org/content-based-filtering/<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>在文本分析中，我們會將所有的文字向量化，使用兩個向量夾角的 cos 值進行相似性的判別。當兩個文字向量夾角越小， cos 值越大，此兩文字相似性越高。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/[%E6%96%87%E7%AB%A0]%20Building%20a%20Content%20Based%20Recommender%20System%20for%20Hotels%20in%20Seattle/" title="[文章] Building a Content Based Recommender System for Hotels in Seattle">https://allen108108.github.io/blog/2019/10/08/[文章] Building a Content Based Recommender System for Hotels in Seattle/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/%E8%A6%96%E8%A6%BA%E5%8C%96%20(%20Visualization%20)%20%E6%A6%82%E8%BF%B0/" rel="prev" title="視覺化 ( Visualization ) 概述">
+                  <i class="fa fa-chevron-left"></i> 視覺化 ( Visualization ) 概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(1)/" rel="next" title="Kaggle Case - Santander Customer Transaction Prediction (1)">
+                  Kaggle Case - Santander Customer Transaction Prediction (1) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

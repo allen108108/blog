@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="我一直想要針對 Machine Learning &#x2F; Deep Learning 的基礎優化方式來寫一篇比較詳盡又不會太困難的文章，一方面想介紹這些很「優美」的方法給初學者或是有點興趣的人知道，另一方面也是想重新審視一下自己對於這些基礎算法的理解到底可以到哪裡。 其實也不是第一次寫這些文章，就梯度下降這一篇也是幾個月前就寫好的，但經過這幾個月來論文、課程的淬鍊之後，對於梯度下降也有一些新的認識跟">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradient descent 梯度下降">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/22/Gradient%20descent%20%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="我一直想要針對 Machine Learning &#x2F; Deep Learning 的基礎優化方式來寫一篇比較詳盡又不會太困難的文章，一方面想介紹這些很「優美」的方法給初學者或是有點興趣的人知道，另一方面也是想重新審視一下自己對於這些基礎算法的理解到底可以到哪裡。 其實也不是第一次寫這些文章，就梯度下降這一篇也是幾個月前就寫好的，但經過這幾個月來論文、課程的淬鍊之後，對於梯度下降也有一些新的認識跟">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/YuKOsXB.jpg%20=400x">
+<meta property="og:image" content="https://i.imgur.com/2gfrexA.jpg">
+<meta property="og:image" content="https://i.imgur.com/gqHKVoB.jpg%20=400x">
+<meta property="og:image" content="https://i.imgur.com/jxToNR7.jpg">
+<meta property="og:image" content="https://i.imgur.com/Fj03Kt3.jpg">
+<meta property="og:image" content="https://i.imgur.com/E1AvmX2.gif">
+<meta property="og:image" content="https://i.imgur.com/i0i3oUA.png">
+<meta property="article:published_time" content="2019-10-22T08:06:26.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:10:53.390Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/YuKOsXB.jpg%20=400x">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/22/Gradient%20descent%20%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/22/Gradient%20descent%20%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/","path":"2019/10/22/Gradient descent 梯度下降/","title":"Gradient descent 梯度下降"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Gradient descent 梯度下降 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%9C%E7%8E%87"><span class="nav-number">1.</span> <span class="nav-text">斜率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E7%B7%9A%E6%96%9C%E7%8E%87"><span class="nav-number">1.1.</span> <span class="nav-text">直線斜率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%87%E7%B7%9A%E6%96%9C%E7%8E%87"><span class="nav-number">1.2.</span> <span class="nav-text">切線斜率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8E%E6%95%B8"><span class="nav-number">2.</span> <span class="nav-text">導數</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%8F%E5%B0%8E%E6%95%B8"><span class="nav-number">3.</span> <span class="nav-text">偏導數</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6"><span class="nav-number">4.</span> <span class="nav-text">梯度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E5%9C%A8%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92%E4%B8%8A%E7%9A%84%E6%87%89%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">梯度在深度學習上的應用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95-gradient-descent"><span class="nav-number">6.</span> <span class="nav-text">梯度下降法 Gradient Descent</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85"><span class="nav-number">6.1.</span> <span class="nav-text">梯度下降法的注意事項</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%A8%E6%A9%9F%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95-stochastic-gradient-deacent"><span class="nav-number">7.</span> <span class="nav-text">隨機梯度下降法 Stochastic Gradient Deacent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">8.</span> <span class="nav-text">參考資料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/22/Gradient%20descent%20%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Gradient descent 梯度下降
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-22 16:06:26" itemprop="dateCreated datePublished" datetime="2019-10-22T16:06:26+08:00">2019-10-22</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-09-06 10:10:53" itemprop="dateModified" datetime="2020-09-06T10:10:53+08:00">2020-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-Deep-Learning/" itemprop="url" rel="index"><span itemprop="name">深度學習 Deep Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/22/Gradient%20descent%20%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/22/Gradient descent 梯度下降/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>我一直想要針對 Machine Learning / Deep Learning 的基礎優化方式來寫一篇比較詳盡又不會太困難的文章，一方面想介紹這些很「優美」的方法給初學者或是有點興趣的人知道，另一方面也是想重新審視一下自己對於這些基礎算法的理解到底可以到哪裡。</p>
+<p>其實也不是第一次寫這些文章，就梯度下降這一篇也是幾個月前就寫好的，但經過這幾個月來論文、課程的淬鍊之後，對於梯度下降也有一些新的認識跟想法，不如重新來寫一下到底什麼是梯度下降法 ( Gradient Descent ) ? 對於梯度下降法我們又該知道些什麼呢 ?</p>
+<span id="more"></span>
+<p>一切都要從斜率說起。</p>
+<h2 id="斜率">斜率</h2>
+<h3 id="直線斜率">直線斜率</h3>
+<p>首先，我們先來定義一下什麼是斜率。</p>
+<p>在數學上，一條直線的斜率可以經由線上兩點來決定 : 假設有兩點 <span class="math inline">\((x_1,y_1)\)</span> 以及 <span class="math inline">\((x_2,y_2)\)</span> 在直線 <span class="math inline">\(L\)</span> 上，那麼斜率的定義為</p>
+<p><span class="math display">\[
+Slope=\displaystyle{\frac{\Delta y}{\Delta x}=\frac{y_1-y_2}{x_1-x_2}}
+\]</span></p>
+<p><img src="https://i.imgur.com/YuKOsXB.jpg%20=400x" /></p>
+<p>直觀上來看斜率，可以代表直線的陡峭程度以及傾斜方向。也就是說，給我們一條直線 <span class="math inline">\(L\)</span> 的斜率，原則上我們大概就可以在腦中形塑出這條直線的模樣 ( 或許可能會有一些平移上的差距，但原則上大概就是長那個樣子 )</p>
+<p>這是我們國高中、大學基本上對於斜率的了解及認識。 那我們是否可以換一個角度來看「斜率」?</p>
+<p>那如果我們站在這條直線上想要往上爬，應該要往哪個方向 ? 斜率能不能告訴我們這件事情 ?</p>
+<p>答案是 : 可以。</p>
+<p>從定義上來看，斜率的正負號，決定了這條直線該往哪裡傾斜。但其實也間接地告訴我們，想要往上爬應該往哪個方向走。</p>
+<p><img src="https://i.imgur.com/2gfrexA.jpg" /></p>
+<p>簡單來說，若斜率為正，表示只要你在這條直線上，往 <span class="math inline">\(x\)</span> 軸的正向走，便會越走越高，反之，若斜率為負，那麼在直線上往 <span class="math inline">\(x\)</span> 軸的負向走，便會越走越高。</p>
+<h3 id="切線斜率">切線斜率</h3>
+<p>清楚了直線定義後，對於任一個曲線 (曲面)上任一點，我們如果能夠找到這一點在某方向上的切線斜率，那我們不也可以知道在這一點上的傾斜程度及方向嗎 ? 那不也就可以知道如果我們要往上爬，在這一個方向上，我們該往哪裡走嗎 ?</p>
+<p><img src="https://i.imgur.com/gqHKVoB.jpg%20=400x" /></p>
+<h2 id="導數">導數</h2>
+<p>現在的問題是，如果我們知道了一條曲線方程式，我們該怎麼找到某一點的切線斜率 ?</p>
+<p>這時候微積分中導數的概念便可輕鬆解決這樣的問題</p>
+<p><img width=500 src="https://i.imgur.com/jxToNR7.jpg" > (紫色線為通過該點的割線，求切線斜率的概念便是將割線斜率中的 <span class="math inline">\(\Delta x\)</span> 逼近於 <span class="math inline">\(0\)</span>)</p>
+<p>假設 <span class="math inline">\(f(x)\)</span> 為平面上一曲線方程式，<span class="math inline">\(f&#39;(a)=\lim_{x\to\ a}\frac{f(x)-f(a)}{x-a}=f(x)\)</span> 在 a點的切線斜率 <span class="math inline">\(=f(x)\)</span>在a點的陡峭程度</p>
+<p>(我們可以將導數泛化出一個導函數 <span class="math inline">\(f&#39;(x)=\lim_{h\to 0}\frac{f(x+h)-f(x)}{h}\)</span> ，只要帶入我們想要的點，就可以求出該點的切線斜率)</p>
+<p>承上所述，導數的正負號也表現出整個圖形上升的方向。</p>
+<h2 id="偏導數">偏導數</h2>
+<p>如果我們遇到的是「高維度」的「曲面」，我們又該怎麼描述在這個曲面上某一點的陡峭程度 ? ( 想像一下，在一個高高低低的山丘上，你可能站在不同的點，都能感受到不同的傾斜程度 )</p>
+<p>把上述導函數的概念稍微推廣至高維度，則偏導函數便是可求出各點在各方向上的切線斜率 (偏導數) 的工具 :</p>
+<p>假設 <span class="math inline">\(f(x_1,x_2,..,x_n)\)</span> 為 <span class="math inline">\(\mathbb{R}^n\)</span> 空間中一曲面方程式， 我們便可以求出 在<span class="math inline">\(x_i\)</span> 方向上的偏導函數 <span class="math inline">\(\frac{\partial f}{\partial x_i}=f(x_1,x_2,..,x_n)\)</span> 中某一點 <span class="math inline">\(x\)</span> 在 <span class="math inline">\(x_i\)</span> 方向的切線斜率 <span class="math inline">\(=f(x_1,x_2,..,x_n)\)</span> 中某一點 <span class="math inline">\(x\)</span> 在 <span class="math inline">\(x_i\)</span> 方向的傾斜程度 而偏微分的正負號當然也可以表現出 <span class="math inline">\(f(x_1,x_2,..,x_n)\)</span> 中某一點 <span class="math inline">\(x\)</span> 在各軸上面往上升的方向。</p>
+<h2 id="梯度">梯度</h2>
+<p>如果我們把上述每一個方向的偏導函數收集起來，便是我們的梯度 :</p>
+<p><span class="math inline">\(\nabla f(x_1,x_2,..,x_n) =(\frac{\partial f}{\partial x_1},\frac{\partial f}{\partial x_2},..,\frac{\partial f}{\partial x_n})\)</span></p>
+<p>梯度，便是一個可以表現此高為曲面在某一點上，對於每一個方向的描述，我們不再需要個別去看此點在每一個軸上的傾斜表現，梯度包含了所有的資訊在其中。</p>
+<p>那麼，若我們想要找到 <span class="math inline">\(f(x_1,x_2,..,x_n)\)</span> 的極值，最簡單的方式便是令 <span class="math inline">\(\nabla f(x_1,x_2,..,x_n) =0\)</span> ( <span class="math inline">\(Fermat&#39;s\ Extreme\ Value\ Theorem\)</span> )</p>
+<h2 id="梯度在深度學習上的應用">梯度在深度學習上的應用</h2>
+<p>今天如果我們的 <span class="math inline">\(f(x_1,x_2,..,x_n)\)</span> 是一個 Loss Function，計算著真實值與預測值上的差異，那麼梯度便可以用來找出滿足使Loss Function出現最小值的點。 ( 我們在預測上面當然是希望錯誤越少越好! )</p>
+<p><span class="math inline">\(\nabla f(x_1,x_2,..,x_n) =0\)</span> ?</p>
+<p>最簡單的方式在深度學習的使用上面卻是困難重重，原因很簡單，根據設定的神經元個數、層數、連結方式...等，往往整個 Loss function 會是一個上千或上萬個變數的函數，再者，根據 Loss function 的型態，梯度的型態通常到最後都是非線性，這種種因素都會導致及困難的計算。</p>
+<h2 id="梯度下降法-gradient-descent">梯度下降法 Gradient Descent</h2>
+<p>梯度下降法的概念便是根據隨機選擇的初始點，不斷調整步伐以及方向，試圖找出最優解。</p>
+<p>如果我們可以初始一個在 Loss function 上隨機的點，我們該如何迭代找出新的點不斷的往 Loss function 上的最小值移動呢 ?</p>
+<p>梯度下降法給了我們一個方式來不斷地找出新的點來往最小值處移動</p>
+<p><span class="math display">\[
+w^{t+1}=w^{t}+\eta\cdot\big(-\nabla L(w^t)\big)=w^t-\eta\cdot\nabla L(w^t)
+\]</span></p>
+<p>這個式子其實很直觀，我們可以這樣解釋 : 新的點 (<span class="math inline">\(w^{t+1}\)</span>)，是舊的點 (<span class="math inline">\(w^t\)</span>)，根據梯度正負號的相反方向 (<span class="math inline">\(-\nabla L(w^t)\)</span>) 以及步伐大小 (<span class="math inline">\(\eta\)</span>) 所找出來的。</p>
+<p>之所以要取 <span class="math inline">\(-\nabla L(w^t)\)</span>，是因為原本梯度代表的是向上的方向，但我們這邊要找的是 Loss 的最小值，所以必然要跟梯度不同號。</p>
+<h3 id="梯度下降法的注意事項">梯度下降法的注意事項</h3>
+<p><strong>1. 梯度下降法的使用條件</strong></p>
+<p>根據上面的介紹，梯度下降法在使用前必須要確定 Loss function 本身是否可微分 (differentiable)，或者至少局部可微。</p>
+<p>倘若真的 Loss function 是一個不可微函數，那麼就必須思考如何轉換或是利用凸優化 (convex optimization) 的方式來處理。</p>
+<p><strong>2. 根據不同的隨機選擇起始點，Gradient Descent過程會非常不一樣</strong></p>
+<p><img src="https://i.imgur.com/Fj03Kt3.jpg" /></p>
+<p><strong>3. 每一次步調的大小也會影響到是否能找到最優解</strong></p>
+<p>若 <span class="math inline">\(\eta\)</span> 太小，迭代次數會很多且容易落在相對極小值 ( 而非絕對最小值 ) 若 <span class="math inline">\(\eta\)</span> 太大，迭代結果震盪大，不夠穩定 因此最好的方式是 <span class="math inline">\(\eta\)</span> 隨著每一次迭代做調整</p>
+<p><img src="https://i.imgur.com/E1AvmX2.gif" /></p>
+<p><strong>4. 每一次的梯度計算都必須要將所有資料納入計算</strong></p>
+<h2 id="隨機梯度下降法-stochastic-gradient-deacent">隨機梯度下降法 Stochastic Gradient Deacent</h2>
+<p>梯度下降法在實質的應用上，必須耗費非常大的計算成本，因為每一次的更新，都必須要計算一次梯度，而每一次計算梯度都必須將所有資料點通通放進來才能計算出梯度，這樣的操作實在不太符合效益。</p>
+<p><span class="math display">\[
+L(w^t)=\frac{1}{N}\sum\limits_{n=1}^{N}err(y^n,\hat{y}^n)=\frac{1}{N}\sum\limits_{n=1}^{N}err\big(y(x^n,w^t),\hat{y}^n\big)\\
+\nabla L(w^t)=\nabla \Big(\frac{1}{N}\sum\limits_{n=1}^{N}err\big(y(x^n,w^t),\hat{y}^n\big)\Big)
+\]</span></p>
+<p>也因此在現在的實際應用上，多以隨機梯度下降法 ( Stochastic Gradient Deacent, SGD ) 作為優化算法來進行權重的更新。</p>
+<p>有別於梯度下降法必須將所有資料點通通進行運算產生梯度，SGD 的概念是僅利用單一筆資料 ( 或是一小批次的資料 ) 計算梯度即可，只要我們隨機抽取出夠多次的資料點，那麼它們最終的期望值會近似於梯度下降法的結果。</p>
+<p><span class="math display">\[
+\nabla L(w^t)=\underset{random\ n}{\mathbb{E}}\Big(\nabla \big( err\big(y(x^n,w^t),\hat{y}^n\big)\big)\Big)\approx \nabla \Big(\frac{1}{N}\sum\limits_{n=1}^{N}err\big(y(x^n,w^t),\hat{y}^n\big)\Big)
+\]</span></p>
+<p>使用 SGD 取代 GD 的確會讓整個計算成本大幅下降，但由於隨機性的關係，SGD 也會相對不穩定。</p>
+<p><img src="https://i.imgur.com/i0i3oUA.png" /> (圖片來源 : <a target="_blank" rel="noopener" href="https://datascience-enthusiast.com/DL/Optimization_methods.html">Optimization Methods</a>)</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://www.books.com.tw/products/0010772464">王富祥, 游雪玲 (2017)。《七把刀弄懂微積分》(第三版)。考用出版社。</a></li>
+<li>3Blue1Brown - <a target="_blank" rel="noopener" href="https://youtu.be/IHZwWFHWa-w">Gradient descent, how neural networks learn | Deep learning, chapter 2</a></li>
+<li>Hsuan-Tien Lin - <a target="_blank" rel="noopener" href="https://youtu.be/IZttt_v5tSw">Logistic Regression :: Gradient of Logistic Regression Error @ Machine Learning Foundations (機器學習基石)</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/22/Gradient%20descent%20%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/" title="Gradient descent 梯度下降">https://allen108108.github.io/blog/2019/10/22/Gradient descent 梯度下降/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/22/L1%20,%20L2%20Regularization%20%E5%88%B0%E5%BA%95%E6%AD%A3%E5%89%87%E5%8C%96%E4%BA%86%E4%BB%80%E9%BA%BC%20_/" rel="prev" title="L1 , L2 Regularization 到底正則化了什麼 ?">
+                  <i class="fa fa-chevron-left"></i> L1 , L2 Regularization 到底正則化了什麼 ?
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/22/%E9%9B%BB%E8%85%A6%E7%94%A8%E4%BB%80%E9%BA%BC%E6%96%B9%E5%BC%8F%E7%90%86%E8%A7%A3%E9%80%99%E5%80%8B%E4%B8%96%E7%95%8C%20_/" rel="next" title="電腦用什麼方式理解這個世界 ?">
+                  電腦用什麼方式理解這個世界 ? <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

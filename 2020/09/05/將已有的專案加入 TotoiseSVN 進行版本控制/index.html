@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="好一段時間沒有更新文章，最主要的原因是筆者換了一份新工作，被指派到負責 IAQ (Indoor Air Quality) 專案中 Gateway (閘道器) 的後端開發，雖然跟深度學習目前較無相關，但後端、底層的部分也一直是我想要接觸的工作項目，只是對我來說都是嶄新的事物，便少了許多時間自己進行研究、學習，也相對的少了部落格文章的更新。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="將已有的專案加入 TotoiseSVN 進行版本控制">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/09/05/%E5%B0%87%E5%B7%B2%E6%9C%89%E7%9A%84%E5%B0%88%E6%A1%88%E5%8A%A0%E5%85%A5%20TotoiseSVN%20%E9%80%B2%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="好一段時間沒有更新文章，最主要的原因是筆者換了一份新工作，被指派到負責 IAQ (Indoor Air Quality) 專案中 Gateway (閘道器) 的後端開發，雖然跟深度學習目前較無相關，但後端、底層的部分也一直是我想要接觸的工作項目，只是對我來說都是嶄新的事物，便少了許多時間自己進行研究、學習，也相對的少了部落格文章的更新。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/fY50pFL.png">
+<meta property="og:image" content="https://i.imgur.com/NPYYC4C.png">
+<meta property="og:image" content="https://i.imgur.com/y02SzCH.png">
+<meta property="og:image" content="https://i.imgur.com/pZhNbwz.jpg">
+<meta property="og:image" content="https://i.imgur.com/pN0YGid.png">
+<meta property="og:image" content="https://i.imgur.com/A7FNxl0.png">
+<meta property="og:image" content="https://i.imgur.com/3QOnUx0.png">
+<meta property="og:image" content="https://i.imgur.com/qeFkNE4.png">
+<meta property="og:image" content="https://i.imgur.com/n8bXUcz.png">
+<meta property="og:image" content="https://i.imgur.com/mZhp1VE.png">
+<meta property="og:image" content="https://i.imgur.com/E6TlIfz.png">
+<meta property="og:image" content="https://i.imgur.com/q9gx0rM.png">
+<meta property="og:image" content="https://i.imgur.com/cF3SUoD.png">
+<meta property="article:published_time" content="2020-09-05T10:53:40.000Z">
+<meta property="article:modified_time" content="2020-09-05T11:23:11.152Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/fY50pFL.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/09/05/%E5%B0%87%E5%B7%B2%E6%9C%89%E7%9A%84%E5%B0%88%E6%A1%88%E5%8A%A0%E5%85%A5%20TotoiseSVN%20%E9%80%B2%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/09/05/%E5%B0%87%E5%B7%B2%E6%9C%89%E7%9A%84%E5%B0%88%E6%A1%88%E5%8A%A0%E5%85%A5%20TotoiseSVN%20%E9%80%B2%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/","path":"2020/09/05/將已有的專案加入 TotoiseSVN 進行版本控制/","title":"將已有的專案加入 TotoiseSVN 進行版本控制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>將已有的專案加入 TotoiseSVN 進行版本控制 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%B5%B1-version-control-ststem"><span class="nav-number">1.</span> <span class="nav-text">版本控制系統 Version Control Ststem</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#concurrent-versions-system-cvs"><span class="nav-number">1.1.</span> <span class="nav-text">Concurrent Versions System (CVS)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#subversion-svn"><span class="nav-number">1.2.</span> <span class="nav-text">Subversion (SVN)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git"><span class="nav-number">1.3.</span> <span class="nav-text">Git</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cvs-svn-git-%E6%AF%94%E8%BC%83"><span class="nav-number">1.4.</span> <span class="nav-text">CVS, SVN, Git 比較</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#totoissvn"><span class="nav-number">2.</span> <span class="nav-text">TotoisSVN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%87%E7%8F%BE%E6%9C%89%E5%B0%88%E6%A1%88%E5%8A%A0%E5%85%A5-totoissvn"><span class="nav-number">3.</span> <span class="nav-text">將現有專案加入 TotoisSVN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%82%99%E4%BB%BD%E5%B0%88%E6%A1%88"><span class="nav-number">3.1.</span> <span class="nav-text">備份專案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-svn-%E5%8F%8A-temp-%E8%B3%87%E6%96%99%E5%A4%BE"><span class="nav-number">3.2.</span> <span class="nav-text">建立 SVN 及 temp 資料夾</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%87%E5%B0%88%E6%A1%88%E5%B0%8E%E5%85%A5-totoisesvn"><span class="nav-number">3.3.</span> <span class="nav-text">將專案導入 TotoiseSVN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8E%E5%9B%9E%E5%8E%9F%E5%B0%88%E6%A1%88%E4%BD%8D%E7%BD%AE"><span class="nav-number">3.4.</span> <span class="nav-text">導回原專案位置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%88%E6%A1%88%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="nav-number">4.</span> <span class="nav-text">專案版本控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">6.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/09/05/%E5%B0%87%E5%B7%B2%E6%9C%89%E7%9A%84%E5%B0%88%E6%A1%88%E5%8A%A0%E5%85%A5%20TotoiseSVN%20%E9%80%B2%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          將已有的專案加入 TotoiseSVN 進行版本控制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-09-05 18:53:40 / 修改時間：19:23:11" itemprop="dateCreated datePublished" datetime="2020-09-05T18:53:40+08:00">2020-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC-Backend-Development/" itemprop="url" rel="index"><span itemprop="name">後端開發 Backend Development</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/09/05/%E5%B0%87%E5%B7%B2%E6%9C%89%E7%9A%84%E5%B0%88%E6%A1%88%E5%8A%A0%E5%85%A5%20TotoiseSVN%20%E9%80%B2%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/09/05/將已有的專案加入 TotoiseSVN 進行版本控制/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>好一段時間沒有更新文章，最主要的原因是筆者換了一份新工作，被指派到負責 IAQ (Indoor Air Quality) 專案中 Gateway (閘道器) 的後端開發，雖然跟深度學習目前較無相關，但後端、底層的部分也一直是我想要接觸的工作項目，只是對我來說都是嶄新的事物，便少了許多時間自己進行研究、學習，也相對的少了部落格文章的更新。</p>
+<span id="more"></span>
+<p>以上雖說都是題外話，但也是這篇文章的起點。</p>
+<p>在資安控管嚴密的大公司中，其實並不太方便使用現在許多現有的工具進行開發，尤其針對一些較大的專案，少了 Github 的支援確實也難隨時進行版本控制及協作，這也因此必須要利用另外的工具，在資安的前提下可以順利的推動開發進程且隨時可以進行版控，TotoiseSVN 便是一個好工具之一。</p>
+<h2 id="版本控制系統-version-control-ststem">版本控制系統 Version Control Ststem</h2>
+<h3 id="concurrent-versions-system-cvs">Concurrent Versions System (CVS)</h3>
+<p>作為跨平台開源版本控制的開山始祖，基本的版本控制目標都能實現，由於採用的是集中式版控系統 ( Centralized Version Control System )，CVS 僅對不同版本進行備份，所有程式碼集中統一管理。</p>
+<p>開發人員進行開發時都必須從伺服器上下載，解決衝突部分最後進行 commit，所有的更動及版本資訊都儲存在 CVS server 中，這也表示，一但無法連線，便失去了協作及版本控制的功能。</p>
+<p><img src="https://i.imgur.com/fY50pFL.png" /></p>
+<h3 id="subversion-svn">Subversion (SVN)</h3>
+<p>SVN 與 CVS 均為集中式版控系統，但不管是 SVN 還是後面會介紹的 Git，原則上都是基於改良 CVS 而產生的，SVN 有一個很大的改良是在於專案資料庫的格式改採用二進制格式 ( Binary format ) 而非 CVS 使用的 RFC 格式 ( Request for Comments format )。</p>
+<p>這樣的改良大大改進了版控系統可讀檔案型態的限制 ( CVS僅可接受文件檔 )、讀寫平行、共享檔案...等優點，不過雖說如此，也造成了資料存儲變得不是這麼友善，必須有適當的工具輔助才能讓使用者更好上手 ( 正如本文的 TotoiseSVN )。</p>
+<p>速度上由於整體架構的不同， SVN 的確比 CVS 快速很多，也支援更多的離線功能，但也因此必須付出巨大的儲存成本。</p>
+<h3 id="git">Git</h3>
+<p>Git 應該可以算是目前最熱門的開源版控系統了，有別於 CVS 已逐漸退流行因此不再提供新功能，Git 的開發與維護都還不斷的在持續更新中。</p>
+<p>Git 跟 SVN 與 CVS 最大不同點是其為分散式版本控制系統 ( Distributed Version Control System )，Git 的開發者必須在開發時將整個專案複製 (clone) 至 local，達成去中心化的概念。從下圖可以發現，開發者可以在 local 直接離線 commit，後續再藉由連線 puch 到 server 中進行同步。</p>
+<p><img src="https://i.imgur.com/NPYYC4C.png" /></p>
+<p>前面有提到 SVN 與 Git 都是基於改良 CVS 而發展出來的系統，Git 當初在開發時，Linus Torvalds 開發者提出了 " WWCVSND " ( What Would CVS Not Do ) 開發原則，至今看來，Git 目前的發展也的確達到這樣的原則，Git 發展至今已經不單單是一個版本控制系統，還是一個檔案管理系統。</p>
+<h3 id="cvs-svn-git-比較">CVS, SVN, Git 比較</h3>
+<p>下面筆者簡單的列出這三者的比較 :</p>
+<p><img src="https://i.imgur.com/y02SzCH.png" /></p>
+<p>CVS 已經幾乎被 SVN 與 Git 取代，然而 SVN 在某種層面上來說，仍然有著 Git 無法完全取代的優勢，舉例來說，因為 SVN 集中式版本控制的特性，在權限控制上比 Git 來的嚴密，因此在公司企業上，仍然以 SVN 的版控系統為首選，以確保核心程式的資訊安全。</p>
+<h2 id="totoissvn">TotoisSVN</h2>
+<p><img src="https://i.imgur.com/pZhNbwz.jpg" /></p>
+<p>前面有提到 SVN 必須要有專門的工具軟體才能讓使用者方便進行版本控制，而 TotoiseSVN 便是基於這樣的需求而產生的工具。</p>
+<p>安裝跟使用方面可以至官網( https://tortoisesvn.net/ ) 進行下載並且安裝，安裝過程本文不贅述，反正就是下一步連發就可以無痛安裝完成。</p>
+<p>本文的重點放在如果我已經有一些專案，應該怎麼將其加入 SVN 進行專案協作及版本控制，也就是下一部份即將要介紹的。</p>
+<h2 id="將現有專案加入-totoissvn">將現有專案加入 TotoisSVN</h2>
+<h3 id="備份專案">備份專案</h3>
+<p>為了下面介紹方便，筆者假設已經擁有一個專案 ( 路徑為<code>C:/projects/project_1</code> )，內含三份文字檔，現在希望將其加入 SVN 中進行版本控制。因為是要處理現有的專案，為了以防萬一防止過程中操作不慎導致檔案受損或遺失，筆者強烈建議進行下面步驟以前必須先進行備份。</p>
+<p><img src="https://i.imgur.com/pN0YGid.png" /></p>
+<h3 id="建立-svn-及-temp-資料夾">建立 SVN 及 temp 資料夾</h3>
+<p>我們建立需要的 <code>temp</code> ( 路徑為<code>C:/temp</code> ) 與 <code>SVN</code> 資料夾 ( 路徑為<code>C:/SVN</code> ) ，並在 SVN 資料夾中建立建立版本庫的 Repository ( 路徑為<code>C:/SVN/test</code> )，在資料夾上按右鍵選擇 <code>TotoiseSVN &gt; Create repository here</code></p>
+<p><img src="https://i.imgur.com/A7FNxl0.png" /></p>
+<p>按下 <code>OK</code> 後便完成 Repository 的建立，我們進入 <code>test</code> 資料夾中可以發現以下資料夾結構，這樣表示 Repository 已經建立完成</p>
+<p><img src="https://i.imgur.com/3QOnUx0.png" /></p>
+<p>接下來，我們在 <code>temp</code> 資料夾中建立子資料夾 <code>new</code>，並於底下建立三個子資料夾 :</p>
+<ul>
+<li><code>C:/temp/new/branches</code></li>
+<li><code>C:/temp/new/tags</code></li>
+<li><code>C:/temp/new/trunk</code></li>
+</ul>
+<p><img src="https://i.imgur.com/qeFkNE4.png" /></p>
+<p>這樣的結構在未來如果使用到高階的專案管理功能上會有很大的作用，即使現在可能不見得會遇到，但預先建立這些結構並不是一件壞事，也不影響目前的版控功能。</p>
+<p>建立完成後，將我們原有的專案底下「<strong>需要版控的資料及資料夾</strong>」( 假設需要版控的資料為三個資料中的<code>textA.txt</code>及 <code>textB.txt</code> )「<strong>移動</strong>」到 <code>./temp/new/trunk</code> 底下，剩下不需要版控的資料便先找地方暫存著，<strong>注意 !!一定要保持專案資料夾 <code>C:/projects/project_1</code> 內全空 。</strong></p>
+<p><img src="https://i.imgur.com/n8bXUcz.png" /></p>
+<h3 id="將專案導入-totoisesvn">將專案導入 TotoiseSVN</h3>
+<p>於 <code>new</code> 資料夾上按滑鼠右鍵選擇 <code>TotoiseSVN &gt; Import</code> ，於網址列中輸入 <code>file:///C:\SVN\test</code> 將這個資料夾一併導入到 SVN 中，</p>
+<p><img src="https://i.imgur.com/mZhp1VE.png" /></p>
+<p>OK，我們回到 <code>C:\SVN\test</code> 按下右鍵選擇 <code>TotoiseSVN &gt; Repo-browser</code> 便可以確定我們已經將 <code>new</code> 底下的三個資料夾導入 SVN 中了</p>
+<p><img src="https://i.imgur.com/E6TlIfz.png" /></p>
+<p>利用 Repo-browser 也可以確定我們選擇要進行版控的兩個檔案也在 <code>trunk</code> 資料夾中。此時 <code>temp</code> 資料夾已經不需要了，可以逕行刪除。</p>
+<h3 id="導回原專案位置">導回原專案位置</h3>
+<p>不過別忘了，當初我們是將原本專案中要版控的檔案 <strong>移動</strong> 到 <code>temp/new/trunk</code> 中，我們還是會希望在原本的專案位址中進行檔案的修改，而非在 <code>temp/new/trunk</code> 進行更動，所以最後一步便是要將其導回原本的專案位址中。</p>
+<p>這步很簡單，我們在原本專案資料夾中，按下滑鼠右鍵選擇 <code>SVN Checkout</code> ， URL 的部分填入 <code>file:///C:/SVN/test/trunk</code> ，而 Checkout Directory 部分填入 <code>C:\projects\project_1</code></p>
+<p><img src="https://i.imgur.com/q9gx0rM.png" /></p>
+<p>按下 OK 後，便可以發現到需要版控的檔案都回到原本資料夾中，且前面都會多了一個小綠勾，表示目前版本為最新版本。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p><img src="https://i.imgur.com/cF3SUoD.png" /></p>
+<p>別忘了，我們還有不需要版控的資料再將其移回至此資料夾中即可。</p>
+<h2 id="專案版本控制">專案版本控制</h2>
+<p>現在，我們已經可以進行版本控制了，日後只要在現有專案文件上進行更改，前面的小綠勾就會轉變成紅色的驚嘆號，那麼我們只需要對此檔案按下滑鼠右鍵選擇 <code>SVN commit</code> 即可提交新版本。</p>
+<p>如果要增加新的檔案，那我們必須先按滑鼠右鍵選擇 <code>TortoiseSVN &gt; Add</code> 將其添加至 SVN 中，再進行 <code>SVN commit</code> 即可。</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://codertw.com/%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80/459584/">SVN與CVS兩者間的比較</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-tw/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E8%BD%AF%E4%BB%B6%E6%AF%94%E8%BE%83">版本控制軟體比較</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/51792519">Git 前时代：使用 CVS 进行版本控制</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/whatday/article/details/84135984">Git 、CVS、SVN比较</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/difference-between-concurrent-versions-system-cvs-and-subversion-svn/">Difference between Concurrent Versions System (CVS) and Subversion (SVN)</a></li>
+</ol>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>如果我們的電腦曾經下載過一些軟體，例如趨勢防毒、onedrive...等，這些都會使用到圖示的疊加功能，Windows有限制最多只能有 15 個圖示疊加，如果未出現 TotoiseSVN 沒有出現小綠勾 很有可能是前面安裝過的軟體已經佔掉這 15個名額，詳細調整方法可以參考 : <a target="_blank" rel="noopener" href="http://mycodetub.logdown.com/posts/253390-tortoisegit-green-hook-is-gone">TortoiseGit 的綠色勾勾消失了</a>、<a target="_blank" rel="noopener" href="https://www.taodabai.com/how/885112511.html">SVN圖標突然消失了怎麼辦</a>..等文章<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/09/05/%E5%B0%87%E5%B7%B2%E6%9C%89%E7%9A%84%E5%B0%88%E6%A1%88%E5%8A%A0%E5%85%A5%20TotoiseSVN%20%E9%80%B2%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/" title="將已有的專案加入 TotoiseSVN 進行版本控制">https://allen108108.github.io/blog/2020/09/05/將已有的專案加入 TotoiseSVN 進行版本控制/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/07/27/%5B%E8%AB%96%E6%96%87%5D%20End-to-End%20Object%20Detection%20with%20Transformers/" rel="prev" title="[論文] End-to-End Object Detection with Transformers">
+                  <i class="fa fa-chevron-left"></i> [論文] End-to-End Object Detection with Transformers
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/09/06/Gateway%20%E5%9C%A8%20IOT%20%E4%B8%AD%E6%89%AE%E6%BC%94%E7%9A%84%E8%A7%92%E8%89%B2/" rel="next" title="Gateway 在 IOT 中扮演的角色">
+                  Gateway 在 IOT 中扮演的角色 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

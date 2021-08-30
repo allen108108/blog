@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="這一個部分延續上一篇文章，對 Q-Learning 的一些技巧做了更深入的延伸。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Reinforcement Learning (4) --- Q-learning (Advanced Tips)">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="這一個部分延續上一篇文章，對 Q-Learning 的一些技巧做了更深入的延伸。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/i2PaLDX.png">
+<meta property="og:image" content="https://i.imgur.com/zMaKB2Y.png">
+<meta property="og:image" content="https://i.imgur.com/FjrTXjX.png">
+<meta property="article:published_time" content="2019-12-05T04:13:28.000Z">
+<meta property="article:modified_time" content="2019-12-05T04:13:47.351Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/i2PaLDX.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/","path":"2019/12/05/Deep Reinforcement Learning (4) — Q-learning (Advanced Tips)/","title":"Deep Reinforcement Learning (4) --- Q-learning (Advanced Tips)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Reinforcement Learning (4) --- Q-learning (Advanced Tips) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tips-of-q-learning-advanced"><span class="nav-number">1.</span> <span class="nav-text">Tips of Q-Learning (Advanced)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#double-dqn---%E8%A7%A3%E6%B1%BA%E5%81%8F%E9%AB%98%E7%9A%84-q-value"><span class="nav-number">1.1.</span> <span class="nav-text">Double DQN - 解決偏高的 Q-value</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dueling-dqn---%E6%9B%B4%E6%9C%89%E6%95%88%E7%8E%87%E7%9A%84-action-%E6%9B%B4%E6%96%B0"><span class="nav-number">1.2.</span> <span class="nav-text">Dueling DQN - 更有效率的 action 更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#prioritized-reply---%E8%B3%87%E6%96%99%E6%9C%89%E5%85%B6%E5%84%AA%E5%85%88%E6%80%A7%E7%9A%84%E8%99%95%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">Prioritized Reply - 資料有其優先性的處理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#multi-step---td-%E8%88%87-mc-%E7%9A%84%E6%AC%8A%E8%A1%A1"><span class="nav-number">1.4.</span> <span class="nav-text">Multi step - TD 與 MC 的權衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#noisy-net---epsilon-greedy-%E7%9A%84%E5%BB%B6%E4%BC%B8"><span class="nav-number">1.5.</span> <span class="nav-text">Noisy Net - Epsilon Greedy 的延伸</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#distributional-q-function---%E6%8E%A2%E7%B4%A2-q-%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">1.6.</span> <span class="nav-text">Distributional Q-function - 探索 Q 的特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rainbow"><span class="nav-number">1.7.</span> <span class="nav-text">Rainbow</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Reinforcement Learning (4) --- Q-learning (Advanced Tips)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-12-05 12:13:28 / 修改時間：12:13:47" itemprop="dateCreated datePublished" datetime="2019-12-05T12:13:28+08:00">2019-12-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/05/Deep Reinforcement Learning (4) — Q-learning (Advanced Tips)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>這一個部分延續上一篇文章，對 Q-Learning 的一些技巧做了更深入的延伸。</p>
+<span id="more"></span>
+<h2 id="tips-of-q-learning-advanced">Tips of Q-Learning (Advanced)</h2>
+<h3 id="double-dqn---解決偏高的-q-value">Double DQN - 解決偏高的 Q-value</h3>
+<p>一般的 DQN ( Deep Q Network )，更新 <span class="math inline">\(\pi\)</span> 的方式是找出可以得到最大 Q 值的 action <span class="math inline">\(a\)</span> 來做替換，這樣的概念直觀但卻可能使 Q 值高估了 expect cumulated reward。</p>
+<p>為什麼會高估 ? 主要是因為我們每一次選取的 action 都是可以得到最大 Q 值的 action，但 DQN 是一個網路結構，每一個 action 的 Q 值跟真正的 expect cumulated reward 本來就可能會有誤差，當我們要選擇會形成最大 Q 值的 action 其實也就是傾向於選擇高估 expect cumulated reward 的那個 action，一次又一次的都是選擇這樣高估 expect cumulated reward 的 aciton，所以我們繪製 DQN 的 Q-value 與 training steps 圖表時，DQN 的曲線通常會呈現偏高且遞增的圖形。</p>
+<p>以下就是利用 DQN 與 Double DQN 玩六種遊戲所繪製的圖 :</p>
+<p><img src="https://i.imgur.com/i2PaLDX.png" /></p>
+<p>Double DQN 其實就是一種 Double check 的機制</p>
+<p><span class="math inline">\(DQN\)</span></p>
+<p><span class="math display">\[
+\mathcal{L}(s_t,a_t)=Q(s_t,a_t)-\big[r_t+\max\limits_{a}Q(s_{t+1},a)\big]
+\]</span></p>
+<p><span class="math inline">\(Double-DQN\)</span></p>
+<p><span class="math display">\[
+\mathcal{L}(s_t,a_t)=Q(s_t,a_t)-\big[r_t+Q&#39;\big(s_{t+1},\arg\max\limits_{a}Q(s_{t+1},a)\big)\big]
+\]</span></p>
+<p>Double-DQN 利用了另外一個 <span class="math inline">\(Q&#39;\)</span> (實務上其實就是使用固定住的那個 target function) 來重新計算 Q 值。如果我們真的 Q 高估了 expect cumulated reward，但只要 Q' 計算時沒有高估，便可以平衡調前面高估 expect cumulated reward 的狀況，反之亦然，假設 Q' 有高估 expect cumulated reward ，但只要 Q 沒有選到會高估 expect cumulated reward 的 action 就也是可以平衡掉影響。</p>
+<h3 id="dueling-dqn---更有效率的-action-更新">Dueling DQN - 更有效率的 action 更新</h3>
+<p>我們在進行一般 DQN 訓練時，往往都是對所有的 action 做取樣，然後針對被取樣的這些 action 來更新網路參數來讓 <span class="math inline">\(Q(s_t,a_t)\)</span> 盡可能接近 <span class="math inline">\(r_t+\max\limits_{a}Q(s_{t+1},a)\)</span>。</p>
+<p>但這樣的更新事實上很沒有效率，如果沒有被取樣到的 action 就不會被考量到一起做參數更新。而 Dueling DQN 便是變更 DQN 的結構，來讓每一次的抽樣後，會連未被抽樣到的 action 一起考慮進去來做參數更新。</p>
+<p><img src="https://i.imgur.com/zMaKB2Y.png" /></p>
+<p>上圖上就是一般的 DQN 結構，輸出 <span class="math inline">\(Q(s,a)\)</span>，<span class="math inline">\(Q(s,a)\)</span> 的每一個維度就是每一個 action 的 expect cumulated reward 。 上圖下則是 Dueling DQN，在最後幾層分成兩個通道，一個通道輸出一個 scalar <span class="math inline">\(V(s)\)</span>，而另外一個通道則是輸出一個 <span class="math inline">\(A(s,a)\)</span>，最後再讓這兩個通道相加 ( <span class="math inline">\(A(s,a)\)</span> 的每一個維度都加上 <span class="math inline">\(V(s)\)</span> ) 成為 <span class="math inline">\(Q(s,a)\)</span>。</p>
+<p>Dueling DQN 這樣的方法，如果我們只有抽樣到某幾個 action，並且期待這幾個被抽樣出來的 action expect cumulated reward 可以逼近 Target value，但由於 <span class="math inline">\(Q(s,a)=A(s,a)+V(s)\)</span>，當我們要調整 <span class="math inline">\(Q(s,a)\)</span> 的某幾個維度，我們希望可以藉由 <span class="math inline">\(V(s)\)</span> 對所有維度都統一進行調整。</p>
+<p>這裡要注意的是 <span class="math inline">\(A(s,a)\)</span>，為了要利用 <span class="math inline">\(V\)</span> 來調整 <span class="math inline">\(Q\)</span>，我們必須對於 <span class="math inline">\(A\)</span> 必須要有所限制，不然的話很可能訓練到最後 <span class="math inline">\(V=0\)</span> 且 <span class="math inline">\(A=Q\)</span>，或者，<span class="math inline">\(A\)</span> 的變化太靈活，最後 <span class="math inline">\(V\)</span> 不動，反而是 <span class="math inline">\(A\)</span> 中相對應被抽樣 action 的維度在改變而已，失去了 Dueling DQN 的意義。在論文中的限制便是 <span class="math inline">\(A\)</span> 的每一個維度總和必須為 <span class="math inline">\(0\)</span>。</p>
+<p>在實作上，這兩個通道其實只需要在一般的 DQN 網路中稍微改一下即可，而對於 <span class="math inline">\(A\)</span> 的限制也只是在這個通道的最後加上一個 normalization 。</p>
+<h3 id="prioritized-reply---資料有其優先性的處理">Prioritized Reply - 資料有其優先性的處理</h3>
+<p>當我們從 buffer 裡面取樣資料時，會以一個 uniform distribution 的想法來抽樣，每一筆資料的機率都是相等的。但在現實中，很有可能會對於某些資料的需求更高，我們會希望有更高的機率可以抽樣到這些資料，因此會在這些資料上給予一定的 priority。</p>
+<h3 id="multi-step---td-與-mc-的權衡">Multi step - TD 與 MC 的權衡</h3>
+<p>這個方法其實是在 TD method ( 一筆資料是 <span class="math inline">\((s_t,a_t,r_t,s_{t+1})\)</span> ) 與 MC method ( 一筆資料是 <span class="math inline">\(\{(s_i,a_i,r_i,s_{i+1})\}_{i=1}^T\)</span> ) 中取一個平衡點。我們不再只讓 policy 跟 environment 進行一次互動而已，我們一筆資料是 <span class="math inline">\(N\)</span> 次互動的資料 : <span class="math inline">\(\{(s_i,a_i,r_i,s_{i+1})\}_{i=t}^{N+t}\)</span></p>
+<p>在這樣的情況下， Loss Function <span class="math inline">\(\mathcal{L}\)</span> 也必須有所調整 :</p>
+<p><span class="math display">\[
+\mathcal{L}(s_t,a_t)=Q(s_t,a_t)-\big[\sum\limits_{i=t}^{N+t}r_i+\max\limits_{a}Q^{target}(s_{N+t+1},a)\big]
+\]</span></p>
+<h3 id="noisy-net---epsilon-greedy-的延伸">Noisy Net - Epsilon Greedy 的延伸</h3>
+<p>上一篇文章我們在講 Epsilon Greedy 的說法是，為了讓其他的 action 也必須要有一些機率被取樣到，給予 DQN 能有更強的探索力。換一個角度來說，我們也是對於 action 加了一定程度的 noise。</p>
+<p>但在 Noise Net 中，我們仍然是給予一些 noise，但是是加在 DQN 的參數中，當 policy 要跟 environment 進行互動前，就先 sample noise 加進DQN 參數中再來進行 <span class="math inline">\(Q^{noise}\)</span> 的估算。</p>
+<p>但其實從現實面來說，Noise Net 的概念會比 Epsilon Greedy 更貼近現實。當我們使用 Epsilon Greedy，在每一個 state 中所採取的 action 會由 <span class="math inline">\(\epsilon\)</span> 來決定抽樣的機率，這顯然不是太合理。正常我們在與環境作互動時，應該要看見同一個 (或類似) 的 state 會有同樣的 action 才對。因此，為了讓 noise 能存在，又可以在每一個 state 上可以有相同的 action 選擇，便是將 noise 加入 DQN 結構中。</p>
+<p>此外也要注意，必須在同一個 episode 中使用同一個 <span class="math inline">\(\epsilon\)</span>，才能確保在這整個 episode 中， policy 會有統一的 action 選擇策略。因此，要重新 sample <span class="math inline">\(\epsilon\)</span> 就必須在結束一個 episode 後才做 sample。</p>
+<h3 id="distributional-q-function---探索-q-的特性">Distributional Q-function - 探索 Q 的特性</h3>
+<p>最後這兩段，在課程中都僅有非常簡單的介紹，因此我便也簡單的描述一下即可。</p>
+<p>原本的 Q-function 輸出的 Q 值，其實就是 Q 值分佈的平均 ( 期望值 )，但對於同一個 Q 值來說，可以有許多種 Q 分佈的可能性。</p>
+<p>假如我們將 Q 值的輸出限制在一個範圍之間，那我們可以針對每一個 action 找出對應的 Q值分佈，最後我們選擇 action 就是看哪一個分佈的平均值最高就選哪一個 action 。</p>
+<p>感覺有點繞了一大圈，再回到原點。但其實這一大圈給了我們一些資訊，譬如說，我們可以知道每一個 action 的 Q 值分佈後，我們便可以計算出其 variance，當兩個 action 的 Q 值均值差不多，或許我們可以選擇 variance 較小的來規避掉一些風險可能性。</p>
+<h3 id="rainbow">Rainbow</h3>
+<p>簡單來說就是結合上述方法的一個組合式方式。</p>
+<p><img src="https://i.imgur.com/FjrTXjX.png" /></p>
+<p>上圖左可以看出 Rainbow 的整體優越性，但上圖右藉由一個一個演算法從 Rainbow 中抽出來看看在 Rainbow 中真正有比較決定性的演算方法是哪一個。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/" title="Deep Reinforcement Learning (4) --- Q-learning (Advanced Tips)">https://allen108108.github.io/blog/2019/12/05/Deep Reinforcement Learning (4) — Q-learning (Advanced Tips)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/" rel="prev" title="Deep Reinforcement Learning (3) --- Q-learning (Basic Idea)">
+                  <i class="fa fa-chevron-left"></i> Deep Reinforcement Learning (3) --- Q-learning (Basic Idea)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(5)%20%E2%80%94%20Q-learning%20(Continuous%20Action)/" rel="next" title="Deep Reinforcement Learning (5) --- Q-learning (Continuous Action)">
+                  Deep Reinforcement Learning (5) --- Q-learning (Continuous Action) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="論文中提出了一個網路結構，可以將一般圖片 ( 未經過處理 ) 輸入後，直接進行手部關鍵點的定位。此方法利用改良過的 VNect1 來對輸入圖像計算其 Heatmap，再利用此 Heatmap 來進行關鍵點的定位。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/01/11/[%E8%AB%96%E6%96%87]%20%E9%80%9F%E8%AE%80%E8%AB%96%E6%96%87%20Accurate%20Hand%20Keypoint%20Localization%20on%20Mobile%20Devices/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="論文中提出了一個網路結構，可以將一般圖片 ( 未經過處理 ) 輸入後，直接進行手部關鍵點的定位。此方法利用改良過的 VNect1 來對輸入圖像計算其 Heatmap，再利用此 Heatmap 來進行關鍵點的定位。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/yRGgQ1I.jpg">
+<meta property="og:image" content="https://i.imgur.com/SHrtVls.png">
+<meta property="og:image" content="https://i.imgur.com/v2IeruH.jpg">
+<meta property="article:published_time" content="2020-01-11T06:55:57.000Z">
+<meta property="article:modified_time" content="2020-01-11T06:59:35.725Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/yRGgQ1I.jpg">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/01/11/[%E8%AB%96%E6%96%87]%20%E9%80%9F%E8%AE%80%E8%AB%96%E6%96%87%20Accurate%20Hand%20Keypoint%20Localization%20on%20Mobile%20Devices/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/01/11/[%E8%AB%96%E6%96%87]%20%E9%80%9F%E8%AE%80%E8%AB%96%E6%96%87%20Accurate%20Hand%20Keypoint%20Localization%20on%20Mobile%20Devices/","path":"2020/01/11/[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices/","title":"[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#vnect"><span class="nav-number">1.</span> <span class="nav-text">VNect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E8%89%AF%E7%89%88-vnect"><span class="nav-number">2.</span> <span class="nav-text">改良版 VNect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">3.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/01/11/[%E8%AB%96%E6%96%87]%20%E9%80%9F%E8%AE%80%E8%AB%96%E6%96%87%20Accurate%20Hand%20Keypoint%20Localization%20on%20Mobile%20Devices/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-01-11 14:55:57 / 修改時間：14:59:35" itemprop="dateCreated datePublished" datetime="2020-01-11T14:55:57+08:00">2020-01-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/01/11/%5B%E8%AB%96%E6%96%87%5D%20%E9%80%9F%E8%AE%80%E8%AB%96%E6%96%87%20Accurate%20Hand%20Keypoint%20Localization%20on%20Mobile%20Devices/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/11/[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>論文中提出了一個網路結構，可以將一般圖片 ( 未經過處理 ) 輸入後，直接進行手部關鍵點的定位。此方法利用改良過的 VNect<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 來對輸入圖像計算其 Heatmap，再利用此 Heatmap 來進行關鍵點的定位。</p>
+<span id="more"></span>
+<p>這樣的方法在一些 Open dataset 上取得了優異的成果，甚至可優於現今 SOTA 的方法，這也使得這樣的結構可以成為移動設備上用來定位關鍵點的重要部件。</p>
+<p><img src="https://i.imgur.com/yRGgQ1I.jpg" /></p>
+<h2 id="vnect">VNect</h2>
+<p>利用 RGB Camera 進行 3D 姿勢辨識一直以來都是一個極具挑戰性的問題，在 VNect 中利用了兩個部份來進行即時的 3D 姿勢預測 : * CNN 回歸預測 ( CNN Pose Regression ) : 以 CNN 方法來將生成 2D Heatmap 以及 3D Location map。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> * 骨架擬合 ( Kinematic Skeleton Fitting ) : 利用 Model-based kinematic skeleton fitting 來修正 CNN 迴歸分析後的關鍵點座標，來確保運動的一致性。</p>
+<p>網路結構如下 :</p>
+<p><img src="https://i.imgur.com/SHrtVls.png" /></p>
+<p>將 ResNet50 在 4f 層的輸出接上上述結構，最後輸出 Heatmap 以及 X,Y,Z 的 Location maps。</p>
+<h2 id="改良版-vnect">改良版 VNect</h2>
+<p>在此論文中，目標是在移動設備上可以進行即時的關鍵點預測，因此，必須將 VNect 的結構進行修改，讓其更輕量卻不失準確度。</p>
+<p>修改的方向如下 :</p>
+<ol type="1">
+<li>將 ResNet 改為輕量級的 MobileNet v2</li>
+<li>原本的 Convolution Layer 改為 Depthwise Convolution Layer<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></li>
+</ol>
+<p><img src="https://i.imgur.com/v2IeruH.jpg" /></p>
+<p>這也就是此論文主要使用的網路結構，這樣的結構生成出手部關鍵點 Heatmap <span class="math inline">\(H(p)\)</span>，之後會利用 MLE 的方式來找出關鍵點座標 <span class="math inline">\(\bar{k}\)</span></p>
+<p><span class="math display">\[
+\bar{k}=\arg\max_{p\in P}H(p)
+\]</span></p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Dushyant Mehta et al. <em>"Vnect: Real-time 3d human pose estimation with a single rgb camera"</em>. In: ACM Trans. on Graphics (TOG) 36.4 (2017).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>為什麼在現今的姿勢預測中，不直接針對關鍵點進行回歸預測即可 ? 除了省去 Bounding Box 的預測計算成本外，使用 Heatmap 來進行關鍵點預測還有許多的優點，詳細說明可參閱知乎 : 《<em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/293815527">关键点检测中，为什么要生成高斯图，而不是直接与groundtruth比较？</a></em> 》<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>CSDN : <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36165459/article/details/78320781">论文阅读《<em>Flowing ConvNets for Human Pose Estimation in Videos</em>》</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>Convolution 與 Depthwise convolution 的差異可以參閱 : <a target="_blank" rel="noopener" href="https://medium.com/@chih.sheng.huang821/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-mobilenet-depthwise-separable-convolution-f1ed016b3467">深度學習-MobileNet (Depthwise separable convolution)</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/01/11/[%E8%AB%96%E6%96%87]%20%E9%80%9F%E8%AE%80%E8%AB%96%E6%96%87%20Accurate%20Hand%20Keypoint%20Localization%20on%20Mobile%20Devices/" title="[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices">https://allen108108.github.io/blog/2020/01/11/[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(5)%20%E2%80%94%20Q-learning%20(Continuous%20Action)/" rel="prev" title="Deep Reinforcement Learning (5) --- Q-learning (Continuous Action)">
+                  <i class="fa fa-chevron-left"></i> Deep Reinforcement Learning (5) --- Q-learning (Continuous Action)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/" rel="next" title="Gesture Recognition using YOLO v3 tiny">
+                  Gesture Recognition using YOLO v3 tiny <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

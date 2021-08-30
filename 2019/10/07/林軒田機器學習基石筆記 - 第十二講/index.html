@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第十二講 : Non-Linear Transformation 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林軒田機器學習基石筆記 - 第十二講">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%AC%9B/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第十二講 : Non-Linear Transformation 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/c3HXSAK.png">
+<meta property="og:image" content="https://i.imgur.com/DTmO9Gy.jpg">
+<meta property="og:image" content="https://i.imgur.com/IsnkDkg.png">
+<meta property="og:image" content="https://i.imgur.com/Cv78khD.png">
+<meta property="og:image" content="https://i.imgur.com/lqyg6Lg.png">
+<meta property="og:image" content="https://i.imgur.com/FGPDf7b.png">
+<meta property="og:image" content="https://i.imgur.com/vwKnLuq.png">
+<meta property="og:image" content="https://i.imgur.com/oNliPL8.png">
+<meta property="og:image" content="https://i.imgur.com/u3AZu6L.png">
+<meta property="og:image" content="https://i.imgur.com/6iXKiEJ.png">
+<meta property="og:image" content="https://i.imgur.com/UPa7uA7.png">
+<meta property="article:published_time" content="2019-10-07T09:54:09.000Z">
+<meta property="article:modified_time" content="2021-08-30T10:46:59.422Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/c3HXSAK.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%AC%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%AC%9B/","path":"2019/10/07/林軒田機器學習基石筆記 - 第十二講/","title":"林軒田機器學習基石筆記 - 第十二講"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>林軒田機器學習基石筆記 - 第十二講 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#z-space-transformation"><span class="nav-number">1.</span> <span class="nav-text">Z-space transformation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#general-quadratic-hypothesis-set"><span class="nav-number">2.</span> <span class="nav-text">General Quadratic Hypothesis Set</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-non-linear-transformation-steps"><span class="nav-number">3.</span> <span class="nav-text">The Non-Linear Transformation Steps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#q%E6%AC%A1%E5%A4%9A%E9%A0%85%E5%BC%8F%E8%BD%89%E6%8F%9B-on-d-dimension"><span class="nav-number">4.</span> <span class="nav-text">Q次多項式轉換 on d-dimension</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%91%E5%80%91%E8%A9%B2%E5%A6%82%E4%BD%95%E9%81%B8%E6%93%87-q-%E5%80%BC"><span class="nav-number">5.</span> <span class="nav-text">我們該如何選擇 Q 值 ?</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%AC%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          林軒田機器學習基石筆記 - 第十二講
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-07 17:54:09" itemprop="dateCreated datePublished" datetime="2019-10-07T17:54:09+08:00">2019-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 18:46:59" itemprop="dateModified" datetime="2021-08-30T18:46:59+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9E%97%E8%BB%92%E7%94%B0-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3/" itemprop="url" rel="index"><span itemprop="name">林軒田 機器學習基石</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%AC%9B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/07/林軒田機器學習基石筆記 - 第十二講/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文為一系列課程之筆記，建議從" <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryxzB7LwN">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文討論內容請參考: 機器學習基石第十二講 : Non-Linear Transformation</strong></p></li>
+<li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
+</ul>
+<hr />
+</blockquote>
+<span id="more"></span>
+<p><img src="https://i.imgur.com/c3HXSAK.png" /></p>
+<p>上圖是一個 Non-Linear Separable ( Circle Separable ) 的情況，在現實中，絕大多數的情況都是非線性可分。</p>
+<p>Linear Separable 的情況下， <span class="math inline">\(d_{vc}\)</span> ( 複雜度 ) 受到控制，很容易可以確保 <span class="math inline">\(E_{in}\)</span> 與 <span class="math inline">\(E_{out}\)</span> 會很接近，但是在 Non-Linear 的情形下， <span class="math inline">\(d_{vc}\)</span> 是不受控制的，用任何的直線都會造成 <span class="math inline">\(E_{in}\)</span> 極高。</p>
+<h2 id="z-space-transformation">Z-space transformation</h2>
+<p>我們從上例來看 :</p>
+<p>這樣的 Circle Separable 我們可以輕易的造出一個圓來作為 hypothesis</p>
+<p><span class="math inline">\(h_{SEP}(\mathbb{X})=Sign(-x_1^2-x_2^2+0.6)\)</span> ( 過原點，半徑為 <span class="math inline">\(\sqrt{0.6}\)</span> 的圓 )</p>
+<p>這導致整個 hypothesis 變成一個 Quadratic (二次) Hypothesis，為了想要使用我們先前學過的 linear classification 因此必須在二次項部分做一個轉換</p>
+<p><span class="math inline">\(\phi\)</span> : <span class="math inline">\(X\longrightarrow Z\)</span> <span class="math inline">\(\phi(\mathbb{X})=\mathbb{Z}\Longrightarrow \phi((1,x_1,x_2))=(1=z_0,x_1^2=z_1,x_2^2=z_2)\)</span></p>
+<p><span class="math inline">\(\therefore \tilde{h}(\mathbb{Z})=Sign((-1)\cdot z_1+(-1)\cdot z_2+(0.6)\cdot z_0 )\)</span></p>
+<p><span class="math inline">\(=Sign(\tilde{w}_1z_1+\tilde{w}_2z_2+\tilde{w}_0z_0)=Sign(\tilde{\mathbb{W} }^T\phi(\mathbb{X}))\)</span></p>
+<p>這一連串的步驟其實就是把原本 X 空間的向量轉成 Z 空間的一次方向量，然後我們再於 Z 空間裡面進行我們先前所學的線性操作。</p>
+<p><img src="https://i.imgur.com/DTmO9Gy.jpg" /> (我借用 SVM 的 wiki 其中一張圖，我覺得可以很明確表達出整個 Transformation 的概念 )</p>
+<p>截至目前為止我們都僅討論「特殊」的 Quadratic Hypothesis ( 過原點、無一次項 )，下列條列出這些特殊形態經過轉換後 <span class="math inline">\(\mathbb{W}\)</span> 的型態 :</p>
+<p><img src="https://i.imgur.com/IsnkDkg.png" /></p>
+<h2 id="general-quadratic-hypothesis-set">General Quadratic Hypothesis Set</h2>
+<p>如果我們的二次式並沒有像上述一樣這麼特殊呢 ? 應該說，現實的狀況都沒有這麼的特殊，我們必須要有一套一般化的 Transformation :</p>
+<p><span class="math inline">\(\phi\)</span> : <span class="math inline">\(X\rightarrow Z\)</span> via <span class="math inline">\((1,x_1,x_2)\rightarrow(1,x_1,x_2,x_1^2,x_1x_2,x_2^2)=(z_0,z_1,...,z_5)\)</span></p>
+<p><span class="math inline">\(\Longrightarrow \mathbb{H}_{\phi}=\left\{h(\mathbb{X})\mid h(\mathbb{X})=\tilde{h}(\phi(\mathbb{X}))\right\}\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 在 Z-space 中的 perceptron 可對應到 X-space 中的 quadratic hypothesis</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 在 Z-space 中好的 perceptron 理應可對應到 X-space 中好的 quadratic hypothesis</p>
+<p><img src="https://i.imgur.com/Cv78khD.png" /></p>
+<h2 id="the-non-linear-transformation-steps">The Non-Linear Transformation Steps</h2>
+<p><img src="https://i.imgur.com/lqyg6Lg.png" /></p>
+<p>Step 1 : 將 <span class="math inline">\((\mathbb{X}_n,y_n)\)</span> 轉換成 <span class="math inline">\((\mathbb{Z}_n,y_n)\)</span></p>
+<p>Step 2 : 於 Z-space 中進行 linear 操作找出 <span class="math inline">\(\tilde{\mathbb{W} }\)</span></p>
+<p>Step 3 : <span class="math inline">\(g(\mathbb{X})=Sign(\tilde{\mathbb{W} }^T\phi(\mathbb{X}))\)</span></p>
+<h2 id="q次多項式轉換-on-d-dimension">Q次多項式轉換 on d-dimension</h2>
+<p>上面說的多項式轉換，除了在二次式上進行一般化外，我們更可以泛化到更高次方。</p>
+<p><span class="math inline">\(\phi\)</span> : <span class="math inline">\(X\longrightarrow Z\)</span> via <span class="math inline">\((1,x_1,x_2,...,x_d)\longrightarrow(1,x_1,...,x_d,x_1^2,x_1x_2,...,x_d^2,......,x_1^Q,x_1^{Q-1}x_2,...,x_d^Q)\)</span></p>
+<p>從上式我們可以知道 經過Q次方轉換後的 Z-space 維度<span class="math inline">\((d_{vc}(\mathbb{H}_{ {\phi}_Q}))=1+\tilde{d}={ {Q+d}\choose{Q} }={ {Q+d}\choose{d} }\in O(Q^d)\)</span></p>
+<p><span class="math inline">\(\therefore Q\uparrow\Longrightarrow d_{vc} (\mathbb{H}_{ {\phi}_Q})\uparrow\)</span></p>
+<h2 id="我們該如何選擇-q-值">我們該如何選擇 Q 值 ?</h2>
+<p>機器學習中有兩個最核心的問題 : * <span class="math inline">\(E_{out}\approx E_{in} ?\)</span> * <span class="math inline">\(E_{in}\)</span> 夠小嗎 ?</p>
+<ol type="1">
+<li>如果我們使用了較高次方的多項式轉換，複雜度較高，<span class="math inline">\(E_{in}\downarrow\)</span> 但 <span class="math inline">\(E_{out}\uparrow\)</span></li>
+</ol>
+<p><img src="https://i.imgur.com/FGPDf7b.png" /></p>
+<ol start="2" type="1">
+<li>那我們反過來試著讓複雜度盡量小呢 ? 從本篇筆記最初的那個 Circle Separable的例子來看，我們好像可以找到複雜度很小的 Hypothesis</li>
+</ol>
+<p><img src="https://i.imgur.com/vwKnLuq.png" /></p>
+<p>這在機器學習中人們常常會犯的錯誤，從資料本身，經由人類使用者來做修正，這樣的修正並非機器學習而得，而是經由我們人腦運作後的結果，這些本該是機器學習的計算成本，但我們將其忽略。</p>
+<p>這樣的方式往往會高估了我們產生的 model。</p>
+<p>那到底我們該怎麼做選擇呢 ?</p>
+<p>我們來重新思考並重述整個多項式變換的過程 :</p>
+<p><img src="https://i.imgur.com/oNliPL8.png" /></p>
+<p>從低次方轉換我們可以迭代到高次方轉換，從這樣子的代換過程我們可以了解整個 Hypothesis Set 的結構</p>
+<p><img src="https://i.imgur.com/u3AZu6L.png" /></p>
+<p>從上圖我們可以推出下列結果 :</p>
+<p><img src="https://i.imgur.com/6iXKiEJ.png" /></p>
+<p>當我們的 Hypothesis Set 變大，相當於我們可以被 shatter 的點變多， 於是 <span class="math inline">\(d_{vc}\)</span> 會持續增加</p>
+<p>當我們的 Hypothesis Set 變大，也相當於我們更有機會找到更低的 <span class="math inline">\(E_{in}\)</span></p>
+<p>這樣的結果我們其實也在前面已經有看過了 :</p>
+<p><img src="https://i.imgur.com/UPa7uA7.png" /></p>
+<p>從上面這些結果來看，我們如果一開始使用較高的Q值，容易出現 <span class="math inline">\(E_{out}\)</span> 過大的情況，最好的方式我們還是從低次方開始向上迭代，找到最好的 <span class="math inline">\(d_{vc}^*\)</span></p>
+<hr />
+<p>後記 :</p>
+<p>這一篇章感覺來的有點突兀，但其實它非常的重要，我們在機器學習中常聽到的 支持向量機 (SVM) 便是由這樣的概念出發，不同的變換 (不一定是多項式轉換)，也會形成不同的 kernel ，這些都不斷的圍繞在往後機器學習技法課程中。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%AC%9B/" title="林軒田機器學習基石筆記 - 第十二講">https://allen108108.github.io/blog/2019/10/07/林軒田機器學習基石筆記 - 第十二講/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/Semi-supervised%20Learning/" rel="prev" title="Semi-supervised Learning">
+                  <i class="fa fa-chevron-left"></i> Semi-supervised Learning
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%B8%89%E8%AC%9B/" rel="next" title="林軒田機器學習基石筆記 - 第十三講">
+                  林軒田機器學習基石筆記 - 第十三講 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="系列文章  MoBot : LINE Bot 開發紀錄 ( LINE &#x2F; Heroku ) 芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )">
+<meta property="og:type" content="article">
+<meta property="og:title" content="芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 ) ">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/06/26/%E8%8A%8B%E9%A6%99%E5%86%AC%E7%93%9C%E3%80%8C%E6%9F%A5%E3%80%8D%20_%20%E5%B0%88%E7%82%BA%E8%87%AA%E5%AE%B6%E9%9C%80%E6%B1%82%E7%9A%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%9F%A5%E8%A9%A2%E7%B3%BB%E7%B5%B1%20App%20(%20MoBot%20ver.2%20)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="系列文章  MoBot : LINE Bot 開發紀錄 ( LINE &#x2F; Heroku ) 芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/hBT6sK8.png">
+<meta property="og:image" content="https://i.imgur.com/EF7PNYd.png">
+<meta property="og:image" content="https://i.imgur.com/i9XIkXg.png">
+<meta property="og:image" content="https://i.imgur.com/t2gPKcQ.png">
+<meta property="og:image" content="https://i.imgur.com/vQNUEoC.png">
+<meta property="og:image" content="https://i.imgur.com/rRkWy1d.png">
+<meta property="og:image" content="https://i.imgur.com/Gqg4xKD.png">
+<meta property="og:image" content="https://i.imgur.com/bqTYoUz.png">
+<meta property="og:image" content="https://i.imgur.com/UJFmJvM.png">
+<meta property="og:image" content="https://i.imgur.com/rts33e5.png">
+<meta property="og:image" content="https://i.imgur.com/7PlRAD7.png">
+<meta property="og:image" content="https://i.imgur.com/B1y6Mde.png">
+<meta property="og:image" content="https://i.imgur.com/c1BzEVP.png">
+<meta property="og:image" content="https://i.imgur.com/R9KnnxC.png">
+<meta property="article:published_time" content="2020-06-25T21:59:50.000Z">
+<meta property="article:modified_time" content="2020-06-25T22:03:54.813Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/hBT6sK8.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/06/26/%E8%8A%8B%E9%A6%99%E5%86%AC%E7%93%9C%E3%80%8C%E6%9F%A5%E3%80%8D%20_%20%E5%B0%88%E7%82%BA%E8%87%AA%E5%AE%B6%E9%9C%80%E6%B1%82%E7%9A%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%9F%A5%E8%A9%A2%E7%B3%BB%E7%B5%B1%20App%20(%20MoBot%20ver.2%20)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/06/26/%E8%8A%8B%E9%A6%99%E5%86%AC%E7%93%9C%E3%80%8C%E6%9F%A5%E3%80%8D%20_%20%E5%B0%88%E7%82%BA%E8%87%AA%E5%AE%B6%E9%9C%80%E6%B1%82%E7%9A%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%9F%A5%E8%A9%A2%E7%B3%BB%E7%B5%B1%20App%20(%20MoBot%20ver.2%20)/","path":"2020/06/26/芋香冬瓜「查」 _ 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )/","title":"芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 ) "}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )  | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">系列文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%88%8A%E7%89%88-mobot-%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="nav-number">3.</span> <span class="nav-text">舊版 MoBot 的缺陷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E6%9B%B4%E6%96%B0"><span class="nav-number">4.</span> <span class="nav-text">功能更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E7%B4%B0%E7%AF%80"><span class="nav-number">5.</span> <span class="nav-text">更新細節</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%9F%E5%BA%A7%E9%81%8B%E5%8B%A2%E6%9F%A5%E8%A9%A2%E5%8A%9F%E8%83%BD%E4%BF%AE%E6%AD%A3"><span class="nav-number">5.1.</span> <span class="nav-text">星座運勢查詢功能修正</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%BB%E5%BD%B1%E5%A0%B4%E6%AC%A1%E6%9F%A5%E8%A9%A2%E5%8A%9F%E8%83%BD%E4%BF%AE%E6%AD%A3"><span class="nav-number">5.2.</span> <span class="nav-text">電影場次查詢功能修正</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#luis-%E7%89%88%E6%9C%AC%E4%BF%AE%E6%AD%A3-%E6%96%B0%E6%84%8F%E5%9C%96%E6%B7%BB%E5%8A%A0"><span class="nav-number">5.3.</span> <span class="nav-text">LUIS 版本修正 &amp; 新意圖添加</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#new-feature%E4%BD%BF%E7%94%A8%E8%80%85%E5%BF%83%E6%83%85%E5%88%A4%E6%96%B7"><span class="nav-number">5.3.1.</span> <span class="nav-text">【New Feature】使用者心情判斷</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%96%E6%96%87%E9%81%B8%E5%96%AE%E6%B7%BB%E5%8A%A0"><span class="nav-number">5.4.</span> <span class="nav-text">圖文選單添加</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AA%E4%BE%86%E5%B7%A5%E4%BD%9C"><span class="nav-number">6.</span> <span class="nav-text">未來工作</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/06/26/%E8%8A%8B%E9%A6%99%E5%86%AC%E7%93%9C%E3%80%8C%E6%9F%A5%E3%80%8D%20_%20%E5%B0%88%E7%82%BA%E8%87%AA%E5%AE%B6%E9%9C%80%E6%B1%82%E7%9A%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%9F%A5%E8%A9%A2%E7%B3%BB%E7%B5%B1%20App%20(%20MoBot%20ver.2%20)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 ) 
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-06-26 05:59:50 / 修改時間：06:03:54" itemprop="dateCreated datePublished" datetime="2020-06-26T05:59:50+08:00">2020-06-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%B0%88%E6%A1%88-Project/" itemprop="url" rel="index"><span itemprop="name">專案 Project</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/06/26/%E8%8A%8B%E9%A6%99%E5%86%AC%E7%93%9C%E3%80%8C%E6%9F%A5%E3%80%8D%20_%20%E5%B0%88%E7%82%BA%E8%87%AA%E5%AE%B6%E9%9C%80%E6%B1%82%E7%9A%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%9F%A5%E8%A9%A2%E7%B3%BB%E7%B5%B1%20App%20(%20MoBot%20ver.2%20)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/06/26/芋香冬瓜「查」 _ 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="系列文章">系列文章</h2>
+<ul>
+<li><a href="https://allen108108.github.io/blog/2020/03/26/MoBot%20_%20LINE%20Bot%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%28%20LINE%20_%20Heroku%20%29">MoBot : LINE Bot 開發紀錄 ( LINE / Heroku )</a></li>
+<li><a href="https://allen108108.github.io/blog/2020/06/26/%E8%8A%8B%E9%A6%99%E5%86%AC%E7%93%9C%E3%80%8C%E6%9F%A5%E3%80%8D%20_%20%E5%B0%88%E7%82%BA%E8%87%AA%E5%AE%B6%E9%9C%80%E6%B1%82%E7%9A%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%9F%A5%E8%A9%A2%E7%B3%BB%E7%B5%B1%20App%20%28%20MoBot%20ver.2%20%29">芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )</a></li>
+</ul>
+<span id="more"></span>
+<h2 id="前言">前言</h2>
+<p>前一篇 "<em><a href="https://allen108108.github.io/blog/2020/03/26/MoBot%20_%20LINE%20Bot%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%28%20LINE%20_%20Heroku%20%29">MoBot : LINE Bot 開發紀錄 ( LINE / Heroku )</a></em>" 主要介紹了整個 Line Bot 的整體細節，利用 Django 做為主架構搭配 heroku 伺服器來實現一個簡單的聊天機器人。當時主要是配合參考書目以及網路教學，將自己想做的幾個功能拼拼湊湊的組合在一起。</p>
+<p>時隔幾個月之後，有些細節部分需要進行處理 (例如 API 版本更新及網站更新導致爬取資料的失敗)，也正好趁這個機會將整個程式碼整理一番。</p>
+<p>此了內在架構做改善外，整個 Line Bot 的外觀也做了一下統一的設計，利用家裡面兩個小孩為主軸來設計，而名稱也從 Mobot 老摩二號改為 -- 芋香冬瓜「查」。 ( 小孩的外號分別為瓜瓜跟芋頭 )</p>
+<h2 id="舊版-mobot-的缺陷">舊版 MoBot 的缺陷</h2>
+<p><em>整個後端架構此文不另贅述，整個 Django 結構、細節參數的設置以及 Heroku 上的部屬都請參照<a href="https://allen108108.github.io/blog/2020/03/26/MoBot%20%20LINE%20Bot%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%28%20LINE%20%20Heroku%20%29">前一篇文章</a>，在這一個大更新中，筆者並沒有對這個部分進行修改。</em></p>
+<p>前一篇文章中，整體的功能設定如下圖，當初的 MoBot 採取的是一個實驗性質的聊天機器人，所以試圖想要用不同的方式來達成不同的目的 ( 例如利用 LUIS 來判斷意圖查詢天氣及電影資訊而利用一般邏輯判斷句來判斷是否要查詢星座運勢) ，最後就會顯得有點混亂，這也是這次改版的最主要原因之一。</p>
+<p><img src="https://i.imgur.com/hBT6sK8.png" /></p>
+<p>在這次的改版中，主要功能延續 MoBot，主要有 : 天氣查詢、電影資訊查詢以及星座運勢查詢，這三個功能都是家人會時常需要查詢的，因此仍然將這些功能視為 <strong>芋香冬瓜「查」</strong> 聊天機器人的主軸。</p>
+<p>MoBot 之前的設計並沒有考慮的很周全，而且筆者也指示抱持著玩票的心態，因此在使用上並沒有太考量使用者的經驗，因此出現以下問題 :</p>
+<ul>
+<li>使用者一開始不知道怎麼使用，通常會隨意輸入一些招呼詞 ( 如 :　你好啊、 Hi ... 等 )，但 MoBot 並沒有做這樣的意圖判斷，因此可能導致機器人無法回應。</li>
+<li>想要了解 MoBot 使用方法，必須輸入 <code>@使用方法</code> ，這種方式太不直覺，一般使用者不太會做這樣的操作。</li>
+<li>針對特定縣市查詢氣象、針對特定電影查詢場次若出現問題，聊天機器人應該仍要給予使用者一些回饋，並引導其正確的輸入查詢。</li>
+</ul>
+<p>而這次的 <strong>芋香冬瓜「查」</strong> 在修改中也盡可能的處理上述的問題。</p>
+<h2 id="功能更新">功能更新</h2>
+<p><strong>芋香冬瓜「查」</strong> ver.1 針對 MoBot 進行了下列的更新 :</p>
+<ul>
+<li>將機器人名稱由老摩二號改為 <strong>芋香冬瓜「查」</strong></li>
+<li>添加圖文選單，方便使用者查詢</li>
+<li>【Update】 升級 LUIS 版本</li>
+<li>【Fix】修正氣象查詢 Bug</li>
+<li>【Fix】修正星座運勢查詢 Bug</li>
+<li>【Fix】將所有使用者輸入統一由 LUIS 進行意圖判別</li>
+<li>【Fix】捨棄 YouTube Python API，直接利用 YouTube Data API v3 爬取影片資訊 JSON 檔案</li>
+<li>【Fix】針對各種可能的 Error 狀況，給予適當的回覆，盡可能地避免 <strong>芋香冬瓜「查」</strong> 出現沒有回覆使用者的狀況。</li>
+<li>【New Feature】 針對使用者與聊天機器人的招呼語，添加意圖判斷，使其導入使用說明</li>
+<li>【New Feature】 添加一新意圖判斷，判斷使用者心情低落時可以回覆可愛照片。</li>
+</ul>
+<h2 id="更新細節">更新細節</h2>
+<h3 id="星座運勢查詢功能修正">星座運勢查詢功能修正</h3>
+<p>在使用上，此功能最早出現問題，原先使用 Beautifulsoup 針對<a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PL6Kny3AiOhiD6SSMzEyiyEVvHHQp0MW3J"><em>唐綺陽星座運勢週報播放列表</em></a>直接找出需要的影片網址後，再經由 YouTube Python API 爬取影片詳細內容。</p>
+<p>但最近開始 Beautifulsoup 會出現時有時無撈不到影片的詭異狀況。最後統整了一下做法，不拆兩段方法來擷取網址跟影片資訊，直接利用 API 一次爬取。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">addressUrl = <span class="string">f&quot;https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails,status&amp;playlistId=<span class="subst">&#123;playlist_id&#125;</span>&amp;key=<span class="subst">&#123;DEVELOPER_KEY&#125;</span>&amp;maxResults=20&quot;</span> </span><br><span class="line"></span><br><span class="line">addressUrlQuote = urllib.parse.quote(addressUrl, safe=string.printable)</span><br><span class="line">response = urlopen(addressUrlQuote).read().decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">responseJson = json.loads(response)</span><br></pre></td></tr></table></figure>
+<p>這樣的方式我們可以得到播放清單中每個影片的資訊，下面是其中一部影片的資訊 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;kind&#x27;: &#x27;youtube#playlistItem&#x27;,</span><br><span class="line">   &#x27;etag&#x27;: &#x27;vnFfx9CtaSL-F-g4g3qWSe61168&#x27;,</span><br><span class="line">   &#x27;id&#x27;: &#x27;UEw2S255M0FpT2hpRDZTU016RXlpeUVWdkhIUXAwTVczSi44OUE4RUIwOURGRUM0MDdG&#x27;,</span><br><span class="line">   &#x27;snippet&#x27;: &#123;&#x27;publishedAt&#x27;: &#x27;2020-06-21T01:30:08Z&#x27;,</span><br><span class="line">    &#x27;channelId&#x27;: &#x27;UCK7LdglLCApOTaylxX8hW2Q&#x27;,</span><br><span class="line">    &#x27;title&#x27;: &#x27;6/22-6/28｜星座運勢週報｜唐綺陽&#x27;,</span><br><span class="line">    &#x27;description&#x27;: &#x27;◎工作注意：\n雙子：長程計畫，能心想事成\n射手：點子很靈，可盡情暢想\n魔羯：年輕人可帶來刺激或改變\n雙魚：收斂一下，不要心急改變\n\n◎桃花注意：\n金牛：要不要桃花是自己的課題\n處女：能受到安慰與呵護\n天秤：感情甜蜜，約會很愉快\n水瓶：有狀況，把話聊開也不錯\n\n◎財運注意：\n巨蟹：需要資源，喊一聲就來\n天蠍：試試手氣，有中獎好運\n\n◎健康注意：\n白羊：緊繃忙碌，注意腸胃健康\n獅子：別心不在焉，以免意外連連&#x27;,</span><br><span class="line">    &#x27;thumbnails&#x27;: &#123;&#x27;default&#x27;: &#123;&#x27;url&#x27;: &#x27;https://i.ytimg.com/vi/hE55KGVN-xI/default.jpg&#x27;,</span><br><span class="line">      &#x27;width&#x27;: 120,</span><br><span class="line">      &#x27;height&#x27;: 90&#125;,</span><br><span class="line">     &#x27;medium&#x27;: &#123;&#x27;url&#x27;: &#x27;https://i.ytimg.com/vi/hE55KGVN-xI/mqdefault.jpg&#x27;,</span><br><span class="line">      &#x27;width&#x27;: 320,</span><br><span class="line">      &#x27;height&#x27;: 180&#125;,</span><br><span class="line">     &#x27;high&#x27;: &#123;&#x27;url&#x27;: &#x27;https://i.ytimg.com/vi/hE55KGVN-xI/hqdefault.jpg&#x27;,</span><br><span class="line">      &#x27;width&#x27;: 480,</span><br><span class="line">      &#x27;height&#x27;: 360&#125;,</span><br><span class="line">     &#x27;standard&#x27;: &#123;&#x27;url&#x27;: &#x27;https://i.ytimg.com/vi/hE55KGVN-xI/sddefault.jpg&#x27;,</span><br><span class="line">      &#x27;width&#x27;: 640,</span><br><span class="line">      &#x27;height&#x27;: 480&#125;,</span><br><span class="line">     &#x27;maxres&#x27;: &#123;&#x27;url&#x27;: &#x27;https://i.ytimg.com/vi/hE55KGVN-xI/maxresdefault.jpg&#x27;,</span><br><span class="line">      &#x27;width&#x27;: 1280,</span><br><span class="line">      &#x27;height&#x27;: 720&#125;&#125;,</span><br><span class="line">    &#x27;channelTitle&#x27;: &#x27;唐綺陽官方專屬頻道&#x27;,</span><br><span class="line">    &#x27;playlistId&#x27;: &#x27;PL6Kny3AiOhiD6SSMzEyiyEVvHHQp0MW3J&#x27;,</span><br><span class="line">    &#x27;position&#x27;: 1,</span><br><span class="line">    &#x27;resourceId&#x27;: &#123;&#x27;kind&#x27;: &#x27;youtube#video&#x27;, &#x27;videoId&#x27;: &#x27;hE55KGVN-xI&#x27;&#125;&#125;,</span><br><span class="line">   &#x27;contentDetails&#x27;: &#123;&#x27;videoId&#x27;: &#x27;hE55KGVN-xI&#x27;,</span><br><span class="line">    &#x27;videoPublishedAt&#x27;: &#x27;2020-06-21T01:30:05Z&#x27;&#125;,</span><br><span class="line">   &#x27;status&#x27;: &#123;&#x27;privacyStatus&#x27;: &#x27;public&#x27;&#125;&#125;,</span><br></pre></td></tr></table></figure>
+<p>這樣一來我們可以從單一次的爬取中可以同時由 <code>'description'</code> 得到影片說明，且從 <code>'contentDetails'</code> 的 <code>'videoId'</code> 可以得到網址資訊。</p>
+<p><img src="https://i.imgur.com/EF7PNYd.png" /></p>
+<h3 id="電影場次查詢功能修正">電影場次查詢功能修正</h3>
+<p>當 LUIS 判斷使用者意圖是進行電影資訊的檢索時，同時會針對電影名稱做命名實體識別 (NER, Named Entity Recognition)，因此正常在進行特定電影的場次檢所需求送出時，LUIS 可以利用識別到的電影名稱來向開眼電影網站進行爬取。</p>
+<p>但 MoBot 並沒有處理識別不到電影名稱的能力，也就是說當使用者沒有或是錯誤輸入電影名稱， MoBot 會沒有任何反應。</p>
+<p>在 <strong>芋香冬瓜「查」</strong> 中，筆者給定 <span class="math inline">\(0.8\)</span> 為意圖的機率閾值，也就是說，當判定為電影檢索意圖 (在筆者的 LUIS 中此意圖命名為 'movieQuery')，且機率大於 <span class="math inline">\(0.8\)</span> 時，便會進行電影的檢索。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;topIntent&#x27;</span>] == <span class="string">&#x27;movieQuery&#x27;</span>) &amp; (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;intents&#x27;</span>][<span class="string">&#x27;movieQuery&#x27;</span>][<span class="string">&#x27;score&#x27;</span>] &gt; <span class="number">0.8</span>)</span><br></pre></td></tr></table></figure>
+<p>但當 LUIS 識別不到電影名稱時，便會改爬取當週新片回覆給使用者，並且提醒使用者可以怎麼檢索特定電影。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">at_link = <span class="string">&#x27;http://www.atmovies.com.tw/movie/new/&#x27;</span></span><br><span class="line">res = requests.get(at_link)</span><br><span class="line">res.encoding = <span class="string">&#x27;utf-8&#x27;</span></span><br><span class="line">soup = BeautifulSoup(res.text, <span class="string">&#x27;lxml&#x27;</span>)</span><br><span class="line">a_tags = soup.find_all(<span class="string">&#x27;a&#x27;</span>)</span><br><span class="line"></span><br><span class="line">new_movies = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> tag <span class="keyword">in</span> a_tags : </span><br><span class="line">    <span class="comment">#print(tag.get(&#x27;href&#x27;))</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="string">&#x27;/movie/&#x27;</span> <span class="keyword">in</span> tag.get(<span class="string">&#x27;href&#x27;</span>)) <span class="keyword">and</span> (<span class="built_in">len</span>(tag.get(<span class="string">&#x27;href&#x27;</span>)) == <span class="number">20</span>) <span class="keyword">and</span> (tag.text != <span class="string">&quot;&quot;</span>):</span><br><span class="line">        new_movies.append(tag.text)</span><br><span class="line">text = <span class="string">&#x27;想不出來要看什麼嗎 ? \n沒關係，臭瓜跟芋頭來推薦推薦本周新片 : \n&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i, movie <span class="keyword">in</span> <span class="built_in">enumerate</span>(new_movies):</span><br><span class="line">    show = <span class="string">f&#x27;<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>. <span class="subst">&#123;movie.split(<span class="string">&quot; &quot;</span>)[<span class="number">0</span>]&#125;</span>&#x27;</span> + <span class="string">&#x27;\n&#x27;</span></span><br><span class="line">    text += show</span><br><span class="line">line_bot_api.reply_message(event.reply_token, </span><br><span class="line">                            [TextSendMessage(text=text), TextSendMessage(text=<span class="string">&#x27;您也可以加入電影名稱查詢唷!\n例如 : XXX電影資訊&#x27;</span>)]) </span><br></pre></td></tr></table></figure>
+<p>在這樣的狀況下，不管使用者有沒有輸入電影名稱， <strong>芋香冬瓜「查」</strong> 都能給予適當回覆。</p>
+<p><img src="https://i.imgur.com/i9XIkXg.png" /></p>
+<h3 id="luis-版本修正-新意圖添加">LUIS 版本修正 &amp; 新意圖添加</h3>
+<p>在修正的過程中，發現因為 LUIS 版本的更迭，導致獲得的 JSON 檔格式不太一樣，這也影響了筆者由 LUIS 所取得的意圖資訊，大多數時間在 Heroku 後台都會發現我們得不到意圖的資訊。</p>
+<p>下面是新版本的 LUIS 預測結果 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;query&#x27;: &#x27;台北天氣&#x27;,</span><br><span class="line"> &#x27;prediction&#x27;: &#123;&#x27;topIntent&#x27;: &#x27;weatherQuery&#x27;,</span><br><span class="line">  &#x27;intents&#x27;: &#123;&#x27;weatherQuery&#x27;: &#123;&#x27;score&#x27;: 0.9923128&#125;,</span><br><span class="line">   &#x27;badEmotion&#x27;: &#123;&#x27;score&#x27;: 0.0107163871&#125;,</span><br><span class="line">   &#x27;None&#x27;: &#123;&#x27;score&#x27;: 0.00253541139&#125;,</span><br><span class="line">   &#x27;welcome&#x27;: &#123;&#x27;score&#x27;: 0.00244946033&#125;,</span><br><span class="line">   &#x27;ConstellationsQuery&#x27;: &#123;&#x27;score&#x27;: 0.00190337654&#125;,</span><br><span class="line">   &#x27;movieQuery&#x27;: &#123;&#x27;score&#x27;: 0.00117647834&#125;&#125;,</span><br><span class="line">  &#x27;entities&#x27;: &#123;&#x27;location&#x27;: [&#x27;台北&#x27;],</span><br><span class="line">   &#x27;$instance&#x27;: &#123;&#x27;location&#x27;: [&#123;&#x27;type&#x27;: &#x27;location&#x27;,</span><br><span class="line">      &#x27;text&#x27;: &#x27;台北&#x27;,</span><br><span class="line">      &#x27;startIndex&#x27;: 0,</span><br><span class="line">      &#x27;length&#x27;: 2,</span><br><span class="line">      &#x27;score&#x27;: 0.9983831,</span><br><span class="line">      &#x27;modelTypeId&#x27;: 1,</span><br><span class="line">      &#x27;modelType&#x27;: &#x27;Entity Extractor&#x27;,</span><br><span class="line">      &#x27;recognitionSources&#x27;: [&#x27;model&#x27;]&#125;]&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>從這樣的格式可以發現，使用 MoBot 所定義擷取 LUIS 結果的函式可能會有問題，因此在 <strong>芋香冬瓜「查」</strong> 裡面我們必須重新定義<code>sendLUIS()</code>函式。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sendLUIS</span>(<span class="params">event, mtext</span>):</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">if</span> (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;topIntent&#x27;</span>] == <span class="string">&#x27;welcome&#x27;</span>) :</span><br><span class="line">            .</span><br><span class="line">            ..</span><br><span class="line">            ...</span><br><span class="line">        <span class="keyword">elif</span> (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;topIntent&#x27;</span>] == <span class="string">&#x27;weatherQuery&#x27;</span>) &amp; (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;intents&#x27;</span>][<span class="string">&#x27;weatherQuery&#x27;</span>][<span class="string">&#x27;score&#x27;</span>] &gt; <span class="number">0.8</span>) :</span><br><span class="line">            .</span><br><span class="line">            ..</span><br><span class="line">            ...</span><br><span class="line">        <span class="keyword">elif</span> (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;topIntent&#x27;</span>] == <span class="string">&#x27;movieQuery&#x27;</span>) &amp; (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;intents&#x27;</span>][<span class="string">&#x27;movieQuery&#x27;</span>][<span class="string">&#x27;score&#x27;</span>] &gt; <span class="number">0.8</span>)  : </span><br><span class="line">            .</span><br><span class="line">            ..</span><br><span class="line">            ...</span><br><span class="line">        <span class="keyword">elif</span> (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;topIntent&#x27;</span>] == <span class="string">&#x27;ConstellationsQuery&#x27;</span>) &amp; (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;intents&#x27;</span>][<span class="string">&#x27;ConstellationsQuery&#x27;</span>][<span class="string">&#x27;score&#x27;</span>] &gt; <span class="number">0.8</span>)  : </span><br><span class="line">            .</span><br><span class="line">            ..</span><br><span class="line">            ...</span><br><span class="line">        <span class="keyword">elif</span> (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;topIntent&#x27;</span>] == <span class="string">&#x27;badEmotion&#x27;</span>) &amp; (result[<span class="string">&#x27;prediction&#x27;</span>][<span class="string">&#x27;intents&#x27;</span>][<span class="string">&#x27;badEmotion&#x27;</span>][<span class="string">&#x27;score&#x27;</span>] &gt; <span class="number">0.8</span>)  : </span><br><span class="line">            .</span><br><span class="line">            ..</span><br><span class="line">            ...</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">import</span> traceback</span><br><span class="line">        traceback.print_exc()</span><br><span class="line">        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=<span class="string">&#x27;查詢時產生錯誤，請稍後再查詢唷~&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<p>從這裡不難發現我們訓練了 LUIS 幾種不同的意圖判別 : <code>'welcome'</code>(歡迎詞), <code>'weatherQuery'</code>(天氣查詢), <code>'movieQuery'</code>(電影資訊查詢), <code>'ConstellationsQuery'</code>(星座運勢查詢), <code>'badEmotion'</code>(壞心情判斷)。其中歡迎詞以及心情的判斷是新添加的意圖分析。</p>
+<h4 id="new-feature使用者心情判斷">【New Feature】使用者心情判斷</h4>
+<p>這個功能早在 MoBot 時就一直想要做，希望可以有一個可以隨機回覆給使用者 (家人) 筆者一對兒女的可愛照片，之前一直沒有時間做，便趁著這次更新一次把這功能建立起來。</p>
+<p>照片的儲存筆者沒有使用之前用的 imgur，最主要的因素是 imgur 圖床不確定圖片可以保存多久，要放這種較為隱私且希望可以長期調用的還是希望放在專門的網路相簿中，因此，這個功能筆者便選擇使用 Flickr 來儲存相片。</p>
+<p>Flickr 也有 python 相對應的 api 工具 <a target="_blank" rel="noopener" href="https://github.com/alexis-mignon/python-flickr-api">flickr_api</a>，筆者利用這個 api 來隨機將特定相本中的圖像做為訊回覆給使用者。</p>
+<p>與一般的 API 相同，也要先至官網取得 <code>KEY</code> 以及 <code>SECRET</code>，然後利用我們的信箱帳號進行使用者確認。</p>
+<p>值得注意的是，Flickr 是一個相簿平台，即使我們取得 Flickr 網址也無法做為一張圖像傳送出去，因此我們還是必須從取得的網址中爬取實際的相片網址。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用者確認</span></span><br><span class="line">flickr_api.set_keys(api_key=flickr_key, api_secret=flickr_secret)</span><br><span class="line">user = flickr_api.Person.findByEmail(flickr_account)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取得相簿 (photosets)</span></span><br><span class="line">photosets = user.getPhotosets()</span><br><span class="line"><span class="comment"># 取得相簿中的相片</span></span><br><span class="line">photos = photosets[<span class="number">0</span>].getPhotos()</span><br><span class="line"><span class="comment">#隨機選取 index</span></span><br><span class="line">n = np.random.randint(photos.info.total)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 爬取相片實際網址</span></span><br><span class="line">res = requests.get(<span class="string">f&#x27;https://www.flickr.com/photos/<span class="subst">&#123;user_id&#125;</span>/<span class="subst">&#123;photos[n].<span class="built_in">id</span>&#125;</span>/&#x27;</span>)</span><br><span class="line">res.encoding = <span class="string">&#x27;utf-8&#x27;</span></span><br><span class="line">soup = BeautifulSoup(res.text, <span class="string">&#x27;lxml&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tags = soup.find_all(<span class="string">&#x27;img&#x27;</span>)</span><br><span class="line"><span class="comment"># 藉由替換字串來得到適當尺寸的圖片</span></span><br><span class="line">link = tags[<span class="number">0</span>][<span class="string">&#x27;src&#x27;</span>].replace(<span class="string">&quot;n&quot;</span>,<span class="string">&quot;b&quot;</span>)</span><br><span class="line">img_link = <span class="string">f&#x27;https:<span class="subst">&#123;link&#125;</span>&#x27;</span></span><br><span class="line">line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=<span class="string">f&#x27;心情不好嗎 ? 來看看小可愛們吧 ~~~~&#x27;</span>), </span><br><span class="line">                        ImageSendMessage(original_content_url=img_link, preview_image_url=img_link)])            </span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/t2gPKcQ.png" /></p>
+<h3 id="圖文選單添加">圖文選單添加</h3>
+<p>圖文選單的建立，其實主要是為了讓使用者可以在一開始就上手，也是引導使用者在一開始就能理解使用方式的一種方法。筆者也是從這個地方開始思考整個 LineBot 外觀怎麼樣子可以統一主題。</p>
+<p>首先，我們先登入 <a target="_blank" rel="noopener" href="https://manager.line.biz/">Line Official Account Manager</a>，並且選擇我們要加入圖文選單的聊天機器人，在本文中就是 <strong>芋香冬瓜「查」</strong></p>
+<p><img src="https://i.imgur.com/vQNUEoC.png" /></p>
+<p>由左側選取「圖文選單」</p>
+<p><img src="https://i.imgur.com/rRkWy1d.png" /></p>
+<p>按下右上角的「建立」以建立新的圖文選單 <img src="https://i.imgur.com/Gqg4xKD.png" /></p>
+<p>圖文選單的建立一共有兩個部分需要設定，第一部分主要是關於此圖文選單的詳細資料，這部分隨意設定即可，而時間就可以把區間拉的長一些，以免一陣子就必須重新設定。</p>
+<p><img src="https://i.imgur.com/bqTYoUz.png" /></p>
+<p>第二部分則是要為圖文選單設置圖片以及使用的方式，我們先「選擇版型」來確定我們要的圖文選單格式為何</p>
+<p><img src="https://i.imgur.com/UJFmJvM.png" /></p>
+<p>有多種樣板可供我們來選擇，在 <strong>芋香冬瓜「查」</strong> 中，由於目前僅有三個主要功能，因此筆者選擇小型三格的版型</p>
+<p><img src="https://i.imgur.com/rts33e5.png" /></p>
+<p>點選左側「建立圖片」</p>
+<p><img src="https://i.imgur.com/7PlRAD7.png" /></p>
+<p>我們可以為這三格選取不同的圖片。倘若我們希望整個圖文選單的圖片是具有連續性、一致性，也可以利用一整張圖片作為整體背景圖片</p>
+<p><img src="https://i.imgur.com/B1y6Mde.png" /></p>
+<p>最後以下圖為例，我們可以為每一格設定一組預設文字，當使用者點選此格圖片，系統便自動會輸入指定文字做為此機器人的輸入。</p>
+<p><img src="https://i.imgur.com/c1BzEVP.png" /></p>
+<p>而下圖則是 <strong>芋香冬瓜「查」</strong> 圖文選單的樣貌 :</p>
+<p><img src="https://i.imgur.com/R9KnnxC.png" /></p>
+<h2 id="未來工作">未來工作</h2>
+<p><strong>芋香冬瓜「查」</strong> 目前的狀態並非一個已經完結的聊天機器人專案，但可以算是一個初步完整的一個聊天機器人，後續仍然有一些可以增添的功能，也有許多待筆者學習的部分。</p>
+<ul>
+<li>連結 LIFF, Google sheeets 或是 MySQL 來為此機器人添加新功能，如 : 類記事本應用 ? ( 可以參考--<a target="_blank" rel="noopener" href="https://drive.google.com/file/d/10Qd-XvznwN_qVkZj2gXK3eLT3PPTqvc3/view">專為高中生設計的管家型聊天機器人</a> )</li>
+<li>是否能利用如 Line Notify 加入自動回覆、定時回覆的功能 ?</li>
+<li>更人性化的對話模式 ?</li>
+<li>串上 AI 模型，如 : YOLO ? FacnNet ? 或者甚至是 BERT ?</li>
+</ul>
+<p>這些部分都是筆者希望可以嘗試的部分，希望再過一陣子就能迎來 <strong>芋香冬瓜「查」</strong> 在一次的大更新吧 ~~~ ( 希望有時間 =.= )</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/06/26/%E8%8A%8B%E9%A6%99%E5%86%AC%E7%93%9C%E3%80%8C%E6%9F%A5%E3%80%8D%20_%20%E5%B0%88%E7%82%BA%E8%87%AA%E5%AE%B6%E9%9C%80%E6%B1%82%E7%9A%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%9F%A5%E8%A9%A2%E7%B3%BB%E7%B5%B1%20App%20(%20MoBot%20ver.2%20)/" title="芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 ) ">https://allen108108.github.io/blog/2020/06/26/芋香冬瓜「查」 _ 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/06/25/2020%20Presidential%20Hackathon%201st.%20Workshop%20(2020.06.19)/" rel="prev" title="2020 Presidential Hackathon 1st. Workshop (2020.06.19)">
+                  <i class="fa fa-chevron-left"></i> 2020 Presidential Hackathon 1st. Workshop (2020.06.19)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/07/27/%5B%E8%AB%96%E6%96%87%5D%20End-to-End%20Object%20Detection%20with%20Transformers/" rel="next" title="[論文] End-to-End Object Detection with Transformers">
+                  [論文] End-to-End Object Detection with Transformers <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

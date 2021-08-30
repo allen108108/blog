@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第十四講 : Regularization 機器學習基石第十五講 : Validation 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林軒田機器學習基石筆記 - 第十四講、第十五講">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E4%BA%94%E8%AC%9B/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第十四講 : Regularization 機器學習基石第十五講 : Validation 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/LpipK8n.png">
+<meta property="og:image" content="https://i.imgur.com/vhV5ctk.png">
+<meta property="og:image" content="https://i.imgur.com/OyCBonF.png">
+<meta property="og:image" content="https://i.imgur.com/1h5P0LI.png%20=400x">
+<meta property="og:image" content="https://i.imgur.com/z20lpWJ.png">
+<meta property="og:image" content="https://i.imgur.com/3DjM86o.png%20=400x">
+<meta property="og:image" content="https://i.imgur.com/z97x6Tl.png">
+<meta property="og:image" content="https://i.imgur.com/5ZNssp2.png">
+<meta property="og:image" content="https://i.imgur.com/dPZGzJ0.png">
+<meta property="og:image" content="https://i.imgur.com/0KUetRD.png">
+<meta property="og:image" content="https://i.imgur.com/ZmKfRCw.png">
+<meta property="og:image" content="https://i.imgur.com/DoXf0o8.png">
+<meta property="og:image" content="https://i.imgur.com/vIBnRYs.png%20=400x">
+<meta property="og:image" content="https://i.imgur.com/pNjaKNb.png">
+<meta property="og:image" content="https://i.imgur.com/FfL7TnG.png">
+<meta property="article:published_time" content="2019-10-07T16:14:45.000Z">
+<meta property="article:modified_time" content="2019-10-22T07:58:10.010Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/LpipK8n.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E4%BA%94%E8%AC%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E4%BA%94%E8%AC%9B/","path":"2019/10/08/林軒田機器學習基石筆記 - 第十四講、第十五講/","title":"林軒田機器學習基石筆記 - 第十四講、第十五講"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>林軒田機器學習基石筆記 - 第十四講、第十五講 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#regularization"><span class="nav-number">1.</span> <span class="nav-text">Regularization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lagrange-multiplier"><span class="nav-number">1.1.</span> <span class="nav-text">Lagrange Multiplier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lambda-%E5%B0%8D%E6%96%BC-regularization-%E7%9A%84%E5%BD%B1%E9%9F%BF"><span class="nav-number">1.2.</span> <span class="nav-text">\(\lambda\) 對於 Regularization 的影響</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#regularization-%E5%9C%A8%E7%90%86%E8%AB%96%E4%B8%8A%E7%9A%84%E4%BF%9D%E8%AD%89"><span class="nav-number">1.3.</span> <span class="nav-text">Regularization 在理論上的保證</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#choice-of-redularizer"><span class="nav-number">1.4.</span> <span class="nav-text">Choice of Redularizer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#choice-of-lambda"><span class="nav-number">1.5.</span> <span class="nav-text">Choice of \(\lambda\)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#validation"><span class="nav-number">2.</span> <span class="nav-text">Validation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#model-selection"><span class="nav-number">2.1.</span> <span class="nav-text">Model Selection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#leave-one-out-cross-validation-k1"><span class="nav-number">2.2.</span> <span class="nav-text">Leave-One-Out Cross Validation (K&#x3D;1)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#v-fold-cross-validation"><span class="nav-number">2.3.</span> <span class="nav-text">V-fold Cross Validation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B0%A1%E5%96%AE%E7%B8%BD%E7%B5%90"><span class="nav-number">3.</span> <span class="nav-text">簡單總結</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E4%BA%94%E8%AC%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          林軒田機器學習基石筆記 - 第十四講、第十五講
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-08 00:14:45" itemprop="dateCreated datePublished" datetime="2019-10-08T00:14:45+08:00">2019-10-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 15:58:10" itemprop="dateModified" datetime="2019-10-22T15:58:10+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9E%97%E8%BB%92%E7%94%B0-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3/" itemprop="url" rel="index"><span itemprop="name">林軒田 機器學習基石</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E4%BA%94%E8%AC%9B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/林軒田機器學習基石筆記 - 第十四講、第十五講/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文為一系列課程之筆記，建議從" <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryxzB7LwN">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文討論內容請參考: 機器學習基石第十四講 : Regularization</strong> <strong>機器學習基石第十五講 : Validation</strong></p></li>
+<li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
+</ul>
+<hr />
+</blockquote>
+<span id="more"></span>
+<h2 id="regularization">Regularization</h2>
+<p>上一篇介紹了 overfitting ，而 regularization 的目的就是希望當 overfitting 發生時，我們可以經過一些調整來避免其發生。</p>
+<p>如果拿先前的多項式為例子，當我們 model complexity 太高，也就是我們使用比較高次方的 Hypothesis Set ，容易造成 overfitting ，那我們 regularization 的概念便是希望從原本的高次方 hypothesis set 往低次方的 hypothesis set 來移動，以避免 overfitting 的發生。</p>
+<p><img src="https://i.imgur.com/LpipK8n.png" /></p>
+<p>在林軒田的課程中，他利用「限制」的概念來一步一步湊出 L2 regularization，過程我這邊不贅述，可以去參考老師的 course slide，在這裡我想直接從數學的角度直接切入，比較直覺也可以同時理解 L1 及 L2 regularization 。</p>
+<p>回到「限制」這個概念，我們要避免在進行 model training 的過程，( 以多項式為例 ) model 會為了貼近 training data 而讓自己的複雜度越來越複雜，次方越來越高，所以我們寧願他不要這麼 fit ，也可以盡量讓他不要 overfitting ，因此我們希望在整個權重上面加上一些限制。</p>
+<p>那我們便加入了一個條件 ( constraint ) : <span class="math inline">\(\mathbb{W}^T\mathbb{W}\leq C\)</span></p>
+<p>現在我們就是希望在訓練過程中，能找到一個 model 可以在這權重的條件下，找到相對應的最小 error，如若我們以一個回歸問題(error measure : square error)，整個式子便可以用下列方式來寫 :</p>
+<p><img src="https://i.imgur.com/vhV5ctk.png" /></p>
+<p>就幾何意義來說，我們就是把權重限制在一個圓內，找尋在這個圓內的最小 error 會產生在哪裡。</p>
+<h3 id="lagrange-multiplier">Lagrange Multiplier</h3>
+<p>我們現在不是只是單純求解 <span class="math inline">\(E_{in}\)</span> 的最小值，而是在符合條件 <span class="math inline">\(\mathbb{W}^T\mathbb{W}\leq C\)</span> 下的最小值，在數學上便是利用 Lagrange Multiplier 來求解有條件的極值問題 :</p>
+<p><img src="https://i.imgur.com/OyCBonF.png" /> ( 為了往後計算方便，將 Lagrange Multiplier 調整為 <span class="math inline">\(\frac{\lambda}{N}\)</span> )</p>
+<p>所以我們要求解有條件的 <span class="math inline">\(E_{in}\)</span> 極值問題其實就等價於沒有條件的求解上式，於是就可以令上式導數為0來找出我們想要的權重</p>
+<p><img src="https://i.imgur.com/1h5P0LI.png%20=400x" /></p>
+<p>而我們也稱 <span class="math inline">\(\frac{\lambda}{N}\mathbb{W}^T\mathbb{W}=\frac{\lambda}{N}\sum\limits_{q=0}^{Q}w_q^2=\|\mathbb{W}\|_2^2\)</span> 為 L2 regularizer，加上 L2 regularizer 的正規化方式就稱為 L2 regularization</p>
+<p>同樣的，我們可以改變一下我們的 constraint ，若把條件從 <span class="math inline">\(\mathbb{W}^T\mathbb{W}\leq C\)</span> 改為 <span class="math inline">\(\|\mathbb{W}\|_1\leq C\)</span> ，就稱為 L1 regularization ，而 L1 regularizer 為 <span class="math inline">\(\frac{\lambda}{N}\sum\limits_{q=0}^{Q}\mid w_q\mid=\|\mathbb{W}\|_1\)</span></p>
+<h3 id="lambda-對於-regularization-的影響"><span class="math inline">\(\lambda\)</span> 對於 Regularization 的影響</h3>
+<p><img src="https://i.imgur.com/z20lpWJ.png" /></p>
+<p>這倒也是不難理解，當 <span class="math inline">\(\lambda=0\)</span> 時，就等同於沒有加上任何的正則化</p>
+<p>而在這邊很有趣的，看似不相干的 <span class="math inline">\(\lambda\)</span> 卻其實也主宰著整個圓的半徑，概念其實我們可以從上圖看出來，當 <span class="math inline">\(\lambda=0\)</span> 時 <span class="math inline">\(\Longrightarrow\)</span> 沒有加上任何的正則化 <span class="math inline">\(\Longrightarrow\)</span> 其實可以當作我取了無窮大的半徑 ( 等於沒有限制 )。</p>
+<h3 id="regularization-在理論上的保證">Regularization 在理論上的保證</h3>
+<p>求 <span class="math inline">\(E_{in}(\mathbb{W})\)</span> 滿足條件 <span class="math inline">\(\mathbb{W}^T\mathbb{W}\leq C\)</span> 的最優解 : <span class="math inline">\(\underset{\mathbb{W}}{min}E_{in}(\mathbb{W})\ s.t\ \mathbb{W}^T\mathbb{W}\leq C\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 求 <span class="math inline">\(E_{aug}(\mathbb{W})\)</span> 的最優解 : <span class="math inline">\(\underset{\mathbb{W}}{min}E_{aug}(\mathbb{W})=E_{in}(\mathbb{W})+\frac{\lambda}{N}\mathbb{W}^T\mathbb{W}\)</span></p>
+<p>原始問題 (上式) 會對應到一個 VC Bound</p>
+<p><img src="https://i.imgur.com/3DjM86o.png%20=400x" /></p>
+<p>而當我們在進行 <span class="math inline">\(E_{aug}\)</span> 最小化的過程中，其實就在間接地得到 VC Bound 的保證，而不用去找出 <span class="math inline">\(\Omega(\mathbb{C})\)</span></p>
+<p>Why ?</p>
+<p>我們來比較一下下圖兩式 :</p>
+<p><img src="https://i.imgur.com/z97x6Tl.png" /></p>
+<p>我們可以把 regularizer 當作是單一個 hypothesis 的複雜度 <span class="math inline">\(=\Omega(\mathbb{W})\)</span>，那麼 <span class="math inline">\(\Omega(\mathbb{H})\)</span> 便是整個 hypothesis set 整個的複雜度。 從這個方向來看，<span class="math inline">\(E_{aug}\)</span>是 <span class="math inline">\(E_{in}\)</span> 加上單一hypothesis複雜度，直觀的來看會比 <span class="math inline">\(E_{in}(\mathbb{W})+\Omega(\mathbb{H})\)</span> 來的小、來的更接近 <span class="math inline">\(E_{out}\)</span>。</p>
+<p>換個角度來解釋</p>
+<p>當我們利用 Lagrange method 來造出 <span class="math inline">\(E_{aug}\)</span> ，對其優化時，已經沒有任何限制，也就是把所有 <span class="math inline">\(\mathbb{W}\)</span> 都考慮進去 ( 把所有 <span class="math inline">\(\mathbb{H}\)</span> 都考慮進去 )，所以其 <span class="math inline">\(d_{vc}=d+1\)</span> 但是我們回到原來有條件的式子來看，事實上我們只考慮了 <span class="math inline">\(\mathbb{H}(C)\)</span>，造成這兩個 <span class="math inline">\(d_{vc}\)</span> 差異的原因在於，我們並非直接對 <span class="math inline">\(\mathbb{H}\)</span> 來做限制，而是利用整個演算法來把 <span class="math inline">\(\mathbb{H}\)</span> 壓縮到 <span class="math inline">\(\mathbb{H}(C)\Longrightarrow d_{vc}(\mathbb{H(C)})\overset{defn}{=}d_{eff}(\mathbb{H},\mathcal{A})\)</span></p>
+<h3 id="choice-of-redularizer">Choice of Redularizer</h3>
+<p>從上面 Lagrange Multiplier 的概念來看，我們可以任意地對權重 <span class="math inline">\(w_i\)</span> 加入任何的限制，而課程中林軒田整理了幾種選擇的方向 :</p>
+<p><img src="https://i.imgur.com/5ZNssp2.png" /></p>
+<p>不管我們用什麼方式選擇、選擇了什麼樣子的 regulizer ，最後我們都還有 <span class="math inline">\(\lambda\)</span> 可以拿來做最終的調整。</p>
+<p><img src="https://i.imgur.com/dPZGzJ0.png" /></p>
+<p>若只有 L1 L2兩種選擇，我們該怎麼取捨呢?</p>
+<p>我們看看 L1 的圖，很容易可以看出，不管 Loss Function 長什麼樣子，最佳解幾乎都會跑到四個頂點上面，而這樣的結果就是指出最優解會出現在大部分權重會等於0，少部分 (甚至只有一個) 權重不等於0的狀況 (我們稱這種情況為 Sparse )，也因此，當我們希望得到的解是 Sparse Solution 時，便建議使用 L1 regularizer 。</p>
+<h3 id="choice-of-lambda">Choice of <span class="math inline">\(\lambda\)</span></h3>
+<p><img src="https://i.imgur.com/0KUetRD.png" /></p>
+<p>這張圖顯示了在某些參數固定的狀況下，我們可以找到的最優 <span class="math inline">\(\lambda\)</span>，越多的 noise 就需要越多的 regularization 。</p>
+<p>不過重點還是在，通常資料在手上，我們很難確定 noise 有多少，既然未知 noise ，又要怎麼找出比較好的 <span class="math inline">\(\lambda\)</span> 呢 ? 這時候就會面臨到如何選擇出一個最優 model 的問題........</p>
+<h2 id="validation">Validation</h2>
+<p>在這一段時間的課程中，我們在使用機器學習時，總是會遇到無數個選擇 :</p>
+<p><img src="https://i.imgur.com/ZmKfRCw.png" /></p>
+<p>沒有一種組合是可以適用於各式各樣的資料，因此我們必須要多方嘗試來選出一個最好的組合，最好的 <span class="math inline">\(g\approx f\)</span></p>
+<h3 id="model-selection">Model Selection</h3>
+<p>Given M models <span class="math inline">\(\mathbb{H}_1,\mathbb{H}_2\ldots\mathbb{H}_M\)</span> corresponding to algorithm <span class="math inline">\(\mathcal{A}_1,\mathcal{A}_2\ldots\mathcal{A}_M\)</span> and unknown <span class="math inline">\(E_{out},\mathbb{P}(\mathbb{X}),\mathbb{P}(y\mid\mathbb{X})\)</span> We want to select <span class="math inline">\(\mathbb{H}_{m^*}\)</span> s.t. <span class="math inline">\(g_{m^*}=\mathcal{A}_{m^*}(\mathbb{D})\)</span> and <span class="math inline">\(E_{out}(g_{m^*})\)</span> is low .</p>
+<p>依照上面對於 model selection 的描述，我們可以有兩個面向來分析 :</p>
+<p><strong>1. 從 「找出最低 <span class="math inline">\(E_{in}\)</span>」的角度出發</strong> : <span class="math inline">\(m^*=arg\underset{1\leq m\leq M}{min}(E_m=E_{in}(\mathcal{A}_m(\mathbb{D})))\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> Overfitting : 高次方轉換必然比低次轉換來的好，<span class="math inline">\(\lambda=0\)</span> 表現得會比 <span class="math inline">\(\lambda&gt;0\)</span> 更好</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> Generalization 差 : 我們相當於是拿 <span class="math inline">\(\mathbb{H}_1\cap\mathbb{H}_2\ldots\cap\mathbb{H}_M\)</span> 來找一個 <span class="math inline">\(g\)</span> ，<span class="math inline">\(d_{vc}=\)</span> Model Complexity 太高</p>
+<p>從這裡看的出來，由 <span class="math inline">\(E_{in}\)</span> 來做選擇會非常危險</p>
+<p><strong>2.從「待測資料中找出 <span class="math inline">\(E_{test}\)</span> 最低」的角度出發</strong> : <span class="math inline">\(m^*=arg\underset{1\leq m\leq M}{min}(E_m=E_{test}(\mathcal{A}_m(\mathbb{D})))\)</span></p>
+<p>如果這樣做，的確可以有夠強的保證可以確保此模型可行</p>
+<p><span class="math inline">\(E_{out}(g_{m^*})\leq E_{test}(g_{m^*})+O(\sqrt{\frac{\log M}{N_{test}}})\)</span></p>
+<p>但實務上，測試資料無法，也不該取得用來做 Model Selection。</p>
+<p>從上面的分析，第一個方向完全不可行，於是我們由第二個方向出發找出了一個折衷的作法 : 從手邊有的 <span class="math inline">\(\mathbb{D}\)</span> 中取一些資料來作為 Validation set ( <span class="math inline">\(\mathbb{D}_{val}\)</span> )</p>
+<p><span class="math inline">\(\Longrightarrow \mathbb{D}=\mathbb{D}_{train}+\mathbb{D}_{val}\)</span> ( 原本 <span class="math inline">\(\mathbb{D}\)</span> 要拿來計算 error 又要拿來做 model selection，現在可以分開讓 <span class="math inline">\(\mathbb{D}_{train}\)</span> 做 model selection 而讓 <span class="math inline">\(\mathbb{D}_{val}\)</span> 計算 error )</p>
+<p><img src="https://i.imgur.com/DoXf0o8.png" /></p>
+<ul>
+<li><p><span class="math inline">\(g_m^-\)</span> : 以負號代表 <span class="math inline">\(\mathbb{D}_{train}\)</span> 所用的資料數量比 <span class="math inline">\(\mathbb{D}\)</span> 少</p></li>
+<li><p><span class="math inline">\(\mathbb{D}_{val}\)</span> : 為了使 <span class="math inline">\(E_{out}\)</span> 與 <span class="math inline">\(E_{val}\)</span> 有相關，因此 <span class="math inline">\(\mathbb{D}_{val}\)</span> 也必須是由 <span class="math inline">\(\mathbb{D}\)</span> 中隨機平均的抽出 K 個。</p></li>
+<li><p>如此一來，我們仍然能有夠強的理論保證可行 : <span class="math inline">\(E_{out}(g_m^-)\leq E_{val}(g_m^-)+\sqrt{\frac{\log M}{K}}\)</span></p></li>
+<li><p>一旦我們找出 <span class="math inline">\(m^*=arg\underset{1\leq m\leq M}{min}(E_m=E_{val}(\mathcal{A}_m(\mathbb{D})))\)</span> ，<span class="math inline">\(g_{m^*}\)</span> 一定表現的會比 <span class="math inline">\(g_{m^*}^-\)</span> 還好。 ( learning curve 告訴我們 N 增加，<span class="math inline">\(E_{out}\)</span> 會下降 )</p></li>
+<li><p>在實務上我們找出 <span class="math inline">\(m^*\)</span> 後會利用 <span class="math inline">\(\mathbb{D}\)</span> 來找出 <span class="math inline">\(g_m^*\)</span></p></li>
+</ul>
+<p><img src="https://i.imgur.com/vIBnRYs.png%20=400x" /></p>
+<p>我們可以把 train set 與 validation set 的error 曲線畫出來如下</p>
+<p><img src="https://i.imgur.com/pNjaKNb.png" /></p>
+<p>從這圖可以看出，我們切出 validation set 後可以得到的 error 雖然未必可以接近 optimal ，但卻可以在這中間取得一個折衷。</p>
+<p>但要注意的地方是，<span class="math inline">\(E_{val}\)</span> 在 K 高達某一個數量時，error 表現得會非常不好，原因在於，當 K 增加，表示 <span class="math inline">\(\mathbb{D}_{train}\)</span> 的數量會減少，因而得到的 <span class="math inline">\(g_m^-\)</span> 就會相對增加，而當 <span class="math inline">\(\mathbb{D}_{train}\)</span> 的數量少到一個數量時，得到的 error 就可能會比用全部的 data set 所得到的 error 還要高。</p>
+<p><img src="https://i.imgur.com/FfL7TnG.png" /></p>
+<p>這是一個在選擇上面的兩難</p>
+<p>我們希望最後選到的 <span class="math inline">\(g\)</span> 所得到的 <span class="math inline">\(E_{out}\)</span> 能夠與我們利用 <span class="math inline">\(g^-\)</span> 所得到的 <span class="math inline">\(E_{out}\)</span> 夠接近 ( 這樣的K值必須小一些 )</p>
+<p>但我們也希望我們用 <span class="math inline">\(g^-\)</span> 得到的 <span class="math inline">\(E_{val}\)</span> 與 <span class="math inline">\(E_{out}\)</span> 可以夠接近 ( 這樣的K值又必須要大一點 )</p>
+<p>所以在選擇上面還是需要權衡，一般來說，實務上會以 <span class="math inline">\(\frac{N}{5}\)</span> 作為K值</p>
+<p>以下介紹兩個不同的 validation 方式 :</p>
+<h3 id="leave-one-out-cross-validation-k1">Leave-One-Out Cross Validation (K=1)</h3>
+<p>這是一個極端的情況 K=1</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> Validation Set : <span class="math inline">\(\mathbb{D}_{val}^{(n)}=\left\{(\mathbb{X}_n,y_n)\right\}\)</span>，而其 <span class="math inline">\(E_{val}^{(n)}=err(g_n^-(\mathbb{X}_n),y_n)\)</span></p>
+<p><span class="math inline">\(\Longrightarrow E_{loocv}(\mathbb{H},\mathcal{A})=\frac{1}{N}\sum\limits_{n=1}^{N}e_n=\frac{1}{N}\sum\limits_{n=1}^{N}err(g_n^-(\mathbb{X}_n),y_n)\)</span></p>
+<p>試証 : <span class="math inline">\(E_{loocv}(\mathbb{H},\mathcal{A})\approx E_{out}(g)\)</span></p>
+<p><span class="math inline">\(\underset{\mathbb{D}}{\mathbb{E}}(E_{loocv}(\mathbb{H},\mathcal{A}))=\underset{\mathbb{D}}{\mathbb{E}}(\frac{1}{N}\sum\limits_{n=1}^{N}e_n)=\frac{1}{N}\sum\limits_{n=1}^{N}\underset{\mathbb{D}}{\mathbb{E}}(e_n)\)</span></p>
+<p><span class="math inline">\(=\frac{1}{N}\sum\limits_{n=1}^{N}\underset{\mathbb{D}_n}{\mathbb{E}}(\underset{(\mathbb{X}_n,y_n)}{\mathbb{E}}(err(g_n^-(\mathbb{X}_n),y_n)))=\frac{1}{N}\sum\limits_{n=1}^{N}\underset{\mathbb{D}_n}{\mathbb{E}}(E_{out}(g_n^-))\)</span></p>
+<p><span class="math inline">\(=\frac{1}{N}\sum\limits_{n=1}^{N}\overline{E_{out}}(N-1)=\overline{E_{out}}(N-1)\)</span> ##得証</p>
+<p>實際上，Leave-one-out cross validation 並不常使用，原因如下 :</p>
+<ul>
+<li>對每一個 model 都要進行 N 次訓練，而且每一次都要 N-1 個 data 來進行訓練，當 N 非常大的時候，計算會變得相對複雜。</li>
+<li>單一 validation 計算會相當不穩定</li>
+</ul>
+<h3 id="v-fold-cross-validation">V-fold Cross Validation</h3>
+<p>隨機將 <span class="math inline">\(\mathbb{D}\)</span> 等分成 V 個部分，每次對 V-1 個部分進行訓練，並留一個部分作為 validation set。</p>
+<p><span class="math inline">\(E_{cv}(\mathbb{H},\mathcal{A})=\frac{1}{V}\sum\limits_{i=1}^{V}E_{val}^{(i)}(g_i^-)\)</span></p>
+<p><span class="math inline">\(m^*=arg\underset{1\leq m\leq M}{min}(E_m=E_{cv}(\mathbb{H}_m,\mathcal{A}_m))\)</span></p>
+<p>在實務上，V=10就可以有不錯的表現。</p>
+<h2 id="簡單總結">簡單總結</h2>
+<ul>
+<li>Traning : 從眾多的 <span class="math inline">\(\mathbb{H}\)</span> 中選擇一個</li>
+<li>Validaiton : 從 Training 出來的 list 中選擇</li>
+<li>Testin : 作為最後評估</li>
+<li>而通常 Validation 的結果會比 Testing 樂觀</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E4%BA%94%E8%AC%9B/" title="林軒田機器學習基石筆記 - 第十四講、第十五講">https://allen108108.github.io/blog/2019/10/08/林軒田機器學習基石筆記 - 第十四講、第十五講/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%B8%89%E8%AC%9B/" rel="prev" title="林軒田機器學習基石筆記 - 第十三講">
+                  <i class="fa fa-chevron-left"></i> 林軒田機器學習基石筆記 - 第十三講
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%85%AD%E8%AC%9B/" rel="next" title="林軒田機器學習基石筆記 - 第十六講">
+                  林軒田機器學習基石筆記 - 第十六講 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

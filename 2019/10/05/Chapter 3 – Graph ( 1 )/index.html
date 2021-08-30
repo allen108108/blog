@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="CAR Theorem CAR Theorem 作為本章節的開頭，提供了我們解決問題的思維流程，而 CAR 包含三個主要的部份 : Criticality、Abstraction 以及 Restriction">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 3 -- Graph ( 1 )">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/05/Chapter%203%20%E2%80%93%20Graph%20(%201%20)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="CAR Theorem CAR Theorem 作為本章節的開頭，提供了我們解決問題的思維流程，而 CAR 包含三個主要的部份 : Criticality、Abstraction 以及 Restriction">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/SWbTa5j.png">
+<meta property="og:image" content="https://i.imgur.com/DJ94uo0.png">
+<meta property="og:image" content="https://i.imgur.com/EiqkSEO.png">
+<meta property="og:image" content="https://i.imgur.com/TWAlTbV.png">
+<meta property="og:image" content="https://i.imgur.com/e1bl4Cj.jpg">
+<meta property="og:image" content="https://i.imgur.com/eXO3cRZ.png">
+<meta property="og:image" content="https://i.imgur.com/BMXqxRA.png">
+<meta property="article:published_time" content="2019-10-05T14:12:00.000Z">
+<meta property="article:modified_time" content="2021-08-30T14:12:10.804Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/SWbTa5j.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/05/Chapter%203%20%E2%80%93%20Graph%20(%201%20)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/05/Chapter%203%20%E2%80%93%20Graph%20(%201%20)/","path":"2019/10/05/Chapter 3 – Graph ( 1 )/","title":"Chapter 3 -- Graph ( 1 )"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Chapter 3 -- Graph ( 1 ) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#car-theorem"><span class="nav-number">1.</span> <span class="nav-text">CAR Theorem</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#criticality"><span class="nav-number">1.1.</span> <span class="nav-text">Criticality</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#abstraction"><span class="nav-number">1.2.</span> <span class="nav-text">Abstraction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#restriction"><span class="nav-number">1.3.</span> <span class="nav-text">Restriction</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seven-bridge-problem"><span class="nav-number">2.</span> <span class="nav-text">Seven Bridge Problem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#definition-application-of-graph"><span class="nav-number">3.</span> <span class="nav-text">Definition &amp; Application of Graph</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#definition"><span class="nav-number">3.1.</span> <span class="nav-text">Definition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tree"><span class="nav-number">3.2.</span> <span class="nav-text">Tree</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#graph-connectivity-and-graph-traversal"><span class="nav-number">4.</span> <span class="nav-text">Graph Connectivity and Graph Traversal</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#breadth-first-search-bfs-%E5%BB%A3%E5%BA%A6%E5%84%AA%E5%85%88%E6%90%9C%E5%B0%8B"><span class="nav-number">4.1.</span> <span class="nav-text">Breadth-First Search ( BFS , 廣度優先搜尋 )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#depth-first-search-dfs-%E6%B7%B1%E5%BA%A6%E5%84%AA%E5%85%88%E6%90%9C%E5%B0%8B"><span class="nav-number">4.2.</span> <span class="nav-text">Depth-First Search ( DFS , 深度優先搜尋 )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#summary-of-bfs-dfs"><span class="nav-number">4.3.</span> <span class="nav-text">Summary of BFS &amp; DFS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">5.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/05/Chapter%203%20%E2%80%93%20Graph%20(%201%20)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Chapter 3 -- Graph ( 1 )
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-05 22:12:00" itemprop="dateCreated datePublished" datetime="2019-10-05T22:12:00+08:00">2019-10-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 22:12:10" itemprop="dateModified" datetime="2021-08-30T22:12:10+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%B1%9F%E8%95%99%E5%A6%82-Algorithm/" itemprop="url" rel="index"><span itemprop="name">江蕙如 Algorithm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/05/Chapter%203%20%E2%80%93%20Graph%20(%201%20)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/05/Chapter 3 – Graph ( 1 )/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="car-theorem">CAR Theorem</h2>
+<p>CAR Theorem 作為本章節的開頭，提供了我們解決問題的思維流程，而 CAR 包含三個主要的部份 : Criticality、Abstraction 以及 Restriction</p>
+<span id="more"></span>
+<h3 id="criticality">Criticality</h3>
+<p>當我們面對一個待解決的問題時，首先要做的就是純化它。 將ㄧ些旁枝末節的部分先捨棄，直達問題的核心。</p>
+<h3 id="abstraction">Abstraction</h3>
+<p>接著我們從更高層次的角度來試圖理解這個問題、解決這個問題 ( Graph Theory 便是一個很好的例子 )，再慢慢的往低層次的方向前進。</p>
+<h3 id="restriction">Restriction</h3>
+<p>最後，我們可以把剛剛被簡化的部分重新考慮進來，試著延伸、調整設計好的演算法來解決最原始的問題。但，千萬不要一開始就處理這樣的部分。</p>
+<h2 id="seven-bridge-problem">Seven Bridge Problem</h2>
+<p>十八世紀 Königsberg 市區中河道中心有兩座小島，分別有七座橋連接彼此與河的兩岸，Euler 試圖解決一個問題是 : 是否有可能每一座橋只經過一次的情況下，把每一座橋都走過？</p>
+<p>Euler 將問題簡化成點和線的情況，並證明這個問題並不存在解。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p><img src="https://i.imgur.com/SWbTa5j.png" /></p>
+<p>這篇論文不但被視為是圖論的始源，也是奠定了數學中拓樸學的基礎。</p>
+<h2 id="definition-application-of-graph">Definition &amp; Application of Graph</h2>
+<h3 id="definition">Definition</h3>
+<ul>
+<li><p>A Graph <span class="math inline">\(G(V,E)\)</span> where <span class="math inline">\(V\)</span> is a vertices ( nodes ) set and <span class="math inline">\(E\)</span> is a edge set. A Graph <span class="math inline">\(G\)</span> 是由點集合<span class="math inline">\(V\)</span>與線集合 <span class="math inline">\(E\)</span> 構成</p></li>
+<li><p><span class="math inline">\(E=\{e\mid e=(u,v),\ u,v\in V\}\)</span> 每一個 edge 均是由兩個頂點所構成</p></li>
+<li><p><span class="math inline">\(G\)</span> is a undirected graph, if edges are undirected, i.e. , <span class="math inline">\(e=(u,v)=(v,u)=\{v,u\}\)</span> Undirected graph 具對稱性，連接兩頂點的 edge 可用大括號表示</p></li>
+<li><p><span class="math inline">\(G\)</span> is a directed graph, if edges are directed, i.e. , <span class="math inline">\(e=(u,v)\neq(v,u)\)</span> Undirected graph 不具對稱性。</p></li>
+<li><p><span class="math inline">\(u,v\in V\)</span>, <span class="math inline">\(v\)</span> is a neighbor of <span class="math inline">\(u\)</span>, if <span class="math inline">\(\exists\)</span> <span class="math inline">\(e=(u,v)\)</span> <span class="math inline">\(v\)</span> 與 <span class="math inline">\(u\)</span> 有 edge 相連，則可稱 <span class="math inline">\(v\)</span> 為 <span class="math inline">\(u\)</span> 的 neighbor。(undirected graph)</p></li>
+<li><p><span class="math inline">\(P=(v_1,v_2,\cdots,v_i,v_{i+1},\cdots,v_k)\)</span> is a path , if <span class="math inline">\((v_i,v_{i+1})\in E\)</span> and <span class="math inline">\(v_i\in V,\ \forall\ i=1,2,\cdots,k\)</span> path <span class="math inline">\(P\)</span> 是由一個頂點序列所組成。</p></li>
+<li><p><span class="math inline">\(P\)</span> is a simple path, if all vertices are distinct. Simple Path 指的是所有頂點均不重複。</p></li>
+<li><p><span class="math inline">\(P\)</span> is a cycle path, if <span class="math inline">\(v_1=v_k,\ k&gt;2\)</span> and <span class="math inline">\(v_2,\cdots,v_{k-1}\)</span> are distinct. Cycle Path　則是起點與終點相同，其餘頂點均不重複。</p></li>
+<li><p><span class="math inline">\(G\)</span> is connected, if <span class="math inline">\(\forall\ u,v\in V,\ \exists\)</span> a path <span class="math inline">\(P\)</span> from <span class="math inline">\(u\)</span> to <span class="math inline">\(v\)</span> 若 Ｇ 中任兩個頂點均存在一個 path，則稱 G 為 connected。</p></li>
+<li><p>The distance of <span class="math inline">\(u,v=\)</span> the minimum number of nodes of <span class="math inline">\(u-v\)</span> path <span class="math inline">\(P\)</span> 兩頂點的距離由最短 path 決定。</p></li>
+<li><p><span class="math inline">\(G\)</span> is a tree ,if it is connected and it doesn't contain cycle path. 一個 graph 是 connected 但不含任何的 cycle path 我們稱之為 tree。</p></li>
+</ul>
+<p>以上定義在 directed graph 中均適用，但需考慮其方向性。</p>
+<h3 id="tree">Tree</h3>
+<p>Tree 可以說是最簡單的 graph 型態，具有一些比較特別的性質 :</p>
+<ol type="1">
+<li>下列三個條件中任兩個條件成立必能推得第三個成立</li>
+</ol>
+<ol type="1">
+<li><span class="math inline">\(G\)</span> is connected</li>
+<li><span class="math inline">\(G\)</span> doesn't contain any cycle</li>
+<li><span class="math inline">\(G\)</span> has <span class="math inline">\(n-1\)</span> edges</li>
+</ol>
+<ol start="2" type="1">
+<li>Tree 中任兩點存在唯一 path。</li>
+</ol>
+<p>Rooted Tree 是 tree 的一種特殊形態，其 root 會位在某一個頂點 <span class="math inline">\(r\)</span> 上。在ㄧ些具有層次結構性 (hierarchy) 的狀況下，我們多用 rooted tree 來表現。</p>
+<h2 id="graph-connectivity-and-graph-traversal">Graph Connectivity and Graph Traversal</h2>
+<p>經過上面的定義之後，我們便開始思考頂點間的 Connectivity，若 <span class="math inline">\(s,t\)</span>兩點具 connctivity，便稱為 <span class="math inline">\(s-t\ connectivity\)</span>，要探討這種 s-t connectivity problem，這邊引進兩種方法 :</p>
+<ol type="1">
+<li>Breadth-First Search</li>
+<li></li>
+</ol>
+<h3 id="breadth-first-search-bfs-廣度優先搜尋">Breadth-First Search ( BFS , 廣度優先搜尋 )</h3>
+<p>BFS 的主要概念是水波的傳導，當我們想要知道與某一點具有 connectivity 的其他頂點時，藉由水波傳導過程將所有頂點做分層。</p>
+<p><img src="https://i.imgur.com/DJ94uo0.png" /></p>
+<p>起點做為第 0 層，將其 neighbors 作為第一層，再各自找尋 neighbors 做為第二層，依此類推，我們便可以找到與起點有 connectivity 的所有點。( 如果有重複的點會被 skip )</p>
+<p>除此之外，BFS 這樣的分層方式也間接地決定了各點與起點的 distance，<span class="math inline">\(L_i\)</span> 的下標 <span class="math inline">\(i\)</span> 便是在此層中的所有點與起點的 distance.</p>
+<p>也因為重複的 vertex 會被後面的 layer 所忽略，因此在 BFS 下會有一些 edge 也被忽略 ( 稱為 non-tree edge )。因此 BFS 下必然會產生一個 tree 的型態，稱為 BFS Tree。</p>
+<p><img src="https://i.imgur.com/EiqkSEO.png" /></p>
+<p>BFS 有一個重要的性質如下 :</p>
+<p><strong>Claim : Assume <span class="math inline">\(T\)</span> is a BFS Tree , <span class="math inline">\(x\in L_i\ ,\ y\in L_j\)</span> are vertices of <span class="math inline">\(T\)</span>. If <span class="math inline">\(e=(x,y)\)</span> is an edge of <span class="math inline">\(G\)</span>, then <span class="math inline">\(\mid i-j\mid\leq1\)</span>.</strong> <span class="math inline">\(x,y\)</span> 為一個 BFS Tree 的兩個相異頂點，若存在一個 edge <span class="math inline">\(e=(x,y)\)</span> ，那麼 <span class="math inline">\(x,y\)</span> 在 BFS 的層數相差不超過 1。</p>
+<p><strong>Proof :</strong> Suppose to the contrary that <span class="math inline">\(\mid i-j\mid &gt; 1\)</span> , <span class="math inline">\(W.L.O.G\)</span> assume <span class="math inline">\(j-1&gt;1\)</span> <span class="math inline">\(\because x\in L_i\Longrightarrow\)</span> the neighbors of <span class="math inline">\(x\)</span> in <span class="math inline">\(L_{k}\)</span> , where <span class="math inline">\(k\leq i+1\)</span> <span class="math inline">\(\because e=(x,y)\)</span> is an edge of <span class="math inline">\(G\)</span> and <span class="math inline">\(y\in L_j\)</span> <span class="math inline">\(\Longrightarrow y\)</span> is a neighbor of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\in L_j\)</span> <span class="math inline">\(\Longrightarrow j\leq i+1\)</span> <span class="math inline">\(\Longrightarrow j-i\leq 1\)</span> ( <span class="math inline">\(\rightarrow\leftarrow\)</span> )</p>
+<p>從一開始的 BFS 圖片我們也可以定義 <span class="math inline">\(Connected\ Component\)</span> :</p>
+<ul>
+<li>Connected component contain vertex s is the largest set of vertices that are reachable from s. 包含 s 的 connected component 指的就是 s 可以到達的最大點集合</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Connected-component(s):</span><br><span class="line">1. initial R=&#123;s&#125;</span><br><span class="line">2. while ∃ edge(u,v) where u∈R and v∉R, then R+=&#123;v&#125;</span><br><span class="line">3. return R</span><br></pre></td></tr></table></figure>
+<p><strong>Claim : <span class="math inline">\(R = connected-componont(s)\)</span></strong></p>
+<p><strong>Proof :</strong></p>
+<p>(Case 1) <span class="math inline">\(R\subseteq connected-componont(s)\)</span></p>
+<p>By Definition, clearly.</p>
+<p>(Case 2) <span class="math inline">\(R\supseteq connected-componont(s)\)</span></p>
+<p>Suppose to the contrary that <span class="math inline">\(R\not\supseteq connected-componont(s)\)</span> <span class="math inline">\(\therefore \exists x\in connected−componont(s)\)</span> and <span class="math inline">\(x\not\in R\)</span> <span class="math inline">\(\because x\in connected−componont(s)\Longrightarrow \exists\ path\ P=(s,x_1,x_2,\cdots,x_n,x)\)</span></p>
+<p>initial <span class="math inline">\(R=\{s\}\)</span> <span class="math inline">\(\because (s,x_1)\in E\Longrightarrow x_1\in R\)</span> <span class="math inline">\(\because (x_1,x_2)\in E\Longrightarrow x_2\in R\)</span></p>
+<p>Continue this process .....</p>
+<p><span class="math inline">\(\because (x_n,x)\in E\Longrightarrow x\in R\)</span> (<span class="math inline">\(\rightarrow\leftarrow\)</span>)</p>
+<p>我們常常在繪圖軟體要進行大面積著色時，很常會用到這樣的工具</p>
+<p><img width=300 src="https://i.imgur.com/TWAlTbV.png" ></p>
+<p>這便是將每一個 pixel 當作 vertex，利用 Connected component 來快速著色。</p>
+<h3 id="depth-first-search-dfs-深度優先搜尋">Depth-First Search ( DFS , 深度優先搜尋 )</h3>
+<p>DFS 的概念比較像是走迷宮，先進行無腦的直衝，等到走進死胡同再退回前一個節點選擇另外一條路前進。</p>
+<p>拿前面的圖片為例，DFS 的過程如下 :</p>
+<p><img src="https://i.imgur.com/e1bl4Cj.jpg" /></p>
+<p>這裡面最後一步雖然說結束，但事實上它還是會一路退回到上一個節點確定都沒有其他路徑可以走，就這樣一直退到 vertex 1。</p>
+<p>可以寫成下列的 procedure</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DFS(s) :</span><br><span class="line">1. mark s and R+&#123;s&#125;</span><br><span class="line">2. if ∃ non-marked smallest v s.t. (s,v)∈E ,then DFS(v)</span><br></pre></td></tr></table></figure>
+<p>從 DFS 的過程來看，有一個特性是每一條路徑都一定會被 check 兩次 (來回)，不管有沒有被 skip 掉都一樣。這也可以推得 DFS 整個過程中，在每一個節點都會有一個進出的過程</p>
+<p><img width=400 src="https://i.imgur.com/eXO3cRZ.png" ></p>
+<p>又如同 BFS 一樣，經過 DFS 後都會形成一棵 DFS Tree，走過的路徑便是 Tree Edge，而被忽略的則是 Non-Tree Edge。</p>
+<p><img src="https://i.imgur.com/BMXqxRA.png" /></p>
+<p><strong>Claim : Assume <span class="math inline">\(T\)</span> is a DFS Tree , <span class="math inline">\((x,y)\)</span> is a non-tree edge of <span class="math inline">\(T\)</span>, then <span class="math inline">\(x,y\)</span> is ancester (descendant) of the other. <span class="math inline">\((x,y)\)</span> 為一個 DFS Tree 的 non-tree edge，則 <span class="math inline">\(x,y\)</span> 必為祖孫層級(上下至少跨兩個層)的關係。</strong></p>
+<p><strong>Proof</strong> <span class="math inline">\(W.L.O.G.\)</span> suppose <span class="math inline">\(x\)</span> is reached earlier by DFS. <span class="math inline">\((x,y)\)</span> 是 Non-Tree edge (被忽略的 edge) <span class="math inline">\(\Longrightarrow (x,y)\)</span> 這條 edge 第一次check沒有被選中，而第二次被判斷要被忽略 <span class="math inline">\(\Longrightarrow y\)</span> 在第二次 check <span class="math inline">\((x,y)\)</span> 這條路徑時，<span class="math inline">\(y\)</span> 已經被 marked 。 <span class="math inline">\(\Longrightarrow y\)</span> 一定是在 DFS 進入 <span class="math inline">\(x\)</span> 到退出 <span class="math inline">\(x\)</span> 這中間被 marked。 <span class="math inline">\(\Longrightarrow x\)</span> must be the ancester of <span class="math inline">\(y\)</span></p>
+<h3 id="summary-of-bfs-dfs">Summary of BFS &amp; DFS</h3>
+<ul>
+<li>BFS 或 DFS 均可以找出 Connected-Component</li>
+<li>BFS Tree　寬且淺，DFS Tree 窄且深。</li>
+<li>DFS Tree 的 Non-Tree Edge 連結上下層級且至少相差兩層以上的 vertex ; BFS Tree 的 Non-Tree Edge 連結上下一層或是同層的 vertex。</li>
+</ul>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>證明可參閱 <a target="_blank" rel="noopener" href="https://web.math.sinica.edu.tw/math_media/d364/36404.pdf"><em>數學傳播 36卷4期 pp. 42-47</em></a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/05/Chapter%203%20%E2%80%93%20Graph%20(%201%20)/" title="Chapter 3 -- Graph ( 1 )">https://allen108108.github.io/blog/2019/10/05/Chapter 3 – Graph ( 1 )/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/05/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E6%8A%80%E8%A1%93%E7%9A%84%E9%9B%A3%E9%A1%8C/" rel="prev" title="人臉辨識技術的難題">
+                  <i class="fa fa-chevron-left"></i> 人臉辨識技術的難題
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%5B%E8%AB%96%E6%96%87%5D%20Network%20In%20Network/" rel="next" title="[論文] Network In Network">
+                  [論文] Network In Network <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="摘要 Abstract 主要的 Sequence transduction model 都是基於包含 encoder 及 decoder 的複雜 RNN 或 CNN 結構。而表現最好的模型將 encoder, decoder 與注意力機制 (Attention Mechanism) 連結在一起。這篇論文中提出了一個新的簡單網路結構 Transformer，它是一個基於注意力機制的網路結構，並且完">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[論文] Attention Is All You Need">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/05/13/[%E8%AB%96%E6%96%87]%20Attention%20Is%20All%20You%20Need/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="摘要 Abstract 主要的 Sequence transduction model 都是基於包含 encoder 及 decoder 的複雜 RNN 或 CNN 結構。而表現最好的模型將 encoder, decoder 與注意力機制 (Attention Mechanism) 連結在一起。這篇論文中提出了一個新的簡單網路結構 Transformer，它是一個基於注意力機制的網路結構，並且完">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/woMGw7D.png">
+<meta property="og:image" content="https://i.imgur.com/3Xgg8pc.png">
+<meta property="og:image" content="https://i.imgur.com/iuSiROs.png">
+<meta property="og:image" content="https://i.imgur.com/opC8sB0.png">
+<meta property="og:image" content="https://i.imgur.com/G9zAO4m.png">
+<meta property="og:image" content="https://i.imgur.com/5cmTFpu.gif">
+<meta property="og:image" content="https://i.imgur.com/Jh53wzI.png%20=350x">
+<meta property="og:image" content="https://i.imgur.com/R8mXjVh.png">
+<meta property="og:image" content="https://i.imgur.com/KgdqdW2.png">
+<meta property="og:image" content="https://i.imgur.com/dd28sYK.png">
+<meta property="og:image" content="https://i.imgur.com/YMX5gsZ.jpg">
+<meta property="og:image" content="https://i.imgur.com/rinckGs.png">
+<meta property="article:published_time" content="2020-05-13T07:03:40.000Z">
+<meta property="article:modified_time" content="2020-05-13T07:08:40.775Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/woMGw7D.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/05/13/[%E8%AB%96%E6%96%87]%20Attention%20Is%20All%20You%20Need/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/05/13/[%E8%AB%96%E6%96%87]%20Attention%20Is%20All%20You%20Need/","path":"2020/05/13/[論文] Attention Is All You Need/","title":"[論文] Attention Is All You Need"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[論文] Attention Is All You Need | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%91%98%E8%A6%81-abstract"><span class="nav-number">1.</span> <span class="nav-text">摘要 Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B0%A1%E4%BB%8B-introduction"><span class="nav-number">2.</span> <span class="nav-text">簡介 Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF-background"><span class="nav-number">3.</span> <span class="nav-text">背景 Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E6%A7%8B%E9%80%A0-model-architecture"><span class="nav-number">4.</span> <span class="nav-text">模型構造 Model Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#encoder-%E8%88%87-decoder-%E5%A0%86%E7%96%8A"><span class="nav-number">4.1.</span> <span class="nav-text">Encoder 與 Decoder 堆疊</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B7%A8%E7%A2%BC%E5%99%A8-encoder"><span class="nav-number">4.1.1.</span> <span class="nav-text">編碼器 Encoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E7%A2%BC%E5%99%A8-decoder"><span class="nav-number">4.1.2.</span> <span class="nav-text">解碼器 Decoder</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6-attention"><span class="nav-number">4.2.</span> <span class="nav-text">注意力機制 Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E6%88%91%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6-scaled-dot-product-attention"><span class="nav-number">4.2.1.</span> <span class="nav-text">自我注意力機制 Scaled Dot-Product Attention</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E9%A0%AD%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6-multi-head-attention"><span class="nav-number">4.2.2.</span> <span class="nav-text">多頭注意力機制 Multi-Head Attention</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%E5%9C%A8-transformer-%E7%9A%84%E6%87%89%E7%94%A8-applications-of-attention-in-our-model"><span class="nav-number">4.2.3.</span> <span class="nav-text">注意力機制在 Transformer 的應用 Applications of Attention in our Model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A3%9C%E5%85%85----about-attention"><span class="nav-number">4.2.4.</span> <span class="nav-text">[ 補充 -- About Attention ]</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A3%9C%E5%85%85----about-mask"><span class="nav-number">4.2.5.</span> <span class="nav-text">[ 補充 -- About Mask ]</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#position-wise-%E5%89%8D%E9%A5%8B%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-position-wise-feed-forward-network"><span class="nav-number">4.3.</span> <span class="nav-text">Position-Wise 前饋神經網路 Position-Wise Feed-Forward Network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E9%87%8F%E5%B5%8C%E5%85%A5%E8%88%87-softmax-embedding-softmax"><span class="nav-number">4.4.</span> <span class="nav-text">向量嵌入與 Softmax Embedding &amp; Softmax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E7%B7%A8%E7%A2%BC-position-encoding"><span class="nav-number">4.5.</span> <span class="nav-text">位置編碼 Position Encoding</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A3%9C%E5%85%85-position-encoding-%E8%A8%AD%E8%A8%88"><span class="nav-number">4.5.1.</span> <span class="nav-text">[ 補充 : Position Encoding 設計 ]</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A3%9C%E5%85%85-%E5%B0%87%E8%BC%B8%E5%85%A5%E5%BA%8F%E5%88%97%E8%9E%8D%E5%85%A5%E4%BD%8D%E7%BD%AE%E8%B3%87%E8%A8%8A%E7%82%BA%E4%BD%95%E5%8F%AF%E4%BB%A5%E7%94%A8%E7%9B%B8%E5%8A%A0%E8%80%8C%E4%B8%8D%E6%98%AF%E7%9B%B4%E6%8E%A5%E6%8B%BC%E6%8E%A5%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="nav-number">4.5.2.</span> <span class="nav-text">[ 補充 : 將輸入序列融入位置資訊為何可以用相加而不是直接拼接的方式 ? ]</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E6%98%AF%E8%87%AA%E6%88%91%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6-why-self-attention"><span class="nav-number">5.</span> <span class="nav-text">為什麼是自我注意力機制 ? Why Self-Attention ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%93%E7%B7%B4-training"><span class="nav-number">6.</span> <span class="nav-text">訓練 Training</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A8%93%E7%B7%B4%E8%B3%87%E6%96%99%E8%88%87%E6%89%B9%E9%87%8F-training-data-and-batching"><span class="nav-number">6.1.</span> <span class="nav-text">訓練資料與批量 Training Data and Batching</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E9%AB%94%E8%88%87%E6%99%82%E7%A8%8B-hardware-and-schedule"><span class="nav-number">6.2.</span> <span class="nav-text">硬體與時程 Hardware and Schedule</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%8C%96%E5%99%A8-optimizer"><span class="nav-number">6.3.</span> <span class="nav-text">最佳化器 Optimizer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E8%A6%8F%E5%8C%96-regularizer"><span class="nav-number">6.4.</span> <span class="nav-text">正規化 Regularizer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%90%E6%9E%9C-result"><span class="nav-number">7.</span> <span class="nav-text">結果 Result</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A9%9F%E5%99%A8%E7%BF%BB%E8%AD%AF-machine-translation"><span class="nav-number">7.1.</span> <span class="nav-text">機器翻譯 Machine Translation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%AE%8A%E9%AB%94-model-variations"><span class="nav-number">7.2.</span> <span class="nav-text">模型變體 Model Variations</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%90%E8%AB%96-conclusion"><span class="nav-number">8.</span> <span class="nav-text">結論 Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99-reference"><span class="nav-number">9.</span> <span class="nav-text">參考資料 Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/05/13/[%E8%AB%96%E6%96%87]%20Attention%20Is%20All%20You%20Need/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [論文] Attention Is All You Need
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-05-13 15:03:40 / 修改時間：15:08:40" itemprop="dateCreated datePublished" datetime="2020-05-13T15:03:40+08:00">2020-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/05/13/%5B%E8%AB%96%E6%96%87%5D%20Attention%20Is%20All%20You%20Need/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/05/13/[論文] Attention Is All You Need/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="摘要-abstract">摘要 Abstract</h2>
+<p>主要的 Sequence transduction model 都是基於包含 encoder 及 decoder 的複雜 RNN 或 CNN 結構。而表現最好的模型將 encoder, decoder 與注意力機制 (Attention Mechanism) 連結在一起。這篇論文中提出了一個新的簡單網路結構 Transformer，它是一個基於注意力機制的網路結構，並且完全不含 RNN 與 CNN 。在一些實驗中都顯示 Transformer 具有優勢，除了高度可平行運算外，訓練的時間也明顯降低許多。</p>
+<span id="more"></span>
+<h2 id="簡介-introduction">簡介 Introduction</h2>
+<p>RNN (Recurrent Neural Network, 循環神經網路) ，特別是 LSTM (Long Short-term memory, 長短期記憶) 與 GRU (Gate Recurrent)，已經成為序列建模與傳導 ( Seq2Seq ) 問題，如語言模型及機器翻譯等，的標準處理方式。而後，人們也不斷的努力擴大 RNN 與 Encoder-Decoder 的界限。</p>
+<p>RNN 模型通常是根據輸入輸出字符的位置進行計算。先將位置與時間步對齊，然後藉由前一個位置(時間)的隱含狀態 (Hidden State) <span class="math inline">\(h_{t-1}\)</span> 以及當下的位置(時間) <span class="math inline">\(t\)</span> 生成這個時間點的隱含狀態 <span class="math inline">\(h_t\)</span>。這樣的序列處理阻礙了平行化訓練，當序列的長度變長，記憶體便會限制了訓練資料的 Batch 數量。即使，較新的成果已經可以透過一些計算技巧 ( 矩陣分解、條件計算...等) 來增加計算效率，同時提高模型的表現，但，序列計算的基本限制仍然存在。</p>
+<p>注意力機制已經成為序列建模與傳導 ( Seq2Seq ) 模型中各種任務不可或缺的一部分，不需要考慮輸入輸出序列的長度即可對依賴項進行建模。不過，除了少數情況下，注意力機制仍然會配合 RNN 一起使用。</p>
+<p>這篇論文中，作者提出了 Transformer，一種完全基於注意力機制且避開 RNN 的模型結構，用以描繪出輸入輸出序列之間的關係。在實驗中，裡用 8 個 P100 GPU 上訓練約 12 小時，Transformer 可以達到更多的平行化運算，並且有更高水準的翻譯品質。</p>
+<h2 id="背景-background">背景 Background</h2>
+<p>Extended Neural GPU, ByteNet 以及 ConvS2S 都是利用卷積來達到減少序列計算的網路結構，但隨著輸入輸出序列中兩個字符的距離增加，要建構這兩個字符的關係所需要使用到的運算、操作數量也會隨之增加 ( 在 ConvS2S 中呈線性成長，而 ByteNet 中則是呈對數增長 )。Transformer 可以將這些操作控制在一個固定的常數，雖然，注意力權重位置平均後會降低有效的解析度，但這樣的狀況可以利用多頭注意力機制 ( Multi-Head Attention ) 來抵銷。</p>
+<p>自我注意力機制 ( Self-Attention )，也被稱為內注意力機制 ( Intra-Attention )，這是一種專注於單序列中不同位置字符關係的注意力機制，目標是要計算出此序列的一種表達形式。自注意力機制已成功用在各項任務上，如 : 閱讀理解 ( Reading Comperhension )、抽象摘要 ( Abstractive Summarization ) 、文本蘊含 ( Textual Entailment ) 以及學習與任務無關的句型表達 ( Task-Independent Sentence Representation ) 。</p>
+<p>End2End Memory Networks 是一個基於遞迴注意力機制的網路結構，而非序列對齊的遞迴結構，這樣的模型已經被證明在一些簡單的問答系統以及語言建模任務上有良好的表現。</p>
+<p>Transformer 是第一個完全依靠自注意力且不須使用序列對齊的 RNN 或 CNN 來計算輸入輸出序列表達的傳導 ( Seq2Seq ) 模型。在下面的各部分，論文將會描述 Transformer、引導自注意機制並且討論其之於其他模型的優勢所在。</p>
+<p><img src="https://i.imgur.com/woMGw7D.png" /> (圖片來源 : <a target="_blank" rel="noopener" href="https://tobiaslee.top/2018/12/13/Start-from-Transformer/">从 Transformer 说起</a>)</p>
+<h2 id="模型構造-model-architecture">模型構造 Model Architecture</h2>
+<p><img src="https://i.imgur.com/3Xgg8pc.png" /></p>
+<p>大多數具競爭力的神經序列傳導模型都具有 Encoder-Decoder 構造。Encoder 將輸入字符序列 <span class="math inline">\((x_1,x_2,\cdots,x_n)\)</span> 映射到一個連續的表達序列 <span class="math inline">\(\mathrm{z}=(z_1,z_2,\cdots,z_n)\)</span> 。給定 <span class="math inline">\(\mathrm{z}\)</span> ，再由 Decoder 生成一個字符序列作為輸出 <span class="math inline">\((y_1,y_2,\cdots,y_m)\)</span> 。 模型的每一個步驟都是自迴歸 ( Auto-Regressive ) 的，利用先前的輸出作為輸入來預測下一個輸出。</p>
+<p>Transformer 遵循這樣的架構，對 Encoder 及 Decoder 都使用自我注意力機制的堆疊、Point-Wise 以及全連接層來構造，整體構造如上圖。</p>
+<h3 id="encoder-與-decoder-堆疊">Encoder 與 Decoder 堆疊</h3>
+<h4 id="編碼器-encoder"><strong>編碼器 Encoder</strong></h4>
+<p>Encoder 的部分是由 <span class="math inline">\(N=6\)</span> 個相同的層堆疊而成，而每一個層都有兩個子層。第一個子層是多頭注意力機制，而第二個子層就是一個簡單的 Position-Wise 全連接層。除此之外，每一個子層都會設置一個 Residual Connection ，並且加入 Layer Normalization 在兩個子層中間，也就是說，每一個子層的輸出應該是</p>
+<p><span class="math display">\[
+\text{LayerNorm}(x+\text{Sublayer}(x))\\
+\]</span></p>
+<p>這裡的 <span class="math inline">\(\text{Sublayer}(x)\)</span> 指的就是將每一個子層視為一個函數來看待。為了加強這些 Residual Connection，所有子層的輸出都設定為 <span class="math inline">\(d_{model}=512\)</span>。</p>
+<h4 id="解碼器-decoder"><strong>解碼器 Decoder</strong></h4>
+<p>Decoder 的部分一樣是由 <span class="math inline">\(N=6\)</span> 個相同的層堆疊而成，不同的地方是，在原本的兩個子層中間插入一個新的子層，其連接 Encoder 的輸出進行多頭注意力機制。與 Encoder 部分相同，每一個子層均有 Residual Connection，並進行 Layer Normalization。</p>
+<p>除此之外，作者們修改了第一個子層，加上一個遮罩 ( Mask ) ，確保對位置 <span class="math inline">\(i\)</span> 的預測只能依賴位置小於 <span class="math inline">\(i\)</span> 的已知輸出來預測。</p>
+<h3 id="注意力機制-attention">注意力機制 Attention</h3>
+<p>注意力函式，可以視為將 Query 與一組 Key-Value 映射輸出成一組向量，其中Query, Key 與 Value 亦為向量。這個函式先利用一個相容性函數 ( Compatibility Function ) 將 Query 與 Key 映射成為 Value 的權重，再將 Value 經過加權總和算出輸出。</p>
+<h4 id="自我注意力機制-scaled-dot-product-attention">自我注意力機制 Scaled Dot-Product Attention</h4>
+<p>作者將 Transformer 中特別的注意力函式稱之為 " Scaled Dot-Product Attention "，由 Query 向量, 維度 <span class="math inline">\(d_k\)</span> 的 Key 向量以及維度 <span class="math inline">\(d_v\)</span> 的 Value 向量作為輸入。先將 Query 與所有的 Key 進行點積 ( dot product ) 後通通除以 <span class="math inline">\(\sqrt{d_k}\)</span>，再使用 Softmax 函數得到 Value 的權重。</p>
+<p>在實務上，Query, Key 與 Value 都會包在矩陣 <span class="math inline">\(Q\)</span>, <span class="math inline">\(K\)</span> 與 <span class="math inline">\(V\)</span> 中進行矩陣運算 :</p>
+<p><span class="math display">\[
+\text{Attention}(Q,K,V)=\text{Softmax}\Big(\dfrac{QK^T}{\sqrt{d_k}}\Big)V
+\]</span></p>
+<p>在注意力函式中，最常用的是 Additive Attention 與 Dot-Product Attention 兩種。Dot-Product Attention 與論文中的 Scaled Dot-Product Attention 只差在 <span class="math inline">\(\sqrt{d_k}\)</span> 的倍數關係。而 Additive Attention 則是將相容性函數由 Softmax 函數替換成單層神經網路。理論上，這兩者的複雜度接近，但在實務上，Dot-Product Attention 的運算速度快得多，而且空間效率高，因此可以利用高度最佳化矩陣乘法來實現。</p>
+<p>當 <span class="math inline">\(d_k\)</span> 值很小時，兩種注意力函式的表現也差不多，但對於較大的 <span class="math inline">\(d_k\)</span> 來說，Additive Attention 則相較 Dot-Product Attention 有較好的表現。作者認為，較大的 <span class="math inline">\(d_k\)</span> 值，可能會使點積的結果躍升成為更高的量級，放進 Softmax 中，就會將梯度推向較小的區域內。為了沖銷這種影響，因此衍生出 Scaled Dot-Product Attention，利用 <span class="math inline">\(\sqrt{d_k}\)</span> 進行縮放。</p>
+<h4 id="多頭注意力機制-multi-head-attention">多頭注意力機制 Multi-Head Attention</h4>
+<p>與使用固定 <span class="math inline">\(d_{model}\)</span> 維度的 Queries, Keys, Values 的 Attention 函式相比，作者們發現，將 Queries, Keys, Values 分別進行 <span class="math inline">\(h\)</span> 次線性映射到維度 <span class="math inline">\({d_k}\)</span>, <span class="math inline">\({d_k}\)</span> 與 <span class="math inline">\({d_v}\)</span> 是有利的。每一次 Queries, Keys, Values 的映射都會平行進行 Attention 函式的運算，各產生一個維度 <span class="math inline">\(d_v\)</span> 的向量值。最後將這 <span class="math inline">\(h\)</span> 個向量拼接在一起再做一次線性映射得到最終的結果值，Scaled Dot-Product Attention 與 Multi-Head Attention 的過程可參考下圖 :</p>
+<p><img src="https://i.imgur.com/iuSiROs.png" /></p>
+<p>多頭注意力機制允許模型在不同的位置上可以同時關聯不同表徵子空間 ( Representation Subspace ) 的訊息，如果僅用單一注意力機制，它會採平均值來削弱這個訊息。</p>
+<p><span class="math display">\[
+\text{MultiHead}(Q, K, V)=\text{Concat}(head_1, head_2,\cdots,head_h)W^O\\
+\text{where }head_i=\text{Attention}(QW_i^Q, KW_i^K, VW_i^V)\\
+\text{and }W_i^Q\in\mathbb{R}^{d_{model}\times d_k}, W_i^K\in\mathbb{R}^{d_{model}\times d_k},W_i^V\in\mathbb{R}^{d_{model}\times d_v},\text{and } W_i^O\in\mathbb{R}^{d_{model}\times d_k}
+\]</span></p>
+<p>在此論文中，作者們設定 <span class="math inline">\(h=8\)</span> 個平行的注意力機制層，且 <span class="math inline">\(d_k=d_v=\dfrac{d_{model}}{h}\)</span>，這可以降低每一個注意力機制的維度，進而減少運算成本，保持跟單一注意力 (Single-Head Attention) 機制一樣的維度。</p>
+<h4 id="注意力機制在-transformer-的應用-applications-of-attention-in-our-model">注意力機制在 Transformer 的應用 Applications of Attention in our Model</h4>
+<p>在 Transformer 中，針對多頭注意力機制採取了三種不同的模式 :</p>
+<ul>
+<li><p><strong>在 Encoder-Decoder Attention 層</strong> 使用先前 Decoder 的輸出作為 Query，以 Encoder 的輸入作為 Key 與 Value (因此這一層並非自我注意力層 Self-Attention)。這樣的設計可以使每一個位置在 Decoder 中都可以得到輸入序列的其它位置的訊息。</p></li>
+<li><p><strong>在 Encoder 中</strong> Encoder 中包含了一組自我注意力層 ( Self-Attention Layer )，所有的 Queries, Keys, Values 都來自於同一個位置，在這個情況中，是指 Encoder 前面幾層的輸出。這樣的設計也使每一個位置在 Encoder 中都可以得到先前層中所有輸出。</p></li>
+<li><p><strong>在 Decoder 中</strong> Decoder 中的遮蔽自我注意力層 ( Mask Self-Attention Layer )，只允許 Decoder 可以關注到包含自身位置之前所有位置的訊息。會這樣設計的緣故主要是為了防止訊息往左 (前) 流動，畢竟每一個位置的預測都應該只與前面的位置有關，不該讓後面位置的資訊影響到當下位置的預測。在論文中，便將非法連接 (後向前傳遞) 的 Softmax 值均設置為 <span class="math inline">\(-\infty\)</span>，達成 Mask 的效果。</p></li>
+</ul>
+<h4 id="補充----about-attention"><strong>[ 補充 -- About Attention ]</strong></h4>
+<p>看了論文中上述對注意力機制與 Transformer 的介紹，或許還是沒辦法太能理解究竟在 Transformer 中是怎麼運用注意力機制的，因此筆者嘗試利用一個實際例子再根據一些參考資料重新解釋一次 Transformer 與注意力機制的關係。</p>
+<p><strong>例子 : 利用 Transformer 進行 " <em>I arrived at the</em> " 語句進行翻譯。</strong></p>
+<p>在 Encoder 的部分，輸入語句先利用一次權重生成 Query, Key 與 Value，再分別給予個別不同的權重生成不同的 Query, Key 與 Value 並同時進行注意力機制，利用這樣多頭注意力積只可使系統能夠更廣泛的抓取輸入語句的表徵，最後再將不同注意力機制下生成的輸出拼接成一個向量，詳細如下圖 :</p>
+<p><img src="https://i.imgur.com/opC8sB0.png" /></p>
+<p>然而，Transformer 並非完全沒有使用到 RNN 的方式，在 Decoder 中，要生成語句或翻譯，還是得利用 RNN 的模式來循環輸出。當我輸入 " <em>I arrived at the</em> "，在 Decoder 的部分就會「依序」生成 " <em>Je suis arrivé</em> "。</p>
+<p>在這個部分，輸入不單單使用 Encoder 的輸出，也會將先前生成的語句一同作為輸入，如此一來便可獲取輸入的資訊。</p>
+<p><img src="https://i.imgur.com/G9zAO4m.png" /></p>
+<p>我們可以利用 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2017/08/transformer-novel-neural-network.html">Google AI Blog "Transformer: A Novel Neural Network Architecture for Language Understanding"</a> 中的一個 GIF 動畫來理解 Transformer 的動態生成過程 :</p>
+<p><img src="https://i.imgur.com/5cmTFpu.gif" /></p>
+<h4 id="補充----about-mask"><strong>[ 補充 -- About Mask ]</strong></h4>
+<p>我們要先了解到，真正會用到 Mask 的部分是在訓練的階段，因為在訓練過程中，可能因為每個 Batch 輸入的序列長度不同或是最後生成的結果完全可見的原因，我們必須要做某種程度上的 Mask 來保證訓練過程不會有問題。</p>
+<p>真正在 Transformer 中使用到的 Mask 技巧有兩種 : Padding Mask 與 Sequence Mask。在實務上，無論是 Encoder 還是 Decoder 層都會使用到 Padding Mask，主要是限制輸入序列的長度必須要一樣，具體來說， Padding Mask 就是語句長度的對齊，將短語句的後面通通補上 0。</p>
+<p>比較重要的是 Sequence Mask，當我們在訓練 Transformer 時，由於結果可見，但又必須要避免生成某位置時不能被其後的「答案」影響到生成，因此必須要進行 Mask，在實際操作上，會利用類似在實際操作上，會利用類似一個三角矩陣的概念來對應到訓練資料的Label上。</p>
+<p>如果拿上面翻譯的例子來看，" <em>Je suis arrivé</em> " 在訓練過程中應該會像下面這樣 :</p>
+<center>
+<p><img src="https://i.imgur.com/Jh53wzI.png%20=350x" /></p>
+</center>
+<p>有人認為 Mask 的概念正是 Transformer 成功的關鍵之一，利用上述的概念，我們可以用來表徵語句的各種順序。</p>
+<p><img src="https://i.imgur.com/R8mXjVh.png" /></p>
+<h3 id="position-wise-前饋神經網路-position-wise-feed-forward-network">Position-Wise 前饋神經網路 Position-Wise Feed-Forward Network</h3>
+<p>除了注意力機制層外，無論在 Encoder 還是 Decoder 部分都還包含一個全連接前饋神經網路，這個神經網路對每一個位置的向量個別進行相同的操作。在這個全連接層中，包含了兩次的線性轉換以及中間加入一個 ReLU activation function。</p>
+<p><span class="math display">\[
+\text{FFN}(x)=\max(0,xW_1+b_1)W_2+b_2
+\]</span></p>
+<p>不同位置的輸入共用同一個前饋網路，但，這個兩層的全連接層的權重並不共用。換個角度來說，這個全連接層可以看做是兩個 <span class="math inline">\(1\times 1\)</span> 的卷積層。輸入、輸出的維度都是 <span class="math inline">\(d_{model}=512\)</span>，中間層維度則是 <span class="math inline">\(d_{ff}=2048\)</span>。</p>
+<h3 id="向量嵌入與-softmax-embedding-softmax">向量嵌入與 Softmax Embedding &amp; Softmax</h3>
+<p>與一般的 Seq2Seq 模型類似，我們可以利用已經學習到的模型將輸入輸出 token 轉換成維度 <span class="math inline">\(d_{model}\)</span> 的向量，然後再利用模型中的線性變換以及 Softmax 函數將 decoder 的輸出轉換成為預測 token 的機率。在 Transformer 中，作者們設計使兩個嵌入層以及 Softmax 變換間共享權重，並且在嵌入層終將所權重均除以 <span class="math inline">\(\sqrt{d_{model}}\)</span>。</p>
+<h3 id="位置編碼-position-encoding">位置編碼 Position Encoding</h3>
+<p>由於 Transformer 並不包含 RNN 與 CNN，因此如果我們仔細看注意力機制會發現整個過程獨立於序列的順序 ( 也就是說，" <em>I arrived at the</em> " 與 " <em>I at the arrived</em> " 並無相異 )，為了讓模型的運作可以考慮到序列的順序，因此，作者在 Encoder 與 Decoder 底部輸入均加上了位置編碼 ( Position Encoding )。由於輸入序列與位置編碼的維度相同因此我們可以直接進行相加。至於如何為位置進行編碼 ? 可以利用學習而得也可以使用固定編碼 ( 類似 One-Hot enoding )。</p>
+<p>在 Transformer 中，作者們將位置編碼做了如下的設計 :</p>
+<p><span class="math display">\[
+PE_{(pos,2i)}=\sin(pos/10000^{2i/d_{model}})\\
+PE_{(pos,2i+1)}=\cos(pos/10000^{2i/d_{model}})
+\]</span></p>
+<p><span class="math inline">\(pos\)</span> 指的是這個 token 在序列中的位置，而 <span class="math inline">\(i\)</span> 代表的是這個位置編碼的維度位置。然後整個位置編碼的維度會對應到一個正弦曲線。上面的設計使得波長會介於 <span class="math inline">\(2\pi\)</span> 到 <span class="math inline">\(10000\cdot 2\pi\)</span> 之間。使用這樣的函數設計主要是因為作者們認為這樣的函數可以有利於作者們認為這樣的函數可以有利於模型輕鬆的學習到位置的編碼，因為對任意的偏移量 <span class="math inline">\(k\)</span> 來說，<span class="math inline">\(PE_{pos+k}\)</span> 都可以表示成為 <span class="math inline">\(PE_{pos}\)</span> 的線性組合。</p>
+<h4 id="補充-position-encoding-設計"><strong>[ 補充 : Position Encoding 設計 ]</strong></h4>
+<p>最直覺的位置編碼就是直接利用位置 <span class="math inline">\(i\)</span> 或是 One-Hot Encoding 的概念進行編碼，但是這樣的方式在長文本的資料中前者會造成數值爆炸，而後者，則很容易導致維度大爆炸。</p>
+<p>因此，在整個位置編碼上面，我們會希望這樣的編碼可以符合幾個條件 :</p>
+<ol type="1">
+<li>必須可以識別一個單字(詞)在不同位置上在不同位置上可能有不同的意義</li>
+<li>必須可以體現不同先後順序的關係</li>
+<li>編碼數值落在區間 <span class="math inline">\([0,1]\)</span> 之間</li>
+<li>編碼維度可以不受限於文本長度</li>
+</ol>
+<p>這就是為什麼論文會引入三角函數來做為位置編碼之中。利用 <span class="math inline">\(\sin\)</span> 及 <span class="math inline">\(\cos\)</span> 有上下界以及具穩定週期循環的特性，來達成上面的條件。</p>
+<p>倘若使用如下簡單的三角函數位置編碼 :</p>
+<p><span class="math display">\[
+PE_{pos}=\sin(\dfrac{pos}{\alpha})\\
+\text{where }PE_{pos} : \mathbb{Z}\rightarrow[-1,1] 
+\]</span></p>
+<p>雖然可以利用 <span class="math inline">\(\alpha\)</span> 來調節三角函數波長，但仍顯過於單調，且仍然可能造成不同位置具有相同編碼的情況出現。</p>
+<p>因此，為了使整個 Word embedding 的維度是 <span class="math inline">\(d_{model}\)</span>，又希望位置編碼具有一定的複雜性，讓每一個維度都可以用不同的函數來進行編碼，所以論文中將每一個維度都用不同的 <span class="math inline">\(\alpha=10000^{2i/d_{model}}\)</span> 來控制波長，且將 <span class="math inline">\(\sin\)</span> 及 <span class="math inline">\(\cos\)</span> 交替在不同的維度上使用。</p>
+<h4 id="補充-將輸入序列融入位置資訊為何可以用相加而不是直接拼接的方式"><strong>[ 補充 : 將輸入序列融入位置資訊為何可以用相加而不是直接拼接的方式 ? ]</strong></h4>
+<p>在李宏毅教授的 Machine Learning 中，在 Attention 的部分有針對這個地方做解釋，先說結論，其實兩個概念最終會得到相同的結果。</p>
+<p>假設輸入序列向量為 <span class="math inline">\(x^i\)</span> ，而其位置編碼使用最簡單的方式 <span class="math inline">\(p^i=(0,0,\cdots,0,1,0,\cdots,0)\)</span></p>
+<p>從整個矩陣的運算可由下圖清楚了解 :</p>
+<p><img src="https://i.imgur.com/KgdqdW2.png" /></p>
+<p>我們將位置編碼直接與 token 拼接在一起經過線性轉換後的結果，會與token 與位置編碼各自進行線性轉換後再相加的結果相同。</p>
+<h2 id="為什麼是自我注意力機制-why-self-attention">為什麼是自我注意力機制 ? Why Self-Attention ?</h2>
+<p>在這個部分，作者比較了在這個部分，作者將自我注意力機制與遞迴層、卷積層這種常用來對符號序列表徵 <span class="math inline">\((x_1,x_2,\cdots,x_n)\)</span> 映射到另一個相等長度的表徵序列 <span class="math inline">\((z_1,z_2,\cdots,z_n)\)</span> , <span class="math inline">\(x_i,z_i\in\mathbb{R}^n\)</span> 的方式 ， 例如典型 Encoder / Decoder 中的隱藏層 ， 進行比較。</p>
+<p>作者們從三個部份來解釋為什麼要使用自我注意力機制。</p>
+<p><img src="https://i.imgur.com/dd28sYK.png" /></p>
+<ol type="1">
+<li><strong>每層的總計算複雜度</strong></li>
+<li><strong>可平行運算的能力</strong> : 這部分是利用所需序列操作的最少數量來衡量</li>
+<li><strong>網路之間針對遠距離依賴性的路徑長度</strong> : 在許多序列傳導任務中，學習遠距離依賴性是非常關鍵的挑戰之一。而影響學習依賴性的一個關鍵因素是訊號向前向後傳遞所必須經過的路徑長度。輸入與輸出序列中任意位置之間的組合距離越短，將會使得長距離依賴性的學習更加容易。因此在這邊作者們便比較了不同型態網路層所組合成的網路中任意輸入、輸出的位置的最大路徑長度。</li>
+</ol>
+<p>在上表中自我注意力層僅需要 <span class="math inline">\(O(1)\)</span> 的複雜度，也就是固定數量的序列操作就可以連結全部的位置，且當序列長度 <span class="math inline">\(n\)</span> 小於維度 <span class="math inline">\(d\)</span> 時， 這是大多數先進模型在機器翻譯中句型表徵 ( Sentence Representation ) 會常見的情形 ，自我注意力的複雜度也比遞迴層要來的低。</p>
+<p>為了提高極長序列任務的計算能力，可以在自我注意力機制上添加一些限制，例如僅考慮輸入序列中以每個輸出位置為中心，半徑為 <span class="math inline">\(r\)</span> 的鄰域。也就是說，我們不對整個序列進行注意力機制，僅對以 <span class="math inline">\(r\)</span> 為半徑的相鄰位置進行自我注意力。如此一來，便可以增加依賴距離到 <span class="math inline">\(O(n/r)\)</span>，作者們將會在往後的研究中討論這個部分。</p>
+<p>一個 kernel 寬度為 <span class="math inline">\(k&lt;n\)</span> 的單一卷積層，無法連接所有成對的輸入輸出位置。想要這樣做就必須在連續 kernels 中堆疊 <span class="math inline">\(O(n/k)\)</span> 個卷積層，而在擴張卷積 ( Dilated Convolution ) 層中則需要 <span class="math inline">\(O(\log_{k}n)\)</span>。這樣的方式，增加了長距離的依賴性，但卷積層的複雜度也比遞迴層多了 <span class="math inline">\(k\)</span> 倍。雖然，可分離卷積 ( Separable Convolution ) 層將複雜度降低至 <span class="math inline">\(O(k\cdot n\cdot d+n\cdot d^2)\)</span> ，但這樣的複雜度，即使在 <span class="math inline">\(k=n\)</span> 的狀況下，也相當於論文中採用的自我注意力層與全連接層的複雜度相加。</p>
+<p>自我注意力機制另外有附帶的優點，即自我注意力機制可以產生更多的解釋力，讓整個模型的可解釋性增加，在論文的附錄中將會介紹並討論範例。在多頭注意力機制中，每一個 head 不僅可以學習到不同的任務，而且多頭注意力機制似乎可以將句法句型與語意結構進行連結。</p>
+<h2 id="訓練-training">訓練 Training</h2>
+<h3 id="訓練資料與批量-training-data-and-batching">訓練資料與批量 Training Data and Batching</h3>
+<p>論文中對標準 WMT 2014 英-德語言資料集進行訓練，其中包含了大約 450 萬組句子對。使用 Byte-Pair Encoding 對句子進行編碼，其中共享一個約 37000 tokens 的來源-目標詞彙集。對於英-法語言，作者們使用一個更大的 WMT 2014 英-法語言資料集來做訓練，此資料集包含了約 36M 組句子對，且將標註拆成 32000 筆字彙。</p>
+<p>將序列長度相近的句子對視為一組，每一次批量訓練都包含了一組句子對，各包含了約 25000 個來源 tokens 與目標 tokens。</p>
+<h3 id="硬體與時程-hardware-and-schedule">硬體與時程 Hardware and Schedule</h3>
+<p>使用一台具備 8 顆 Nvidia P100 GPU 的電腦進行訓練，對於論文中所設置超參數的基本模型，每一次訓練 ( training step ) 約 0.4 秒，共進行約 100,000 次或 12 小時的訓縣。對於大型模型而言，則每次訓練時間需要約 1.0 秒，一共接受了 300,000 次或約 3.5 天的訓練時間。</p>
+<h3 id="最佳化器-optimizer">最佳化器 Optimizer</h3>
+<p>訓練中所使用的 Optimizer 為 Adam，其參數設置如下 :</p>
+<p><span class="math display">\[
+\beta_1=0.9\\
+\beta_2=0.98\\
+\epsilon=10^{-9}\\
+LR=d_{model}^{-0.5}\cdot\min(step\text{_}num^{-0.5},step\text{_}num\cdot warmup\text{_}steps^{-1.5})
+\]</span></p>
+<p>利用這樣的學習率設置方式，可以在訓練中間根據訓練的狀況不斷調整學習率，先根據 <span class="math inline">\(warmup\text{_}steps\)</span> ( 論文中設置為 4000 ) 線性增加學習率，再經由訓練次數的平方根倒數來降低學習率。</p>
+<h3 id="正規化-regularizer">正規化 Regularizer</h3>
+<p>在整個訓練過程中，一共用了三種正規化方式 :</p>
+<ul>
+<li><strong>Residual Dropout</strong></li>
+</ul>
+<p>在每一個子層的輸出後，Normalization 前都添加 Dropout，此外，在 Encoder 與 Decoder 中，對於 token 與 位置編碼加總的部分也添加 Dropout。 其中， <span class="math inline">\(P_{drop}=0.1\)</span></p>
+<ul>
+<li><strong>Label Smoothing</strong></li>
+</ul>
+<p>訓練中還進行了 <span class="math inline">\(\epsilon_{ls}=0.1\)</span> 的 Label Smothing。雖然這樣會讓整個模型變得更加不穩定，但卻提高了準確度與 BLEU 分數。</p>
+<h2 id="結果-result">結果 Result</h2>
+<h3 id="機器翻譯-machine-translation">機器翻譯 Machine Translation</h3>
+<p>在 WMT 2014 英德語言資料翻譯任務中，大型的 Transformer 模型的表現比先前最佳的模型高了 2.0 BLEU 分數，這締造了 BLEU 的最高 28.4 分紀錄。大型 Transformer 的模型設定可以參考下表 Table 3 ，利用 8 顆 Nvidia P100 GPU 訓練 3.5 天的時間。從結果來看，Transformer 勝過了之前其他的模型及其組合，且訓練成本相較於這些模型來說僅占一小部分。</p>
+<p>在 WMT 2014 英法語言資料翻譯任務中，大型 Transformer 的 BLEU 分數可以高達 41.0，勝過先前發布的任一個模型，而且訓練成本不到這些模型的 1/4。在英法翻譯任務中，所訓練的 Transformer ，其 Dropout 設定為 <span class="math inline">\(P_{drop}=0.1\)</span> ，而非 <span class="math inline">\(0.3\)</span>。</p>
+<p>對於基本的 Transformer 模型來說，作者使用的是最後 5 個 Checkpoints 之平均來得到最終的模型，而對於大型 Transformer ，則是透過最後 20 個 Checkpoint 平均來取得最終模型。而作者們利用 <span class="math inline">\(B=4\)</span> 及 <span class="math inline">\(\alpha=0.6\)</span> 的定向搜尋 ( Beam Search ) ，這些參數的決定是經過實驗後選擇的。在推論的部分，作者們設置了最大輸出長度=輸入長度 <span class="math inline">\(+50\)</span>，但可以提早終止。</p>
+<p>下表總結了實驗的結果，並將 Transformer 與其他的模型架構進行翻譯直向語訓練成本的比較。其中，透過 GPU 數量、訓練時間以及單一 GPU 持續單精度浮點能力 ( Sustained Single-Percision Floating-Point Capacity ) 的估計相乘來估算浮點運算的數量。</p>
+<p><img src="https://i.imgur.com/YMX5gsZ.jpg" /></p>
+<h3 id="模型變體-model-variations">模型變體 Model Variations</h3>
+<p>為了評估 Transformer 各個不同組件的重要性，作者們利用不同的方式改變基本 Transformer ，並在 newatest2013 開發資料集中測量了英德翻譯的變化。使用了前面提到的定向搜索但不進行 Checkpoint 平均，整個結果呈現在下表 Table 3 中。</p>
+<p>在 Table 3 (A) 列中，作者們改變了 Head 數量、Key 與 Value 的大小使其計算量保持不變，儘管單頭注意力機制較多頭注意力機制的表現來的差，但 Head 數量過多時，整個模型質量也會下降。</p>
+<p>在 Table 3 (B) 列中，作者發現當減少 <span class="math inline">\(d_{Key}\)</span> 值會損害模型的質量，這表明了決定相容性函數並非是一件容易的事情，且相較於點積運算更複雜的相容性函數可能會有其益處。在 (C) (D) 列中，可以更進一步的發現，正如期待較大的模型表現會較好，且 Dropout 有助於避免 Overfitting。在 (E) 列中，作者將學習而得的位置編碼以正弦函數來做替換，可以發現結果會與基本 Transformer 的結果幾乎相同。</p>
+<p><img src="https://i.imgur.com/rinckGs.png" /></p>
+<h2 id="結論-conclusion">結論 Conclusion</h2>
+<p>在這篇論文中，提出了 Transformer，這是完全基於注意力機制的第一個序列傳導模型，使用多頭注意力機制代替了 Encoder-Decoder 結構中常用的遞迴層。</p>
+<p>對於翻譯任務，與基於遞迴層或是卷積層的結構相比，可以大大增加 Transformer 的訓練速度，驗 WMT 2014 英德語言資料與 WMT 2014 英法語言資料中，Transformer 都可以達到最佳的表現。在前者中，甚至可以超過所有的模型及其組合模型。</p>
+<p>作者們對於基於注意力機制的模型未來感到興奮，並且計畫將其應用在其他任務中。未來計畫將 Transformer 擴展到非文本以外關於輸入、輸出模式上的問題之中，並且進一步研究局部、受限制的注意力機制來有效的處理更大的輸入、輸出序列，例如圖像、音訊以及影像。另外，讓生成具有較低順序性也是另一個研究的方向之一。</p>
+<h2 id="參考資料-reference">參考資料 Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/46990010">论文解读:Attention is All you need</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/data-scientists-playground/transformer-encoder-mask%E7%AF%87-dc2c3abfe2e">Transformer -encoder mask篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/data-scientists-playground/transformer-decoder-mask%E7%AF%87-77130461cd63">Transformer -decoder mask篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://tobiaslee.top/2018/12/13/Start-from-Transformer/">从 Transformer 说起</a></li>
+<li><a target="_blank" rel="noopener" href="https://kexue.fm/archives/6933">从语言模型到Seq2Seq：Transformer如戏，全靠Mask</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/95079337">transformer的Position encoding的总结</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/347678607/answer/864217252">如何理解Transformer论文中的positional encoding，和三角函数有什么关系？</a></li>
+<li><a target="_blank" rel="noopener" href="https://ai.googleblog.com/2017/08/transformer-novel-neural-network.html">Transformer: A Novel Neural Network Architecture for Language Understanding</a></li>
+<li><a target="_blank" rel="noopener" href="http://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=ugWDIIOHtPA&amp;t=2026s">Hung-yi Lee : Transformer</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/05/13/[%E8%AB%96%E6%96%87]%20Attention%20Is%20All%20You%20Need/" title="[論文] Attention Is All You Need">https://allen108108.github.io/blog/2020/05/13/[論文] Attention Is All You Need/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/05/01/%CF%80%CF%80_pi%20%E7%82%BA%E7%84%A1%E7%90%86%E6%95%B8%E4%B9%8B%E8%AD%89%E6%98%8E/" rel="prev" title="$\pi$ 為無理數之證明">
+                  <i class="fa fa-chevron-left"></i> $\pi$ 為無理數之證明
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/05/29/2020%20%E8%B3%87%E6%96%99%E5%89%B5%E6%96%B0%E6%87%89%E7%94%A8%E7%AB%B6%E8%B3%BD%E5%8F%83%E8%B3%BD%E8%A8%98%E9%8C%84%20(%20%E5%90%AB%E9%A0%92%E7%8D%8E%E5%85%B8%E7%A6%AE%20)/" rel="next" title="2020 資料創新應用競賽參賽記錄 ( 含頒獎典禮 )">
+                  2020 資料創新應用競賽參賽記錄 ( 含頒獎典禮 ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

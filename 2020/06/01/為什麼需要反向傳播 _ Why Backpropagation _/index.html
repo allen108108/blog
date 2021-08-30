@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="反向傳播是現今深度學習中非常重要的一個演算法，利用反向傳播，我們可以用有效率的方式找到損失函數對於權重的梯度，進而利用梯度下降法 ( Gradient Descent ) 來對每一個權重進行優化。梯度下降法在本文不另贅述，有興趣的話可以參考筆者很早寫的一篇簡單介紹 &quot; Gradient descent 梯度下降 &quot;，本文將會簡單介紹整個反向傳播的運作原理，以及到底為什麼我們會需要反向傳播 ?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="為什麼需要反向傳播 ? Why Backpropagation ?">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/06/01/%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%20_%20Why%20Backpropagation%20_/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="反向傳播是現今深度學習中非常重要的一個演算法，利用反向傳播，我們可以用有效率的方式找到損失函數對於權重的梯度，進而利用梯度下降法 ( Gradient Descent ) 來對每一個權重進行優化。梯度下降法在本文不另贅述，有興趣的話可以參考筆者很早寫的一篇簡單介紹 &quot; Gradient descent 梯度下降 &quot;，本文將會簡單介紹整個反向傳播的運作原理，以及到底為什麼我們會需要反向傳播 ?">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/wllk0uc.png">
+<meta property="og:image" content="https://i.imgur.com/pXVrJRl.png">
+<meta property="og:image" content="https://i.imgur.com/vYSMDN2.png">
+<meta property="og:image" content="https://i.imgur.com/GsecI9n.png">
+<meta property="og:image" content="https://i.imgur.com/40iLvCv.png">
+<meta property="og:image" content="https://i.imgur.com/sBMXOoA.png">
+<meta property="og:image" content="https://i.imgur.com/HYx1cxc.png">
+<meta property="og:image" content="https://i.imgur.com/3aKbZhX.png">
+<meta property="article:published_time" content="2020-06-01T05:56:12.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:10:53.386Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/wllk0uc.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/06/01/%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%20_%20Why%20Backpropagation%20_/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/06/01/%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%20_%20Why%20Backpropagation%20_/","path":"2020/06/01/為什麼需要反向傳播 _ Why Backpropagation _/","title":"為什麼需要反向傳播 ? Why Backpropagation ?"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>為什麼需要反向傳播 ? Why Backpropagation ? | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD-backpropagation"><span class="nav-number">1.</span> <span class="nav-text">反向傳播 Backpropagation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E8%99%9F%E5%AE%9A%E7%BE%A9"><span class="nav-number">1.1.</span> <span class="nav-text">符號定義</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%E6%BC%94%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">反向傳播演算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AA%A4%E5%B7%AE%E5%82%B3%E6%92%AD"><span class="nav-number">2.</span> <span class="nav-text">誤差傳播</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E8%A6%81%E7%94%A8%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">為什麼要用反向傳播法 ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#one-simple-example-..."><span class="nav-number">4.</span> <span class="nav-text">One Simple Example ...</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">5.</span> <span class="nav-text">後記</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/06/01/%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%20_%20Why%20Backpropagation%20_/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          為什麼需要反向傳播 ? Why Backpropagation ?
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2020-06-01 13:56:12" itemprop="dateCreated datePublished" datetime="2020-06-01T13:56:12+08:00">2020-06-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-09-06 10:10:53" itemprop="dateModified" datetime="2020-09-06T10:10:53+08:00">2020-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-Deep-Learning/" itemprop="url" rel="index"><span itemprop="name">深度學習 Deep Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/06/01/%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%20_%20Why%20Backpropagation%20_/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/06/01/為什麼需要反向傳播 _ Why Backpropagation _/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>反向傳播是現今深度學習中非常重要的一個演算法，利用反向傳播，我們可以用有效率的方式找到損失函數對於權重的梯度，進而利用梯度下降法 ( Gradient Descent ) 來對每一個權重進行優化。梯度下降法在本文不另贅述，有興趣的話可以參考筆者很早寫的一篇簡單介紹 " <a target="_blank" rel="noopener" href="http://bit.ly/32EPtzi">Gradient descent 梯度下降</a> "，本文將會簡單介紹整個反向傳播的運作原理，以及到底為什麼我們會需要反向傳播 ?</p>
+<span id="more"></span>
+<h2 id="反向傳播-backpropagation">反向傳播 Backpropagation</h2>
+<p>反向傳播最主要的概念，就是將誤差值往回傳遞資訊，使權重可以利用這樣的資訊進行梯度下降法來更新權重，進一步的降低誤差。為什麼要利用這樣的方式來更新權重 ? 在這一個部分筆者暫時先不進行解釋，我們先來了解所謂的反向傳播應該怎麼傳播，最後，利用一個簡單的例子來手推一次反向傳播過程。</p>
+<h3 id="符號定義">符號定義</h3>
+<p><img src="https://i.imgur.com/wllk0uc.png" /></p>
+<p>給定一個 <span class="math inline">\(L\)</span> 層神經網路如上圖所示，輸入層為 <span class="math inline">\(n\)</span> 維，輸出層 <span class="math inline">\(m\)</span> 維，共有 <span class="math inline">\(L\)</span> 層，且任一 <span class="math inline">\(l\)</span> 層中都有 <span class="math inline">\(n_{l}\)</span> 個神經元。為了方便接下來的推導，先定義一個特定的損失函數 :</p>
+<p><span class="math display">\[
+E=\dfrac{1}{2}\sum_{k=1}^m(t_{k}-o_{k})^2=\dfrac{1}{2}\sum_{k=1}^mE_k
+\]</span></p>
+<p>其中，輸出向量維度為 <span class="math inline">\(p\)</span>，<span class="math inline">\(t_i\)</span> 指的是目標向量第 <span class="math inline">\(i\)</span> 維之值，<span class="math inline">\(o_i\)</span> 則是輸出向量第 <span class="math inline">\(i\)</span> 維之值。此外，我們可以針對第 <span class="math inline">\(l\)</span> 層中第 <span class="math inline">\(j\)</span> 個神經元 (上圖紅色神經元) 給出以下符號定義。</p>
+<p><img src="https://i.imgur.com/pXVrJRl.png" /></p>
+<p>前一層中第 <span class="math inline">\(i\)</span> 個神經元與之連結之權重 <span class="math inline">\(w^l_{ij}\)</span>，則此神經元之輸入為</p>
+<p><span class="math display">\[
+net_j^l=\sum_{i=1}^{n^{l-1}}w_{ij}^lf(net_i^{l-1})
+\]</span></p>
+<p>輸出則為 <span class="math inline">\(o_j^l=f(net_{l})\)</span>，其中 <span class="math inline">\(f\)</span> 為神經網路中的 activation function ( 本文假設各層 activation function 均相同 )，此函數的作用可以增加神經網路整體的非線性能力。</p>
+<h3 id="反向傳播演算法">反向傳播演算法</h3>
+<p>從梯度下降的角度進行最佳化，那我們就要想辦法取得每一個</p>
+<p><span class="math display">\[
+\dfrac{\partial E}{\partial w_{ij}^l}
+\]</span></p>
+<p>先看最後一層，這樣的偏微分並不難求得，根據微積分連鎖率 (Chian Rule) :</p>
+<p><span class="math display">\[
+\dfrac{\partial E}{\partial w_{ij}^L}=\dfrac{\partial E}{\partial net_{j}^L}\dfrac{\partial net_{j}^L}{\partial w_{ij}^L}\\=\dfrac{\partial E}{\partial o_j^L}\dfrac{\partial o_j^L}{\partial net_{j}^L}\dfrac{\partial net_{j}^L}{\partial w_{ij}^L}\\
+=\dfrac{\partial}{\partial o_j^L}\Big(\dfrac{1}{2}\sum_{k=1}^m(t_{k}-o_{k})^2\Big)\dfrac{\partial}{\partial net_{j}^L}\Big(f(net_j^{L})\Big)\dfrac{\partial}{\partial w_{ij}^L}\Big(\sum_{k=1}^{n^{L-1}}w_{kj}^Lf(net_k^{L-1})\Big)\\
+=2\cdot\dfrac{1}{2}(t_j-o_j)\cdot f&#39;(net_j^{L})\cdot f(net_i^{L-1})\text{     .............. (1)}
+\]</span></p>
+<p>如果是中間層的話呢 ?</p>
+<p><span class="math display">\[
+\dfrac{\partial E}{\partial w_{ij}^l}=\dfrac{\partial E}{\partial net_{j}^l}\dfrac{\partial net_{j}^l}{\partial w_{ij}^l}\\
+\overset{let}{=}\delta_j^l\dfrac{\partial net_{j}^l}{\partial w_{ij}^l}\\
+=\delta_j^l\cdot f(net_i^{l-1}){     ........ (2)}
+\]</span></p>
+<p>其中</p>
+<p><span class="math display">\[
+\delta_j^l=\dfrac{\partial E}{\partial net_{j}^l}\\
+=\sum_{k=1}^{n^{l+1}}\dfrac{\partial E}{\partial net_{j}^{l+1}}\dfrac{\partial net_{j}^{l+1}}{\partial o_j^{l}}\dfrac{\partial o_j^{l}}{\partial net_{j}^l}\\
+=\sum_{k=1}^{n^{l+1}}\delta_k^{l+1}\cdot w_{jk}^{l+1}\cdot f&#39;(net_j^l)\text{     .............. (3)}
+\]</span></p>
+<p>由 (1) (2) 式中確認了整個梯度的計算方式，只要知道每一個 <span class="math inline">\(net_{i}^l\)</span> ， <span class="math inline">\(w_{ij}^l\)</span> 及 <span class="math inline">\(\delta_k^{l+1}\)</span> 便可找出誤差對每一個權重的偏微分。再由 (3) 式可以知道，任一個 <span class="math inline">\(\delta_j^l\)</span> 均可由 <span class="math inline">\(\delta^{l+1},\delta^{l+2},\cdots ,\delta^{L}\)</span> 計算出來。因此我們將整個反向傳播法 Backpropagation 分成兩個步驟進行 :</p>
+<ul>
+<li><p>前向傳播 Forward Pass 輸入向量 <span class="math inline">\(x_1,x_2,\cdots,x_n\)</span> 計算出每一層中每一個神經元的 <span class="math inline">\(net_i^l\)</span> 以及相對應的權重 <span class="math inline">\(w_{ij}^l\)</span></p></li>
+<li><p>反向傳播 Backward Pass 前向傳播後所計算出來的 <span class="math inline">\(E\)</span> 計算出最後一層的 <span class="math inline">\(\delta^L\)</span> 後開始往前退算出所有的 <span class="math inline">\(\delta\)</span></p></li>
+</ul>
+<p>經由前後向傳播得到的值便可以計算出整個梯度，再來利用梯度下降法來更新梯度。</p>
+<p><span class="math display">\[
+w_{ij}^l \longleftarrow w_{ij}^l-\eta\cdot \dfrac{\partial E}{\partial w_{ij}^l}
+\]</span></p>
+<h2 id="誤差傳播">誤差傳播</h2>
+<p>再許多的反向傳播部落格文章中，甚至 Sepp Hochreiter 提出的 LSTM 論文 " <a target="_blank" rel="noopener" href="https://www.bioinf.jku.at/publications/older/2604.pdf"><em>LONG SHORT-TERM MEMORY</em></a> " 中都有提及反向傳播法的概念可以視為是一個「誤差傳播」的方式。但是究竟誤差是怎麼傳播的呢 ?</p>
+<p>要知道傳播的方式，我們先定義 <span class="math inline">\((t_j-o_j)=\delta_j^L\)</span>，那麼 :</p>
+<p><span class="math display">\[
+\dfrac{\partial E}{\partial w_{ij}^L}=\delta_j^L\cdot f&#39;(net_j^{L})\cdot f(net_i^{L-1})
+\]</span></p>
+<p><span class="math display">\[
+\dfrac{\partial E}{\partial w_{ij}^{L-1}}=\delta_j^{L-1}\cdot f(net_i^{L-2})=\sum_{k=1}^{n^{L}}\delta_k^{L}\cdot w_{jk}^{L}\cdot f&#39;(net_j^{L-1})\cdot f(net_i^{L-2})
+\]</span></p>
+<p><span class="math display">\[
+\dfrac{\partial E}{\partial w_{ij}^{L-2}}=\delta_j^{L-2}\cdot f(net_i^{L-3})=\sum_{k=1}^{n^{L-1}}\delta_k^{L-1}\cdot w_{jk}^{L-1}\cdot f&#39;(net_j^{L-2})\cdot f(net_i^{L-3})
+\]</span></p>
+<p><span class="math display">\[
+\vdots
+\]</span></p>
+<p>從上面的式子來看，都必須先計算出後面一層的 <span class="math inline">\(\delta\)</span> 乘上相對應的權重才能得到誤差函數對每一層權重的偏微分，如果我們把 <span class="math inline">\(\delta\)</span> 放進神經網路圖中，就可以看出其「傳遞」的模式了</p>
+<p><img src="https://i.imgur.com/vYSMDN2.png" /></p>
+<p>從這樣的傳遞方式，也更可以理解反向傳播法其實就是「誤差反向傳播法」，藉由誤差乘以權重的傳遞，來計算出梯度。</p>
+<h2 id="為什麼要用反向傳播法">為什麼要用反向傳播法 ?</h2>
+<p>最直覺的一個問題是，<strong>為什麼不直接計算梯度</strong> 就好 ? 如果我們能寫出整個誤差函數，要寫出誤差對每一層權重的偏導函數，當然不是問題，但是如果今天的整個神經網路長成這樣的話呢 ?</p>
+<p><img src="https://i.imgur.com/GsecI9n.png" /> (圖片來源 : <a target="_blank" rel="noopener" href="https://twitter.com/karpathy/status/597631909930242048?lang=en">Andrej Karpathy's Twitter</a>)</p>
+<p>我想，瘋了才會想要把整個誤差函數寫出來吧。</p>
+<p>再者，當我們想要針對每一個權重進行偏微分計算的時候，在計算過程中，會有許多部分會被重複計算到，如果今天整個網路結構如上圖般複雜，那麼這樣造成的計算冗餘將會十分驚人。</p>
+<p>對於電腦而言，反向傳播法之所以能夠至今屹立不搖，說穿了，就是讓電腦更有效率的利用微積分的鏈鎖率來進行梯度的計算。下面我們用一個簡單的例子來實際進行反向傳播的計算，或許能夠更深刻理解其效率。</p>
+<h2 id="one-simple-example-...">One Simple Example ...</h2>
+<p>我們假定有一個兩層的神經網路，輸入維度為 3 ，輸出維度為 2 ，並為了簡化討論過程，筆者使用一個簡單的線性函數 <span class="math inline">\(f(x)=x\)</span> 作為 Activation Function。</p>
+<p>現有一筆資料 <span class="math inline">\(x = (x_1,x_2,x_3) = (1,9,3)\)</span>，其真實標註為 <span class="math inline">\(y = (-183, 160)\)</span>，一開始神經網路隨機初始化所有連結權重，我們便可以先進行一次前向傳播，計算出誤差訊號 <span class="math inline">\(\delta_1^2\)</span> 及 <span class="math inline">\(\delta_1^2\)</span>。</p>
+<p><img src="https://i.imgur.com/40iLvCv.png" /></p>
+<p>之後，我們可以開始傳播這個誤差訊號，並且利用前向傳播的資訊加上誤差訊號的傳播，計算出第二層的權重偏微分。</p>
+<p><img src="https://i.imgur.com/sBMXOoA.png" /></p>
+<p>接著，我們利用前向傳播的權重傳遞下一個誤差訊號至第一層</p>
+<p><img src="https://i.imgur.com/HYx1cxc.png" /></p>
+<p>當然也就可以藉此計算出第一層的權重偏微分</p>
+<p><img src="https://i.imgur.com/3aKbZhX.png" /></p>
+<p>這個例子，筆者僅推導一小部分的偏微分以及誤差訊號，但是其他的部分都是用相同的方式進行計算，有興趣的讀者可以自己手動計算看看。</p>
+<h2 id="後記">後記</h2>
+<p>在學習深度學習的過程中，必然熟悉 『梯度下降法』 與 『反向傳播法』這兩個詞彙，但大多數人一開始大多僅止於概念上的理解，但對於實際上的運作以及真正的意義上卻不見得那麼深刻的體會，當然，筆者就是屬於這樣的人。</p>
+<p>經過一段時間的自學以及實際開發專案後，總會希望自己的學習更加踏實，便開始思考，要怎麼對於這些基本概念更加熟悉，便有了這篇文章，雖然從第一次聽見 『反向傳播』這個名詞直到完成這篇文章，中間隔了非常久的時間，但是，這段時間中的經驗、思考以及淬鍊，讓我在審視這些基本觀念時，變得更加清晰。</p>
+<p>或許，當我們前進到一個階段時，不妨回頭看看，這中間聽過的、看過的，自己究竟了解多少，筆者認為，這樣的不斷審視自己，更能了解自己學習的盲點。</p>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/27239198?rf=24827633">如何直观地解释 backpropagation 算法？</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/40761721">反向传播算法</a></li>
+<li><a target="_blank" rel="noopener" href="http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html">Principles of training multi-layer neural network using backpropagation</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.yani.io/deltarule/">Backpropagation Derivation - Delta Rule</a></li>
+<li>Raul Rojas. (2013). "<a target="_blank" rel="noopener" href="https://page.mi.fu-berlin.de/rojas/neural/neuron.pdf"><em>Neural Networks : A Systematic Introduction</em></a>". Springer Science &amp; Business Media.</li>
+<li>Hsuan-Tien Lin. (2017)."<em><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=fFSi5I3OLtk&amp;feature=youtu.be">Machine Learning Techniques : neural network</a></em>" from National Taiwan University .</li>
+<li>Fei-Fei Li, Justin Johnson &amp; Serena Yeung. (2017). "<em><a target="_blank" rel="noopener" href="http://cs231n.stanford.edu/2017/">CS231n: Convolutional Neural Networks for Visual Recognition.</a></em>" Spring, 2017, from Stanford University.</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/06/01/%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%20_%20Why%20Backpropagation%20_/" title="為什麼需要反向傳播 ? Why Backpropagation ?">https://allen108108.github.io/blog/2020/06/01/為什麼需要反向傳播 _ Why Backpropagation _/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/05/29/2020%20%E8%B3%87%E6%96%99%E5%89%B5%E6%96%B0%E6%87%89%E7%94%A8%E7%AB%B6%E8%B3%BD%E5%8F%83%E8%B3%BD%E8%A8%98%E9%8C%84%20(%20%E5%90%AB%E9%A0%92%E7%8D%8E%E5%85%B8%E7%A6%AE%20)/" rel="prev" title="2020 資料創新應用競賽參賽記錄 ( 含頒獎典禮 )">
+                  <i class="fa fa-chevron-left"></i> 2020 資料創新應用競賽參賽記錄 ( 含頒獎典禮 )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/06/06/%E6%89%8B%E9%83%A8%E9%97%9C%E9%8D%B5%E9%BB%9E%20(Hand%20Keypoints)%20%E7%9A%84%E9%A0%90%E6%B8%AC%E5%8F%8A%E5%85%B6%E6%87%89%E7%94%A8/" rel="next" title="手部關鍵點 (Hand Keypoints) 的預測及其應用">
+                  手部關鍵點 (Hand Keypoints) 的預測及其應用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

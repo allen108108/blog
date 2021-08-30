@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="概要 Abstrct 當深度逐漸增加，神經網路的訓練就會越來越困難。在這篇論文中，作者們提出了一個殘差學習 (residual Learning) 框架來使極深層的網路結構訓練變得更簡單。原本神經網路中的層 (layer) 目的在學習出一個未知的函數，研究團隊則根據輸入來將其目的改成學習一個殘差函數。論文中許多的實驗證明了無論在 ImageNet,CIFAR-10 或是 COCO 資料集上，這樣">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[論文] Deep Residual Learning for Image Recognition">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/29/[%E8%AB%96%E6%96%87]%20Deep%20Residual%20Learning%20for%20Image%20Recognition/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="概要 Abstrct 當深度逐漸增加，神經網路的訓練就會越來越困難。在這篇論文中，作者們提出了一個殘差學習 (residual Learning) 框架來使極深層的網路結構訓練變得更簡單。原本神經網路中的層 (layer) 目的在學習出一個未知的函數，研究團隊則根據輸入來將其目的改成學習一個殘差函數。論文中許多的實驗證明了無論在 ImageNet,CIFAR-10 或是 COCO 資料集上，這樣">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/uiZKSUo.png">
+<meta property="og:image" content="https://i.imgur.com/Xo67I5n.png">
+<meta property="og:image" content="https://i.imgur.com/a1eMhwP.png">
+<meta property="og:image" content="https://i.imgur.com/TNwzuNP.png">
+<meta property="og:image" content="https://i.imgur.com/600joXK.png">
+<meta property="og:image" content="https://i.imgur.com/7fDJQwO.png">
+<meta property="og:image" content="https://i.imgur.com/X7Oj5Bv.png">
+<meta property="article:published_time" content="2019-10-29T00:25:14.000Z">
+<meta property="article:modified_time" content="2020-07-28T00:54:09.466Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/uiZKSUo.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/29/[%E8%AB%96%E6%96%87]%20Deep%20Residual%20Learning%20for%20Image%20Recognition/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/29/[%E8%AB%96%E6%96%87]%20Deep%20Residual%20Learning%20for%20Image%20Recognition/","path":"2019/10/29/[論文] Deep Residual Learning for Image Recognition/","title":"[論文] Deep Residual Learning for Image Recognition"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[論文] Deep Residual Learning for Image Recognition | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%A6%81-abstrct"><span class="nav-number">1.</span> <span class="nav-text">概要 Abstrct</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B0%A1%E4%BB%8B-introduction"><span class="nav-number">2.</span> <span class="nav-text">簡介 Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E9%97%9C%E5%B7%A5%E4%BD%9C-related-work"><span class="nav-number">3.</span> <span class="nav-text">相關工作 Related Work</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#residual-representations"><span class="nav-number">3.1.</span> <span class="nav-text">Residual Representations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shortcut-connections"><span class="nav-number">3.2.</span> <span class="nav-text">Shortcut Connections</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E6%AE%98%E5%B7%AE%E5%AD%B8%E7%BF%92-deep-residual-learning"><span class="nav-number">4.</span> <span class="nav-text">深度殘差學習 Deep Residual Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#residual-learning"><span class="nav-number">4.1.</span> <span class="nav-text">Residual Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#identity-mapping-by-shortcuts"><span class="nav-number">4.2.</span> <span class="nav-text">Identity Mapping by Shortcuts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#network-architectures"><span class="nav-number">4.3.</span> <span class="nav-text">Network Architectures</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E7%B6%B2%E8%B7%AF-plain-network"><span class="nav-number">4.3.1.</span> <span class="nav-text">一般網路 Plain Network</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AE%98%E5%B7%AE%E7%B6%B2%E8%B7%AF-residual-network"><span class="nav-number">4.3.2.</span> <span class="nav-text">殘差網路 Residual Network</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B7%E9%AB%94%E5%AF%A6%E7%8F%BE-implementation"><span class="nav-number">4.4.</span> <span class="nav-text">具體實現 Implementation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%A6%E9%A9%97-experiment"><span class="nav-number">5.</span> <span class="nav-text">實驗 Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">6.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">7.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/29/[%E8%AB%96%E6%96%87]%20Deep%20Residual%20Learning%20for%20Image%20Recognition/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [論文] Deep Residual Learning for Image Recognition
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-29 08:25:14" itemprop="dateCreated datePublished" datetime="2019-10-29T08:25:14+08:00">2019-10-29</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-07-28 08:54:09" itemprop="dateModified" datetime="2020-07-28T08:54:09+08:00">2020-07-28</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-Convolutional-Neural-Network/" itemprop="url" rel="index"><span itemprop="name">卷積神經網路 Convolutional Neural Network</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/29/%5B%E8%AB%96%E6%96%87%5D%20Deep%20Residual%20Learning%20for%20Image%20Recognition/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/29/[論文] Deep Residual Learning for Image Recognition/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="概要-abstrct">概要 Abstrct</h2>
+<p>當深度逐漸增加，神經網路的訓練就會越來越困難。在這篇論文中，作者們提出了一個殘差學習 (residual Learning) 框架來使極深層的網路結構訓練變得更簡單。原本神經網路中的層 (layer) 目的在學習出一個未知的函數，研究團隊則根據輸入來將其目的改成學習一個殘差函數。論文中許多的實驗證明了無論在 ImageNet,CIFAR-10 或是 COCO 資料集上，這樣的方式可以使網路更容易被優化，而且可以得到更好的表現。</p>
+<span id="more"></span>
+<h2 id="簡介-introduction">簡介 Introduction</h2>
+<p>Deep CNN 引領了圖像分類一系列的突破，深層網路整合了低/中/高級特徵進入一個 end2end 分類器，而藉由層堆疊可以使這些層級的特徵更加豐富、多元。近來的許多研究也指出「深度」是非常重要的因素，許多優異的研究成果都建築在極深層的網路結構下。</p>
+<p>既然深度如此重要，那麼便沿生出另外一個問題 : 「網路的學習是否跟增加深度一樣的簡單 ?」，從最常見的梯度消失/爆炸情狀況來看顯然並非如此。要解決這樣的問題就必須從層的 Normalized Initialization 以及 Intermediate Normalization 來做，而這些方法可以使較深層的網路結構在隨機梯度下降 ( Stochastic Gradient Descent, SGD ) 及反向傳播法 ( Backpropagation, BP )下收斂。</p>
+<p>但是當深層網路開始收斂時，退化 (degradation) 問題就會開始出現。</p>
+<p><img src="https://i.imgur.com/uiZKSUo.png" /></p>
+<p>當深度逐漸增加，準確度卻開始出現飽和，而且退化迅速。這樣的退化問題並非來自於 overfitting，而是因為深度增加連帶著使得 training error 增加所致。</p>
+<p>退化問題指出了並不是所有的網路結構都可以容易被優化的。我們假設手上有一個淺層網路結構。利用這個淺層結構再多加幾層恆等映射層 (identity mapping layers) 形成一個更深層的網路結構，我們可以確定，這一個深層結構的表現其實是和淺層結構的表現一樣的，也不會多增加 training error。但經由實驗發現，深層網路經過訓練後，根本無法逼近于恆等映射。</p>
+<p>這裡可能有點難理解，我拿上圖左的例子來說好了。</p>
+<p>20層的網路結構是黃綠色的那條線，照理來說，56層的網路結構只要後面的36層通通是恆等映射就可以讓整個網路表現跟 20 層的表現一樣好，但是實驗卻發現，經過訓練我們根本無法達到這樣的狀態，也就是說，要讓一個網路經由學習逼近成恆等映射是幾乎不太可能的事情。( 可能是因為深層網路參數量太大導致難以優化到極致 )</p>
+<p>我們都知道可以將一個網路結構視為一個函數 <span class="math inline">\(\mathcal{H}(\mathbb{x})\)</span> ( 忽略 activation function 的情況下 )</p>
+<p>從上面的討論來看，希望訓練後 <span class="math inline">\(\mathcal{H}(\mathbb{x})\rightarrow \mathbb{x}\)</span> 這樣子的逼近似乎很困難，那試試看 <span class="math inline">\(\mathcal{H}(\mathbb{x})-\mathbb{x}\rightarrow 0\)</span> 如何 ? 我們將網路結構從 <span class="math inline">\(\mathcal{H}(\mathbb{x})\)</span> 轉變成 <span class="math inline">\(\mathcal{F}(\mathbb{x})=\mathcal{H}(\mathbb{x})-\mathbb{x}\)</span> 如何 ?</p>
+<p>實驗結果，這樣的逼近變得簡單，應用在數百層的網路結構中也不會有上述退化的狀況。</p>
+<p>我們將這樣的型態 <span class="math inline">\(\mathcal{F}(\mathbb{x})=\mathcal{H}(\mathbb{x})-\mathbb{x}\)</span> 稱為 residual mapping，經過訓練後，我們可以發現這樣的 residual mapping　變得更容易優化，極端的狀況，可以將 residual 通通趨近到 0，也就是達到我們一直想要的目標 「將整個網路結構趨近於 identity mapping」。</p>
+<p><strong>[補充]</strong></p>
+<p>這裡我想補充兩個部分是論文中沒有提到的，residual mapping 其實衍生兩個問題 :</p>
+<ol type="1">
+<li>為什麼 <span class="math inline">\(\mathcal{F}(\mathbb{x})=\mathcal{H}(\mathbb{x})-\mathbb{x}\)</span> 會比較容易優化 ?</li>
+<li>利用這樣的 residual mapping 我們可以讓網路結構趨近於恆等映射，那不也只是代表整體網路的 performance 可以表現得跟淺層網路 「一樣好」，為何實驗結果可以更優於 「淺層網路」 ?</li>
+</ol>
+<p>關於第一個問題，有人提出的想法是 <span class="math inline">\(\mathcal{H}(\mathbb{x})\rightarrow \mathbb{x}\)</span> 這樣的優化，箭頭的兩端都含有未知數，也就是同時兩端都在更新，所以這樣的狀態下要達到平衡是困難的，相反的，<span class="math inline">\(\mathcal{F}(\mathbb{x})=\mathcal{H}(\mathbb{x})-\mathbb{x}\rightarrow 0\)</span> 是將整個函數經過不斷調整至一個 constant，相對來說較容易達到平衡狀態。</p>
+<p>而第二個問題，可以利用下圖來解釋 :</p>
+<p><img src="https://i.imgur.com/Xo67I5n.png" /></p>
+<p>事實上整個 shortcut connections 擴大了解空間 ( solution space )，讓更優解變的可能，因此，整個模型的表現便不限制只會趨近於淺層網路，更可能找到更好的解。</p>
+<p>Residual mapping 我們也可以藉由網路結構的變更來實現</p>
+<p><img width=500 src="https://i.imgur.com/a1eMhwP.png" ></p>
+<p>旁邊這一條稱之為 "Identity Shortcut connection" ，作用在於讓信息可以跨過數層往下傳遞，這樣的設計不須額外的參數也不會增加計算複雜度，且可以使用一般的 Library 利用 SGD 來進行 BP，而不需修改 solver。</p>
+<p>論文中利用 Residual Network 針對 ImageNet、CIFAR-10、COCO dataset 上進行實驗都能取得相當好的表現，尤其在 ImageNet 上深度達到 152 層的 Residual Net 不僅表現上優於 VGG Net，整個複雜度也較 VGG Net 還要低，這些都顯示了 Residual Learning 在各種任務上的通用性。</p>
+<h2 id="相關工作-related-work">相關工作 Related Work</h2>
+<h3 id="residual-representations">Residual Representations</h3>
+<p>VLAD ( Vector of Locally Aggregated Descriptors )，是一種圖像的特徵表示法<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>，而 Fisher Vector 則可視為 VLAD 的機率版本，這兩種方式是圖像檢索及分類非常有用的表示法。</p>
+<p>而偏微分方程的求解是低層次電腦視覺及電腦圖像上經常使用的方法，其中多重網格法 ( Multigrid method ) 將多尺度任務切成子問題，每一個子問題都可以視為求解大小尺度間的殘差解 ( residual solution ) 。</p>
+<p>另一個取代多重網格法的方法是層級基底預處理 ( Hierarchical Basis Preconditioning )，這樣的方式依賴兩個尺度間殘差向量的變量。</p>
+<p>不管是上述哪一個方法，都被證明其收斂速度比其他不依賴殘差性質的方法來的快，且這樣子的預處理都可以簡化優化過程。</p>
+<h3 id="shortcut-connections">Shortcut Connections</h3>
+<p>Shortcut Connection 這樣的方法已經經過了很長一段時間的實作及理論研究過程。早期的多層感知器 ( Multilayer perceptrons, MLPs ) 在輸入、輸出中間接上線性層 ; 一些研究中於中間層接上輔助分類器 ( auxiliary classifier ) 來避免梯度消失/爆炸的狀況 ; 也有一些研究利用了 Shortcut Connection 來集中層響應 ( layer responces )、梯度以及誤差傳導 ; 在知名的 "Inception" 架構中也是由各分支、shortcut 分支所組成。</p>
+<p>在論文 " Highway Network " 中將 Shortcut Connection 與 gate 機制結合。與 Residual Net 不同的地方在於，Highway Net 的 gate 會由輸入控制，也因而會產生參數，但 Residual Net 完全由 identity shortcut connections 來進行跨層的信息傳輸，並不會產生任何參數，不像 Highway Net，這樣的 shortcut connections 永遠不會被關閉。</p>
+<p>因此在深層網路結構下， Residual Net 可以有效提升模型的表現，而 Highwat Net 並沒有辦法在極深層網路上有夠好的表現。</p>
+<h2 id="深度殘差學習-deep-residual-learning">深度殘差學習 Deep Residual Learning</h2>
+<h3 id="residual-learning">Residual Learning</h3>
+<p>如果把 <span class="math inline">\(\mathbb{x}\)</span> 視為輸入層，我們可以將數層 ( 局部結構，不一定是整個網路結構 )視作是一個函數 <span class="math inline">\(\mathcal{H}(\mathbb{x})\)</span>，這樣的假設在前面我們已經有提過 ( 但其實在論文 "<em>On the number of linear regions of deep neural networks.</em>" 中有提到，這樣的假設仍然是一個 open question )，那也等同於這些層我們可以用另外一個函數來代替 <span class="math inline">\(\mathcal{F}(\mathbb{x})=\mathcal{H}(\mathbb{x})-\mathbb{x}\)</span>，則原來的函數則為</p>
+<p><span class="math display">\[
+\mathcal{H}(\mathbb{x})=\mathcal{F}(\mathbb{x})+\mathbb{x}
+\]</span></p>
+<p><img src="https://i.imgur.com/TNwzuNP.png" /></p>
+<p>從數學式來看這兩個形式可以說是等價的，但是就機器學習的角度來看，學習過程可能大不相同。</p>
+<p>這樣的重構是因為違反直覺的退化問題發生而激發的想法。前面我們提過，如果多餘的層通通是恆等映射，那麼整個深層模型的表現應該不會比淺層模型還要差，然而退化問題指出事實上這些多出來的非線性層根本很難去逼近恆等映射。而換個方式利用殘差學習，反而容易讓殘差去趨近於 0，讓整個函數去逼近恆等映射。</p>
+<p><img src="https://i.imgur.com/600joXK.png" /></p>
+<p>上圖是利用 CIFAR-10 針對各層做 Batch Nprmalization 之後的輸出值，可以觀察到 ResNet 在各層的標準差 ( Standard deviations, std ) 都比一般網路 ( plain Net ) 來的低，這說明了各層的輸出都更集中在 0 附近，也就是最優解會更接近恆等映射而非零映射。</p>
+<h3 id="identity-mapping-by-shortcuts">Identity Mapping by Shortcuts</h3>
+<p>在論文中，作者們對數個層的堆疊做殘差學習，這些堆疊的層我們可以視為一個一個的 build block，可用一個函數表示為</p>
+<p><span class="math display">\[
+\mathbb{y}=\mathcal{H}(\mathbb{x})=\mathcal{F}(\mathbb{x}, \{W_i\})+\mathbb{x}
+\]</span></p>
+<p>從論文一開始兩層的 build block 來看，可以將各個輸出計算出來 (忽略 bias以簡化運算)</p>
+<p><img src="https://i.imgur.com/7fDJQwO.png" /></p>
+<p>其中 <span class="math inline">\(\sigma\)</span> 代表的是 ReLU 函數，最後透過一個 element-wise 的加法，再通過一個 ReLU 函數</p>
+<p><span class="math display">\[
+\mathbb{y}=W_2\cdot\sigma(W_1\mathbb{x})+\mathbb{x}\\
+\sigma(\mathbb{y})=\sigma(W_2\cdot\sigma(W_1\mathbb{x})+\mathbb{x})
+\]</span></p>
+<p>從 shortcut connection 可以看出來，我們並沒有增加任何的參數，當然也不會增加任何的計算複雜度，這樣的結構在實踐上是非常吸引人的，也因為參數量沒有增加，我們可以公平的與相同參數的網路結構做比較。</p>
+<p>然而，shortcut connection 有一個問題，就是在輸入與輸出向量必須具有相同的維度才能進行 element-wise 的加法運算，為了解決這樣的問題，論文內的解決方法是在 shortcut connection 上乘上一個投影矩陣 <span class="math inline">\(W_s\)</span> 來對 <span class="math inline">\(\mathbb{x}\)</span> 做維度的調整。</p>
+<p><span class="math display">\[
+\mathbb{y}=\mathcal{F}(\mathbb{x}, \{W_i\})+W_s\mathbb{x}
+\]</span></p>
+<p>當然，我們可以在一開始所有的 shortcut connection 上都呈上一個 <span class="math inline">\(W_s\)</span>，但是基本上單純的恆等映射已經可以處理退化問題，實在無須多增加參數，因此僅在調整維度上才會使用 <span class="math inline">\(W_s\)</span>。</p>
+<p>我們要對多少層進行堆疊並加上 shortcut connection 均可，<span class="math inline">\(\mathcal{F}\)</span> 是很彈性的，但是在實驗上可以看出，如果只對單一層做 shortcut connection，Residual Net 並沒有特別好的表現。</p>
+<p>雖然上面的舉例都是使用全連接層，但事實上這可以適用在卷積層上也沒有問題。<span class="math inline">\(\mathcal{F}(\mathbb{x}, W_i)\)</span> 可以用來表徵多個卷積層，而 element-wise 加法則是針對兩個 feature maps 來進行。</p>
+<h3 id="network-architectures">Network Architectures</h3>
+<p>研究團隊針對各種一般網路以及殘差網路架構進行實驗，觀察到一些一致性的現象，以下我們描述兩種應用在 ImageNet 的網路架構以供後續討論</p>
+<h4 id="一般網路-plain-network">一般網路 Plain Network</h4>
+<p>論文中的一般普通的網路架構來自於 VGG Net。</p>
+<ul>
+<li>具有 <span class="math inline">\(3\times 3\)</span> filters 的卷積層，且 stride 為 2</li>
+<li>feature map 尺寸相同者，filter 數量均相同</li>
+<li>feature map 尺寸減半者，filter 數量加倍以確保時間複雜度不變。</li>
+<li>最後接上一個全局平均池化層 (Global Average Pooling Layer) 以及一個 1000 個類別，以 Softmax 為 activation function 的全連接層分類器。</li>
+<li>含有參數的層數為34。</li>
+</ul>
+<h4 id="殘差網路-residual-network">殘差網路 Residual Network</h4>
+<p>基於上述一般網路架構，我們加入 Shortcut connections，轉換成殘差網路架構。</p>
+<ul>
+<li>輸入與輸出尺寸相同時，直接使用 Shortcut connections (下圖實線 Shortcut connection)</li>
+<li>輸出尺寸增加時，我們利用兩種方式來解決維度不同的問題，並後續進行實驗比較 : (1)增加的維度利用 zero-padding 來處理 (2)利用投影矩陣來進行維度調整</li>
+</ul>
+<p><img src="https://i.imgur.com/X7Oj5Bv.png" /></p>
+<h3 id="具體實現-implementation">具體實現 Implementation</h3>
+<p>此論文遵循著 " <em>Imagenet Classification with Deep Convolutional Neural Networks</em> " 以及 " <em>Very deep convolutional networks for large-scale image recognition.</em> " 兩篇論文來進行網路架構的實現。</p>
+<ul>
+<li>從 <span class="math inline">\([256,480]\)</span> 中隨機抽取進行尺寸增強</li>
+<li>針對圖像或其翻轉後之圖像隨機選取 <span class="math inline">\(224\times 224\)</span> 區域進行資料增強，並同時將每一個 pixel 減去所有 pixel 之平均值。</li>
+<li>進行標準顏色增強。</li>
+<li>Activation function 之前進行 Batch Normalization</li>
+<li>從 zero-mean 且 high variance 的分佈中對權重進行初始化，以確保神經元能夠有正 input 使學習可以繼續。</li>
+<li>Batch size = 256</li>
+<li>Learning Rate = 0.1</li>
+<li>Weight Decay 正則化 = 0.0001</li>
+<li>momentum = 0.9</li>
+<li>不使用 dropout</li>
+</ul>
+<p>在測試資料上，為了可以進行比較，採取了</p>
+<ul>
+<li>標準 10-crop 測試</li>
+<li>全卷積型態</li>
+<li>針對 <span class="math inline">\(\{224,256,386,480,640\}\)</span> 這些尺寸( 短邊 )上計算平均分數</li>
+</ul>
+<h2 id="實驗-experiment">實驗 Experiment</h2>
+<p>( 依照慣例省略，有興趣者請直接參閱論文 )</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/53224378">resnet（残差网络）的F（x）究竟长什么样子？</a></li>
+<li><a target="_blank" rel="noopener" href="http://mrulafi.blogspot.com/2016/03/aggregating-local-descriptors-into.html">【論文筆記】《Aggregating local descriptors into a compact image represenatation》</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36022126">Image Retrieval之VLAD</a></li>
+</ol>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>VLAD 的概念是 2015年的論文 "<em>Aggregating local descriptors into a compact image representation</em>" 中提出的概念，結合了 BOF (Bag of features) 與 Fisher Kernel 的優點，利用 k-means 對特徵子 (descriptor) 進行 clustering，並找出中心作為 visual word。VLAD 不僅利用 visual word 來代替特徵子，而且同時記錄下每個特徵子與中心的距離，一方面達到圖像特徵表示方式的優化，另一方面也可以使圖像特徵的降維及檢索的優化變得更容易。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/29/[%E8%AB%96%E6%96%87]%20Deep%20Residual%20Learning%20for%20Image%20Recognition/" title="[論文] Deep Residual Learning for Image Recognition">https://allen108108.github.io/blog/2019/10/29/[論文] Deep Residual Learning for Image Recognition/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/24/Chapter%203%20%E2%80%93%20Graph%20(%203%20)/" rel="prev" title="Chapter 3 -- Graph ( 3 )">
+                  <i class="fa fa-chevron-left"></i> Chapter 3 -- Graph ( 3 )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/29/Generative%20Adversarial%20Network%20(2)%20%E2%80%94%20Conditional%20GAN/" rel="next" title="Generative Adversarial Network (2) --- Conditional GAN">
+                  Generative Adversarial Network (2) --- Conditional GAN <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

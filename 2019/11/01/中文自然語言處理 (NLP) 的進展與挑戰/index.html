@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="時間 : 2019.10.31 地點 : 台灣大學德田館 103 教室 主講者 : 馬偉雲博士">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中文自然語言處理 (NLP) 的進展與挑戰">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/11/01/%E4%B8%AD%E6%96%87%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86%20(NLP)%20%E7%9A%84%E9%80%B2%E5%B1%95%E8%88%87%E6%8C%91%E6%88%B0/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="時間 : 2019.10.31 地點 : 台灣大學德田館 103 教室 主講者 : 馬偉雲博士">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/P70R3I8.png">
+<meta property="og:image" content="https://i.imgur.com/49XotY6.png">
+<meta property="og:image" content="https://i.imgur.com/6N5x3Sq.jpg">
+<meta property="og:image" content="https://i.imgur.com/jo8HQuw.png">
+<meta property="og:image" content="https://i.imgur.com/HNX8Lts.jpg">
+<meta property="og:image" content="https://i.imgur.com/dov1e1i.jpg">
+<meta property="og:image" content="https://i.imgur.com/aC2b0sV.jpg">
+<meta property="og:image" content="https://i.imgur.com/gLorwH2.jpg">
+<meta property="og:image" content="https://i.imgur.com/Zs07aSX.jpg">
+<meta property="og:image" content="https://i.imgur.com/pyrJPtl.jpg">
+<meta property="article:published_time" content="2019-11-01T03:53:09.000Z">
+<meta property="article:modified_time" content="2019-11-01T04:27:50.491Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/P70R3I8.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/11/01/%E4%B8%AD%E6%96%87%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86%20(NLP)%20%E7%9A%84%E9%80%B2%E5%B1%95%E8%88%87%E6%8C%91%E6%88%B0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/11/01/%E4%B8%AD%E6%96%87%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86%20(NLP)%20%E7%9A%84%E9%80%B2%E5%B1%95%E8%88%87%E6%8C%91%E6%88%B0/","path":"2019/11/01/中文自然語言處理 (NLP) 的進展與挑戰/","title":"中文自然語言處理 (NLP) 的進展與挑戰"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>中文自然語言處理 (NLP) 的進展與挑戰 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E7%A0%94%E9%99%A2%E8%A9%9E%E5%BA%AB%E5%B0%8F%E7%B5%84ckip"><span class="nav-number">1.</span> <span class="nav-text">中研院詞庫小組(CKIP)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nlp%E7%B0%A1%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">NLP簡介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nlu-natural-language-understanding-nlg-natural-language-genration"><span class="nav-number">2.1.</span> <span class="nav-text">NLU (Natural Language understanding) &amp; NLG (Natural Language Genration)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#difficulty"><span class="nav-number">2.2.</span> <span class="nav-text">Difficulty</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nlp-%E9%80%B2%E5%B1%95"><span class="nav-number">3.</span> <span class="nav-text">NLP 進展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92%E7%9A%84%E5%BC%95%E5%85%A5"><span class="nav-number">3.1.</span> <span class="nav-text">深度學習的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A5%E8%AD%98%E5%9C%96%E8%AD%9C%E7%9A%84%E5%BC%95%E5%85%A5"><span class="nav-number">3.2.</span> <span class="nav-text">知識圖譜的引入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nlp-%E6%8C%91%E6%88%B0"><span class="nav-number">4.</span> <span class="nav-text">NLP 挑戰</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nlp-%E8%A7%A3%E6%B1%BA%E4%B9%8B%E9%81%93"><span class="nav-number">5.</span> <span class="nav-text">NLP 解決之道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#qa"><span class="nav-number">6.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#q-%E5%9C%A8%E4%B8%80%E4%BA%9B-nlp-%E6%87%89%E7%94%A8%E4%B8%8A%E5%B8%B8%E6%9C%83%E9%87%9D%E5%B0%8D%E6%84%8F%E5%9C%96%E9%80%B2%E8%A1%8C%E5%88%86%E6%9E%90%E8%99%95%E7%90%86%E9%A6%AC%E6%95%99%E6%8E%88%E6%98%AF%E5%90%A6%E6%9C%89%E4%BB%80%E9%BA%BC%E6%83%B3%E6%B3%95"><span class="nav-number">6.1.</span> <span class="nav-text">Q : 在一些 NLP 應用上常會針對「意圖」進行分析處理，馬教授是否有什麼想法 ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#q-%E4%B8%AD%E7%A0%94%E9%99%A2%E6%98%AF%E5%90%A6%E6%9C%89%E9%87%9D%E5%B0%8D%E6%96%B0%E8%A9%9E%E9%8C%AF%E5%AD%97%E5%81%B5%E6%B8%AC%E9%80%B2%E8%A1%8C%E4%BB%80%E9%BA%BC%E6%A8%A3%E7%9A%84%E7%A0%94%E7%A9%B6"><span class="nav-number">6.2.</span> <span class="nav-text">Q : 中研院是否有針對新詞、錯字偵測進行什麼樣的研究 ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#q-%E4%B8%AD%E6%96%87%E7%9A%84-nlp-%E8%88%87%E8%8B%B1%E6%96%87%E5%9C%A8%E8%99%95%E7%90%86%E4%B8%8A%E6%9C%89%E4%BB%80%E9%BA%BC%E6%A8%A3%E5%AD%90%E7%9A%84%E5%B7%AE%E7%95%B0"><span class="nav-number">6.3.</span> <span class="nav-text">Q : 中文的 NLP 與英文在處理上有什麼樣子的差異 ?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ckiptagger"><span class="nav-number">7.</span> <span class="nav-text">CkipTagger</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B7%E8%A9%9E%E6%8A%80%E5%B7%A7"><span class="nav-number">7.1.</span> <span class="nav-text">斷詞技巧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B6%9C%E5%90%88%E4%BB%8B%E7%B4%B9"><span class="nav-number">7.2.</span> <span class="nav-text">綜合介紹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#qa-1"><span class="nav-number">7.3.</span> <span class="nav-text">QA</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/11/01/%E4%B8%AD%E6%96%87%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86%20(NLP)%20%E7%9A%84%E9%80%B2%E5%B1%95%E8%88%87%E6%8C%91%E6%88%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          中文自然語言處理 (NLP) 的進展與挑戰
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-11-01 11:53:09 / 修改時間：12:27:50" itemprop="dateCreated datePublished" datetime="2019-11-01T11:53:09+08:00">2019-11-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%B4%BB%E5%8B%95%E7%B4%80%E9%8C%84-Record-of-Multi-Learning/" itemprop="url" rel="index"><span itemprop="name">活動紀錄 Record of Multi-Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/11/01/%E4%B8%AD%E6%96%87%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86%20(NLP)%20%E7%9A%84%E9%80%B2%E5%B1%95%E8%88%87%E6%8C%91%E6%88%B0/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/01/中文自然語言處理 (NLP) 的進展與挑戰/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>時間 : 2019.10.31 地點 : 台灣大學德田館 103 教室 主講者 : 馬偉雲博士</p>
+<span id="more"></span>
+<p>筆者對 Natural Language Processing (NLP, 自然語言處理)一直蠻有興趣，因此一個月前看到這個活動資訊便立刻決定參加，上周中研院開放參觀，筆者也有幸跟馬教授交談過，針對自己在進行 LineBot 的一些疑問請益，便更期待這一天的講座，以下是在講座過程中筆者的隨手筆記，或許沒有非常鉅細靡遺，但盡可能的記下重點。</p>
+<h2 id="中研院詞庫小組ckip">中研院詞庫小組(CKIP)</h2>
+<p>是中研院跨所的一個中文計算語言研究小組，五個主要研究方向：深度學習、知識表達、自然語言理解、知識擷取、聊天機器人。</p>
+<h2 id="nlp簡介">NLP簡介</h2>
+<p>語言是思惟的外化，代表著人類的智慧，目前比較成功的任務 : 機器翻譯、Chatbot、網頁查詢、詐騙偵測、輿情分析....</p>
+<h3 id="nlu-natural-language-understanding-nlg-natural-language-genration">NLU (Natural Language understanding) &amp; NLG (Natural Language Genration)</h3>
+<p>NLU ( Lang to Structure data ) : 查詢、詐騙偵測、情緒分析.. NLG ( Structure data to Lang ) : 新聞寫作 NLU + NLG : 機器翻譯、聊天機器人</p>
+<h3 id="difficulty">Difficulty</h3>
+<ol type="1">
+<li><p>語言具有歧異性</p>
+<ul>
+<li>我很「難過」 VS 這條河很「難過」</li>
+<li>這是我們的「學習時間」 VS 我們一起來「學習時間」</li>
+<li>他騎「機車」 VS 他很「機車」</li>
+<li>小名和小美結婚 VS 小明和小美都結婚</li>
+</ul></li>
+<li><p>Domain knowlege</p>
+<ul>
+<li>勇士對尼克，勇士贏了 VS 勇士對巨人，勇士贏了</li>
+</ul></li>
+</ol>
+<h2 id="nlp-進展">NLP 進展</h2>
+<h3 id="深度學習的引入">深度學習的引入</h3>
+<ul>
+<li>自動學習特徵 (domain knowledge) 在傳統 Machine Learning 上我們必須要給予一些 feature 來輸入 model 進行任務的分析，但在 Deep Learning 上我們省略了 Feature Extraction 的步驟，機器可以自行學習出 features。在論文 "<a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/D14-1181.pdf"><em>Convolutional Neural Network for sentence classification</em></a>" 利用 CNN model 來進行 end2end 特徵的萃取及分類。</li>
+</ul>
+<p><img src="https://i.imgur.com/P70R3I8.png" /></p>
+<ul>
+<li>Pre-training + training ( unsupervised + supervised ) 在 NLP 中，我們希望要先對 text 進行 embedding (pre-training) ，給予一個比較好的初始值，再丟進 model 進行訓練 ( training )，可以節省計算成本。 BERT : pre-training (embedding/model) + training (finetune)</li>
+</ul>
+<p><img src="https://i.imgur.com/49XotY6.png" /></p>
+<p>單純的 Pre-training + training 可能會因為語意的歧異性產生問題，但這樣的問題在 BERT 上並不復見，因 BERT 中會做到語意解歧的作用。</p>
+<h3 id="知識圖譜的引入">知識圖譜的引入</h3>
+<ul>
+<li>Crowd soursing 使知識圖譜建立難度降低 例如 wiki、web comment 的產生。 Zhou 等人在 IJCAI,2018年論文 "<em><a target="_blank" rel="noopener" href="https://www.ijcai.org/proceedings/2018/0643.pdf">Commonsense Knowledge Aware Conversation Generation with Graph Attention</a></em>" 利用知識圖譜來建立聊天機器人。Ghazvininejad 等人於2018年發表的論文 " <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1702.01932.pdf"><em>A Knowledge-Grounded Neural Conversation Model</em></a> "中利用美食評論來訓練 Model</li>
+</ul>
+<h2 id="nlp-挑戰">NLP 挑戰</h2>
+<ul>
+<li>對 DL 的 NLG 來說，生成的文字難以控制語意</li>
+<li>知識與常識的擷取、整合、應用</li>
+<li>Unsupervised Learning、Semi-Supervised、GAN、Distant Supervision (only for NLP)</li>
+</ul>
+<p><img width=500 src="https://i.imgur.com/6N5x3Sq.jpg" ></p>
+<ul>
+<li>Explainable，這是所有深度學習結構的共同問題。</li>
+</ul>
+<h2 id="nlp-解決之道">NLP 解決之道</h2>
+<ul>
+<li>避免說錯、該說的沒說、嘮叨 "Sementically conditionaled LSTM-based Neural Language Generation for Spoken Dialogue Systems" 在 forget gate 上進行調整</li>
+</ul>
+<p><img width=500 src="https://i.imgur.com/jo8HQuw.png" ></p>
+<ul>
+<li>知識及常識的整合 打造"<a target="_blank" rel="noopener" href="http://ehownet.iis.sinica.edu.tw/index.php">大廣義知網</a>"來整合知識與常識。</li>
+</ul>
+<p><img width=500 src="https://i.imgur.com/HNX8Lts.jpg" ></p>
+<h2 id="qa">QA</h2>
+<h3 id="q-在一些-nlp-應用上常會針對意圖進行分析處理馬教授是否有什麼想法">Q : 在一些 NLP 應用上常會針對「意圖」進行分析處理，馬教授是否有什麼想法 ?</h3>
+<p>A : 在任務型的機器人中，我們比然要針對意圖進行分析，確定意圖後再進行回復，但純聊天機器人中，意圖分析或許是比較偷吃步的方式，但是還是會希望整個純聊天的 model 可以把意圖分析融合進 model 中。</p>
+<h3 id="q-中研院是否有針對新詞錯字偵測進行什麼樣的研究">Q : 中研院是否有針對新詞、錯字偵測進行什麼樣的研究 ?</h3>
+<p>A : 新詞是 NLP 長年的問題，目前中研院的研究是將新詞與斷詞可以一起處理，錯字偵測的做法大概也是在 NN 上面 training 來做，關鍵還是在資料量不足。或許我們可以從中文教學中取得錯字偵測的資料或是從 wiki 上取得編輯紀錄來收集。</p>
+<h3 id="q-中文的-nlp-與英文在處理上有什麼樣子的差異">Q : 中文的 NLP 與英文在處理上有什麼樣子的差異 ?</h3>
+<p>A : 中英文的差異除斷詞問題、中文的語法結構較英文鬆散靈活、中文上主詞會很常省略。因此，在中文長篇上會較英文難上許多。此外，英文的量詞發達、中文太常使用倒裝句，這些都會造就 NLP 上的處理難度。</p>
+<h2 id="ckiptagger">CkipTagger</h2>
+<p>這個部分，大多結合實際操作進行講解，因此筆記部分會稍微凌亂。</p>
+<p><img width=500 src="https://i.imgur.com/dov1e1i.jpg" ></p>
+<p><a target="_blank" rel="noopener" href="https://ckip.iis.sinica.edu.tw/service/corenlp/">CkipTagger</a> 是一個結合斷詞、詞性標記、實體辨識的一個國產開源套件。</p>
+<h3 id="斷詞技巧">斷詞技巧</h3>
+<ul>
+<li>Word-level approach
+<ol type="1">
+<li>Maximum length (長詞優先)</li>
+<li>動態規劃查找最大概率路徑</li>
+</ol></li>
+<li>Character-level approach
+<ol type="1">
+<li>character Sequence Labeling</li>
+</ol></li>
+<li>CkipTagger 則是綜合上面兩種方法，針對 word 及 character 同時進行分析。</li>
+</ul>
+<h3 id="綜合介紹">綜合介紹</h3>
+<ul>
+<li>CkipTagger 利用 中央社、wiki (用舊版套件先進行斷詞) 及 ASBC (為期近10年人工標記) 為文本進行 word embedding</li>
+</ul>
+<p><img width=500 src="https://i.imgur.com/aC2b0sV.jpg" ></p>
+<ul>
+<li>同時要參考 word embedding 跟 character embedding，主要因為在 character 層次中可能會凸顯一些 word 的重要性。舉例來說，如果只單純考量 word embedding，「台北市」這樣的字詞就是一個 embedding，但若同時考量到 character embedding，則可以抓出在上下文中可能會更強調台北市這三個字中「市」這樣的字。</li>
+</ul>
+<p><img width=500 src="https://i.imgur.com/gLorwH2.jpg" ></p>
+<ul>
+<li>傳統 BiLSTM 無法解決 XOR 問題，因此衍生 Cross-BiLSTM</li>
+</ul>
+<p><img width=500 src="https://i.imgur.com/Zs07aSX.jpg" ></p>
+<p><img width=500 src="https://i.imgur.com/pyrJPtl.jpg" ></p>
+<ul>
+<li>從 ASBC Corpus 上實驗，如果我們定義大量詞彙，其實對結果影響不大，這表示整個 model 的自動化程度已經做得很好了。</li>
+</ul>
+<h3 id="qa-1">QA</h3>
+<ul>
+<li><p>目前 Ckip 無法處理 overlap 的切詞 (眼鏡框切成眼鏡/鏡框/眼鏡框)</p></li>
+<li><p>在製作新詞上，結巴可以給予詞頻，但 Ckip 是允許給定權重，這樣的權重跟詞頻在數學上的概念稍有不同</p></li>
+<li><p>詞類有必要這麼多種嗎？事實上是需要的，這麼細緻的分類對NER的處理上面是有功效的，而且在實際應用上，例如聊天機器人，可以針對細緻的分類進行比較保障的互動。</p></li>
+<li><p>由於 Ckip 並非長詞優先系統，因此在處理「韓國瑜」「韓國瑜珈老師」的切詞就不見得可以切得很好。</p></li>
+<li><p>Ckip 考慮的是 sentence 的 Context，因為預設是全文的斷詞不太會有不同的狀況出現。</p></li>
+<li><p>針對未來 Ckip 的期待，主要會集中在 NER 研究上，因為 NER 目前 performance略差，但斷詞已經可以達到 97%。</p></li>
+<li><p>針對本屆科技大擂台，建議是先利用手邊能有的 DL 方式 (例如:BERT)建立初一個 baseline，再試圖加入 Knowledge Graph 進來增強 performance。</p></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/11/01/%E4%B8%AD%E6%96%87%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86%20(NLP)%20%E7%9A%84%E9%80%B2%E5%B1%95%E8%88%87%E6%8C%91%E6%88%B0/" title="中文自然語言處理 (NLP) 的進展與挑戰">https://allen108108.github.io/blog/2019/11/01/中文自然語言處理 (NLP) 的進展與挑戰/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/29/Generative%20Adversarial%20Network%20(3)%20%E2%80%94%20Unsupervised%20Conditional%20GAN/" rel="prev" title="Generative Adversarial Network (3) --- Unsupervised Conditional GAN">
+                  <i class="fa fa-chevron-left"></i> Generative Adversarial Network (3) --- Unsupervised Conditional GAN
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/02/Chapter%203%20%E2%80%93%20Graph%20(%204%20)/" rel="next" title="Chapter 3 -- Graph ( 4 )">
+                  Chapter 3 -- Graph ( 4 ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

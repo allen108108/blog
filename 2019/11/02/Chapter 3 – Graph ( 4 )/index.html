@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="Directed Acyclic Graphs (DAGs) 是被廣泛討論的一種有向圖型態。而接下來要講的 Topological Ordering 也主要是針對 DAGs 做討論。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 3 -- Graph ( 4 )">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/11/02/Chapter%203%20%E2%80%93%20Graph%20(%204%20)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="Directed Acyclic Graphs (DAGs) 是被廣泛討論的一種有向圖型態。而接下來要講的 Topological Ordering 也主要是針對 DAGs 做討論。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/G6SU4qT.png">
+<meta property="og:image" content="https://i.imgur.com/OeEeQBq.png">
+<meta property="og:image" content="https://i.imgur.com/SbGXeSH.png">
+<meta property="og:image" content="https://i.imgur.com/oIcw0Fq.png">
+<meta property="article:published_time" content="2019-11-02T08:31:39.000Z">
+<meta property="article:modified_time" content="2019-11-02T08:34:33.486Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/G6SU4qT.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/11/02/Chapter%203%20%E2%80%93%20Graph%20(%204%20)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/11/02/Chapter%203%20%E2%80%93%20Graph%20(%204%20)/","path":"2019/11/02/Chapter 3 – Graph ( 4 )/","title":"Chapter 3 -- Graph ( 4 )"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Chapter 3 -- Graph ( 4 ) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#directed-acyclic-graphs-dags"><span class="nav-number">1.</span> <span class="nav-text">Directed Acyclic Graphs (DAGs)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#topological-ordering"><span class="nav-number">2.</span> <span class="nav-text">Topological Ordering</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#definition"><span class="nav-number">2.1.</span> <span class="nav-text">Definition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#theorem"><span class="nav-number">2.2.</span> <span class="nav-text">Theorem</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">3.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/11/02/Chapter%203%20%E2%80%93%20Graph%20(%204%20)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Chapter 3 -- Graph ( 4 )
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-11-02 16:31:39 / 修改時間：16:34:33" itemprop="dateCreated datePublished" datetime="2019-11-02T16:31:39+08:00">2019-11-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%B1%9F%E8%95%99%E5%A6%82-Algorithm/" itemprop="url" rel="index"><span itemprop="name">江蕙如 Algorithm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/11/02/Chapter%203%20%E2%80%93%20Graph%20(%204%20)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/02/Chapter 3 – Graph ( 4 )/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Directed Acyclic Graphs (DAGs) 是被廣泛討論的一種有向圖型態。而接下來要講的 Topological Ordering 也主要是針對 DAGs 做討論。</p>
+<span id="more"></span>
+<h2 id="directed-acyclic-graphs-dags">Directed Acyclic Graphs (DAGs)</h2>
+<p>在正式討論 DAGs 之前，我們先來試想一下，在無向圖 ( Undirected graph )中，沒有 cycle 的狀況是什麼樣子 ?</p>
+<p>很直覺的可以發現，沒有 cycle 的無向圖會是以一個 tree 或是 forest (multiple tree) 的形態出現，如果是單一個 tree 則有 n-1 條 edges，若為 forest 則 edge 數必然小於 n-1 ( n 為 node 數量 )，也就是說，一個沒有 cycle 的無向圖，其 edge 的狀態是很稀疏 (sparse) 的。</p>
+<p>但是一個 directed acyclic graph ，其 edge 的呈現是可以很密集 ( dense ) 的狀態。換句話說， DAGs 可以擁有很豐富的結構型態。</p>
+<p><img width=500 src="https://i.imgur.com/G6SU4qT.png" ></p>
+<p>DAGs 適合用來表達具有依存關係、先後順序的物件，如果這些關係用 DAGs 來表達，且其中出現 cycle 則表示這樣的依存關係會呈現一種僵局 ( deadlock )。</p>
+<p>DAGs 的討論之所以重要，是因為生活中其實會有不少這種依存關係出現，舉例來說 : 大學四年的課程規劃，科目之間會有一些順序上的限制，不然能會出現擋修的狀態。再者，在電腦中，CPU處理非常多的指令，也必須釐清處指令間的順序、依存關係才能做適當的執行。</p>
+<h2 id="topological-ordering">Topological Ordering</h2>
+<h3 id="definition">Definition</h3>
+<ul>
+<li>Given a directed graph G, a Topological Ordering is an ordering of its nodes as <span class="math inline">\(v_1,v_2,\cdots,v_n\)</span> s.t. <span class="math inline">\(\forall\)</span> edge <span class="math inline">\((v_i,v_j),i&lt;j\)</span> 對於一個有向圖來說，我們可以將所有 nodes 做出一個排序，使得任一 directed edge 的兩個端點必符合這樣的優先順序。</li>
+</ul>
+<h3 id="theorem">Theorem</h3>
+<p><span class="math inline">\(G\ has\ a\ topological\ ordering\Longleftrightarrow G\ is\ a\ DAG.\)</span></p>
+<p><strong>Proof :</strong></p>
+<p>(<span class="math inline">\(\Longrightarrow\)</span>)</p>
+<p>Suppose to the contrary that <span class="math inline">\(G\)</span> is not a DAG. <span class="math inline">\(\Longrightarrow\exists\)</span> a cycle <span class="math inline">\((v_i,\cdots,v_j,v_i)\)</span> in <span class="math inline">\(G\)</span>, where <span class="math inline">\(v_i\)</span> is the node with smallest index <span class="math inline">\(i\)</span>. <span class="math inline">\(\Longrightarrow j&gt;i\)</span> <span class="math inline">\(\because\)</span> edge <span class="math inline">\((v_j,v_i)\)</span> exists. ( <span class="math inline">\(\because\)</span> cycle <span class="math inline">\((v_i,\cdots,v_j,v_i)\)</span> ) <span class="math inline">\(\therefore j&lt;i\)</span> (<span class="math inline">\(\rightarrow\leftarrow\)</span>)</p>
+<p>(<span class="math inline">\(\Longleftarrow\)</span>) 要利用下面 lemma 才能證明<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Claim : <span class="math inline">\(G\ is\ a\ DAG\Longrightarrow\exists\ node\ v_k\ doesn&#39;t\ has\ incoming\ edges.\)</span></p>
+<p><strong>Proof :</strong></p>
+<p>Suppose to the contrary that <span class="math inline">\(\exists\)</span> an incoming edge in <span class="math inline">\(v\)</span>, <span class="math inline">\(\forall v\in V\)</span> <span class="math inline">\(\Longrightarrow v\)</span> has an incoming edge <span class="math inline">\((v_1,v)\)</span> <span class="math inline">\(\Longrightarrow v_1\)</span> has an incoming edge <span class="math inline">\((v_2,v_1)\)</span> Continue this process <span class="math inline">\(\Longrightarrow v_n\)</span> has an incoming edge <span class="math inline">\((v_{n+1},v_n)\)</span></p>
+<p><span class="math inline">\(\because\)</span> <span class="math inline">\(\mid V\mid=n\)</span> <span class="math inline">\(\therefore\exists\)</span> <span class="math inline">\(v_i,v_j\in \{v_1,v_2,\cdots,v_{n+1}\}\)</span> s.t. <span class="math inline">\(v_i=v_j\)</span> <span class="math inline">\(\Longrightarrow v_i,v_{i+1},\cdots,v_{j-1},v_j=v_i\)</span> form a cycle in G. (<span class="math inline">\(\rightarrow\leftarrow\)</span>)</p>
+<p>上述這個 Lemma 非常重要，因為有了這個定理，我們可以確定一個 DAG 裡面一定會有一個點是有 incoming edge。而這一個點是不會受到其他點所控制，那我們便可以用其作為 topological order 的第一個點。</p>
+<p><img src="https://i.imgur.com/OeEeQBq.png" /></p>
+<p>( a ) 從兩個無 incoming edge 之點擇一 ( b ) 確定了 topological order 的第一點後，我們便不在意此點會支配那些 nodes (暫時將 outcoming edge以虛線代替)，原本是 DAG，少掉其中一點的 graph 仍然是 DAG ( 原本沒有 cycle，缺了一點仍然不會有 cycle ) ( c ) 既然少掉一點的 graph 仍然是 DAG，那麼它也仍然存在一個沒有 incoming edge 的點。 ( d )~( g ) 重複這樣的方式便可以找出整個 topological order。</p>
+<p>而這個 lemma 也是證明上述 Theorem 的重要關鍵</p>
+<p>(<span class="math inline">\(\Longleftarrow\)</span>)</p>
+<p>Prove by induction.</p>
+<p>Suppose that <span class="math inline">\(\mid V_G\mid=k\)</span></p>
+<p>Step 1. : <span class="math inline">\(k=1\)</span></p>
+<p>G has only one node, and has no edge. <span class="math inline">\(\Longrightarrow\)</span> This is trivial case. The Theorem is true when <span class="math inline">\(k=1\)</span>.</p>
+<p>Step 2. : If the theorem is true when <span class="math inline">\(k\leq n\)</span>.</p>
+<p>Suppose that <span class="math inline">\(G\)</span> is a DAG and <span class="math inline">\(\mid V_G\mid=n+1\)</span> <span class="math inline">\(\Longrightarrow\exists\)</span> node <span class="math inline">\(v\)</span> without incoming edge</p>
+<p>Let <span class="math inline">\(G&#39;=G-\{v\}\)</span> and <span class="math inline">\(\mid V_{G&#39;}\mid=n\)</span></p>
+<p><span class="math inline">\(\because G&#39;\)</span> is still a DAG. <span class="math inline">\(\Longrightarrow\)</span> <span class="math inline">\(G&#39;\)</span> has a topological ordering <span class="math inline">\(R=\{r_1,r_2,\cdots,r_n\}\)</span>.</p>
+<p>Let ordering <span class="math inline">\(R&#39;=\{v,r_1,r_2,\cdots,r_n\}\)</span></p>
+<p><span class="math inline">\(\because v\)</span> has no incoming edge and <span class="math inline">\(\{r_1,r_2,\cdots,r_n\}\)</span> is a topologival ordering <span class="math inline">\(\therefore R&#39;=\{v,r_1,r_2,\cdots,r_n\}\)</span> is also a topological ordering.(<span class="math inline">\(\because \not\exists\)</span> edge <span class="math inline">\((v,r_m),\forall m\in\{1,2,3,...,n\}\)</span>)</p>
+<p>上面的數學歸納法步驟其實也告訴我們一個 topological sorting 的演算法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TopologicalOrder(G) :</span><br><span class="line">1. 找到一個沒有 incoming edge 的點 v</span><br><span class="line">2. 對其進行排序</span><br><span class="line">3. G=G-&#123;v&#125; ＃從 G 中移除　ｖ</span><br><span class="line">4. 若 G 不為空，則 TopologicalOrder(G)</span><br></pre></td></tr></table></figure>
+<p>這樣的演算法，時間複雜度為 <span class="math inline">\(O(n^2)\)</span> ( 因為一共要做 n 次 iterations，且每一次都要找一次沒有 incoming edge的點 )</p>
+<p>但是我們其實可以配合資料結構來降低時間複雜度，就是一種以「空間換取時間」的概念。</p>
+<ul>
+<li>用 Adjacency List 來做為基礎表示法</li>
+<li>每一個 node 必須多給一點空間來儲存 <span class="math inline">\(indgre(\mathbb{w})\)</span> ，這是每一個 iteration 時，還沒有被刪除的 node 的 incoming edge 數量。</li>
+<li>我們還需要多給一個空間來儲存一個新的集合 <span class="math inline">\(S\)</span>，主要是用來放每一個 iteration 中沒有 incoming edge 的 node。</li>
+</ul>
+<p><img src="https://i.imgur.com/SbGXeSH.png" /></p>
+<p>我們利用上圖來大致解釋一下過程 : ( a ) 初始化 <span class="math inline">\(indgre(\mathbb{w})\)</span> 以及 <span class="math inline">\(S\)</span>，這裡要掃過所有的 nodes 跟 edges，所以需要時間複雜度為 <span class="math inline">\(O(m+n)\)</span></p>
+<p>( b ) 當我對某一個 <span class="math inline">\(indgre(\mathbb{w})=0\)</span> 的 node 進行排序後，它所連結到的 nodes <span class="math inline">\(indgre(\mathbb{w})\)</span> 都會 -1，且我們會直接將 <span class="math inline">\(indgre(\mathbb{w})=0\)</span> 的點放進 <span class="math inline">\(S\)</span> 中，而以排序的點也會同時移出 <span class="math inline">\(S\)</span>。在圖中，粉紅色標記其實就相當於指出了 <span class="math inline">\(S\)</span> 現在有哪些點。因為這些動作都不需要掃過所有 nodes 跟 edges，時間複雜度相當於 <span class="math inline">\(O(1)\)</span>。</p>
+<p>( c )~ 後續就依照這樣的方式重複進行，因此總時間複雜度也就是初始化時候的時間複雜度為 <span class="math inline">\(O(m+n)\)</span></p>
+<p>這樣的方式相當於使用 BFS 來進行 Topological Sorting，其實在一般的課本或是網路上大多使用的是 DFS 來做 Topological Sorting。</p>
+<p>以下是演算法聖經 Cormen 等人所著的 "<em>Introduction To Algorithm</em>" 中利用 DFS 來尋找 Topological Ordering 的演算法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">TopologicalOrder(G) :</span><br><span class="line">1. Call DFS(G) to compute finishing times v.f for each vertex v </span><br><span class="line">2. As each vertex is finished, insert it onto the front of a linked list</span><br><span class="line">3. Return the linked list of vertices</span><br></pre></td></tr></table></figure>
+<p>在前面我們有提過，DFS 演算法中，每一個節點都會被進出各一次，我們可以藉此找出每一個節點的進入時間 (discover time, <span class="math inline">\(v.d\)</span> ) 以及離開時間 ( finish time, <span class="math inline">\(v.f\)</span> )。</p>
+<p>尋找 Topological Ordering 的過程，我們先對 <span class="math inline">\(G\)</span> 做一次 DFS，找出所有 nodes 的 finish time <span class="math inline">\(v.f\)</span>，之後再根據這個 <span class="math inline">\(v.f\)</span> 進行排序即可。</p>
+<p><img src="https://i.imgur.com/oIcw0Fq.png" /></p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>原本我想直接利用反證法，不經過 Lemma 來直接證明 Suppose to the contrary that G has no topological ordering 但這樣的證明會遇到一個問題 : 非 topological ordering 的排序並不一定會保證會出現 cycle ，這樣我就無法利用這樣的特性製造矛盾。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/11/02/Chapter%203%20%E2%80%93%20Graph%20(%204%20)/" title="Chapter 3 -- Graph ( 4 )">https://allen108108.github.io/blog/2019/11/02/Chapter 3 – Graph ( 4 )/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/01/%E4%B8%AD%E6%96%87%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86%20(NLP)%20%E7%9A%84%E9%80%B2%E5%B1%95%E8%88%87%E6%8C%91%E6%88%B0/" rel="prev" title="中文自然語言處理 (NLP) 的進展與挑戰">
+                  <i class="fa fa-chevron-left"></i> 中文自然語言處理 (NLP) 的進展與挑戰
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/05/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%201%20)/" rel="next" title="Chapter 4 -- Greedy algorithms ( 1 )">
+                  Chapter 4 -- Greedy algorithms ( 1 ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

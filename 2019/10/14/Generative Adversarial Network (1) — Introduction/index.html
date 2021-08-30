@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="在之前李宏毅的 Machine Learning 中已經有對 Generative Adversarial Network ( GAN, 對抗生成網路 ) 有了初步的介紹，而本課程接續著這些基礎，將會對 GAN 有比較深入的討論。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Generative Adversarial Network (1) --- Introduction">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/14/Generative%20Adversarial%20Network%20(1)%20%E2%80%94%20Introduction/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="在之前李宏毅的 Machine Learning 中已經有對 Generative Adversarial Network ( GAN, 對抗生成網路 ) 有了初步的介紹，而本課程接續著這些基礎，將會對 GAN 有比較深入的討論。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/b8foMIJ.png">
+<meta property="og:image" content="https://i.imgur.com/lmffToS.png">
+<meta property="og:image" content="https://i.imgur.com/mhIxYqP.jpg">
+<meta property="og:image" content="https://i.imgur.com/AeUAWMj.png">
+<meta property="og:image" content="https://i.imgur.com/F75Z83Q.png">
+<meta property="og:image" content="https://i.imgur.com/58sibZ4.png">
+<meta property="og:image" content="https://i.imgur.com/hOKQRJ5.png">
+<meta property="article:published_time" content="2019-10-14T15:45:41.000Z">
+<meta property="article:modified_time" content="2019-10-22T08:01:29.253Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/b8foMIJ.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/14/Generative%20Adversarial%20Network%20(1)%20%E2%80%94%20Introduction/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/14/Generative%20Adversarial%20Network%20(1)%20%E2%80%94%20Introduction/","path":"2019/10/14/Generative Adversarial Network (1) — Introduction/","title":"Generative Adversarial Network (1) --- Introduction"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Generative Adversarial Network (1) --- Introduction | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#algorithm"><span class="nav-number">1.</span> <span class="nav-text">Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#initial-g-d"><span class="nav-number">1.1.</span> <span class="nav-text">initial \(G\) &amp; \(D\)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-1.-fix-g-update-d"><span class="nav-number">1.2.</span> <span class="nav-text">Step 1. : Fix G , update D</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-2.-fix-d-update-g"><span class="nav-number">1.3.</span> <span class="nav-text">Step 2. : Fix D , update G</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#algorithm-1"><span class="nav-number">1.4.</span> <span class="nav-text">Algorithm</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#regard-gan-as-structure-learning"><span class="nav-number">2.</span> <span class="nav-text">Regard GAN as structure Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#the-challenge-of-structure-learning"><span class="nav-number">2.1.</span> <span class="nav-text">The Challenge of Structure Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#one-shot-zero-shot-learning"><span class="nav-number">2.1.1.</span> <span class="nav-text">One-Shot (Zero-Shot) Learning</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#can-machine-learn-only-by-generator-or-discriminator"><span class="nav-number">3.</span> <span class="nav-text">Can machine learn only by Generator or Discriminator ?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#learn-by-generator"><span class="nav-number">3.1.</span> <span class="nav-text">Learn by Generator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#learn-by-discriminator"><span class="nav-number">3.2.</span> <span class="nav-text">Learn by Discriminator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pros-and-cons"><span class="nav-number">3.3.</span> <span class="nav-text">Pros and Cons</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#generator-discriminator"><span class="nav-number">4.</span> <span class="nav-text">Generator + Discriminator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">5.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/14/Generative%20Adversarial%20Network%20(1)%20%E2%80%94%20Introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Generative Adversarial Network (1) --- Introduction
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-14 23:45:41" itemprop="dateCreated datePublished" datetime="2019-10-14T23:45:41+08:00">2019-10-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 16:01:29" itemprop="dateModified" datetime="2019-10-22T16:01:29+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/14/Generative%20Adversarial%20Network%20(1)%20%E2%80%94%20Introduction/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/14/Generative Adversarial Network (1) — Introduction/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在之前李宏毅的 Machine Learning 中已經有對 <a href="/yq6MGU5USb68EkOGlApe0g">Generative Adversarial Network ( GAN, 對抗生成網路 )</a> 有了初步的介紹，而本課程接續著這些基礎，將會對 GAN 有比較深入的討論。</p>
+<span id="more"></span>
+<h2 id="algorithm">Algorithm</h2>
+<p>在 Machine Learning 中並沒有對整個演算法有太多的著墨，而留在這裡做比較詳盡的解釋。</p>
+<p><img src="https://i.imgur.com/b8foMIJ.png" /></p>
+<p>既然 GAN 在概念上就是利用 <span class="math inline">\(G\)</span> ( generator ) 跟 <span class="math inline">\(D\)</span> ( discriminator ) 的對抗及演化來增強 performance，那我們便可以把整個過程分成兩個步驟然後持續循環進行。</p>
+<p>雖然說是說兩個互相對抗，但其實實踐的方式就是講這兩個 Neural Network 串聯在一起訓練這樣。</p>
+<h3 id="initial-g-d">initial <span class="math inline">\(G\)</span> &amp; <span class="math inline">\(D\)</span></h3>
+<p>首先對整個 GAN 進行 weight 及 bias 的初始化，得到 <span class="math inline">\(G_{v_0}\)</span> 與 <span class="math inline">\(D_{v_0}\)</span></p>
+<h3 id="step-1.-fix-g-update-d">Step 1. : Fix G , update D</h3>
+<p>初始化後的 <span class="math inline">\(G_{v_0}\)</span> ，如果給予一個隨機向量，必然會產生表現不是很好的圖片，在這樣的狀況下，我們可以把真實的圖片與產生出來的圖片作為訓練資料來訓練 <span class="math inline">\(D_{v_0}\)</span>，最後我們可以得到一個進化後的 <span class="math inline">\(D_{v_1}\)</span></p>
+<h3 id="step-2.-fix-d-update-g">Step 2. : Fix D , update G</h3>
+<p>接著我們固定住 <span class="math inline">\(D_{v_1}\)</span> 來對 <span class="math inline">\(G_{v_0}\)</span> 進行訓練，訓練的目的就是要讓 <span class="math inline">\(G_{v_0}\)</span> 產生的圖片可以騙過 <span class="math inline">\(D_{v_1}\)</span>，這樣的訓練後我們可以得到一個進化後的 <span class="math inline">\(G_{v_1}\)</span>，如此循環進行下去。</p>
+<h3 id="algorithm-1">Algorithm</h3>
+<p>我們可以將上面的過程得到下列 GAN 演算法 :</p>
+<ul>
+<li><p>初始化 <span class="math inline">\(G\)</span> 與 <span class="math inline">\(D\)</span> 的參數 <span class="math inline">\(\theta_g\)</span> 與 <span class="math inline">\(\theta_d\)</span></p></li>
+<li><p>循環迭代進行</p>
+<ul>
+<li>Updeate <span class="math inline">\(D\)</span>
+<ul>
+<li>從 database 中隨機抽取 <span class="math inline">\(m\)</span> 個真實樣本 <span class="math inline">\(\{x^1,x^2,\cdots,x^m\}\)</span></li>
+<li>從我們給定的分布中隨機抽取 <span class="math inline">\(m\)</span> 個向量 <span class="math inline">\(\{z^1,z^2,\cdots,z^m\}\)</span></li>
+<li>藉由 <span class="math inline">\(\tilde{x}^i=G(z^i)\)</span> 生成 <span class="math inline">\(\{\tilde{x}^1,\tilde{x}^2,\cdots,\tilde{x}^m\}\)</span></li>
+<li>Loss Function <span class="math inline">\(\tilde{V}=\displaystyle{\frac{1}{m}\sum\limits_{i=1}^{m}\log D(x^i)+\frac{1}{m}\sum\limits_{i=1}^{m}\log\big(1-D(\tilde{x}^i)\big)}\)</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></li>
+<li>藉由最大化 <span class="math inline">\(\tilde{V}\)</span> ( Gradient Ascent ) 來更新權重 <span class="math inline">\(\theta_d\)</span> : <span class="math display">\[
+\theta_d = \theta_d + \eta\cdot\nabla\tilde{V}(\theta_d)
+\]</span></li>
+</ul></li>
+<li>Update <span class="math inline">\(G\)</span>
+<ul>
+<li>從我們給定的分布中隨機抽取 <span class="math inline">\(m\)</span> 個向量 <span class="math inline">\(\{z&#39;^1,z&#39;^2,\cdots,z&#39;^m\}\)</span></li>
+<li>Loss Function <span class="math inline">\(\tilde{V}=\displaystyle{\frac{1}{m}\sum\limits_{i=1}^{m}\log D(G(z&#39;^i))}\)</span></li>
+<li>藉由最小化 <span class="math inline">\(\tilde{V}\)</span> ( Gradient descent ) 來更新權重 <span class="math inline">\(\theta_g\)</span> : <span class="math display">\[
+\theta_g = \theta_g - \eta\cdot\nabla\tilde{V}(\theta_g)
+\]</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="regard-gan-as-structure-learning">Regard GAN as structure Learning</h2>
+<p>從 GAN 的概念上看來，它的確是一種類似 Structure Learning 的學習過程，藉由 Discriminator 的對抗，讓 Generator 可以生成一個足具結構性的結果 ( 可以是一張圖片、一段摘要、... )</p>
+<p>甚至我們也可以利用 GAN 來輸入文字，生成對應的圖片</p>
+<p><img src="https://i.imgur.com/lmffToS.png" /></p>
+<h3 id="the-challenge-of-structure-learning">The Challenge of Structure Learning</h3>
+<h4 id="one-shot-zero-shot-learning">One-Shot (Zero-Shot) Learning</h4>
+<p>在 GAN 中，在 Training Data 中的每一個類別幾乎都可能只出現過一次，而且待預測的問題也通常不會出現在 Training Data 中，因此，我們可以把 GAN 看作是一個極端的 One-Shot (Zero-Shot) Learning。</p>
+<p>這也代表著， Machine 在整個 GAN 學習過程中，必須讓自己的學習能力更強，以圖片生成來說，GAN 不是只需要根據 pixel 生成圖片這樣的局部處理能力，它更必須要有一個看清楚全局的能力，這樣才能在沒有看過的資料底下做事適當的反應。</p>
+<h2 id="can-machine-learn-only-by-generator-or-discriminator">Can machine learn only by Generator or Discriminator ?</h2>
+<h3 id="learn-by-generator">Learn by Generator</h3>
+<p>這樣的方式並不是完全沒有，在 Deep Learning 中，我們碰過的 Auto Encoder<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> 或是 Variational Auto Encoder<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> 其實就是只有 Generator 的技術。</p>
+<p>但是這樣的技術其實有一些問題 : 1. Reconstruction Error 在進行 reconstruction error 時，通常系統考慮的是 pixel level 的錯誤程度，但以一張圖片來說，有時候的確會出現雖然錯誤的 pixel 較多，但是並不影響圖片本身的資訊，然而，有些時候僅出現極少量的錯誤 pixel 卻能讓整張圖片呈現出截然不同的資訊。</p>
+<p><img width=500 src="https://i.imgur.com/mhIxYqP.jpg" ></p>
+<ol start="2" type="1">
+<li>Component independent 在 NN 運作的過程中，最後一層輸出的往往每一個 component 之間是互相獨立的，也就是在整張圖之中的每一個 pixel 之間互不相關，這樣容易導致整張圖片生成出來會容易出現局部零碎的部分無法相互連接。這也不是沒有解決方法，在最後的 layer 後多加幾層 layers 讓訊息可以互相連結即可。這也表示，像這種單純只用 Generator 訓練的模型，往往需要更深的架構才有機會有較好的表現。</li>
+</ol>
+<h3 id="learn-by-discriminator">Learn by Discriminator</h3>
+<p>Discriminator 本身是一個評價系統，要讓它做出一張好的圖片生成其實並不是它所擅長的工作，但是它可以利用它自己的評價系統來「挑」出一張分數夠高的圖片輸出。</p>
+<p><span class="math display">\[
+\tilde{x}=\arg\max\limits_{x\in X} D(x)
+\]</span></p>
+<p>[ Note ] : 我們暫且不討論這個方式的可行性，就先假設這樣的演算法是存在的。</p>
+<p>在這樣的演算法底下，其實會出現一個比較根本性的問題 : 我們該怎麼訓練它 ? 我們手上有的 Data 就是一堆正常的、好的圖片，這樣是無法作訓練的，Machine 只會從這些資料裡面學到不管輸入什麼圖片就通通給高分就好了。</p>
+<p>我們還需要的是一些「夠好的反例」。</p>
+<p><img width=500 src="https://i.imgur.com/AeUAWMj.png" ></p>
+<p>現在的問題就是要訓練它輸出圖片，但問題卻又回到希望它先輸出一些夠好的、卻又明顯是人造的圖片來訓練它生成圖片 ? 這明顯的就是雞生蛋蛋生雞的狀況。</p>
+<p>目前能做的頂多就是給一堆 noise ，非常差的圖片給它訓練，但這樣又容易使 Machine 對那些稍微好一點的人造圖片給予非常高的分數，這樣的判斷不是我們期待的。</p>
+<p>修正一下，利用 iterative 的方式來進行訓練 :</p>
+<ul>
+<li>先隨機生成一些圖片作為反例</li>
+</ul>
+<p><img width=500 src="https://i.imgur.com/F75Z83Q.png" ></p>
+<ul>
+<li>以這些反例與我們手邊的正常圖片訓練一個 discriminator 可以區分「目前」這種正反例型態的圖片。</li>
+<li>利用這樣的 discriminator 經由 <span class="math inline">\(\tilde{x}=\arg\max\limits_{x\in X} D(x)\)</span> 來生成另外一些再好一點的圖片作為反例</li>
+<li>重複上面的步驟持續訓練</li>
+</ul>
+<p>整個上述訓練的過程其實就是一種分布上的調整，經由不斷的 smaple，把分布逼近於真實的分布狀況。</p>
+<p><img width=500 src="https://i.imgur.com/58sibZ4.png" ></p>
+<h3 id="pros-and-cons">Pros and Cons</h3>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 35%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Generator</th>
+<th>Discriminator</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pros</td>
+<td>便於產生圖片</td>
+<td>可以考量到全局</td>
+</tr>
+<tr class="even">
+<td>Cons</td>
+<td>僅學習到整個結構的表象，並沒有學習到其內涵，因此每個 pixel 間都是個別獨立的。</td>
+<td>argmax 問題通常不易解，而且反例圖片不容易取得。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="generator-discriminator">Generator + Discriminator</h2>
+<p>GAN 就是結合上述的優點所形成的方法，利用 Generator 來克服 Discriminator 不易產生圖片的難處，也利用 Discriminator 來幫 Generator 做到全局的掌控。</p>
+<p><img src="https://i.imgur.com/hOKQRJ5.png" /></p>
+<p>在 Mario Lucic 的論文 " <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1711.10337"><em>Are GANs Created Equal? A Large-Scale Study</em></a> " 中針對了幾種 GAN 方式與 VAE 一起做一個整合式的比較，從上圖可以發現，VAE 的確就其他的 GAN 來說的確表現得稍微差了一些。</p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Goodfellow, Ian J., Pouget-Abadie, Jean, Mirza, Mehdi, Xu, Bing, Warde-Farley, David, Ozair, Sherjil, Courville, Aaron and Bengio, Yoshua. "<em>Generative Adversarial Networks.</em>" (2014): .<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>原始論文的 Loss Function 是如此設計，事實上也不一定要用這樣的方式，可以自行設計。在這一個式子中，比較直觀的想法是這樣 : 我們希望真實圖片可以獲得高分，而假圖片則是獲得低分 <span class="math inline">\(\Longleftrightarrow \max(D(x^i))\)</span> 並且 <span class="math inline">\(\min(D(\tilde{x}^i))\)</span> <span class="math inline">\(\Longleftrightarrow\max(\log D(x^i))\)</span> 並且 <span class="math inline">\(\max(\log(D(1-\tilde{x}^i)))\)</span> <span class="math inline">\(\Longleftrightarrow\max\Big(\displaystyle{\frac{1}{m}\sum\limits_{i=1}^{m}\log D(x^i)+\frac{1}{m}\sum\limits_{i=1}^{m}\log(1-D(\tilde{x}^i))}\Big)\)</span> <span class="math inline">\(\Longleftrightarrow\max(\tilde{V})\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p><a href="/fnFXsGryQr-qP4q_-p5qwA">Unsupervised Learning -- AutoEncoder</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p><a href="/K0V0cQeYRfabsgKKKPwSEg">Unsupervised Learning -- Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/14/Generative%20Adversarial%20Network%20(1)%20%E2%80%94%20Introduction/" title="Generative Adversarial Network (1) --- Introduction">https://allen108108.github.io/blog/2019/10/14/Generative Adversarial Network (1) — Introduction/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/14/%5B%E6%96%B0%E6%9B%B8%5D%20Algebra,%20Topology,%20Differential%20Calculus,%20and%20Optimization%20Theory%20for%20Computer%20Science%20and%20Machine%20Learning/" rel="prev" title="[新書] Algebra, Topology, Differential Calculus, and Optimization Theory for Computer Science and Machine Learning">
+                  <i class="fa fa-chevron-left"></i> [新書] Algebra, Topology, Differential Calculus, and Optimization Theory for Computer Science and Machine Learning
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/17/%5B%E8%AB%96%E6%96%87%5D%20Highway%20Network/" rel="next" title="[論文] Highway Network">
+                  [論文] Highway Network <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

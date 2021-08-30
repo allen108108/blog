@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="人臉辨識最近引起不少的關注，主要是利用特殊的化妝技巧，便可以防止被人臉辨識系統成功的偵測出身分，然而這樣的方法筆者認為並不能算是非常符合我們一般生活習慣的方式，畢竟，誰會願意把臉上貼成這樣出門逛街 ? 有沒有一種比較......正常的方式可以對抗人臉辨識 ?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="人臉辨識技術的難題">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/05/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E6%8A%80%E8%A1%93%E7%9A%84%E9%9B%A3%E9%A1%8C/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="人臉辨識最近引起不少的關注，主要是利用特殊的化妝技巧，便可以防止被人臉辨識系統成功的偵測出身分，然而這樣的方法筆者認為並不能算是非常符合我們一般生活習慣的方式，畢竟，誰會願意把臉上貼成這樣出門逛街 ? 有沒有一種比較......正常的方式可以對抗人臉辨識 ?">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/nqZxqsY.png">
+<meta property="og:image" content="https://i.imgur.com/KpYKg5m.png">
+<meta property="og:image" content="https://i.imgur.com/pCjUbXc.png">
+<meta property="og:image" content="https://i.imgur.com/Za3khWj.png">
+<meta property="og:image" content="https://i.imgur.com/sw18QEx.png">
+<meta property="article:published_time" content="2019-10-04T18:15:24.000Z">
+<meta property="article:modified_time" content="2019-10-04T18:21:02.826Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/nqZxqsY.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/05/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E6%8A%80%E8%A1%93%E7%9A%84%E9%9B%A3%E9%A1%8C/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/05/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E6%8A%80%E8%A1%93%E7%9A%84%E9%9B%A3%E9%A1%8C/","path":"2019/10/05/人臉辨識技術的難題/","title":"人臉辨識技術的難題"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>人臉辨識技術的難題 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#advhat-real-world-adversarial-attack-on-arcface-face-id-system"><span class="nav-number">1.</span> <span class="nav-text">AdvHat: Real-world adversarial attack on ArcFace Face ID system</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/05/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E6%8A%80%E8%A1%93%E7%9A%84%E9%9B%A3%E9%A1%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          人臉辨識技術的難題
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-10-05 02:15:24 / 修改時間：02:21:02" itemprop="dateCreated datePublished" datetime="2019-10-05T02:15:24+08:00">2019-10-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E9%9B%9C%E8%A8%98-Essay/" itemprop="url" rel="index"><span itemprop="name">雜記 Essay</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/05/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E6%8A%80%E8%A1%93%E7%9A%84%E9%9B%A3%E9%A1%8C/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/05/人臉辨識技術的難題/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>人臉辨識最近引起不少的關注，主要是利用特殊的化妝技巧，便可以防止被人臉辨識系統成功的偵測出身分，然而這樣的方法筆者認為並不能算是非常符合我們一般生活習慣的方式，畢竟，誰會願意把臉上貼成這樣出門逛街 ? 有沒有一種比較......正常的方式可以對抗人臉辨識 ?</p>
+<span id="more"></span>
+<p><img src="https://i.imgur.com/nqZxqsY.png" /> 圖片來源 : <a target="_blank" rel="noopener" href="https://technews.tw/2017/08/03/anti-facial-recognition-tech/">俄羅斯科網高層，研發反人臉辨識技術</a></p>
+<p>在 2017 年的 CS 231n, Stanford University 課程中，請了大名鼎鼎的 Ian Goodfellow 來進行一場講座，主題為 " <em><a target="_blank" rel="noopener" href="http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture16.pdf">Adversarial Examples and Adversarial Training</a></em> “，在裡面舉了幾個非常有趣的例子，而這些例子便對現在的人臉辨識系統產生了莫大的影響，也是現今人臉辨識系統發展的難題。</p>
+<p>先來看看左右的兩張熊貓圖。</p>
+<p><img src="https://i.imgur.com/KpYKg5m.png" /></p>
+<p>從我們的角度來看，似乎無法辨識出有什麼不同之處，但其實右圖是左圖加上一雜訊生成的圖片，從我們人眼來看幾乎無法看出差異性，但丟進電腦的辨識系統中，右圖被辨識成了一隻長臂猿，很可笑吧 ? 但事實就是如此，我們還可以看看其他的示例。</p>
+<p><img src="https://i.imgur.com/pCjUbXc.png" /></p>
+<p>上面的幾個圖像，最後一張都會被電腦判定成「飛機」。</p>
+<p><img src="https://i.imgur.com/Za3khWj.png" /></p>
+<p>看起來都是 9 的十張圖像圖像，其實已經讓電腦判定成 0-9 不同的數字。</p>
+<p>這件事告訴我們，加入特定的雜訊，我們絕對是可以控制電腦的判斷的，不僅僅是讓他判斷錯誤，我們更可以讓它判別成我們想讓他判別的目標，我們可稱其為 target transferability (目標可轉移性)</p>
+<p>這樣的技術看起來總是讓人覺得離現實生活仍有一段不小的距離，畢竟上面的應用都是限定在 「圖像」上面加上一些雜訊來成就這樣的對抗攻擊。但在這講座的後面也有想到，其實在現實物理世界中，我們也可以針對實體來進行拍照加上雜訊就能使判斷效果降低。</p>
+<p><img src="https://i.imgur.com/sw18QEx.png" /></p>
+<h2 id="advhat-real-world-adversarial-attack-on-arcface-face-id-system">AdvHat: Real-world adversarial attack on ArcFace Face ID system</h2>
+<p>在今年八月份 ( 2019.08 ) ， Stepan Komkov, Aleksandr Petiushko 所發表的論文 " <em><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.08705">AdvHat: Real-world adversarial attack on ArcFace Face ID system</a></em> " 中便針對現在公認最好的臉部辨識系統 ArcFace 利用嶄新且容易再現的技術來進行攻擊，這樣的方式成功地降低系統的辨識能力，並且可轉移到其他的辨識系統上。</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/a4iNg0wWBsQ" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>這篇論文具有相當的開創性 :</p>
+<ol type="1">
+<li>我們再也不須經由數位操作增加雜訊來進行辨識系統的攻擊</li>
+<li>輕易地可以將這樣的操作進行複製再現 ( 將上面的圖案印出貼在帽子上即可 ) 這樣個攻擊使得辨識系統的判別結果與 Ground Truth 的相似性顯著下降。</li>
+</ol>
+<p>在作者於 reddit 的<a target="_blank" rel="noopener" href="https://www.reddit.com/r/MachineLearning/comments/cvl2ed/r_advhat_realworld_adversarial_attack_on_arcface/">貼文</a>中也說明，這項研究僅專注於「避免」、「防禦」人臉辨識系統的主動偵測，事實上這項技術更可以進行修改後，針對辨識系統做目標轉移，意即，我們可以經由這樣的方式，讓辨識系統判別成另外一個人，而這人的身分甚至是我們可以選擇的。</p>
+<p>這樣的方式，未來或許可以應用在其他隨身物品上，藉由這些物品來帶給視訊系統某種程度上的雜訊，使其辨識力急速下降，這種方法應該會比在臉上貼的亂七八糟來的要好吧?</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/05/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E6%8A%80%E8%A1%93%E7%9A%84%E9%9B%A3%E9%A1%8C/" title="人臉辨識技術的難題">https://allen108108.github.io/blog/2019/10/05/人臉辨識技術的難題/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/05/Gradient%20Vanishing%20Problem%20---%20%E4%BB%A5%20ReLU%20_%20Maxout%20%E5%8F%96%E4%BB%A3%20Sigmoid%20actvation%20function/" rel="prev" title="Gradient Vanishing Problem --- 以 ReLU / Maxout 取代 Sigmoid actvation function">
+                  <i class="fa fa-chevron-left"></i> Gradient Vanishing Problem --- 以 ReLU / Maxout 取代 Sigmoid actvation function
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/05/Chapter%203%20%E2%80%93%20Graph%20(%201%20)/" rel="next" title="Chapter 3 -- Graph ( 1 )">
+                  Chapter 3 -- Graph ( 1 ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

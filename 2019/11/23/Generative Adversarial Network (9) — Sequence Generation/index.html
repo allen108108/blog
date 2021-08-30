@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="在 GAN 的應用中，前面有提到可以用來做 conditional image generation，這種技術我們可以用來進行圖像風格的轉換、語音上的轉換...等等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Generative Adversarial Network (9) --- Sequence Generation">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/11/23/Generative%20Adversarial%20Network%20(9)%20%E2%80%94%20Sequence%20Generation/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="在 GAN 的應用中，前面有提到可以用來做 conditional image generation，這種技術我們可以用來進行圖像風格的轉換、語音上的轉換...等等。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/jaO7jb8.jpg">
+<meta property="og:image" content="https://i.imgur.com/LZqZJlz.png">
+<meta property="og:image" content="https://i.imgur.com/lnACrB4.png">
+<meta property="og:image" content="https://i.imgur.com/y7hHuFT.jpg">
+<meta property="og:image" content="https://i.imgur.com/S9q3lVW.png">
+<meta property="og:image" content="https://i.imgur.com/euBGH4d.png">
+<meta property="og:image" content="https://i.imgur.com/hF2pffJ.png">
+<meta property="og:image" content="https://i.imgur.com/f8kOFAn.png">
+<meta property="og:image" content="https://i.imgur.com/WqoC3Eo.png">
+<meta property="og:image" content="https://i.imgur.com/oxZdYWX.png">
+<meta property="og:image" content="https://i.imgur.com/rL2as6D.png">
+<meta property="og:image" content="https://i.imgur.com/CpJ0uVJ.png">
+<meta property="og:image" content="https://i.imgur.com/byVjRGy.png">
+<meta property="article:published_time" content="2019-11-22T18:43:30.000Z">
+<meta property="article:modified_time" content="2019-11-22T18:44:08.850Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/jaO7jb8.jpg">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/11/23/Generative%20Adversarial%20Network%20(9)%20%E2%80%94%20Sequence%20Generation/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/11/23/Generative%20Adversarial%20Network%20(9)%20%E2%80%94%20Sequence%20Generation/","path":"2019/11/23/Generative Adversarial Network (9) — Sequence Generation/","title":"Generative Adversarial Network (9) --- Sequence Generation"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Generative Adversarial Network (9) --- Sequence Generation | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#supervised-conditional-sequence-generation"><span class="nav-number">1.</span> <span class="nav-text">Supervised Conditional Sequence Generation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#reinforcement-learning"><span class="nav-number">1.1.</span> <span class="nav-text">Reinforcement Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gan"><span class="nav-number">1.2.</span> <span class="nav-text">GAN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gumbel-softmax"><span class="nav-number">1.2.1.</span> <span class="nav-text">Gumbel-Softmax</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#continuous-input-for-d"><span class="nav-number">1.2.2.</span> <span class="nav-text">Continuous input for \(D\)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reinforcement-learning-1"><span class="nav-number">1.2.3.</span> <span class="nav-text">Reinforcement Learning</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%A6%E9%A9%97%E7%9A%84%E5%BB%B6%E4%BC%B8%E8%A8%8E%E8%AB%96"><span class="nav-number">1.3.</span> <span class="nav-text">實驗的延伸討論</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unsupervised-conditional-sequence-generation"><span class="nav-number">2.</span> <span class="nav-text">Unsupervised Conditional Sequence Generation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#text-style-transfer"><span class="nav-number">2.1.</span> <span class="nav-text">Text Style Transfer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#abstractive-summarization"><span class="nav-number">2.2.</span> <span class="nav-text">Abstractive Summarization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unsupervised-machine-translation"><span class="nav-number">2.3.</span> <span class="nav-text">Unsupervised Machine Translation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unsupervised-speech-recognition"><span class="nav-number">2.4.</span> <span class="nav-text">Unsupervised Speech Recognition</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">3.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/11/23/Generative%20Adversarial%20Network%20(9)%20%E2%80%94%20Sequence%20Generation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Generative Adversarial Network (9) --- Sequence Generation
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-11-23 02:43:30 / 修改時間：02:44:08" itemprop="dateCreated datePublished" datetime="2019-11-23T02:43:30+08:00">2019-11-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/11/23/Generative%20Adversarial%20Network%20(9)%20%E2%80%94%20Sequence%20Generation/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/23/Generative Adversarial Network (9) — Sequence Generation/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在 GAN 的應用中，前面有提到可以用來做 conditional image generation，這種技術我們可以用來進行圖像風格的轉換、語音上的轉換...等等。</p>
+<span id="more"></span>
+<p>當然我們也可以用在 NLP 領域中，我們稱之為 conditional sequence generation，簡單來說，就是一個生成 Sequence 的任務，比較常看見的例子就是語音轉文字、語音翻譯、聊天機器人...等。這樣的輸出就是一串 Word Sequence。</p>
+<p>然而，在一般的 Seq2Seq Model 中利用 MLE 來做預測，很容易會碰到一些問題。舉例來說，當一個　Model 接收到 " How are you ? " 這樣的句子時，訓練階段我們認為 " I'm good. " 這樣的回答是好的。訓練結束過後，當我們在進行應用時，遇到相同問題，下列兩個回答，機器人會怎麼做抉擇 ?</p>
+<ol type="1">
+<li>I'm John.</li>
+<li>Not Bad.</li>
+</ol>
+<p>從人類的角度來看，第二句是好的回答，但 model 卻會認為第一句是應該採取的回應，因為，至少在第一個字上面是正確的。</p>
+<h2 id="supervised-conditional-sequence-generation">Supervised Conditional Sequence Generation</h2>
+<p>在上面這種 Supervised Conditional Sequence Generation 任務上，食物通常利用兩種方式來增進 model 的表現 :</p>
+<ul>
+<li>Reinforcement Learning</li>
+<li>GAN</li>
+</ul>
+<h3 id="reinforcement-learning">Reinforcement Learning</h3>
+<p>如果我們今天想要引進 Reinforcement Learning 來讓 Chatbot 回答得更好、更準確，那可能會讓機器人不斷的跟人進行對話，最後由人給出一個 Reward，藉由很多次的對話，得到很多的 Reward 來增進機器人的回應。</p>
+<p>優化的目標其實就是希望期望 Reward 可以盡可能的高，方式則是使用 Policy Gradient 來進行優化。</p>
+<p>如果我們將機器人本身視為一個 Network，當我們輸入一個 <span class="math inline">\(h\)</span>，不同參數 <span class="math inline">\(\theta\)</span> 的模型會得到不同的輸出 <span class="math inline">\(x\)</span>，當然也就會有不同的 Reward <span class="math inline">\(R(x,h)\)</span>，因此我們希望找到一個 <span class="math inline">\(\theta^*\)</span> 可以使整個期望 Reward <span class="math inline">\(\bar{R}\)</span> 最大。( 為了簡化討論，我們讓整個對話過程只有一次問答的過程就會得到 Reward。 )</p>
+<p><span class="math display">\[
+\theta^*=\arg\max\limits_{\theta}\bar{R}_{\theta}\\
+\text{where }\bar{R}_{\theta}=\sum\limits_{h}P(h)\sum\limits_{x}R(x,h)P_{\theta}(x|h)
+\]</span></p>
+<p>對於 <span class="math inline">\(\bar{R}_{\theta}\)</span> 我們可以這樣直觀的來解釋 :</p>
+<p><img src="https://i.imgur.com/jaO7jb8.jpg" /></p>
+<p>經由這樣的解釋我們可以改寫 <span class="math inline">\(\bar{R}_{\theta}\)</span></p>
+<p><span class="math display">\[
+\bar{R}_{\theta}=\mathbb{E}_{h\sim P(h)}\Big[\mathbb{E}_{x\sim P(x|h)}[R(x,h)]\Big]\\
+=\mathbb{E}_{h\sim P(h),x\sim P(x|h)}[R(x,h)]
+\]</span></p>
+<p>但我們不可能遍歷所有可能的 <span class="math inline">\(h\)</span>、<span class="math inline">\(x\)</span>，因此我們試圖去利用手上有的資料來做估計 :</p>
+<p><span class="math display">\[
+\bar{R}_{\theta}\approx\frac{1}{N}\sum\limits_{i=1}^NR(x^i,h^i)
+\]</span></p>
+<p>看似一切合理的推導，但卻發生了一個很嚴重的問題，當我們試著要藉由改變 <span class="math inline">\(\theta\)</span> 來優化 <span class="math inline">\(\bar{R}_{\theta}\)</span> 時，剛剛推導下來的結果根本沒有 <span class="math inline">\(\theta\)</span> 這個參數，或者換個說法，<span class="math inline">\(\theta\)</span> 這個參數被隱藏在這 <span class="math inline">\(N\)</span> 個抽樣資料中 (不同的 <span class="math inline">\(\theta\)</span> 就有不同的抽樣資料 )，導致我們無法對 <span class="math inline">\(\bar{R}_{\theta}\)</span> 直接找梯度。因此有了 Policy Gradient 的方式出來。</p>
+<p>既然我們沒辦法對平均 Reward 求梯度，那我們就直接從整個得到 Reward 的「策略」來求梯度。</p>
+<p><span class="math display">\[
+\bar{R}_{\theta}=\sum\limits_{h}P(h)\sum\limits_{x}R(x,h)P_{\theta}(x|h)\\
+\nabla\bar{R}_{\theta}=\sum\limits_{h}P(h)\sum\limits_{x}R(x,h)\nabla P_{\theta}(x|h)\\
+=\sum\limits_{h}P(h)\sum\limits_{x}R(x,h)P_{\theta}(x|h)\frac{\nabla P_{\theta}(x|h)}{P_{\theta}(x|h)}\\
+=\sum\limits_{h}P(h)\sum\limits_{x}R(x,h)P_{\theta}(x|h)\nabla\log P_{\theta}(x|h)\\
+=\mathbb{E}_{h\sim P(h),x\sim P(x|h)}[R(x,h)\nabla\log P_{\theta}(x|h)]
+\]</span></p>
+<p>一樣的我們用手中現有的資料來做估計</p>
+<p><span class="math display">\[
+\nabla\bar{R}_{\theta}\approx\frac{1}{N}\sum\limits_{i=1}^NR(x^i,h^i)\nabla\log P_{\theta}(x|h)
+\]</span></p>
+<p>這樣我們就可以使用 Gradient Ascent 來進行優化</p>
+<p><span class="math display">\[
+\theta^{n+1}\longleftarrow\theta^n+\eta\cdot\nabla\bar{R}_{\theta^n}
+\]</span></p>
+<p>在實作上，我們整個過程大概是如下 :</p>
+<ol type="1">
+<li>讓 Machine 跟人進行 <span class="math inline">\(N\)</span> 輪對話 (抽象)，得到 <span class="math inline">\(N\)</span> 筆資料 <span class="math inline">\((h^i,x^i)\)</span> 跟 Reward <span class="math inline">\(R(x^i,h^i)\)</span>。</li>
+<li>利用 <span class="math inline">\(\theta^{n+1}\longleftarrow\theta^n+\eta\cdot\nabla\bar{R}_{\theta^n}\)</span> 進行優化，Reward 高的策略出現機率會上調，反之，機率則下降。</li>
+<li>重新讓 Machine 根據新的參數跟人進行 <span class="math inline">\(N\)</span> 輪對話 (重新抽樣)。</li>
+</ol>
+<p>其中第三點非常重要，一般的 GD 只要更新完參數就可以繼續更新下去，但在 Policy Gradient 中我們必須要重新進行抽樣才能再繼續更新。( 這樣的計算成本十分高昂，在實作上是有方式可以處理這個問題的，就留待 MLDS 的 RL 課程再介紹。 )</p>
+<p>以下是 RL 與 MLE 的比較表 :</p>
+<p><img src="https://i.imgur.com/LZqZJlz.png" /></p>
+<p>最後，補充一點的是，現實上要機器跟人類進行上百上千次對話其實也並不是這麼容易的事情，所以也有人利用兩個機器人互相對話來進行 RL。</p>
+<h3 id="gan">GAN</h3>
+<p>利用 GAN 其實跟 RL 非常相似，甚至我們可以說 RL 的方式就是 GAN 的一種特例。我們可以先從 Conditional GAN 的架構來配合 Seq2Seq 來看</p>
+<p><img src="https://i.imgur.com/lnACrB4.png" /></p>
+<p>我們輸入一個 Sentence <span class="math inline">\(c\)</span> 利用一個 <span class="math inline">\(G\)</span> 來生成另一個 Sentence <span class="math inline">\(x\)</span>，將 <span class="math inline">\(c,x\)</span> 輸入 <span class="math inline">\(D\)</span> 進行真偽判斷。這不是太困難，但之所以稱 RL 可以是 GAN 的一個特例主要是因為，如果把 <span class="math inline">\(G\)</span> 看作是一個 ChatBot，而 <span class="math inline">\(D\)</span> 的工作讓人來做，這不就是 RL 在做的事情 ?</p>
+<ul>
+<li>初始化 $<span class="math inline">\(G\)</span> (Chatbot) and <span class="math inline">\(D\)</span></li>
+<li>迭代進行 :
+<ul>
+<li>從訓練資料中隨機抽樣句子與回應 <span class="math inline">\((c,x)\)</span></li>
+<li>從訓練資料中隨機抽樣句子 <span class="math inline">\(c&#39;\)</span>，並且利用 <span class="math inline">\(G\)</span> 生成 <span class="math inline">\(\tilde{x}\Longrightarrow\tilde{x}=G(c&#39;)\)</span></li>
+<li>藉由更新 <span class="math inline">\(D\)</span> 來增加 <span class="math inline">\(D(c,x)\)</span> ，並減少 <span class="math inline">\(D(c&#39;,\tilde{x})\)</span></li>
+<li>藉由更新 <span class="math inline">\(G\)</span> 來減少 <span class="math inline">\(D(c,x)\)</span> ，並增加 <span class="math inline">\(D(c&#39;,\tilde{x})\)</span></li>
+</ul></li>
+</ul>
+<p>然而，Sentence 上的訓練，並非直接輸入一個 Sentence 向量，<span class="math inline">\(G\)</span> 是一個 Seq2Seq Model，可能使用的是一個類似 RNN 的方式在運作，每一次吐出一個 token<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。但是 RNN 在運作的過程中，其實是藉由抽樣 (sample) 來得到 token。</p>
+<p><img src="https://i.imgur.com/y7hHuFT.jpg" /></p>
+<p>現在遇到的困難是，<span class="math inline">\(G\)</span> 利用這樣抽樣的過程得到 token，當我們要進行 <span class="math inline">\(G\)</span> 的優化時，這個過程是沒有辦法微分的。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>無法微分就不能進行 GD 優化，但在許多 paper 中有許多種不同的方式來解決這樣的問題 :</p>
+<ol type="1">
+<li>Gumbel-Softmax</li>
+<li>Continuous input for <span class="math inline">\(D\)</span></li>
+<li>Reinforcement Learning</li>
+</ol>
+<h4 id="gumbel-softmax">Gumbel-Softmax</h4>
+<p>課程中沒有對 Gumbel-Softmax 有比較深入的介紹，簡單來說這種方法是利用一個特殊的 Softmax 來對離散的分佈進行抽樣，這樣的抽樣是連續的、可微分的，而且逼近原本的離散分佈。</p>
+<h4 id="continuous-input-for-d">Continuous input for <span class="math inline">\(D\)</span></h4>
+<p>這個方法比較直觀，原本我們說 RNN 利用取樣來輸出 token，而這導致了佈可微分的狀況，既然如此，那我們就不要取樣了，直接把取樣前的分佈輸入 <span class="math inline">\(D\)</span>。</p>
+<p><img src="https://i.imgur.com/S9q3lVW.png" /></p>
+<p>這樣的做法固然解決了不可微分的狀況，但也產生了訓練時的問題。</p>
+<p>試想，我們在 training data 中的真實資料通常都是以 one-hot encoding 呈現，但我們生成的 word distribution 卻都是依些連續數值。這樣在訓練的過程中，<span class="math inline">\(G\)</span> 為了騙過 <span class="math inline">\(D\)</span> 就會盡可能地生成出類似 one-hot 型態的分佈，但其實這樣的分佈產生的 token 其實很可能是毫無語意可言的。</p>
+<p>在實作中藥解決這樣的問題，比較可能成功的方式就是利用 WGAN。原因是因為 WGAN 中有一個 1-Lipschitz 的限制，這樣的限制導致 <span class="math inline">\(D\)</span> 在進行真偽判定的能力不會這麼「強」。李宏毅課程中的舉例更生動，其實就是 <span class="math inline">\(D\)</span> 看東西的能力變得模糊，這樣<span class="math inline">\(G\)</span>就不見得非得將分佈壓成 <span class="math inline">\(0,1\)</span>。</p>
+<h4 id="reinforcement-learning-1">Reinforcement Learning</h4>
+<p>第三個方法，我們利用 RL 訓練的方式來進行，可以解決這個不可微分的狀況。</p>
+<p>作法很簡單，其實就把 RL 中的人改成 <span class="math inline">\(D\)</span>，把 Reward <span class="math inline">\(R(c^i,x^i)\)</span> 改成 <span class="math inline">\(D(c^i,x^i)\)</span>，然後訓練方法跟上面介紹的 RL 訓練過程一模一樣即可。</p>
+<p>但是上面的步驟只有 train <span class="math inline">\(G\)</span> ，但現在我們還必須要 train <span class="math inline">\(D\)</span>，方式跟一般的 Discriminator 訓練其實一樣，我們用真人對話的資料跟生成對話的資料輸入給 <span class="math inline">\(D\)</span>，讓其盡可能地分辨出真偽。最後再反覆地對 <span class="math inline">\(G\)</span> 及 <span class="math inline">\(D\)</span> 進行訓練即可。</p>
+<p>現在假設我們輸入一個 sentence <span class="math inline">\(c^i=\)</span>" What's your name ? "，而我們得到一個生成回應 <span class="math inline">\(x^i=\)</span> " I don't know "</p>
+<p>這樣的回應並不是很好，因此我們會希望得到的 Reward 是負值，也會希望<span class="math inline">\(x^i\)</span> 的機率 <span class="math inline">\(P(x^i|c^i)\)</span> 下降。但我們知道整個 <span class="math inline">\(x^i\)</span> 的生成是利用 RNN 一個一個 token 生成出來的。在這個例子中，可以切出三個 token : " I ", "'don't","know"，而且 <span class="math inline">\(x^i\)</span> 的發生機率應該是這三者的個別發生機率之乘積，而當我們希望 <span class="math inline">\(x^i\)</span> 的機率 <span class="math inline">\(P(x^i|c^i)\)</span> 下降 也就是希望上面這三個 token 的發生機率均下降。</p>
+<p><span class="math display">\[
+\nabla\bar{R}_{\theta}\approx\frac{1}{N}\sum\limits_{i=1}^{N}D(x^i,c^i)\nabla\log P_{\theta}(x^i|c^i)
+\]</span></p>
+<p><img src="https://i.imgur.com/euBGH4d.png" /></p>
+<p>但是 "I" 這個 token 其實並沒有這麼差，如果要將其產生機率下降其實有些不合理。但在「理想狀況」下，這樣的狀況其實並沒有什麼問題，因為 " I don't know " 是抽樣出來的結果，我們也可能抽樣到 <span class="math inline">\(x^i=\)</span> " I am John ", "I am Mary" 之類的 Sentence，這些回應句都該得到正值的 Reward，而且希望 <span class="math inline">\(P(x^i|c^i)\)</span> 上升，當然這也代表了 "I" 出現的機率在這樣的前提下應該要被提高。</p>
+<p>於是在整個抽樣下，只要我們抽樣得夠多，"I" 這個 token 一加一減後其實會抵消，不會造成負面的影響。但這前提就是 「抽樣得夠多」，我們往往會知道這種理想狀態通常不會發生。</p>
+<p>所以我們會希望當 <span class="math inline">\(P(x^i|c^i)\)</span> 上升或下降時，每一個 token 的機率可以個別進行估計，不要一起上升或下降。</p>
+<p>底下是採用的修改方式 ( 課程中簡單帶過，我們也簡單看過就好 )</p>
+<p><img src="https://i.imgur.com/hF2pffJ.png" /></p>
+<h3 id="實驗的延伸討論">實驗的延伸討論</h3>
+<p>當我們進行 GAN 當我們進行 GAN 或是最早之前的 MLE 方式進行，其實在實驗結果的呈現上有蠻大程度的不同。</p>
+<p><img src="https://i.imgur.com/f8kOFAn.png" /></p>
+<p>從上圖來看，MLE 會生成的語句通常都是比較短的、模稜兩可的句子。而 GAN 則是會比較偏向於生成較長也相對複雜的句子。</p>
+<h2 id="unsupervised-conditional-sequence-generation">Unsupervised Conditional Sequence Generation</h2>
+<p>這種 Unsupercvised Learning 在 GAN 前面的部分講過很多了，例如畫風轉換、語音轉換...等等。所採用的方法以 Cycle GAN 為大宗，其他還有 X-GAN、Star GAN 等方法。在 Seq2Seq Model 中，也有類似的 Unsupervised 問題，最基本的就是 Text Style Transfer。</p>
+<h3 id="text-style-transfer">Text Style Transfer</h3>
+<p>簡單一點的例子就是將正面文字 ( it's a good day ) 轉換為負面文字 ( it's a bad day )。在實作上我們就是把正面跟負面視為兩個不同的 domian 利用 Cycle GAN 等方法進行生成。</p>
+<p>當然一樣會遇到上面離散分布導致不可微分的狀況，處理的辦法也就如同上述介紹，這邊不多贅述。</p>
+<h3 id="abstractive-summarization">Abstractive Summarization</h3>
+<p>另一個廣泛的問題是摘要擷取，也就是給定一篇文章，我們希望機器可以自行學出摘要。這個問題我們當然可以利用 Supervised Learning 的方式進行處理，先對一堆文章進行人工摘要標註，再來訓練 Model，但這樣的方式一來曠日廢時，二來我們要進行自動摘要擷取的文章通常也都還是機器沒看過的，要進行摘要擷取會變得相對困難。</p>
+<p>其實擷取摘要並非新的問題，早在幾十年前就有人在研究，當時作的主要是 Extracted Summarization，這是指將文章中的一些重要文句抓出來拼接成一個摘要。但這樣處理通常會造成語句不通順，而且這樣的摘要也是我們真正想要的。最終我們希望的是機器可以利用自己的學習能力來自己生成出摘要，不是只是照抄而已，這就是我們說的 Abstractive Summarization。</p>
+<p>在實務上的做法一樣是將文章跟摘要視為兩個不同的 Domain，而我們的任務就是訓練一個 model 可以在這兩個 domain 間互轉。</p>
+<p><img src="https://i.imgur.com/WqoC3Eo.png" /></p>
+<p>跟 Cycle GAN 一樣，我們必須在中間加上一個 Discriminator 來使生成的摘要更真實。</p>
+<p>下圖可以明顯看出，僅使用了 500k 筆資料進行的 Unsupervised Learning，其準確度進逼使用 3.8M 筆資料進行 Supervised Learning。也就是說，用了相較少量的資料我就可以做出幾乎相同的成果。</p>
+<p><img src="https://i.imgur.com/oxZdYWX.png" /></p>
+<h3 id="unsupervised-machine-translation">Unsupervised Machine Translation</h3>
+<p>課程這部分沒講什麼，有興趣的可以看看課程中給的兩篇 Paper : " <em><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.04087">Word Translation Without Parallel Data</a></em> " 以及 " <em><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1711.00043">Unsupervised Machine Translation Using Monolingual Corpora Only</a></em> "</p>
+<p>比較有趣的還是實驗結果，在下途中可以看到，如果我們手中的資料十萬筆，利用 Unsupervised 的方式是可能會勝過 Supervised 的。</p>
+<p><img src="https://i.imgur.com/rL2as6D.png" /></p>
+<h3 id="unsupervised-speech-recognition">Unsupervised Speech Recognition</h3>
+<p>將語音跟文字一樣視為兩個不同 Domain，利用 Cycle GAN 技術來讓機器學習到怎麼將語音轉文字，甚至機器可以學習怎樣的語音訊號會對應到什麼樣的文字。</p>
+<p><img src="https://i.imgur.com/CpJ0uVJ.png" /></p>
+<p>以下是實驗結果</p>
+<p><img src="https://i.imgur.com/byVjRGy.png" /></p>
+<p>語音使用 TIMIT Corpus ，而文字使用的是 WMT Corpus，這兩個語料庫間並沒有對應關係。從上面的實驗解果看來，我們可能會覺得 Unsupervised 的效果不如預期，但事實上這樣的表現遠遠勝過隨機亂猜，這表明了機器仍有學習到一些東西。</p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Token 在 NLP 領域中指的是句子經過切詞後產生的不同長度的字詞，不一定是"字"(word)，而每一個 token 我們都會以一個向量來表示。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>我們可以從一個比較直觀的角度來看這個取樣的過程，取樣其實不會是一個平滑的過程，既然不是平滑的，那我們就無法對這樣的函數(<span class="math inline">\(G\)</span>)進行微分。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/11/23/Generative%20Adversarial%20Network%20(9)%20%E2%80%94%20Sequence%20Generation/" title="Generative Adversarial Network (9) --- Sequence Generation">https://allen108108.github.io/blog/2019/11/23/Generative Adversarial Network (9) — Sequence Generation/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/18/Generative%20Adversarial%20Network%20(8)%20%E2%80%94%20Photo%20Editing/" rel="prev" title="Generative Adversarial Network (8) --- Photo Editing">
+                  <i class="fa fa-chevron-left"></i> Generative Adversarial Network (8) --- Photo Editing
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/23/Generative%20Adversarial%20Network%20(10)%20%E2%80%94%20Evaluation%20&%20Concluding%20Remarks/" rel="next" title="Generative Adversarial Network (10) --- Evaluation & Concluding Remarks">
+                  Generative Adversarial Network (10) --- Evaluation & Concluding Remarks <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

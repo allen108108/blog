@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="PHP 之所以好用，一來是其與 HTML 的高度相容，可以在 HTML 中任意的地方插入 PHP 程式碼，另外一部分就是 PHP 作為 Web 應用的 Programming Language，它可以做為與資料庫的互動極為好用的工具之一。而這樣的特性，在 IOT 領域上獲得了非常多的應用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【PHP】 Array 與 HTML">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/09/14/%E3%80%90PHP%E3%80%91%20Array%20%E8%88%87%20HTML/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="PHP 之所以好用，一來是其與 HTML 的高度相容，可以在 HTML 中任意的地方插入 PHP 程式碼，另外一部分就是 PHP 作為 Web 應用的 Programming Language，它可以做為與資料庫的互動極為好用的工具之一。而這樣的特性，在 IOT 領域上獲得了非常多的應用。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/hze3kBt.png">
+<meta property="article:published_time" content="2020-09-14T15:03:31.000Z">
+<meta property="article:modified_time" content="2020-09-14T15:04:05.644Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/hze3kBt.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/09/14/%E3%80%90PHP%E3%80%91%20Array%20%E8%88%87%20HTML/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/09/14/%E3%80%90PHP%E3%80%91%20Array%20%E8%88%87%20HTML/","path":"2020/09/14/【PHP】 Array 與 HTML/","title":"【PHP】 Array 與 HTML"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【PHP】 Array 與 HTML | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#array-%E9%99%A3%E5%88%97"><span class="nav-number">1.</span> <span class="nav-text">Array 陣列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#array-%E7%9A%84%E5%9E%8B%E6%85%8B"><span class="nav-number">1.1.</span> <span class="nav-text">Array 的型態</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#array-%E7%9A%84%E6%96%B0%E5%A2%9E"><span class="nav-number">1.2.</span> <span class="nav-text">Array 的新增</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%96%AE%E4%B8%80%E5%85%83%E7%B4%A0%E7%9A%84%E6%96%B0%E5%A2%9E"><span class="nav-number">1.2.1.</span> <span class="nav-text">單一元素的新增</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#key-value-pair-%E7%9A%84%E6%96%B0%E5%A2%9E"><span class="nav-number">1.2.2.</span> <span class="nav-text">Key-Value pair 的新增</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#array-%E7%9A%84%E5%B1%95%E7%A4%BA"><span class="nav-number">1.3.</span> <span class="nav-text">Array 的展示</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#array-function"><span class="nav-number">2.</span> <span class="nav-text">Array Function</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#http-method-get-and-post"><span class="nav-number">2.1.</span> <span class="nav-text">HTTP Method : GET and POST</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#array_keys-array_key_exists"><span class="nav-number">2.2.</span> <span class="nav-text">array_keys &#x2F;array_key_exists</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#array-and-database"><span class="nav-number">3.</span> <span class="nav-text">Array and Database</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#json"><span class="nav-number">3.1.</span> <span class="nav-text">JSON</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">4.</span> <span class="nav-text">後記</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/09/14/%E3%80%90PHP%E3%80%91%20Array%20%E8%88%87%20HTML/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【PHP】 Array 與 HTML
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-09-14 23:03:31 / 修改時間：23:04:05" itemprop="dateCreated datePublished" datetime="2020-09-14T23:03:31+08:00">2020-09-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC-Backend-Development/" itemprop="url" rel="index"><span itemprop="name">後端開發 Backend Development</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/09/14/%E3%80%90PHP%E3%80%91%20Array%20%E8%88%87%20HTML/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/09/14/【PHP】 Array 與 HTML/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>PHP 之所以好用，一來是其與 HTML 的高度相容，可以在 HTML 中任意的地方插入 PHP 程式碼，另外一部分就是 PHP 作為 Web 應用的 Programming Language，它可以做為與資料庫的互動極為好用的工具之一。而這樣的特性，在 IOT 領域上獲得了非常多的應用。</p>
+<span id="more"></span>
+<h2 id="array-陣列">Array 陣列</h2>
+<h3 id="array-的型態">Array 的型態</h3>
+<p>從 Python 的角度來看， PHP 的 array 可以視為<code>list列表</code>, <code>array陣列</code> 與 <code>dictionary字典</code> 的結合。它的型態可以是一維的線性型態、可以是二維的型態也可以是包含著 array 的 array 型態。PHP 中的陣列沒有一個很嚴謹的型態告訴使用者什麼叫做 array，也相對來說在應用上具有很高的彈性。以下是官方對於陣列的解釋 :</p>
+<blockquote>
+<p>An array in PHP is actually an ordered map. A map is a type that associates values to keys. This type is optimized for several different uses; it can be treated as an array, list (vector), hash table (an implementation of a map), dictionary, collection, stack, queue, and probably more. As array values can be other arrays, trees and multidimensional arrays are also possible.</p>
+</blockquote>
+<p>以下是幾種陣列型態的舉例 :</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//一維陣列</span></span><br><span class="line"><span class="variable">$arr</span> = <span class="keyword">array</span>(<span class="string">&quot;Michael&quot;</span>, <span class="string">&quot;Jackson&quot;</span>);</span><br><span class="line"><span class="comment">// output :</span></span><br><span class="line"><span class="comment">// Array ( [0] =&gt; Michael [1] =&gt; Jackson )</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的例子可以知道，其實即使是單一元素的陣列，它仍是一個有序的 Key-Value pair，只是以 index 做為 Key 而已。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//二維陣列</span></span><br><span class="line"><span class="variable">$arr</span> = <span class="keyword">array</span>(<span class="string">&quot;First_Name&quot;</span>=&gt;<span class="string">&quot;Michael&quot;</span>, </span><br><span class="line">             <span class="string">&quot;Last_Name&quot;</span>=&gt;<span class="string">&quot;Jackson&quot;</span>);</span><br><span class="line"><span class="comment">// output :</span></span><br><span class="line"><span class="comment">// Array ( [First_Name] =&gt; Michael [Last_Name] =&gt; Jackson )</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//陣列包含陣列</span></span><br><span class="line"><span class="variable">$arr</span> = <span class="keyword">array</span>(</span><br><span class="line">          <span class="string">&quot;Idol_Name&quot;</span> =&gt;<span class="keyword">array</span>(<span class="string">&quot;First_Name&quot;</span>=&gt;<span class="string">&quot;Michael&quot;</span>, </span><br><span class="line">                         <span class="string">&quot;Last_Name&quot;</span>=&gt;<span class="string">&quot;Jackson&quot;</span>),</span><br><span class="line">          <span class="string">&quot;Idol_Album&quot;</span> =&gt;<span class="keyword">array</span>(<span class="string">&quot;Album_Name&quot;</span>=&gt;<span class="string">&quot;Dangerous&quot;</span>, </span><br><span class="line">                         <span class="string">&quot;Released&quot;</span>=&gt;<span class="string">&quot;November 26, 1991&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;Length&quot;</span>=&gt;<span class="string">&quot;77:03&quot;</span>),</span><br><span class="line">          <span class="string">&quot;Idol_Movie&quot;</span> =&gt;<span class="keyword">array</span>(<span class="string">&quot;Movie_Name&quot;</span>=&gt;<span class="string">&quot;Moonwalker&quot;</span>, </span><br><span class="line">                         <span class="string">&quot;Directed_By&quot;</span>=&gt;<span class="string">&quot;Jerry Kramer&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;Written_By&quot;</span>=&gt;<span class="string">&quot;David Newman&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;Distributed_By&quot;</span>=&gt;<span class="string">&quot;Warner Bros.&quot;</span>)</span><br><span class="line">);</span><br><span class="line"><span class="comment">// output :</span></span><br><span class="line"><span class="comment">// Array ( [Idol_Name] =&gt; Array ( [First_Name] =&gt; Michael </span></span><br><span class="line"><span class="comment">//                                [Last_Name] =&gt; Jackson ) </span></span><br><span class="line"><span class="comment">//         [Idol_Album] =&gt; Array ( [Album_Name] =&gt; Dangerous </span></span><br><span class="line"><span class="comment">//                                 [Released] =&gt; November 26, 1991 </span></span><br><span class="line"><span class="comment">//                                 [Length] =&gt; 77:03 ) </span></span><br><span class="line"><span class="comment">//         [Idol_Movie] =&gt; Array ( [Movie_Name] =&gt; Moonwalker </span></span><br><span class="line"><span class="comment">//                                 [Directed_By] =&gt; Jerry Kramer </span></span><br><span class="line"><span class="comment">//                                 [Written_By] =&gt; David Newman </span></span><br><span class="line"><span class="comment">//                                 [Distributed_By] =&gt; Warner Bros. ) )</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>從上面的例子可以發現 PHP 中 array 展現的多樣性，而這樣的彈性會為我們後面要介紹的資料庫存取有很大的關連性。</p>
+<p>PS : 這裡我們先暫時不管 output 是怎麼出來的，留待後面的部分再進行介紹。但是當我們初次接觸 PHP 時 (尤其像筆者是從高階語言跳過來學習 PHP 的人)，要習慣在每一個語句的後面都要加上 <code>;</code> ，而且變數必須在前面加上 <code>$</code>，不然一定會報錯。 ( 不過跟其他語言一樣，如果會看得懂 Error message 就應該可以抓到問題點 )</p>
+<h3 id="array-的新增">Array 的新增</h3>
+<p>PHP 作為使用者與後台資料庫的介接，不管是使用者輸入參數要藉由 PHP 來對資料庫撈資料，或是面對撈出來的資料要整理出來呈現給使用者，這中間都會使用到 array 來作為資料的型態進行傳遞。有鑑於上面所談到 array 的多樣結構，這對於結構性資料的呈現非常有幫助，因此我們必須要知道如何新增這些資料進 array 之中。</p>
+<h4 id="單一元素的新增">單一元素的新增</h4>
+<p>單一元素的新增方法其實有蠻多的方法，比較正規的大概是利用 <code>array_push</code> function 來新增元素</p>
+<p><code>方法一</code> <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$list</span> = <span class="keyword">array</span>(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>);</span><br><span class="line">array_push(<span class="variable">$list</span>, , <span class="string">&quot;c&quot;</span>, <span class="string">&quot;d&quot;</span>, <span class="string">&quot;e&quot;</span>);</span><br><span class="line"></span><br><span class="line">print_r(<span class="variable">$list</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// output :</span></span><br><span class="line"><span class="comment">//Array([0] =&gt; a</span></span><br><span class="line"><span class="comment">//      [1] =&gt; b</span></span><br><span class="line"><span class="comment">//      [2] =&gt; c</span></span><br><span class="line"><span class="comment">//      [3] =&gt; d</span></span><br><span class="line"><span class="comment">//      [4] =&gt; e)</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure> 但筆者在現實狀況下比較常用的是另一種新增方式，下面的方式如果遇到較多資料的新增，就會讓整個程式碼變得冗長，不過這樣的方式在運用的不同場景下會有更多的彈性 ( 例如 : 會需要利用迴圈來進行新增 )</p>
+<p><code>方法二</code> <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$list</span> = <span class="keyword">array</span>(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>);</span><br><span class="line"><span class="variable">$list</span>[] = <span class="string">&quot;c&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[] = <span class="string">&quot;d&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[] = <span class="string">&quot;e&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output :</span></span><br><span class="line"><span class="comment">//Array([0] =&gt; a</span></span><br><span class="line"><span class="comment">//      [1] =&gt; b</span></span><br><span class="line"><span class="comment">//      [2] =&gt; c</span></span><br><span class="line"><span class="comment">//      [3] =&gt; d</span></span><br><span class="line"><span class="comment">//      [4] =&gt; e)</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure> 無論是方法一或二，都可以知道，新增單一元素其實也會自動新增 Key 值進去。如果原本的陣列就已經有其 Key 值，單純新增元素進去，Key 值會從 0 開始新增</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$list</span> = <span class="keyword">array</span>(<span class="string">&quot;A&quot;</span> =&gt; <span class="string">&quot;a&quot;</span>, </span><br><span class="line">              <span class="string">&quot;B&quot;</span> =&gt; <span class="string">&quot;b&quot;</span>);</span><br><span class="line"><span class="variable">$list</span>[] = <span class="string">&quot;c&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[] = <span class="string">&quot;d&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[] = <span class="string">&quot;e&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output :</span></span><br><span class="line"><span class="comment">//Array([A] =&gt; a</span></span><br><span class="line"><span class="comment">//      [B] =&gt; b</span></span><br><span class="line"><span class="comment">//      [0] =&gt; c</span></span><br><span class="line"><span class="comment">//      [1] =&gt; d</span></span><br><span class="line"><span class="comment">//      [2] =&gt; e)</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="key-value-pair-的新增">Key-Value pair 的新增</h4>
+<p>如果要新增一個 Key-Value pair，方法類似於 Python 字典的新增方式</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$list</span> = <span class="keyword">array</span>(<span class="string">&quot;A&quot;</span> =&gt; <span class="string">&quot;a&quot;</span>, </span><br><span class="line">              <span class="string">&quot;B&quot;</span> =&gt; <span class="string">&quot;b&quot;</span>);</span><br><span class="line"><span class="variable">$list</span>[<span class="string">&quot;C&quot;</span>] = <span class="string">&quot;c&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[<span class="string">&quot;D&quot;</span>] = <span class="string">&quot;d&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[<span class="string">&quot;E&quot;</span>] = <span class="string">&quot;e&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output :</span></span><br><span class="line"><span class="comment">//Array([A] =&gt; a</span></span><br><span class="line"><span class="comment">//      [B] =&gt; b</span></span><br><span class="line"><span class="comment">//      [C] =&gt; c</span></span><br><span class="line"><span class="comment">//      [D] =&gt; d</span></span><br><span class="line"><span class="comment">//      [E] =&gt; e)</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="array-的展示">Array 的展示</h3>
+<p>在 PHP 中，要進行印出的工作，大多使用 <code>echo</code>, <code>var_dump</code>, <code>print</code>以及 <code>print_r</code>，當我們試圖要印出 array 時，建議使用 <code>var_dump</code> 以及 <code>print_r</code>。</p>
+<p>當我們使用 <code>echo</code> 或 <code>print</code> 要印出 array 會遇到錯誤訊息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Notice:  Array to string conversion in &lt;file_path&gt; on &lt;line_number&gt; </span><br></pre></td></tr></table></figure>
+<p>這個錯誤的原因是因為 <code>echo</code> 或 <code>print</code> 就是一個輸出字串的語言結構 (Language Structures)，我們可以說，它就是將看到的『字串』印出來而已，但 Array 是一個資料結構，並非字串符，當然會報錯。</p>
+<p>利用 <code>print_r</code> 印出 Array，是一種比較簡潔的呈現方式，它只會將 Array 中的 Key-Value Pair 印出，正如上面所有例子中的 output 呈現方式</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$list</span> = <span class="keyword">array</span>(<span class="number">0</span>, <span class="number">0.0</span>, <span class="literal">false</span>, <span class="string">&quot;&quot;</span>);</span><br><span class="line"></span><br><span class="line">print_r(<span class="variable">$list</span>);</span><br><span class="line">var_dump(<span class="variable">$list</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// output :</span></span><br><span class="line"><span class="comment">//Array([0] =&gt; 0</span></span><br><span class="line"><span class="comment">//      [1] =&gt; 0</span></span><br><span class="line"><span class="comment">//      [2] =&gt; </span></span><br><span class="line"><span class="comment">//      [3] =&gt; )</span></span><br><span class="line"><span class="comment">//array(4) &#123;[0]=&gt;int(0)</span></span><br><span class="line"><span class="comment">//          [1]=&gt;float(0)</span></span><br><span class="line"><span class="comment">//          [2]=&gt;bool(false)</span></span><br><span class="line"><span class="comment">//          [3]=&gt;string(0) &quot;&quot;&#125;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>這裡比較要注意的部分是，<code>print_r</code> 對於某些型態的值是無法判別的，例如 <code>0</code> 與 <code>0.0</code> / <code>false</code> 與 <code>""</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$list</span> = <span class="keyword">array</span>(<span class="string">&quot;A&quot;</span> =&gt; <span class="string">&quot;a&quot;</span>, </span><br><span class="line">              <span class="string">&quot;B&quot;</span> =&gt; <span class="string">&quot;b&quot;</span>);</span><br><span class="line"><span class="variable">$list</span>[<span class="string">&quot;C&quot;</span>] = <span class="string">&quot;c&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[<span class="string">&quot;D&quot;</span>] = <span class="string">&quot;d&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[<span class="string">&quot;E&quot;</span>] = <span class="string">&quot;e&quot;</span>;</span><br><span class="line"></span><br><span class="line">var_dump(<span class="variable">$list</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//output : </span></span><br><span class="line"><span class="comment">//array(5) &#123;</span></span><br><span class="line"><span class="comment">//  [&quot;A&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;a&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;B&quot;]=&gt;</span></span><br><span class="line"><span class="comment">// string(1) &quot;b&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;C&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;c&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;D&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;d&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;E&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;e&quot;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>var_dump</code> 不僅呈現 Array 中的 Key-Value 關係，更會檢查所有值的轉存 (dump) 的型態</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$list</span> = <span class="keyword">array</span>(<span class="string">&quot;A&quot;</span> =&gt; <span class="string">&quot;a&quot;</span>, </span><br><span class="line">              <span class="string">&quot;B&quot;</span> =&gt; <span class="string">&quot;b&quot;</span>);</span><br><span class="line"><span class="variable">$list</span>[<span class="string">&quot;C&quot;</span>] = <span class="string">&quot;c&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[<span class="string">&quot;D&quot;</span>] = <span class="string">&quot;d&quot;</span>;</span><br><span class="line"><span class="variable">$list</span>[<span class="string">&quot;E&quot;</span>] = <span class="string">&quot;e&quot;</span>;</span><br><span class="line"></span><br><span class="line">var_dump(<span class="variable">$list</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//output : </span></span><br><span class="line"><span class="comment">//array(5) &#123;</span></span><br><span class="line"><span class="comment">//  [&quot;A&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;a&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;B&quot;]=&gt;</span></span><br><span class="line"><span class="comment">// string(1) &quot;b&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;C&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;c&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;D&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;d&quot;</span></span><br><span class="line"><span class="comment">//  [&quot;E&quot;]=&gt;</span></span><br><span class="line"><span class="comment">//  string(1) &quot;e&quot;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在 debug 階段，<code>var_dump</code> 往往是一個不錯的選擇，尤其當我們可能不清楚手上拿到的 Array 裡面元素的形態時。</p>
+<h2 id="array-function">Array Function</h2>
+<p>其實，筆者其實並沒有要詳細介紹所有的陣列函式，若讀者有興趣可以參閱 <a target="_blank" rel="noopener" href="https://www.php.net/manual/en/ref.array.php">PHP 官方文件 -- Array Functions</a>，裡面會介紹到許多的陣列函式及其應用方法。</p>
+<p>這一段落，筆者想要介紹一個對於後續與網頁互動非常相關的函式 -- <code>array_keys</code> 與 <code>array_key_exists</code></p>
+<h3 id="http-method-get-and-post">HTTP Method : GET and POST</h3>
+<p>筆者將以非常淺談的方式來介紹 GET 與 POST。</p>
+<p>當我們利用 HTTP 要進行資料或是參數的傳送時，我們可以定義傳送這些資料的方法，如果我們定義以 GET Method 進行傳送，那麼傳送的資訊會以字串的方式利用 <code>?</code> 加在網址後面，並以 <code>&amp;</code> 做區隔。</p>
+<p>舉例來說，Google api 許多都是以類似的方法進行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://maps.googleapis.com/maps/api/geocode/json？latlng=23.48386540,120.45358340</span><br><span class="line">// ? 後面就是要查詢的經緯度</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://www.googleapis.com/youtube/v3/channels?part=contentDetails&amp;id=UCMUnInmOkrWN4gof9KlhNmQ&amp;key=Abccato</span><br><span class="line">// ? 後面就是要查詢的影片頻道 ID 及使用者 KEY</span><br></pre></td></tr></table></figure>
+<p>相對於 GET，POST 傳送的資訊則是包在 message body 中以封包方式進行傳送。其實，也就是可見與不可見的差異，GET 方式會使要傳送的資料一覽無遺的呈現在網址中，而 POST 則較為隱密。</p>
+<h3 id="array_keys-array_key_exists"><code>array_keys</code> /<code>array_key_exists</code></h3>
+<p>搞清楚 HTTP 中傳送資料的方式後，接下來的問題是，PHP 要怎麼去知道使用者傳送了什麼資料 / 條件 / 參數 ? 我們必須先知道這些，才有辦法對後面的資料庫進行資料查詢。</p>
+<p>如果今天是以 GET 方式傳遞，可以利用 <code>array_keys</code> 來得到參數的 Key-Value 結構，Key 指的是參數名稱，而 Value 則是其值。後續再以 <code>array_key_exists</code> 來進行參數判斷。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line"><span class="variable">$arr_keys_in</span> = array_keys(<span class="variable">$_GET</span>); </span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$arr_keys_in</span> <span class="keyword">as</span> <span class="variable">$item</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span> (array_key_exists(<span class="string">&quot;latlng&quot;</span>, <span class="variable">$item</span>))&#123;</span><br><span class="line">    ...</span><br><span class="line">    &#125;<span class="keyword">else</span> (array_key_exists(<span class="string">&quot;address&quot;</span>, <span class="variable">$item</span>))&#123;</span><br><span class="line">    ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的方式便是我們可以判斷 Google api 中以經緯度或是地址來查詢地理資料分別可以進行不同的動作。</p>
+<h2 id="array-and-database">Array and Database</h2>
+<p>前面的部分，筆者從 Array 的基本介紹中，也帶出了許多 Array 在 HTTP 中的應用範疇，接下來，該是談談 Array 如何應用在 database 之中了。</p>
+<h3 id="json">JSON</h3>
+<p>JSON ( JavaScript Object Notation，JavaScript物件表示法 )，是一種文本格式，之所以廣泛的應用於 HTTP 之中，最主要的原因是它具有結構性，對於存儲或是提取 SQL, MySQL 或 SQLite 這些關聯式資料庫十分適合。因此，利用 Array 作為 PHP 與 Database 之間的傳遞型態，但如果要跟 HTML 作互動，大多使用 JSON 格式來進行。</p>
+<p>假如下列為 SQLite <code>Person.db</code> 資料庫中的某一個關聯表 <code>PersonTbl</code></p>
+<p><img src="https://i.imgur.com/hze3kBt.png" /></p>
+<p>我們可以利用 SQLite PHP API 來進行讀取關聯表，並且存入陣列中 :</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$db</span> = <span class="keyword">new</span> SQLite3(<span class="string">&quot;./Person.db&quot;</span>); <span class="comment">//讀取資料庫</span></span><br><span class="line"><span class="variable">$strSQL</span> = <span class="string">&quot;SELECT * FROM PersonTbl;&quot;</span> <span class="comment">//對關聯表進行 Query</span></span><br><span class="line"><span class="variable">$results</span> = <span class="variable">$db</span>-&gt;query(<span class="variable">$strSQL</span>)</span><br><span class="line"></span><br><span class="line"><span class="variable">$list</span> = <span class="keyword">array</span>() <span class="comment">//初始化陣列</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//將每一個人的資料作為一個陣列添加進 $list array 之中</span></span><br><span class="line"><span class="keyword">while</span> (<span class="variable">$row</span> <span class="keyword">as</span> DB_fetch_row(<span class="variable">$result</span>))&#123;</span><br><span class="line">    <span class="variable">$list</span>[] = <span class="keyword">array</span>(<span class="string">&quot;PersonID&quot;</span>=&gt;<span class="variable">$row</span>[<span class="string">&quot;PersonID&quot;</span>],</span><br><span class="line">                    <span class="string">&quot;Name&quot;</span>=&gt;<span class="variable">$row</span>[<span class="string">&quot;Name&quot;</span>],</span><br><span class="line">                    <span class="string">&quot;Age&quot;</span>=&gt;<span class="variable">$row</span>[<span class="string">&quot;Age&quot;</span>],</span><br><span class="line">                    <span class="string">&quot;Gender&quot;</span>=&gt;<span class="variable">$row</span>[<span class="string">&quot;Gender&quot;</span>],</span><br><span class="line">                    <span class="string">&quot;Profession&quot;</span>=&gt;<span class="variable">$row</span>[<span class="string">&quot;Profession&quot;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print_r(<span class="variable">$list</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//output : </span></span><br><span class="line"><span class="comment">//Array([0] =&gt; Array([PersonID] =&gt; 90152</span></span><br><span class="line"><span class="comment">//                   [Name] =&gt; TuPac</span></span><br><span class="line"><span class="comment">//                   [Age] =&gt; 25</span></span><br><span class="line"><span class="comment">//                   [Gender] =&gt; Male</span></span><br><span class="line"><span class="comment">//                   [Profession] =&gt; Singer)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//      [1] =&gt; Array([PersonID] =&gt; 63254</span></span><br><span class="line"><span class="comment">//                   [Name] =&gt; Dreck</span></span><br><span class="line"><span class="comment">//                   [Age] =&gt; 32</span></span><br><span class="line"><span class="comment">//                   [Gender] =&gt; Male</span></span><br><span class="line"><span class="comment">//                   [Profession] =&gt; Teacher)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//      [2] =&gt; Array([PersonID] =&gt; 45369</span></span><br><span class="line"><span class="comment">//                   [Name] =&gt; Nicki</span></span><br><span class="line"><span class="comment">//                   [Age] =&gt; 28</span></span><br><span class="line"><span class="comment">//                   [Gender] =&gt; Female)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//      [3] =&gt; Array([PersonID] =&gt; 85624</span></span><br><span class="line"><span class="comment">//                   [Name] =&gt; Jay-Z</span></span><br><span class="line"><span class="comment">//                   [Age] =&gt; 40</span></span><br><span class="line"><span class="comment">//                   [Gender] =&gt; Male</span></span><br><span class="line"><span class="comment">//                   [Profession] =&gt; Driver))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最後我們要轉換成 JSON 只需要利用 <code>json_encode</code> 就可以直接轉換</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$res_obj</span> = json_encode(<span class="variable">$list</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$res_obj</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//[</span></span><br><span class="line"><span class="comment">//    &#123;&quot;PersonID&quot;:&quot;90152&quot;,&quot;Name&quot;:&quot;TuPac&quot;,&quot;Age&quot;:&quot;25&quot;,&quot;Gender&quot;:&quot;Male&quot;,&quot;Profession&quot;:&quot;Singer&quot;&#125;,</span></span><br><span class="line"><span class="comment">//    &#123;&quot;PersonID&quot;:&quot;63254&quot;,&quot;Name&quot;:&quot;Dreck&quot;,&quot;Age&quot;:&quot;32&quot;,&quot;Gender&quot;:&quot;Male&quot;,&quot;Profession&quot;:&quot;Teacher&quot;&#125;,</span></span><br><span class="line"><span class="comment">//    &#123;&quot;PersonID&quot;:&quot;45369&quot;,&quot;Name&quot;:&quot;Nicki&quot;,&quot;Age&quot;:&quot;28&quot;,&quot;Gender&quot;:&quot;Female&quot;,&quot;Profession&quot;:&quot;Artist&quot;&#125;,</span></span><br><span class="line"><span class="comment">//    &#123;&quot;PersonID&quot;:&quot;85624&quot;,&quot;Name&quot;:&quot;Jay-Z&quot;,&quot;Age&quot;:&quot;40&quot;,&quot;Gender&quot;:&quot;Male&quot;,&quot;Profession&quot;:&quot;Driver&quot;&#125;</span></span><br><span class="line"><span class="comment">//]</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="後記">後記</h2>
+<p>PHP 作為新手的第二 Programming Language 實在是不錯的選擇，其簡潔有力的寫法讓人可以很快的上手，另外它在網路上的廣泛應用，對於學習後端設計的新手來說也非常的有用。現在許多的網路應用 API 都會以 PHP 為架構進行編寫，希望筆者的文章可以幫助大家對 PHP 更有興趣，然後跟著筆者一起來學習吧~~~~~</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/09/14/%E3%80%90PHP%E3%80%91%20Array%20%E8%88%87%20HTML/" title="【PHP】 Array 與 HTML">https://allen108108.github.io/blog/2020/09/14/【PHP】 Array 與 HTML/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/09/10/%E3%80%90PHP%E3%80%91%20require_once%20%E8%88%87%20__DIR__/" rel="prev" title="【PHP】 require_once 與 __DIR__">
+                  <i class="fa fa-chevron-left"></i> 【PHP】 require_once 與 __DIR__
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/11/04/Nyquist-Shannon%20Theorem%20%E5%8F%96%E6%A8%A3%E5%AE%9A%E7%90%86%20(1)%20_%20%E6%B7%BA%E8%AB%87%E5%82%85%E7%AB%8B%E8%91%89%E5%88%86%E6%9E%90/" rel="next" title="Nyquist-Shannon Theorem 取樣定理 (1) : 淺談傅立葉分析">
+                  Nyquist-Shannon Theorem 取樣定理 (1) : 淺談傅立葉分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

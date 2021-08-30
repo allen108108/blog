@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="在正式進入 Word Embedding 之前，我覺得應該先來談談什麼是 Word Vector。 今天看了幾個 Medium 文章，有技術部落格甚至認為 Word Embedding 就是 Word Vector。這才讓我覺得，似乎要對 Word Embedding 要有更深刻的了解才是。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unsupervised Learning (3) -- Word Embedding">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(3)%20--%20Word%20Embedding/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="在正式進入 Word Embedding 之前，我覺得應該先來談談什麼是 Word Vector。 今天看了幾個 Medium 文章，有技術部落格甚至認為 Word Embedding 就是 Word Vector。這才讓我覺得，似乎要對 Word Embedding 要有更深刻的了解才是。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/Q2yK9cs.png%20=300x">
+<meta property="og:image" content="https://i.imgur.com/Y6gh48b.png%20=300x">
+<meta property="og:image" content="https://i.imgur.com/K4EvdrZ.png%20=500x">
+<meta property="og:image" content="https://i.imgur.com/IW9Ve1s.png%20=500x">
+<meta property="og:image" content="https://i.imgur.com/adgSMho.png%20=500x">
+<meta property="og:image" content="https://i.imgur.com/xBv13wS.png%20=330x">
+<meta property="og:image" content="https://i.imgur.com/z0Pp3P0.png%20=330x">
+<meta property="og:image" content="https://i.imgur.com/orAfN63.png">
+<meta property="article:published_time" content="2019-10-07T16:42:04.000Z">
+<meta property="article:modified_time" content="2019-10-22T08:00:29.324Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/Q2yK9cs.png%20=300x">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(3)%20--%20Word%20Embedding/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(3)%20--%20Word%20Embedding/","path":"2019/10/08/Unsupervised Learning (3) -- Word Embedding/","title":"Unsupervised Learning (3) -- Word Embedding"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Unsupervised Learning (3) -- Word Embedding | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#word-vector"><span class="nav-number">1.</span> <span class="nav-text">Word Vector</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#of-n-encoding-one-hot-representation"><span class="nav-number">1.1.</span> <span class="nav-text">1-of-N Encoding ( One-Hot representation )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#word-embedding-distribution-representation"><span class="nav-number">1.2.</span> <span class="nav-text">Word Embedding ( Distribution representation )</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#advantage-of-word-embedding"><span class="nav-number">2.</span> <span class="nav-text">Advantage of Word Embedding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">4.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(3)%20--%20Word%20Embedding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unsupervised Learning (3) -- Word Embedding
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-08 00:42:04" itemprop="dateCreated datePublished" datetime="2019-10-08T00:42:04+08:00">2019-10-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 16:00:29" itemprop="dateModified" datetime="2019-10-22T16:00:29+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/Unsupervised%20Learning%20(3)%20--%20Word%20Embedding/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/Unsupervised Learning (3) -- Word Embedding/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在正式進入 Word Embedding 之前，我覺得應該先來談談什麼是 Word Vector。</p>
+<p>今天看了幾個 Medium 文章，有技術部落格甚至認為 Word Embedding 就是 Word Vector。這才讓我覺得，似乎要對 Word Embedding 要有更深刻的了解才是。</p>
+<span id="more"></span>
+<h2 id="word-vector">Word Vector</h2>
+<p>在 Machine Learning 中，資料的特徵表示是整個領域中最核心的部分，不同的特徵表示，可能會訓練出天差地遠的 Model。當然，在 Natural Language Processing ( NLP ) 中亦然。</p>
+<p>然而於 NLP 中我們應該要用什麼樣子的方式來表示資料 ? 怎麼樣子的方式才能真正有效的表現文本裡面「字」、「詞」、「句」之間的意義呢 ? 此時便有了 Word Vector 的概念。</p>
+<h3 id="of-n-encoding-one-hot-representation">1-of-N Encoding ( One-Hot representation )</h3>
+<p>這是 NLP 中最直覺也是最多人使用的方法，將 One-Hot Encoding 的概念引入 NLP ，每一個字都是一個很長的向量，維度是我們手中擁有的詞數量。</p>
+<p><img src="https://i.imgur.com/Q2yK9cs.png%20=300x" /></p>
+<p>上面的示例，只是為了讓我們理解 1-of-N Encoding 的概念，實務上，每一個 Word Vector 可能都會是好幾萬維的稀疏矩陣。</p>
+<p>1-of-N Encoding 直觀、簡潔，而且在演算法上計算也沒有什麼太大的瓶頸，但是這樣的 Word Vector Representation 卻有一些問題 :</p>
+<ul>
+<li>隨著文本的內容增加，維度會越來越大。</li>
+<li>每一個 Word Vector 之間都是 Independent，無法體現上下文之間的語意相關，而這在 NLP 中是極為嚴重的問題。</li>
+<li>無法加入新詞。</li>
+</ul>
+<h3 id="word-embedding-distribution-representation">Word Embedding ( Distribution representation )</h3>
+<p>Distribution Representation 最早是在 1986 年 Hinton 的論文 -- " <em>Learning distributed representations of concepts</em> " 中被提出。而 Word Embedding 則是 Distribution representation 的一種型態，可以克服 One-Hot repesentation 的缺點 。</p>
+<p><img src="https://i.imgur.com/Y6gh48b.png%20=300x" /> ( 圖片來源 : <a target="_blank" rel="noopener" href="https://blog.csdn.net/scotfield_msn/article/details/69075227">DeepNLP的表示学习·词嵌入来龙去脉·深度学习（Deep Learning）·自然语言处理（NLP）·表示（Representation）</a> )</p>
+<p>Word Embedding 的核心概念是將每一個詞映射到一個 (相對於 One-Hot representation) 低維度的賦距空間內，而這些帶有文本訊息的低維度向量形成一個稠密的「詞向量空間」，然後利用距離來判斷其 ( 語法、語意 ) 相似性。</p>
+<p>這才是真正「詞嵌入」的精隨所在。</p>
+<p>值得一提的是，當我們以 Neural Network 建模時，中間的 hidden layer 都可以視為是一種 feature extraction ( 特徵萃取 )，如果利用 NN 來做 NLP 模型時，這些低維度 hidden layer 也是有捕捉上下文的能力。換句話說， Word Embedding 可以視為 NN 處理 NLP 問題下的副產品。</p>
+<p>說起來簡單，但真正在 NLP 要取得詞向量並不是這麼容易，因為映射方式的不同、嵌入空間的大小不同...等因素，詞向量並不會是唯一的。</p>
+<p>Word Embedding 可以簡單地做一個分類 :</p>
+<ul>
+<li><p>Count-Based : 利用詞頻統計來建立 Word Vector 的一種方法。著名的方法有 -- Count Vector、TF-IDF Vector 以及 Co-Occurence Vector ( GloVe<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> )</p></li>
+<li><p>Prediction-Based : 利用神經網路來建立 Word Vector 的一種方法。常見的方法有 -- Continuous Bag of Words ( CBOW ) 及 Skip-gram。( Prediction-Base 為李宏毅教授的重點 )</p></li>
+</ul>
+<p><img src="https://i.imgur.com/K4EvdrZ.png%20=500x" /></p>
+<p>假如果我們要以前一個字 <span class="math inline">\(w_{i-1}\)</span> 來預測下一個字 <span class="math inline">\(w_i\)</span>，那我們可以利用一組 NN 架構以及一些文本訓練資料，將文本中 <span class="math inline">\(w_{i-1}\)</span> 的 1-of-N Encoding 作為輸入，輸出則是所有文本內文字的機率值 ( 輸入輸出雖是同樣維度，但是意義卻不同。 ) ，藉此訓練出一套預測模型。</p>
+<p><img src="https://i.imgur.com/IW9Ve1s.png%20=500x" /></p>
+<p>當然我們也可以用前兩個字 <span class="math inline">\(w_{i-2},w_{i-1}\)</span> 來預測下一個字 <span class="math inline">\(w_i\)</span>。 就直觀來看，<span class="math inline">\(w_{i-2}\)</span> 與 <span class="math inline">\(w_{i-1}\)</span> 理應具有相同的性質 (語意、上下文關係...)，才能預測出 <span class="math inline">\(w_i\)</span>。因為這樣的理由，我們可以將其權重共享來體現其上述的概念。當然，也可以藉此降低參數量，減少計算成本。</p>
+<p>理解了 Prediction-Base 概念後，前面所講的 CBOW 或是 Skip-gram 也只是其變形應用。</p>
+<p><img src="https://i.imgur.com/adgSMho.png%20=500x" /></p>
+<h2 id="advantage-of-word-embedding">Advantage of Word Embedding</h2>
+<p>當我們可以建立出 Word Embedding 後，就可以對 Word 進行觀察、操作</p>
+<ul>
+<li>我們可以藉由可視化來觀察字詞之間的關聯性</li>
+</ul>
+<p><img src="https://i.imgur.com/xBv13wS.png%20=330x" /><img src="https://i.imgur.com/z0Pp3P0.png%20=330x" /></p>
+<ul>
+<li>我們也可以利用向量的運算法則對 Word 進行運算。</li>
+</ul>
+<p><img width=500 src="https://i.imgur.com/orAfN63.png" ></p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li>Hung-yi Lee , <a target="_blank" rel="noopener" href="http://speech.ee.ntu.edu.tw/~tlkagk/courses_ML17_2.html">Machine Learning</a>(2017)</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/scotfield_msn/article/details/69075227">DeepNLP的表示学习·词嵌入来龙去脉·深度学习（Deep Learning）·自然语言处理（NLP）·表示（Representation）</a></li>
+<li><a target="_blank" rel="noopener" href="https://nlp.stanford.edu/projects/glove/">GloVe: Global Vectors for Word Representation</a></li>
+<li><a target="_blank" rel="noopener" href="https://pengfoo.com/post/machine-learning/2017-04-11">GloVe:另一种Word Embedding方法</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.fanyeong.com/2018/02/19/glove-in-detail/">GloVe详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/2a76b7d3126b">Word Embedding的发展和原理简介</a></li>
+</ol>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Global Vectors for Word Representation 的簡稱。這是 Stanford University 於2014年所發表的 Word Embedding 方法，利用 Co-Occurence Matrix ( 共現矩陣 ) 與上下文的關係建立一套 Loss Function，找出最優化解時的 Word Vector。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(3)%20--%20Word%20Embedding/" title="Unsupervised Learning (3) -- Word Embedding">https://allen108108.github.io/blog/2019/10/08/Unsupervised Learning (3) -- Word Embedding/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Unsupervised%20Learning%20(2)%20--%20AutoEncoder/" rel="prev" title="Unsupervised Learning (2) -- AutoEncoder">
+                  <i class="fa fa-chevron-left"></i> Unsupervised Learning (2) -- AutoEncoder
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Unsupervised%20Learning%20(4)%20--%20Neighbor%20Embedding/" rel="next" title="Unsupervised Learning (4) -- Neighbor Embedding">
+                  Unsupervised Learning (4) -- Neighbor Embedding <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

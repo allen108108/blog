@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="Programming、Data Structure 與 Algorithm 其實是一體的三面，在解決問題時通常從高層次的 Algorithm 開始，搭配著 Data Structure 設計好之後再進入 Implementation 的 Programming 部分。 一個好的演算法必須搭配適當的資料結構才能達到高效，而一個好的眼算法只要 Programming 不要太差，往往都能有著還不錯的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 2 -- Algorithm analysis">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/03/Chapter%202%20%E2%80%93%20Algorithm%20analysis/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="Programming、Data Structure 與 Algorithm 其實是一體的三面，在解決問題時通常從高層次的 Algorithm 開始，搭配著 Data Structure 設計好之後再進入 Implementation 的 Programming 部分。 一個好的演算法必須搭配適當的資料結構才能達到高效，而一個好的眼算法只要 Programming 不要太差，往往都能有著還不錯的">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/127Y2gI.jpg">
+<meta property="og:image" content="https://i.imgur.com/DPg3Dm8.jpg">
+<meta property="og:image" content="https://i.imgur.com/AucQ56Z.png">
+<meta property="og:image" content="https://i.imgur.com/QicnFsM.png">
+<meta property="article:published_time" content="2019-10-03T14:11:15.000Z">
+<meta property="article:modified_time" content="2021-08-30T14:11:45.584Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/127Y2gI.jpg">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/03/Chapter%202%20%E2%80%93%20Algorithm%20analysis/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/03/Chapter%202%20%E2%80%93%20Algorithm%20analysis/","path":"2019/10/03/Chapter 2 – Algorithm analysis/","title":"Chapter 2 -- Algorithm analysis"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Chapter 2 -- Algorithm analysis | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#asymptotic-order-of-growth"><span class="nav-number">1.</span> <span class="nav-text">Asymptotic Order of Growth</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#property-of-oomega-and-theta"><span class="nav-number">1.1.</span> <span class="nav-text">Property of \(O,\Omega\ and\ \Theta\)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#polynomial-time-complexity-of-gale-shapley-algorithm"><span class="nav-number">2.</span> <span class="nav-text">Polynomial-Time complexity of Gale &amp; Shapley Algorithm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">3.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/03/Chapter%202%20%E2%80%93%20Algorithm%20analysis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Chapter 2 -- Algorithm analysis
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-03 22:11:15" itemprop="dateCreated datePublished" datetime="2019-10-03T22:11:15+08:00">2019-10-03</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 22:11:45" itemprop="dateModified" datetime="2021-08-30T22:11:45+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%B1%9F%E8%95%99%E5%A6%82-Algorithm/" itemprop="url" rel="index"><span itemprop="name">江蕙如 Algorithm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/03/Chapter%202%20%E2%80%93%20Algorithm%20analysis/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/03/Chapter 2 – Algorithm analysis/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Programming、Data Structure 與 Algorithm 其實是一體的三面，在解決問題時通常從高層次的 Algorithm 開始，搭配著 Data Structure 設計好之後再進入 Implementation 的 Programming 部分。</p>
+<p>一個好的演算法必須搭配適當的資料結構才能達到高效，而一個好的眼算法只要 Programming 不要太差，往往都能有著還不錯的結果。</p>
+<span id="more"></span>
+<p>什麼是好的演算法 ?</p>
+<ol type="1">
+<li>Corectness : 以證明確認其正確性</li>
+<li>Efficiency : 執行時間快速 (Time) 且 memory 使用量少 (Space) <span class="math inline">\(\Longrightarrow\)</span> Time complexity &amp; Space complexity</li>
+</ol>
+<p>然而，隨著 input size 的增加，在 resource requirement 上面必然需求會增加，我們在這裡在意的應該是增加的 「幅度」。且，當我們在執行演算法的時候，很難確定會在何種設備下運作，也很難確認我們每一次遇到的 case 的情況是如何，因此在討論演算法效率的時候通常是 Platform-Independent &amp; Instance-Independent。</p>
+<p>另外，一個演算法想要進行效率上的比較往往有太多的變因需要討論，input size、演算法的設計都會影響整個解決問題的效率。為了解決這樣的問題，大家便有了一個共識，我們就比較最糟糕的狀況 ( Worse Case ) 下，任意 input size 會造成什麼樣的後果，只要最糟糕的狀況都還能被接受，那麼這樣的演算法應該就不會太差。</p>
+<p>這邊給出了一個定義 :</p>
+<p><span class="math inline">\(An\ algorithm\ is\ efficient\ if\ it\ has\ a\ polynomial\ running\ time.\)</span>[^註1][^註2]</p>
+<p>這裡不是數學上的 <span class="math inline">\(if\)</span> 或是 <span class="math inline">\(if\ only\ if\)</span> 主要是因為上述定義並沒有這麼嚴謹 : 1. 若 c,d 兩常數都非常大時，他仍可以被稱為具有 polynomial running time，但整個城市在執行仍然是非常緩慢的 2. 事實上，當一個 Procedure 沒有 polynomial running time，但在執行上仍然可能會有 efficient 的效果 ( 例如 : Simplex Method 、 Unix Grep )，原因在於，這樣的 Procedure 在執行時往往 Worse case 的狀況不會出現。</p>
+<h2 id="asymptotic-order-of-growth">Asymptotic Order of Growth</h2>
+<p>討論完 efficient 概念後，我們要進入的就是量化的過程。</p>
+<p>如果今天有一個 Procedure 可以計算出執行需要 <span class="math inline">\(1.62n^2+3.5n+8\)</span> primitive coputational steps，如果我們利用這個函數來比較其實會造成ㄧ些問題 : 1. 太過仔細 2. 意義不大 : 既然都是利用 primitive coputational steps 來計算，那麼其差異通常大多都只有係數上的變化，這樣的比較意義並不大。 3. 不容易進行程度上的分組 : 原則上我們還是希望針對效率有一個概括性分類，如果像上式的型態，我們不容易針對個別差異做區分。</p>
+<p>因此，引進了三個符號 <span class="math inline">\(O, \Omega, \Theta\)</span>，來對 Worse Case running time function <span class="math inline">\(T(n)\)</span> 的上下界做限制。以下是其定義　：　 * <span class="math inline">\(T(n)= O\big(f(n)\big)\Longleftrightarrow\exists\ c&gt;0, n_0&gt;0\ s.t.\ T(n)\leq cf(n),\ \forall n&gt;n_0\)</span> * <span class="math inline">\(T(n)= \Omega\big(f(n)\big)\Longleftrightarrow\exists\ c&gt;0, n_0&gt;0\ s.t.\ T(n)\geq cf(n),\ \forall n&gt;n_0\)</span> * <span class="math inline">\(T(n)= \Theta\big(f(n)\big)\Longleftrightarrow T(n)= O\big(f(n)\big)\ and\ T(n)= \Omega\big(f(n)\big)\)</span></p>
+<p>在這樣的定義下，有兩個部分需要注意。</p>
+<ol type="1">
+<li>我們關注的是當 n 足夠大的時候，整個演算法的執行步驟是否可以被一個函數 Bound 住，因此在前期、或是可觀察到的期間的表現可能不是這麼好也沒關係，這不是我們著重的重點。</li>
+</ol>
+<p><img src="https://i.imgur.com/127Y2gI.jpg" /> (圖片來源 : <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=zYNlOKTRd2Y">Data Structures &amp; Algorithms: Video 2 Big O, Big Omega, and Big Theta</a>)</p>
+<ol start="2" type="1">
+<li>在演算法中，<span class="math inline">\(T(n)= O\big(f(n)\big)\)</span> 這樣的表達式似乎已為大眾所接受，但就嚴謹的數學定義上來看，符合條件的 <span class="math inline">\(f(n)\)</span> 顯然有無限多個，而 <span class="math inline">\(O\big(f(n)\big)\)</span> 應該是一個集合的概念。既然如此，一個 function " 等於 " 一個 set，這樣的敘述本身就很奇怪。嚴格來說應該寫成這樣 : <span class="math inline">\(T(n) \in O\big(f(n)\big)\)</span> 會比較貼近其定義。</li>
+</ol>
+<h3 id="property-of-oomega-and-theta">Property of <span class="math inline">\(O,\Omega\ and\ \Theta\)</span></h3>
+<ul>
+<li><p>Transitivity : <span class="math inline">\(f(n)=\prod(g(n))\)</span> and <span class="math inline">\(g(n)=\prod(h(n))\Longrightarrow f(n)=\prod(h(n))\)</span> , where <span class="math inline">\(\prod=O,\Omega\)</span> or <span class="math inline">\(\Theta\)</span></p></li>
+<li><p>Rule of sums : ( Procedure 中每一行 code 的複雜度加總 ) <span class="math inline">\(f(n)+g(n)=\prod\big(\max(f(n),g(n))\big)\)</span> , where <span class="math inline">\(\prod=O,\Omega\)</span> or <span class="math inline">\(\Theta\)</span></p></li>
+<li><p>Rule of products : ( 內外迴圈的總複雜度計算 ) <span class="math inline">\(f_1(n)=\prod(g_1(n)\)</span> , <span class="math inline">\(f_2(n)=\prod(g_2(n)\Longrightarrow f_1(n)f_2(n)=\prod(g_1(n)g_2(n))\)</span> , where <span class="math inline">\(\prod=O,\Omega\)</span> or <span class="math inline">\(\Theta\)</span></p></li>
+<li><p>Transpose symmetry : <span class="math inline">\(f(n)=O\big(g(n)\big)\Longleftrightarrow g(n)=\Omega\big(f(n)\big)\)</span></p></li>
+<li><p>Reflexivity : <span class="math inline">\(f(n)=\prod(f(n))\)</span> , where <span class="math inline">\(\prod=O,\Omega\)</span> or <span class="math inline">\(\Theta\)</span></p></li>
+<li><p>Symmetry : <span class="math inline">\(f(n)=\Theta\big(g(n)\big)\Longleftrightarrow g(n)=\Theta\big(f(n)\big)\)</span></p></li>
+</ul>
+<p>以上性質均可從定義證明。</p>
+<p>最後，列舉ㄧ些常見的複雜度於下圖</p>
+<p><img src="https://i.imgur.com/DPg3Dm8.jpg" /></p>
+<p>紅框代表的是 Polynomial-Time complexity，在這邊通常會希望至少都要達到 <span class="math inline">\(O(n^2)\)</span> 的複雜度才算是比較理想的演算法。</p>
+<h2 id="polynomial-time-complexity-of-gale-shapley-algorithm">Polynomial-Time complexity of Gale &amp; Shapley Algorithm</h2>
+<p>回顧一下 Gale &amp; Shapley Algorithm</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">def stableMatching :</span><br><span class="line">    Initialize all m ∈ M and w ∈ W to free </span><br><span class="line">    # 初始化所有人均為單身</span><br><span class="line">    while ∃ free man m who still has a woman w to propose to </span><br><span class="line">       w = first woman on m&#x27;s list to whom m has not yet proposed</span><br><span class="line">       # 男生要進行 Propose 必然會先從名單上最高分的女性進行 Propose</span><br><span class="line">       if w is free</span><br><span class="line">         (m, w) become engaged</span><br><span class="line">       # 如果女性單身，則配對</span><br><span class="line">       else some pair (m&#x27;, w) already exists</span><br><span class="line">         if w prefers m to m&#x27;</span><br><span class="line">            m&#x27; becomes free</span><br><span class="line">           (m, w) become engaged </span><br><span class="line">         else</span><br><span class="line">           (m&#x27;, w) remain engaged</span><br><span class="line">       # 若女性已被有配對，則比較兩位男性對於這女性的名單 ranking　高低來決定與誰配對</span><br><span class="line">    return set(S) of engaged pairs </span><br></pre></td></tr></table></figure>
+<p>因為 Rule of sums ，我們可以分解上面的步驟來計算個別複雜度再加總。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Initialize <span class="built_in">all</span> m ∈ M <span class="keyword">and</span> w ∈ W to free </span><br></pre></td></tr></table></figure>
+<p>初始化所有的男女，因此只須掃過全部的人就可以完成，複雜度為 <span class="math inline">\(O(n)\)</span></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return set(S) of engaged pairs </span><br></pre></td></tr></table></figure>
+<p>僅僅 output 每一對的結果，複雜度也是 <span class="math inline">\(O(n)\)</span></p>
+<p>之前我們有證明過整個 Gale &amp; Shapley Algorithm 最多會執行 <span class="math inline">\(n^2\)</span> 次 iterations，那麼我們便期望在演算法中的 while loop 內部的步驟都可以限制再 <span class="math inline">\(O(1)\)</span> ，這樣整個 Algorithm <span class="math inline">\(n^2\)</span> iterations 後就可以被限制在 <span class="math inline">\(O(n^2)\)</span></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">∃ free man m who still has a woman w to propose to</span><br></pre></td></tr></table></figure>
+<p>演算法要配合合適的資料結構才能達到高效。</p>
+<p>在這一個部分 每一個男女的 ranking list 我們可以用 array 來儲存，因為其長度固定都是 n。 但這邊我們想要儲存 free men 就不適合用 array，因為 free men 的名單會動態增減，並非固定。 所以這邊比較適合使用 Singly-linked list (單向鏈表) 來存儲 free men list。</p>
+<p><img src="https://i.imgur.com/AucQ56Z.png" /></p>
+<p>只要有人恢復 free man 角色，或是有對象 engaged ，都可以利用 Singly-linked list 的插入、取出，來進行更動。</p>
+<p>但在這一行，真正重要的是有沒有存在一個 free man，我們關心的只是 head 有沒有指向一筆資料。這跟你有多少人都沒有關係，這樣的複雜度就是 <span class="math inline">\(O(1)\)</span>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">w = first woman on m&#x27;s list to whom m has not yet proposed</span><br><span class="line"># 男生要進行 Propose 必然會先從名單上最高分的女性進行 Propose</span><br><span class="line">if w is free</span><br><span class="line">    (m, w) become engaged</span><br><span class="line">    # 如果女性單身，則配對</span><br></pre></td></tr></table></figure>
+<p>這裡我們要個別儲存兩個 array : NEXT &amp; CURRENT，初始值為 1 及 0。</p>
+<p>NEXT ，長度為 n，其中每一個元素代表的是此男性下一個 propose 的對象是他自己 ranking list 的第幾名。又，每一個男性必然會先跟他心目中第一名的對象 propose，所以初始值均為 1。</p>
+<p>而 CURRENT 中元素代表的即為此女性目前與她的 ranking list 中第幾名 engage。一開始所有女性均為 free，因此初始值均為 0。</p>
+<p>在這裡，演算法只需要去 check 某男性在 NEXT 中接下來要跟誰 propose，而此女性是否為 free，這樣的動作依然與男女人數無關，複雜度為 <span class="math inline">\(O(1)\)</span>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">else some pair (m&#x27;, w) already exists</span><br><span class="line">    if w prefers m to m&#x27;</span><br><span class="line">        m&#x27; becomes free</span><br><span class="line">        (m, w) become engaged </span><br><span class="line">    else</span><br><span class="line">        (m&#x27;, w) remain engaged</span><br><span class="line"># 若女性已被有配對，則比較兩位男性對於這女性的名單 ranking　高低來決定與誰配對</span><br></pre></td></tr></table></figure>
+<p>如果今天有兩位男生對某個女生 propose，女方選擇要拒絕誰的依據就是 ranking list，必須比較兩位男性的優先順序，worse case 就是要掃過一整輪的 ranking list ( worse case : 有一個男生在ranking list 上是最後一名，那她就要從第一名看到最後一名才能確認這個男生的名次 )，也就是 <span class="math inline">\(O(n)\)</span> 複雜度，這樣太不符合期待。</p>
+<p>因此我們要將資料 ( 男生-名次 ) 做一點重新排列，不要按照 ranking 排列，改為按照男生原本的排序來排列</p>
+<p><img src="https://i.imgur.com/QicnFsM.png" /></p>
+<p>這樣的排列，女方只要知道是誰對她 propose 之後就立刻可以知道名次，這跟男生人數有多少人也無關，複雜度就是 <span class="math inline">\(O(1)\)</span>。</p>
+<p>統整一下整個 Gale &amp; Shapley Algorithm 的複雜度 : * 初始以及回傳複雜度都是 <span class="math inline">\(O(n)\)</span> * <span class="math inline">\(n^2\)</span> iterations 的迴圈內部複雜度都是 <span class="math inline">\(O(1)\)</span>，這個迴圈部分的複雜度就是 <span class="math inline">\(O(n^2)\)</span></p>
+<p>所以最後 Gale &amp; Shapley Algorithm 的複雜度便是 <span class="math inline">\(O(n^2)\)</span></p>
+<p>從分析 Gale &amp; Shapley Algorithm 複雜度的過程我們可以了解，即便同一個 Procedure 讓不同的人寫成程式都會有不同的運算效率，因為資料結構選擇的方式不同。</p>
+<p>一個好的演算法，必須搭配一個好的資料結構，才能發揮最好的效率。</p>
+<h2 id="註釋">註釋</h2>
+<p>[^註1] Polynomial running time : <span class="math inline">\(\forall\ input\ size\ N, \exists\ c&gt;0, d&gt;0\ s.t.\ it&#39;s\ running\ time\ is\ bounded\ by\ cN^d\ primitive\ computational\ steps.\)</span></p>
+<p>[^註2] Primitive coputational step : 在一個 Procedure 中，步驟可以被切分成數個無關 input size 的子步驟，這樣的子步驟稱之。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/03/Chapter%202%20%E2%80%93%20Algorithm%20analysis/" title="Chapter 2 -- Algorithm analysis">https://allen108108.github.io/blog/2019/10/03/Chapter 2 – Algorithm analysis/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%85%AB%E8%AC%9B/" rel="prev" title="林軒田機器學習基石筆記 - 第八講">
+                  <i class="fa fa-chevron-left"></i> 林軒田機器學習基石筆記 - 第八講
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/05/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20Convolutional%20Neural%20Network%20(%20CNN%20)%20%E8%88%87%20%E5%85%A8%E9%80%A3%E6%8E%A5%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20Fully%20Connected%20Feedforward%20Network%20%E6%96%BC%20MNIST%20%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/" rel="next" title="卷積神經網路 Convolutional Neural Network ( CNN ) 與 全連接神經網路 Fully Connected Feedforward Network 於 MNIST 上之實作">
+                  卷積神經網路 Convolutional Neural Network ( CNN ) 與 全連接神經網路 Fully Connected Feedforward Network 於 MNIST 上之實作 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

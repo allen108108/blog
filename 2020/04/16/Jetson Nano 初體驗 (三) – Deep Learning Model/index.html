@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="系列文章  Jetson Nano 初體驗 (一) -- WaveShare JetBot Jetson Nano 初體驗 (二) -- Jetson Nano Jetson Nano 初體驗 (三) -- Deep Learning Model">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jetson Nano 初體驗 (三) -- Deep Learning Model">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%89)%20%E2%80%93%20Deep%20Learning%20Model/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="系列文章  Jetson Nano 初體驗 (一) -- WaveShare JetBot Jetson Nano 初體驗 (二) -- Jetson Nano Jetson Nano 初體驗 (三) -- Deep Learning Model">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/GmxuUp4.jpg">
+<meta property="og:image" content="https://i.imgur.com/FFiuXhb.jpg">
+<meta property="og:image" content="https://i.imgur.com/iCkTj5Q.jpg">
+<meta property="og:image" content="https://i.imgur.com/WwC4PEh.jpg">
+<meta property="article:published_time" content="2020-04-16T10:50:55.000Z">
+<meta property="article:modified_time" content="2020-04-16T10:56:42.904Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/GmxuUp4.jpg">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%89)%20%E2%80%93%20Deep%20Learning%20Model/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%89)%20%E2%80%93%20Deep%20Learning%20Model/","path":"2020/04/16/Jetson Nano 初體驗 (三) – Deep Learning Model/","title":"Jetson Nano 初體驗 (三) -- Deep Learning Model"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Jetson Nano 初體驗 (三) -- Deep Learning Model | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">系列文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%8B%E5%8B%A2%E8%BE%A8%E8%AD%98-gesture-recognition"><span class="nav-number">3.</span> <span class="nav-text">手勢辨識 Gesture Recognition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98-face-recognition"><span class="nav-number">4.</span> <span class="nav-text">人臉辨識 Face Recognition</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%89)%20%E2%80%93%20Deep%20Learning%20Model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Jetson Nano 初體驗 (三) -- Deep Learning Model
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-04-16 18:50:55 / 修改時間：18:56:42" itemprop="dateCreated datePublished" datetime="2020-04-16T18:50:55+08:00">2020-04-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%89%B5%E5%AE%A2-Maker/" itemprop="url" rel="index"><span itemprop="name">創客 Maker</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%89)%20%E2%80%93%20Deep%20Learning%20Model/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/16/Jetson Nano 初體驗 (三) – Deep Learning Model/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="系列文章">系列文章</h2>
+<ul>
+<li><a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%B8%80%29%20%E2%80%93%20WaveShare%20JetBot/"><em>Jetson Nano 初體驗 (一) -- WaveShare JetBot</em></a></li>
+<li><a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%BA%8C%29%20%E2%80%93%20Jetson%20Nano/"><em>Jetson Nano 初體驗 (二) -- Jetson Nano</em></a></li>
+<li><a href="https://allen108108.github.io/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%B8%89%29%20%E2%80%93%20Deep%20Learning%20Model/"><em>Jetson Nano 初體驗 (三) -- Deep Learning Model</em></a></li>
+</ul>
+<span id="more"></span>
+<h2 id="前言">前言</h2>
+<p>前面的工作已經為我們的專案開發打好了基礎，接下來就可以開始進行專案開發。筆者試圖將之前自己作的幾個開發專案移植到 Jetson Nano ，看看是否可行。除此之外，筆者也藉由 Jetson Nano 搭配 MLX 90615 紅外線測溫模組來對專案進行延伸開發。</p>
+<h2 id="手勢辨識-gesture-recognition">手勢辨識 Gesture Recognition</h2>
+<p>手勢辨識專案之前筆者已經寫過一篇專題介紹 " <a href="https://allen108108.github.io/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/">Gesture Recognition using YOLO v3 tiny</a> " ，但移植到 Jetson Nano 的模型是基於 Darknet 的 YOLOv2 tiny ，訓練資料及時間上都與前文之版本不太相同，因此表現上也有所差異，但這並非本文所要討論的內容，因此不多加解釋。</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/UoOW0amTH9w" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>硬體上與筆電仍有差異，因此效能上會有落差，這是可以預期的，可以藉由 Gstream 調整畫面大小來提升 FPS。但要達到 Nvidia 官方宣稱的 25 FPS 我認為有其難度，這方面還需要再研究。</p>
+<h2 id="人臉辨識-face-recognition">人臉辨識 Face Recognition</h2>
+<p>這個專案沿用了 "<a href="https://allen108108.github.io/blog/2020/04/16/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E7%B3%BB%E7%B5%B1%20Face%20Recognition%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%20%28%20OpenCV%20_%20Dlib%20%29/">人臉辨識系統 Face Recognition 開發紀錄 ( OpenCV / Dlib )</a>" 並且利用 MLX 90615 來量測體溫。</p>
+<p><img src="https://i.imgur.com/GmxuUp4.jpg" /></p>
+<p>MLX 90615 是一個紅外線溫度感測模組，支援 I2C 接口，因此額外購入了 其附上的 I2C 接線筆者想直接使用，因此額外購入了 Base Hat for Raspberry Pi Zero 將 MLX 90615 與 Jetson Nano 可以直接串接。</p>
+<p><img src="https://i.imgur.com/FFiuXhb.jpg" /></p>
+<p>紅外線偵測必須跟鏡頭同步偵測，因此筆者將 MLX90615 的紅外線探測頭固定在鏡頭之上。</p>
+<p><img src="https://i.imgur.com/iCkTj5Q.jpg" /></p>
+<p><img src="https://i.imgur.com/WwC4PEh.jpg" /></p>
+<p>僅將接線鏡頭安裝，仍未能使用，必須要有相關模組的 Library 才能使用。MLX90615 官方僅提供 Arduino Lib，筆者嘗試使用 MLX 90614 Lib 也無法正常運作，最後找到了一個 MLX 90615 可用的 <a target="_blank" rel="noopener" href="https://github.com/2n3906/python-sensor-drivers/blob/master/mlx90615.py">Python Lib</a></p>
+<p>惟要注意的地方是，必須將 <code>i2c_bus</code> 與 <code>i2c_address</code> 設定正確才可正常運作。</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/6uDmfeJqv9k" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>從上面的實作上面看來，Inference time 不算太高，接下來還可以嘗試將 Facenet 替換掉 Dlib 進行人臉辨識，看看是否能有更高的效率。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%89)%20%E2%80%93%20Deep%20Learning%20Model/" title="Jetson Nano 初體驗 (三) -- Deep Learning Model">https://allen108108.github.io/blog/2020/04/16/Jetson Nano 初體驗 (三) – Deep Learning Model/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/04/16/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E7%B3%BB%E7%B5%B1%20Face%20Recognition%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%20(%20OpenCV%20_%20Dlib%20)/" rel="prev" title="人臉辨識系統 Face Recognition 開發紀錄  ( OpenCV / Dlib )">
+                  <i class="fa fa-chevron-left"></i> 人臉辨識系統 Face Recognition 開發紀錄  ( OpenCV / Dlib )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(7)%20%E2%80%94%20Sparse%20Reward/" rel="next" title="Deep Reinforcement Learning (7) --- Sparse Reward">
+                  Deep Reinforcement Learning (7) --- Sparse Reward <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

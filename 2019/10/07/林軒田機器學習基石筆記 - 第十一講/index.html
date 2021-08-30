@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第十一講 : Linear Model for Classification 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林軒田機器學習基石筆記 - 第十一講">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%B8%80%E8%AC%9B/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第十一講 : Linear Model for Classification 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/INx9k8g.jpg">
+<meta property="og:image" content="https://i.imgur.com/8Pb6lPt.png">
+<meta property="og:image" content="https://i.imgur.com/TeQxRwA.png">
+<meta property="og:image" content="https://i.imgur.com/Nt4wjL3.png">
+<meta property="og:image" content="https://i.imgur.com/94ToyWz.png">
+<meta property="og:image" content="https://i.imgur.com/aBNInQ6.png">
+<meta property="og:image" content="https://i.imgur.com/TjOmbDz.png">
+<meta property="og:image" content="https://i.imgur.com/kMZNYq5.png">
+<meta property="og:image" content="https://i.imgur.com/rFU1QSV.png">
+<meta property="og:image" content="https://i.imgur.com/tHcMelr.png">
+<meta property="og:image" content="https://i.imgur.com/pV24mS4.png">
+<meta property="og:image" content="https://i.imgur.com/EXXG7IR.png">
+<meta property="og:image" content="https://i.imgur.com/MOwCJD3.png">
+<meta property="article:published_time" content="2019-10-07T06:51:42.000Z">
+<meta property="article:modified_time" content="2019-10-22T07:58:14.508Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/INx9k8g.jpg">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%B8%80%E8%AC%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%B8%80%E8%AC%9B/","path":"2019/10/07/林軒田機器學習基石筆記 - 第十一講/","title":"林軒田機器學習基石筆記 - 第十一講"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>林軒田機器學習基石筆記 - 第十一講 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#linear-classification-linear-regression-and-logistic-regression"><span class="nav-number">1.</span> <span class="nav-text">Linear Classification , Linear Regression and Logistic Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%9E-logistic-regression-%E8%A7%92%E5%BA%A6%E4%BE%86%E7%9C%8B"><span class="nav-number">1.1.</span> <span class="nav-text">從 Logistic Regression 角度來看 :</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stochastic-gradient-descent"><span class="nav-number">2.</span> <span class="nav-text">Stochastic Gradient Descent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multuclass-classification-one-versus-all-ova-decomposition"><span class="nav-number">3.</span> <span class="nav-text">Multuclass Classification : One-Versus-All (OVA) Decomposition</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ova-decomposition-algorithm"><span class="nav-number">3.1.</span> <span class="nav-text">OVA Decomposition Algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ova-decomposition-%E7%9A%84%E5%84%AA%E7%BC%BA%E9%BB%9E"><span class="nav-number">3.2.</span> <span class="nav-text">OVA Decomposition 的優缺點</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multuclass-classification-one-versus-one-ovo-decomposition"><span class="nav-number">4.</span> <span class="nav-text">Multuclass Classification : One-Versus-One (OVO) Decomposition</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ovo-decomposition-algorithm"><span class="nav-number">4.1.</span> <span class="nav-text">OVO Decomposition Algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ovo-decomposition-%E7%9A%84%E5%84%AA%E7%BC%BA%E9%BB%9E"><span class="nav-number">4.2.</span> <span class="nav-text">OVO Decomposition 的優缺點</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%B8%80%E8%AC%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          林軒田機器學習基石筆記 - 第十一講
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-07 14:51:42" itemprop="dateCreated datePublished" datetime="2019-10-07T14:51:42+08:00">2019-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 15:58:14" itemprop="dateModified" datetime="2019-10-22T15:58:14+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9E%97%E8%BB%92%E7%94%B0-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3/" itemprop="url" rel="index"><span itemprop="name">林軒田 機器學習基石</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%B8%80%E8%AC%9B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/07/林軒田機器學習基石筆記 - 第十一講/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文為一系列課程之筆記，建議從" <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryxzB7LwN">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文討論內容請參考: 機器學習基石第十一講 : Linear Model for Classification</strong></p></li>
+<li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
+</ul>
+</blockquote>
+<hr />
+<span id="more"></span>
+<h2 id="linear-classification-linear-regression-and-logistic-regression">Linear Classification , Linear Regression and Logistic Regression</h2>
+<p>我們所學的這些線性模型，是否均能夠用來作分類問題 ? 一樣的，只要我們能夠確認 VC bound 存在就沒有問題。</p>
+<p>我將我們學的這幾種線性模型做了一番整理 :</p>
+<p><img src="https://i.imgur.com/INx9k8g.jpg" /></p>
+<p>我們來看看他們的 error 圖形會長成什麼樣子</p>
+<p><img src="https://i.imgur.com/8Pb6lPt.png" /></p>
+<h3 id="從-logistic-regression-角度來看">從 Logistic Regression 角度來看 :</h3>
+<p><span class="math inline">\(\forall ys\)</span> , <span class="math inline">\(err_{0/1}(s,y)\leq err_{SCE}(s,y)=\frac{err_{CE}(s,y)}{\ln 2}\)</span></p>
+<p><span class="math inline">\(\Longrightarrow E_{in}^{0/1}(\mathbb{W})\leq E_{in}^{SCE}(s,y)=\frac{E_{in}^{CE}(s,y)}{\ln 2}\)</span></p>
+<p><span class="math inline">\(\Longrightarrow E_{out}^{0/1}(\mathbb{W})\leq E_{out}^{SCE}(s,y)=\frac{E_{out}^{CE}(s,y)}{\ln 2}\)</span></p>
+<p><span class="math inline">\(\therefore E_{out}^{0/1}\leq E_{in}^{0/1}+\Omega^{0/1}\leq E_{in}^{SCE}(\mathbb{W})+\Omega^{0/1}=\frac{1}{\ln 2}E_{in}^{CE}(\mathbb{W})+\Omega^{0/1}\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 當 <span class="math inline">\(E_{in}^{CE}\)</span> 夠小，我們便能確定 <span class="math inline">\(E_{out}^{0/1}\)</span> 夠小</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 利用 Logistic Regression 來做 Classification 是可行的。 ( Linear Regression 亦有此保證 )</p>
+<p>我們也可以從上圖整理出各項 Linear Model 在處理分類問題時的優缺點 : <img src="https://i.imgur.com/TeQxRwA.png" /></p>
+<blockquote>
+<p>[Remark] * 在實務上，我們會用 Linear Regression 的最佳解來當作 PLA/Pocket/Logistic Regression 的起始權重 <span class="math inline">\(\mathbb{W}_0\)</span> * 抑或直接使用 Logistic Regression 取代 PLA ( 較容易求出最佳解 )</p>
+</blockquote>
+<h2 id="stochastic-gradient-descent">Stochastic Gradient Descent</h2>
+<p>Logistic Regression 跟 Pocket 一樣，每一次的迭代都必須計算所有的資料一輪，成本相對於PLA來說高出很多。</p>
+<p><img src="https://i.imgur.com/Nt4wjL3.png" /></p>
+<p>想要降低計算成本的方法是 將 <span class="math inline">\(\nabla E(\mathbb{W}_{t})\)</span> 視為隨機 <span class="math inline">\((\mathbb{X}_n,y_n)\)</span> 的 <span class="math inline">\(\nabla err(\mathbb{W}_t,\mathbb{X}_n,y_n)\)</span> 之期望值</p>
+<p><img src="https://i.imgur.com/94ToyWz.png" /></p>
+<p>換句話說，<strong>Stochastic Gradient = True Gradient + Noise</strong> * 經過多次迭代後 ，平均的 Stochastic Gradient 會近似於 True Gradient * 用SGD取代GD的好處是，計算成本相對簡單很多，且計算簡單，但是比較不穩定</p>
+<p><img src="https://i.imgur.com/aBNInQ6.png" /></p>
+<p>從上面兩式來看 : * 可以將SGD Logistic Regression 視為是一種 Soft PLA * 只要 <span class="math inline">\(\mathbb{W}_t^T\mathbb{X}_t\)</span> 夠大 ( <span class="math inline">\(\theta\rightarrow 1\)</span> )， PLA 就會近似於 SGD Logistic Regression</p>
+<blockquote>
+<p>[Remark] 1. 停止條件 ? <span class="math inline">\(\Rightarrow\)</span> 當 t 夠大的時候 2. <span class="math inline">\(\eta\)</span> 要取多少 ? ? <span class="math inline">\(\Rightarrow\)</span> 0.1附近通常有不錯的表現</p>
+</blockquote>
+<h2 id="multuclass-classification-one-versus-all-ova-decomposition">Multuclass Classification : One-Versus-All (OVA) Decomposition</h2>
+<p><img src="https://i.imgur.com/TjOmbDz.png" /></p>
+<p>利用基本二元分類，個別找出 classifier，但這樣的方式會有幾個問題 : * 落在上圖 A 區的資料應該如何分類 ? * 落在上圖 B 區的資料又該如何分類 ?</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 利用 Soft binary Classification 來解決這樣的問題</p>
+<p><img src="https://i.imgur.com/kMZNYq5.png" /></p>
+<h3 id="ova-decomposition-algorithm">OVA Decomposition Algorithm</h3>
+<p><img src="https://i.imgur.com/rFU1QSV.png" /></p>
+<p>Step 1 : 對每一個分類 k ，我們都能藉由 Logistic Regression 找到一組 <span class="math inline">\(\mathbb{W}_k\)</span> 可以將 <span class="math inline">\(\mathbb{D}\rightarrow\mathbb{D}_k\)</span></p>
+<p>Step 2 : 將每一個資料點與各分類器所對應到的機率值進行比較，最高者就分給那一類。</p>
+<h3 id="ova-decomposition-的優缺點">OVA Decomposition 的優缺點</h3>
+<p><img src="https://i.imgur.com/tHcMelr.png" /></p>
+<h2 id="multuclass-classification-one-versus-one-ovo-decomposition">Multuclass Classification : One-Versus-One (OVO) Decomposition</h2>
+<p>為了解決 OVA 中遇到 k 值過大的 unbalance 情況，將 One-Versus-All 改為 One-Versus-One，意即，將所有類別倆倆抓出來 learning pairwise classifier</p>
+<p><img src="https://i.imgur.com/pV24mS4.png" /></p>
+<p>從上面例子來看，4個類別可以學習出 <span class="math inline">\({4}\choose{2}=6\)</span>種 classifier，一旦新的資料需要預測，就將其丟入這六種 classifier ，端看最後這六種 classifier 最多的預測結果即為 OVO 之預測結果</p>
+<h3 id="ovo-decomposition-algorithm">OVO Decomposition Algorithm</h3>
+<p><img src="https://i.imgur.com/EXXG7IR.png" /></p>
+<p>Step 1 : 任取 k , l 兩種類別，找出一組 <span class="math inline">\(\mathbb{W}_{k,l}\)</span>，可以將 <span class="math inline">\(\mathbb{D}\rightarrow\mathbb{D}_{k,l}\)</span></p>
+<p>Step 2 : 對於 <span class="math inline">\(\mathbb{X}\)</span> 的分類 <span class="math inline">\(g(\mathbb{X})\)</span> 則由 <span class="math inline">\(\left\{\mathbb{W}_{k,l}^T\mathbb{X}\right\}_{\forall k,l}\)</span>來投票決定</p>
+<h3 id="ovo-decomposition-的優缺點">OVO Decomposition 的優缺點</h3>
+<p><img src="https://i.imgur.com/MOwCJD3.png" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%B8%80%E8%AC%9B/" title="林軒田機器學習基石筆記 - 第十一講">https://allen108108.github.io/blog/2019/10/07/林軒田機器學習基石筆記 - 第十一講/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B9%9D%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E8%AC%9B/" rel="prev" title="林軒田機器學習基石筆記 - 第九講、第十講">
+                  <i class="fa fa-chevron-left"></i> 林軒田機器學習基石筆記 - 第九講、第十講
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/Tensorflow-GPU%E7%9A%84%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%A2%BA%E8%AA%8D%20(%20Win%2010%20)/" rel="next" title="Tensorflow-GPU的安裝及確認 ( Win 10 )">
+                  Tensorflow-GPU的安裝及確認 ( Win 10 ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

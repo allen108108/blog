@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="前言 機器學習或是深度學習，雖說發展已久，但在近幾年的發展突飛猛進，不管是 google , Facebook 還是 Amazon 的論文發表真的是一篇接著一篇，新技巧、新概念的開展著實讓人覺得不可思議，要了解整個發展以及新技術的應用，閱讀論文想必是最快速的方法。 在台灣 Pytorch Taiwan 以及許多讀書會也都開始有論文閱讀的部分都是正在進行式，我也是期待自己養成閱讀論文的習慣，因此">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[ 論文 ] Gradient-Based Learning Applied to Document Recognition">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Gradient-Based%20Learning%20Applied%20to%20Document%20Recognition/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="前言 機器學習或是深度學習，雖說發展已久，但在近幾年的發展突飛猛進，不管是 google , Facebook 還是 Amazon 的論文發表真的是一篇接著一篇，新技巧、新概念的開展著實讓人覺得不可思議，要了解整個發展以及新技術的應用，閱讀論文想必是最快速的方法。 在台灣 Pytorch Taiwan 以及許多讀書會也都開始有論文閱讀的部分都是正在進行式，我也是期待自己養成閱讀論文的習慣，因此">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/BXEWBsY.png">
+<meta property="og:image" content="https://i.imgur.com/WDxti0L.png">
+<meta property="og:image" content="https://i.imgur.com/U1Qy4xM.png">
+<meta property="og:image" content="https://i.imgur.com/kPUkWKL.png%20=250x">
+<meta property="og:image" content="https://i.imgur.com/7tGTZHB.png%20=400x">
+<meta property="og:image" content="https://i.imgur.com/XJ5yPms.jpg">
+<meta property="og:image" content="https://i.imgur.com/zG8PMM3.png">
+<meta property="og:image" content="https://i.imgur.com/o49ic8B.png">
+<meta property="article:published_time" content="2019-07-28T14:16:58.000Z">
+<meta property="article:modified_time" content="2021-08-30T14:16:47.798Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/BXEWBsY.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Gradient-Based%20Learning%20Applied%20to%20Document%20Recognition/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Gradient-Based%20Learning%20Applied%20to%20Document%20Recognition/","path":"2019/07/28/[論文] Gradient-Based Learning Applied to Document Recognition/","title":"[ 論文 ] Gradient-Based Learning Applied to Document Recognition"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[ 論文 ] Gradient-Based Learning Applied to Document Recognition | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AB%96%E6%96%87%E6%91%98%E8%A6%81"><span class="nav-number">2.</span> <span class="nav-text">論文摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#i.-introduction"><span class="nav-number">3.</span> <span class="nav-text">I. Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a.-learning-from-data"><span class="nav-number">3.1.</span> <span class="nav-text">A. Learning from Data</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b.-gradient-based-learning"><span class="nav-number">3.2.</span> <span class="nav-text">B. Gradient-Based Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c.-gradient-back-propagation"><span class="nav-number">3.3.</span> <span class="nav-text">C. Gradient Back-Propagation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d.-learning-in-real-handwriting-recognition-systems"><span class="nav-number">3.4.</span> <span class="nav-text">D. Learning in Real Handwriting Recognition Systems</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#e.-globally-trainable-systems"><span class="nav-number">3.5.</span> <span class="nav-text">E. Globally Trainable Systems</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ii.-convolutional-neural-network-for-isolated-character-recognition"><span class="nav-number">4.</span> <span class="nav-text">II. Convolutional Neural Network for Isolated Character Recognition</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a.-convolutional-network"><span class="nav-number">4.1.</span> <span class="nav-text">A. Convolutional Network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b.-lenet-5"><span class="nav-number">4.2.</span> <span class="nav-text">B. LeNet-5</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#input"><span class="nav-number">4.2.1.</span> <span class="nav-text">Input</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c_1-%E5%8D%B7%E7%A9%8D%E5%B1%A4"><span class="nav-number">4.2.2.</span> <span class="nav-text">\(C_1\) (卷積層)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#s_2-%E6%B1%A0%E5%8C%96%E5%B1%A4"><span class="nav-number">4.2.3.</span> <span class="nav-text">\(S_2\) (池化層)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c_3-%E5%8D%B7%E7%A9%8D%E5%B1%A4"><span class="nav-number">4.2.4.</span> <span class="nav-text">\(C_3\) (卷積層)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#s_4-%E6%B1%A0%E5%8C%96%E5%B1%A4"><span class="nav-number">4.2.5.</span> <span class="nav-text">\(S_4\) (池化層)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c_5-%E5%8D%B7%E7%A9%8D%E5%B1%A4"><span class="nav-number">4.2.6.</span> <span class="nav-text">\(C_5\) (卷積層)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#f_6-%E5%85%A8%E9%80%A3%E6%8E%A5%E5%B1%A4"><span class="nav-number">4.2.7.</span> <span class="nav-text">\(F_6\) (全連接層)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#output"><span class="nav-number">4.2.8.</span> <span class="nav-text">Output</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c.-loss-function"><span class="nav-number">4.3.</span> <span class="nav-text">C. Loss Function</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">5.</span> <span class="nav-text">後記</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">6.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">7.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Gradient-Based%20Learning%20Applied%20to%20Document%20Recognition/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [ 論文 ] Gradient-Based Learning Applied to Document Recognition
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-07-28 22:16:58" itemprop="dateCreated datePublished" datetime="2019-07-28T22:16:58+08:00">2019-07-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 22:16:47" itemprop="dateModified" datetime="2021-08-30T22:16:47+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-Convolutional-Neural-Network/" itemprop="url" rel="index"><span itemprop="name">卷積神經網路 Convolutional Neural Network</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/07/28/%5B%E8%AB%96%E6%96%87%5D%20Gradient-Based%20Learning%20Applied%20to%20Document%20Recognition/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/28/[論文] Gradient-Based Learning Applied to Document Recognition/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="前言">前言</h2>
+<p>機器學習或是深度學習，雖說發展已久，但在近幾年的發展突飛猛進，不管是 google , Facebook 還是 Amazon 的論文發表真的是一篇接著一篇，新技巧、新概念的開展著實讓人覺得不可思議，要了解整個發展以及新技術的應用，閱讀論文想必是最快速的方法。</p>
+<p>在台灣 Pytorch Taiwan 以及許多讀書會也都開始有論文閱讀的部分都是正在進行式，我也是期待自己養成閱讀論文的習慣，因此便著手第一篇論文的閱讀。</p>
+<p>第一篇論文，就從這 Convolutional Neural Network 的發源論文 <em>"Gradient-Based Learning Applied to Document Recognition"</em> 作為起頭吧 ! 這篇論文介紹了經典模型 LeNet-5 進行手寫數字辨識，許多人都將此論文視為 CNN 的起源，雖然說此論文年代稍為久遠，與現今的 CNN 模型稍有不同，但仍可藉由此論文體會、了解 CNN 的架構及精神。</p>
+<span id="more"></span>
+<p>此論文內容非常充實，足足有46頁之多，本篇文章主要著重在論文兩個核心部分，分別是 Introduction 以及 Convolutional Neural Network for Isolated Character Recognition。</p>
+<h2 id="論文摘要">論文摘要</h2>
+<h2 id="i.-introduction">I. Introduction</h2>
+<p>本論文最重要的是建構了一個更自動化的學習機器來進行手寫辨識，而減少人為手把手設計的辨識系統。</p>
+<p>過去的模型，在特徵萃取的技巧上，都被限制在低維度空間上進行操作才能有比較好的表現，但近幾年來卻能夠提升高維度空間上的表現，且可以處理相對大量的資料集，主要的原因有三 :</p>
+<ol type="1">
+<li>低價高效的計算單位容易取得，使得我們可以利用暴力的數值方法硬處理。</li>
+<li>資料的取得更加容易，可以輕易地取得任何我們有興趣的資料。</li>
+<li>最重要的一點是，機器學習技巧的發展，使我們可以在高維度上對大量的資料及進行處理。</li>
+</ol>
+<h3 id="a.-learning-from-data">A. Learning from Data</h3>
+<p>若我們手中有一組訓練資料 <span class="math inline">\(\left\{(Z^1,D^1),(Z^2,D^2),\cdots,(Z^P,D^P)\right\}\)</span>，我們可以使用機器學習方式對所有的輸入資料 <span class="math inline">\(Z^p\)</span> 學習出一套模式、一組權重 <span class="math inline">\(W\)</span> ，進行預測得到 <span class="math inline">\(Y^p\)</span></p>
+<p><span class="math display">\[
+Y^p=F(Z^p,W)
+\]</span></p>
+<p>進而我們可以針對預測值 <span class="math inline">\(Y^p\)</span> 與真實值 <span class="math inline">\(D^p\)</span> 計算誤差 <span class="math inline">\(E^p\)</span>，也可以計算出整個訓練資料集的平均誤差 <span class="math inline">\(E_{train}\)</span></p>
+<p><span class="math display">\[
+E^p=D(D^p,Y^p)=D(D^p,F(Z^p,W))\\
+E_{train}=\displaystyle{\frac{1}{P}\sum\limits_{p=1}^{P}E^p}
+\]</span></p>
+<p>之後我們在針對測試資料上的誤差期望值 <span class="math inline">\(E_{test}\)</span> 與 <span class="math inline">\(E_{train}\)</span> 進行比較已確認模型的準確度。而在一些研究工作上顯示出此二者的誤差會接近 <span class="math inline">\(k(h/P)^{\alpha}\)</span>，<span class="math inline">\(P\)</span> 為訓練資料的數量， <span class="math inline">\(h\)</span> 是模型複雜度， <span class="math inline">\(\alpha\)</span> 則是介於 0.5 到 1 的常數值，而 <span class="math inline">\(k\)</span> 亦為常數值。</p>
+<p><span class="math display">\[
+E_{test}-E_{train}=k(h/P)^{\alpha}
+\]</span></p>
+<h3 id="b.-gradient-based-learning">B. Gradient-Based Learning</h3>
+<p>既然我們計算出對於任何一組權重 <span class="math inline">\(W\)</span> 資料所產生的誤差 <span class="math inline">\(E(W)\)</span> ，那我們便希望可以藉由調整權重 <span class="math inline">\(W\)</span>，來讓誤差越來越小。而 Gradient-Based Learning 針對平滑可微分的連續函數提供了一個較為簡單的優化方式。</p>
+<p>在 Gradient Descent 的方法中，我們不斷迭代調整 <span class="math inline">\(W\)</span>，來得到更小的誤差值</p>
+<p><span class="math display">\[
+W_k=W_{k-1}-\epsilon\displaystyle{\frac{\partial E(W)}{\partial W}}
+\]</span></p>
+<p>而另一種更受歡迎的方法 : Stochastic Gradient Descent ( SGD ) ，改善 Gradient Descent 每一次都要丟全部的資料進去算梯度，SGD 利用隨機單筆資料的梯度拿來更新參數，就計算成本上來說會節省不少。</p>
+<p><span class="math display">\[
+W_k=W_{k-1}-\epsilon\displaystyle{\frac{\partial E^{p_k}(W)}{\partial W}}
+\]</span></p>
+<h3 id="c.-gradient-back-propagation">C. Gradient Back-Propagation</h3>
+<p>在1950年代後期，Greadient-Based Learning 開始被人們使用，但也幾乎都僅限於線性系統。近年來幾件事情的發展使得 Gradient Descent 被廣泛的應用 :</p>
+<ol type="1">
+<li>Loss function 的局部最小值並不會是實務上的主要問題 ( 李宏毅課程中也有講到，有些學者甚至認為高維度出現局部最小值的機率其實很小，我們使用 Gradient Descent 很可能找到的都是全局最小值。 )</li>
+<li>Backpropagation (BP) algorithm 在多層非線性系統中可以有效率的計算梯度。</li>
+<li>Backpropagation algorithm 也可以處理在多層神經網路中的複雜學習任務。</li>
+</ol>
+<p>BP 的核心概念就是從輸出層往前推導到輸入層，有效率的計算梯度，雖然在 60 年代初期就有類似的概念出現，但還沒應用在機器學習的問題中。</p>
+<h3 id="d.-learning-in-real-handwriting-recognition-systems">D. Learning in Real Handwriting Recognition Systems</h3>
+<p>( 略 ) 手寫辨識中，最困難的並非辨識單獨的字母或數字，而是要對一整個句子或單字進行切割、分段。"Heuristic Over-segmentation" 便是處理這樣子問題的標準模式，它要能夠生成各種可能的切割方式，並從中找出最合適的組合。</p>
+<p>而在此論文的後面幾個部分會提到如何實現 Segmentation ，但這不在本篇文章的討論範圍，因此不再贅述。</p>
+<h3 id="e.-globally-trainable-systems">E. Globally Trainable Systems</h3>
+<p>( 略 ) 這一個部分，主要在談一個完整辨識系統的各個模組是如何運作、如何互相串接，這部分也非本篇文章的討論範圍，因此也先不詳細介紹。</p>
+<h2 id="ii.-convolutional-neural-network-for-isolated-character-recognition">II. Convolutional Neural Network for Isolated Character Recognition</h2>
+<p>傳統的辨識系統，利用人工定義的 feature extractor 取得相關聯的資訊並且去除不相關的變數，配合著全連接層神經網路分類器來進行分類。但我們更在意的是，是否能夠讓機器自己學習出一套 feature extractor，如此以來我們便可以直接餵原始資料進全連接層的分類器，直接進行辨識。</p>
+<p>然而這樣會產生一些問題 :</p>
+<ol type="1">
+<li>原始圖片的像素過大，在第一層的全連接層可能就會產生數以千萬計的參數(權重)，參數越多，我們就需要更多的訓練資料才能訓練出一個好的 model。當然，我們所需的計算成本也必須隨之增加。</li>
+<li>一個非結構化的圖片、語音的問題就在於它們並沒有結構上的不變性，輸入分類器的型態可能千變萬化。以手寫文字來說，即使我們可以做一些前處理 --- 將圖片尺寸標準化、將手寫字置於圖片中央 --- 但不管怎麼做總是無法做的夠完美，手寫文字的大小不會固定、也有文字傾斜...等問題。理論上，只要我們提供足夠多的 neurons 應該也可以訓練得夠好，但仍會有計算成本及訓練樣本不夠多的狀況。</li>
+<li>全連接層的架構忽略了圖片整體的拓樸性質，將輸入圖像轉化成為互相獨立的變數，但圖像本身具有很強的空間結構，某些像素跟周圍的像素間應該具有高度的相關性，這些相關聯的像素便組合成一個個局部特徵。而 CNN 便是掌握了這樣的概念進行有效的特徵萃取。</li>
+</ol>
+<h3 id="a.-convolutional-network">A. Convolutional Network</h3>
+<p>Convolutional Network 架構包含了三個重要的概念 : 局部感受野 (Local receptive fields )、權重共享 ( Shared weights ) 以及 子(二次)採樣 ( Sub-sampling )</p>
+<p><strong>Local receptive fields</strong></p>
+<p>局部感受野的概念在早期的醫學、生物學上面就有許多的研究，在這樣的局部館策中，視覺神經元可以直接萃取出圖像上的特徵 ( 如 : 邊緣、端點、角落...)，而這些特徵可以組合成夠高層次的特徵。而這些特徵仍然保有其拓樸性質。</p>
+<p>而這樣特徵萃取的概念應用在 Neural Network 上便是利用一組 identical weight vector ( 在 CNN 中稱之為 kernel 或是 filter ) 掃過整張圖片，然後輸出一張 feature map。這樣的過程對應到論文中的 LeNet-5 模型即為 卷積層 ( Convolution Layer )。一個完整的卷積層會有多個 kernel ( weight vector ) 組成，然後轉出成若干個 feature maps。</p>
+<p>之所以稱為卷積，主要是因為 kernel 利用滑動的方式掃過整張圖的每一個位置，並且記錄下每一個位置的狀態然後對應到 feature map 的相對位置，這樣的操作與數學上的 「卷積」 相同。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>經過卷積層的操作後，一旦特徵被偵測出來後，這個特徵的精確位置便不是那麼重要，重要的反而是這個特徵與其他特徵的相對位置。</p>
+<p><strong>Sub-sampling</strong></p>
+<p>既然我們在意的是特徵間的相對位置，而不在意其精確的位置，最簡單的方式就是直接減少 feature map 的空間分辨率 ( Spatial Resolution )，做法便是將局部感受野進行平均化及子採樣，這過程便對應到 LeNet-5 的 Subsampling Layer ( 又稱作池化層 )。</p>
+<p>在 LeNet-5 的 Subsampling Layer 中，利用 2X2 的 kernel，掃過 Convolution Layer 所產生的 feature maps，遍歷的方式與卷積層有所不同，每一個相鄰感受野均不重疊，將每一個局部區域數值取平均後再經過一個 sigmoid function 。經過 subsampling 過後的 feature maps 長寬均會減少一半。</p>
+<p><strong>Shared weights</strong></p>
+<p>由於卷積的操作特性，我們不難發現，每一個 kernel 滑過整張圖的過程中，參數都是固定的，這樣權重共享的概念讓我們在計算上減少非常多的負擔。而且也會使 test error 更接近 train error。</p>
+<h3 id="b.-lenet-5">B. LeNet-5</h3>
+<p>這個部分主要再詳細介紹整個 LeNet-5 的各層架構及運作。<span class="math inline">\(C\)</span> 表示卷積層，<span class="math inline">\(S\)</span> 表示池化層，而 <span class="math inline">\(F\)</span> 則是全連接層，下標數字則是標示位於第幾層。由此可見，LeNet-5 是一個有六層主結構的辨識系統 ( 不含輸入輸出層 )。</p>
+<p><img src="https://i.imgur.com/BXEWBsY.png" /></p>
+<p>以下我們依照各層分別介紹:</p>
+<h4 id="input">Input</h4>
+<p>LeNet-5的輸入格式為 <span class="math inline">\(32\times 32\)</span> 的手寫圖像。</p>
+<h4 id="c_1-卷積層"><span class="math inline">\(C_1\)</span> (卷積層)</h4>
+<p>第一層是有 6 個 <span class="math inline">\(5\times 5\)</span> 的 kernel 的卷積層，每一個kernel經過卷積會輸出一張 feature map，因此在這一層會有六張 <span class="math inline">\(28\times 28\)</span> 的 feature maps。 ( 以現在的 CNN 來說，這是 stride=1 且沒有 padding 的卷積層 )</p>
+<p><img width=500 src="https://i.imgur.com/WDxti0L.png" > ( 圖片來源 : <a target="_blank" rel="noopener" href="https://www.charleychai.com/blogs/2018/ai/NN/lenet.html">LeNet-5详解与实现</a> )</p>
+<p>我們也可以輕易地計算，第一層一共有 <span class="math inline">\((25\times 6)+(1\times 6)=156\)</span> 個權重， 及 <span class="math inline">\((25\times 28^2\times 6)+(28^2\times 6)=122304\)</span> 個連結數。</p>
+<h4 id="s_2-池化層"><span class="math inline">\(S_2\)</span> (池化層)</h4>
+<p>第二層是有 <span class="math inline">\(2\times 2\)</span> kernel 的池化層，先經過平均池化後給予一個權重及 偏置 ( bias ) 再丟進 sigmoid function 形成 feature maps。feature maps的尺寸經過池化後會減少一半 ( stride=2 )，亦即此層生成的 feature maps 尺寸會是 <span class="math inline">\(14\times 14\)</span>。</p>
+<p><img width=500 src="https://i.imgur.com/U1Qy4xM.png" > ( 圖片來源 : <a target="_blank" rel="noopener" href="https://www.charleychai.com/blogs/2018/ai/NN/lenet.html">LeNet-5详解与实现</a> )</p>
+<p>這一層一共有 <span class="math inline">\((1+1)\times 6=12\)</span>個權重，且有 <span class="math inline">\(4\times 14^2\times 6+14^2\times 6=5880\)</span> 個連結數。</p>
+<h4 id="c_3-卷積層"><span class="math inline">\(C_3\)</span> (卷積層)</h4>
+<p>此層較為特別，作者採用的方式是將數個 <span class="math inline">\(S_2\)</span> 的 feature maps 一起做卷積，這樣會產生一共 16 個 feature maps，且每一個 feature map 大小為 <span class="math inline">\(10\times 10\)</span>。( 連結方式如下圖右 )</p>
+<p><img src="https://i.imgur.com/kPUkWKL.png%20=250x" /> <img src="https://i.imgur.com/7tGTZHB.png%20=400x" /></p>
+<p>為何不採用全連接的方式 ? 首先，這樣可以減少參數。其次，<span class="math inline">\(C_3\)</span> 每一個輸入的 feature map 都是 <span class="math inline">\(C_1\)</span> 的 kernel 針對輸入圖像所萃取出來的特徵圖，利用這樣不對稱的連結方式，反而可以組合成更高層級的特徵。</p>
+<p>這一層中我們有 <span class="math inline">\(6\times(25\times 3+1)+9\times(4\times 25+1)+1\times(6\times 25+1)=1516\)</span> 個參數及 <span class="math inline">\(151600\)</span> 個連結。</p>
+<h4 id="s_4-池化層"><span class="math inline">\(S_4\)</span> (池化層)</h4>
+<p>操作方式與 <span class="math inline">\(S_2\)</span> 相同，經過 <span class="math inline">\(2\times 2\)</span> 的 kernel 池化過後，feature maps 的大小是 <span class="math inline">\(5\times 5\)</span>。</p>
+<p>此層具有 <span class="math inline">\((1+1)\times 16=32\)</span>個參數，及 <span class="math inline">\((4\times 25\times 16)+(25\times 16)=2000\)</span> 個連結。</p>
+<h4 id="c_5-卷積層"><span class="math inline">\(C_5\)</span> (卷積層)</h4>
+<p>這裡跟 <span class="math inline">\(C_3\)</span> 卷積層不同的地方在於這邊是採全連接的方式產出一共120個 feature maps，由 <span class="math inline">\(5\times 5\)</span> 的 kernel 一次對所有 ( 16個 ) <span class="math inline">\(S_4\)</span> 的 feature maps 卷積過後的 feature map 大小會變成 <span class="math inline">\(1\times 1\)</span>。</p>
+<p>這一層會有 <span class="math inline">\((5\times 5\times 16+1)\times 120=48120\)</span> 個參數。</p>
+<h4 id="f_6-全連接層"><span class="math inline">\(F_6\)</span> (全連接層)</h4>
+<p>這一層是一個簡單的全連接層，共有 84 個神經元，與上一層的 120 個 feature maps 進行全連接。( 為何取 84 ? 我們在 Output 層會說明。 )</p>
+<p>如同一般的神經網路，這 84 個神經元都是 <span class="math inline">\(C_5\)</span> 層中 120 維向量與權重向量內積後，經過 activation function 轉換後再加上偏置而得。</p>
+<p><img width=500 src="https://i.imgur.com/XJ5yPms.jpg" ></p>
+<p>因此這邊一共會有 <span class="math inline">\((120\times 84)+(1\times 84)=10164\)</span> 個參數。</p>
+<p>這裡使用的 activation function 是 <span class="math inline">\(A\cdot tanh(Sa)\)</span>，其中 <span class="math inline">\(S\)</span> 是原點的斜率，則 <span class="math inline">\(A=1.7159\)</span>。</p>
+<h4 id="output">Output</h4>
+<p>最後的輸出層，使用 Euclidean Radial Basis Function ( RBF ) 計算出每一個類別 (此例就是 0-9) 的數值</p>
+<p><span class="math display">\[
+y_i=\sum\limits_{j}(x_j-w_{ij})^2
+\]</span></p>
+<p>這個式子以及 <span class="math inline">\(y_i\)</span> 代表的意義是什麼呢 ?</p>
+<p>在輸出層以前，我們輸入一張手寫圖片，最後會得到一個 84 維的向量，利用這 84 維向量跟各個類別的權重向量計算這兩者的歐式距離。</p>
+<p>為什麼當初在 <span class="math inline">\(F_6\)</span> 層的輸出會取 84 個神經元 ? 因為我們要針對每一個類別給予一個標準權重值，好跟 <span class="math inline">\(F_6\)</span> 層的輸出來計算距離，那麼這個標準權重值就是從 ACSII 而來</p>
+<p><img src="https://i.imgur.com/zG8PMM3.png" /></p>
+<p>這裡面每一個字母 / 數字 / 符號 都是 <span class="math inline">\(7\times 12\)</span> 的大小，每一個字符我們都可以化成一組 84 維的標準權重，其中每一維的值不是 +1 ，就是 -1。這樣的設計可以避免 <span class="math inline">\(O,o,0\)</span> 這種容易混淆的字符造成判別錯誤。</p>
+<p>我們可以將各層視覺化出來，或許更能了解每一層的作用</p>
+<p><img src="https://i.imgur.com/o49ic8B.png" /></p>
+<h3 id="c.-loss-function">C. Loss Function</h3>
+<p>一般來說我們的 Loss Function 會採用 Maximum Likelihood Estimation (MLE)，但在本論文中其實 MLE 等價於 Minimum MSE ( Mean Square Error )</p>
+<p><span class="math display">\[
+E(W)=\displaystyle{\frac{1}{P}}\sum\limits_{p=1}^{P}y_{D_{p}}(Z^p,W)
+\]</span></p>
+<p><span class="math inline">\(y_{D_{p}}\)</span> 指的就是第 <span class="math inline">\(p\)</span> 筆資料輸入後所得的「正確類別」 RBF 值，所以訓練資料的 error 就是所有訓練資料所得「正確類別」 RBF 值之平均。( 從 RBF 的型態來看其實就是 mean square error )</p>
+<p>但這樣的 Loss Function 有一些缺點 :</p>
+<ol type="1">
+<li><p>RBF 的參數不可拿來訓練。倘若 RBF 的權重也可拿來訓練，會導致 RBF 權重會因不斷調整而趨於相等，而 <span class="math inline">\(F_6\)</span> 層的結果也會趨近於 RBF 權重，最後 RBF輸出均為 0。亦即不管輸入什麼資料，最後訓練出來的 RBF 輸出都會是 0 。</p></li>
+<li><p>缺乏考慮各類別間的競爭關係。這樣的競爭關係我們可以用 Maximum a posteriori ( MAP , 最大後驗機率法 ) 來表示。假定一個樣本，我們希望他的預測可以接近真實的 label ，那我們從機率的角度來看就是要試著最大化它的後驗機率<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。( 或是最小化正確類別的機率值取 <span class="math inline">\(\log\)</span> )。因此從這個方向我們可以修改一下我們的 Loss Function</p></li>
+</ol>
+<p><span class="math display">\[
+E(W)=\displaystyle{\frac{1}{P}}\sum\limits_{p=1}^{P}y_{D_{p}}(Z^p,W)+\log(e^{-j}+\sum\limits_{i}e^{-y_i(Z^p,W)})
+\]</span></p>
+<p>從 <span class="math inline">\(\sum\limits_{i}e^{-y_i(Z^p,W)}\)</span> 這一項不難發現，若錯誤類別的 RBF 值越小，進行懲罰的就越多。如此一來，整個模型便能同時考量正確類別的誤差及其他類別的交互影響。</p>
+<h2 id="後記">後記</h2>
+<p>這是一偏較早期的論文，所使用的方法其實在現在的 CNN 架構中很多都不被使用，舉例來說 <span class="math inline">\(C_3\)</span> 層使用的特殊特徵配對方式，由於現在的硬體效能都提升很多，現今已不再使用這樣的方式進行配對。各層所使用的 Sigmoid function 現在也大多被 ReLU 所取代。雖然如此，這篇論文的價值仍然不容被忽視，仍然可以提供完整圖像辨識的架構給讀者。</p>
+<p>此篇論文的內容非常多，我也無法一次全部看完，目前就先以最重要的部分進行閱讀，待日後有時間再來將後面的部分補完。</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li>LeCun, Y., Bottou, L., Bengio, Y., &amp; Haffner, P. (1998). Gradient-based learning applied to document recognition. Proceedings of the IEEE, 86(11), 2278-2323. DOI: 10.1109/5.726791 (論文<a target="_blank" rel="noopener" href="http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf">下載</a>)</li>
+<li><a target="_blank" rel="noopener" href="https://www.charleychai.com/blogs/2018/ai/NN/lenet.html">LeNet-5详解与实现</a></li>
+<li><a target="_blank" rel="noopener" href="https://mattwang44.github.io/en/articles/PyTorchTP-LeNet/">PyTorch Taipei 2018 week1: LeNet-5</a></li>
+<li>論文筆記 --- <a target="_blank" rel="noopener" href="https://hackmd.io/@K3QB5C-YSsyBr6dBBo6IkQ/rka5m35NX">Gradient-Based Learning Applied to Document Recognition</a></li>
+</ol>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>在CNN上卷積操作其實就是 Slide + Inner Product，利用滑動的方式遍歷所有位置，並記錄下 kernel 與相對位置的內積值於 feature map 的相對位置上。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>條件機率 : 在事件 <span class="math inline">\(y\)</span> 發生的前提下，事件 <span class="math inline">\(x\)</span> 發生的機率 <span class="math inline">\(\boldsymbol{P}(x\mid y)\)</span> 後驗機率 : 事件 <span class="math inline">\(x\)</span> 事件發生後的反向條件機率 <span class="math inline">\(\boldsymbol{P}(y\mid x)=\displaystyle{\frac{\boldsymbol{P}(x\mid y)\cdot\boldsymbol{P}(y)}{\boldsymbol{P}(x)}}\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Gradient-Based%20Learning%20Applied%20to%20Document%20Recognition/" title="[ 論文 ] Gradient-Based Learning Applied to Document Recognition">https://allen108108.github.io/blog/2019/07/28/[論文] Gradient-Based Learning Applied to Document Recognition/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/07/28/%5B%E8%AB%96%E6%96%87%5D%20Imagenet%20Classification%20with%20Deep%20Convolutional%20Neural%20Networks/" rel="prev" title="[論文] Imagenet Classification with Deep Convolutional Neural Networks">
+                  <i class="fa fa-chevron-left"></i> [論文] Imagenet Classification with Deep Convolutional Neural Networks
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/08/11/Data%20Science%20online%20Course%20%E6%8E%A8%E8%96%A6/" rel="next" title="Data Science online Course 推薦">
+                  Data Science online Course 推薦 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="Greedy algorithm 當我們在設計演算法時，往往都是一個一個步驟累積而成，而每一個步驟往往都必須要對某些狀況做決定。Greedy Algorithm 在每一個步驟都選擇「當下」「最好」的決定。也就是說，Greedy Algorithm 在每一步驟下都必須要去試著最優化我們所訂定的規範 (criterion)。而且，這樣的演算法不會回頭、不會反悔、不會猶豫。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 4 -- Greedy algorithms ( 1 )">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/11/05/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%201%20)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="Greedy algorithm 當我們在設計演算法時，往往都是一個一個步驟累積而成，而每一個步驟往往都必須要對某些狀況做決定。Greedy Algorithm 在每一個步驟都選擇「當下」「最好」的決定。也就是說，Greedy Algorithm 在每一步驟下都必須要去試著最優化我們所訂定的規範 (criterion)。而且，這樣的演算法不會回頭、不會反悔、不會猶豫。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/dGLn0Si.png">
+<meta property="og:image" content="https://i.imgur.com/fUZ4NHd.png">
+<meta property="og:image" content="https://i.imgur.com/mOdtdlC.gif">
+<meta property="article:published_time" content="2019-11-04T16:31:21.000Z">
+<meta property="article:modified_time" content="2019-11-08T11:52:25.358Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/dGLn0Si.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/11/05/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%201%20)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/11/05/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%201%20)/","path":"2019/11/05/Chapter 4 – Greedy algorithms ( 1 )/","title":"Chapter 4 -- Greedy algorithms ( 1 )"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Chapter 4 -- Greedy algorithms ( 1 ) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#greedy-algorithm"><span class="nav-number">1.</span> <span class="nav-text">Greedy algorithm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#interval-scheduling"><span class="nav-number">2.</span> <span class="nav-text">Interval Scheduling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scenario"><span class="nav-number">2.1.</span> <span class="nav-text">Scenario</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#criterion-greedy-rule"><span class="nav-number">2.2.</span> <span class="nav-text">Criterion ( Greedy Rule )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#correctness-of-algorithm"><span class="nav-number">2.3.</span> <span class="nav-text">Correctness of Algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#complexity"><span class="nav-number">2.4.</span> <span class="nav-text">Complexity</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/11/05/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%201%20)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Chapter 4 -- Greedy algorithms ( 1 )
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-11-05 00:31:21" itemprop="dateCreated datePublished" datetime="2019-11-05T00:31:21+08:00">2019-11-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-11-08 19:52:25" itemprop="dateModified" datetime="2019-11-08T19:52:25+08:00">2019-11-08</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%B1%9F%E8%95%99%E5%A6%82-Algorithm/" itemprop="url" rel="index"><span itemprop="name">江蕙如 Algorithm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/11/05/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%201%20)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/05/Chapter 4 – Greedy algorithms ( 1 )/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="greedy-algorithm">Greedy algorithm</h2>
+<p>當我們在設計演算法時，往往都是一個一個步驟累積而成，而每一個步驟往往都必須要對某些狀況做決定。Greedy Algorithm 在每一個步驟都選擇「當下」「最好」的決定。也就是說，Greedy Algorithm 在每一步驟下都必須要去試著最優化我們所訂定的規範 (criterion)。而且，這樣的演算法不會回頭、不會反悔、不會猶豫。</p>
+<span id="more"></span>
+<p>這樣短視近利的方式，直覺且快速，因此適用於各種問題上。雖然說在某些問題上，Greedt Algorithm 可能可以得到最佳解，但大部分狀況，solution 都不會是最好的。</p>
+<p>因此如何證明 Greedy Algorithm 在這一小部分問題上的確可以得到最佳解，將是最大的挑戰之一。一般來說，我們可以利用下列兩種方式來進行證明 :</p>
+<ol type="1">
+<li>The Greedy Algorithm stays ahead. 利用 Greedy Algorithm 可以一路最佳化。</li>
+<li>The exchange argument. 預設有一個最佳解，將其中與 Greedy Algorithm 不符的 criterions 交換，試圖證明這樣交換後仍然可得最優解。</li>
+</ol>
+<h2 id="interval-scheduling">Interval Scheduling</h2>
+<h3 id="scenario">Scenario</h3>
+<p><span class="math inline">\(Let\ \{I(i)=\big[s(i),f(i)\big)\mid i=1,2,3,\cdots,n\}\ is\ a\ set\ of\ requests\ interval.\)</span> <span class="math inline">\(Find\ a\ compatible(no\ overlap)\ requests\ with\ maximim\ size.\)</span> 給定一個區間，以及 <span class="math inline">\(n\)</span> 個子區間，試圖在這個區間中找出最多不重複的子區間。</p>
+<p><img src="https://i.imgur.com/dGLn0Si.png" /></p>
+<h3 id="criterion-greedy-rule">Criterion ( Greedy Rule )</h3>
+<p>前面有提到，Greedy Algorithm 在每一步驟下都必須要去試著最優化我們所訂定的規範 (criterion)，在 Interval Scheduling 問題來說，就是先選出一個在當下比較「好的 interval」，刪除掉 overlap 的選擇，之後再選擇一個「好的 interval」.....，一值重複下去。</p>
+<p>或許我們可以思考一下，最好的 interval 的可能有哪些 :</p>
+<ol type="1">
+<li>最早開始 ?</li>
+<li>最短區間 ?</li>
+<li>最少衝突 ?</li>
+<li>最晚結束 ?</li>
+</ol>
+<p><img width=500 src="https://i.imgur.com/fUZ4NHd.png" ></p>
+<p>上面四種方式，最直覺的大概數「最少衝突」這一種狀況，在這並非最優解。Greedy Algorithm 在選取條件上，往往不是那麼直覺，這也是比較需要花時間思考的部分。</p>
+<p>最早結束的 interval 才是每一輪選擇的最好條件，因為大區間的起始固定，因此越早結束的子區間也強制其長度，另一方面也可以越早將資源放出來給其他子區間來使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Interval-Scheduling(R)</span><br><span class="line"># R是當下可選擇的requests set,而 A 是我們選擇的 requsts set</span><br><span class="line">1. A=∅</span><br><span class="line">2. while R is not empty then do</span><br><span class="line">       choose I(i) with minimum f(i)</span><br><span class="line">       A=A+&#123;I(i)&#125;</span><br><span class="line">       X=&#123; I(j)| I(j) is not compatible with I(i) &#125;</span><br><span class="line">       R=R-&#123;I(i)&#125;-X</span><br><span class="line">3. return A</span><br></pre></td></tr></table></figure>
+<p>Greedy Algorithm 在演算法中很容易實現，主要也是因為其架構幾乎都是一個 loop。</p>
+<h3 id="correctness-of-algorithm">Correctness of Algorithm</h3>
+<p><strong>Compatible</strong></p>
+<p>因為我們每一次個 loop 都會刪除 overlap 的選擇，再去下一個 loop 中挑選一個 request 放進 <span class="math inline">\(A\)</span> 中，因此我們可以確定 <span class="math inline">\(A\)</span> 中的 requests 必然都是 compatible。</p>
+<p><strong>Maximum set</strong></p>
+<p>Cliam : <span class="math inline">\(O\)</span> is an optimal solution, then <span class="math inline">\(|A|=|O|\)</span></p>
+<ol type="1">
+<li>這裡我們先提出一個引理 : <span class="math inline">\(A=\{I(i_1),I(i_2),\cdots,I(i_n)\}\)</span> and <span class="math inline">\(O=\{I(j_1),I(j_2),\cdots,I(j_m)\},where\ f(j_u)\leq f(j_v)\ when\ u\leq v\Longrightarrow \forall\ k\leq n,\ f(i_k)\leq f(j_k)\)</span></li>
+</ol>
+<p>Step1. <span class="math inline">\(k=1\Longrightarrow f(i_1)\leq f(j_1)\)</span> 成立 (<span class="math inline">\(\because i_1\)</span> 是所有 requests 中結束時間最早的)</p>
+<p>Step2. 假設 <span class="math inline">\(k=r\)</span> 時亦成立 <span class="math inline">\(\Longrightarrow f(i_r)\leq f(j_r)\)</span> <span class="math inline">\(\because I(j_r)\)</span> 與 <span class="math inline">\(I(j_{r+1})\)</span> 為 compatible ，且 <span class="math inline">\(I(i_r)\)</span> 與 <span class="math inline">\(I(i_{r+1})\)</span> 為 compatible <span class="math inline">\(\therefore I(i_r)\)</span> 與 <span class="math inline">\(I(i_{r+1})、I(j_{r+1})\)</span> 均為 compatible <span class="math inline">\(\Longrightarrow\)</span> 在 <span class="math inline">\(r+1\)</span> 這個 loop 中，<span class="math inline">\(R\)</span> 裡面同時存在 <span class="math inline">\(I(i_{r+1})、I(j_{r+1})\)</span> <span class="math inline">\(\Longrightarrow f(i_{r+1})\leq f(j_{r+1})\)</span></p>
+<ol start="2" type="1">
+<li>Suppose to the contrary that <span class="math inline">\(A\)</span> is not optimal solution. <span class="math inline">\(\Longrightarrow |A|=n&lt;m= |O|\)</span> <span class="math inline">\(\Longrightarrow \exists\ I(j_{n+1})\in O\subseteq R\)</span> s.t. <span class="math inline">\(I(j_{n+1})\)</span>與<span class="math inline">\(I(j_{n})\)</span> compatible， 且<span class="math inline">\(f(i_n)&lt;s(j_{n+1})\)</span> <span class="math inline">\(\Longrightarrow\)</span> 當 <span class="math inline">\(I(i_n)\)</span> 被挑出來放進 <span class="math inline">\(A\)</span> 後，<span class="math inline">\(R\)</span> 裡面至少還有一個 <span class="math inline">\(I(j_{n+1})\)</span>，整個 loop 不會結束。 <span class="math inline">\(\Longrightarrow |A|\geq n+1\)</span> (<span class="math inline">\(\rightarrow\leftarrow\)</span>)</li>
+</ol>
+<h3 id="complexity">Complexity</h3>
+<p>我們在進行上面的演算法時，由於我們必須要比較 finish time，所以我們會先對 <span class="math inline">\(R\)</span> 做一次排序，複雜度為 <span class="math inline">\(O(n\log n)\)</span> (課程還沒講過這部分，暫時先了解即可)。</p>
+<p>之後我們每一次 loop 挑出排序後的 <span class="math inline">\(R\)</span> 最前面的 interval 後，都必須要重複查找 <span class="math inline">\(R\)</span> 中是否有 overlap 的 intervals 進行刪除，總共的複雜度是 <span class="math inline">\(O(n^2)\)</span>。(裡面必然有一些 interval 會在不同 loop 中被重複查找)</p>
+<p>由於排序的複雜度不可避免，我們便想這邊利用一些方式來減少整個 loop 的複雜度，讓整個演算法複雜度壓到只有排序這邊產生的 <span class="math inline">\(O(n\log n)\)</span> 。</p>
+<p>概念就是 <strong>每一次對 <span class="math inline">\(R\)</span> 進行 overlap interval 刪除時，不要全部刪除</strong></p>
+<ul>
+<li>先建立一個 <span class="math inline">\(S\)</span> 用來儲存每一個 interval 的 start time。</li>
+<li>每一輪從 <span class="math inline">\(R\)</span> 挑出最前面我們要的 interval <span class="math inline">\(I(i_k)\)</span> 後，按照 <span class="math inline">\(R\)</span> 排序，僅刪除 <span class="math inline">\(s(i_l)&lt;f(i_k)\)</span> 的 interval <span class="math inline">\(I(i_l)\)</span>，遇到 <span class="math inline">\(s(i_l)&gt;f(i_k)\)</span> 即停止。這樣可以確保所有的 intervals 在全部 loop 結束時只會被查找過一次。也就是說，整個 loop 查找完所花的時間複雜度只有 <span class="math inline">\(O(n)\)</span>。</li>
+</ul>
+<p>下列動畫可以試著解釋這整個演算法流程 :</p>
+<p><img src="https://i.imgur.com/mOdtdlC.gif" /></p>
+<p>這樣不但可以減少每一個 loop 的檢索時間，還可以確保前面該刪除沒刪除的 intervals 一定會在後面的 loop 被刪掉。</p>
+<p>藉由這樣的方式，我們便可以將整體的時間複雜度壓到只剩下 <span class="math inline">\(O(n\log n)\)</span>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/11/05/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%201%20)/" title="Chapter 4 -- Greedy algorithms ( 1 )">https://allen108108.github.io/blog/2019/11/05/Chapter 4 – Greedy algorithms ( 1 )/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/02/Chapter%203%20%E2%80%93%20Graph%20(%204%20)/" rel="prev" title="Chapter 3 -- Graph ( 4 )">
+                  <i class="fa fa-chevron-left"></i> Chapter 3 -- Graph ( 4 )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/06/Generative%20Adversarial%20Network%20(4)%20%E2%80%94%20Basic%20Theory%20behind%20GAN/" rel="next" title="Generative Adversarial Network (4) --- Basic Theory behind GAN">
+                  Generative Adversarial Network (4) --- Basic Theory behind GAN <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

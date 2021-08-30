@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="系列文章 本文對於以 Django 為基礎設計的 Line Bot 細節並不會有太多著墨，這些都在先前文章中有提到，建議讀者可以先行閱讀下面兩篇文章 :  MoBot : LINE Bot 開發紀錄 ( LINE &#x2F; Heroku ) 芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Line Bot 在群組中的喚醒&#x2F;休眠機制 (Django Database 之應用) ">
+<meta property="og:url" content="https://allen108108.github.io/blog/2021/08/30/Line%20Bot%20%E5%9C%A8%E7%BE%A4%E7%B5%84%E4%B8%AD%E7%9A%84%E5%96%9A%E9%86%92_%E4%BC%91%E7%9C%A0%E6%A9%9F%E5%88%B6%20(Django%20Database%20%E4%B9%8B%E6%87%89%E7%94%A8)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="系列文章 本文對於以 Django 為基礎設計的 Line Bot 細節並不會有太多著墨，這些都在先前文章中有提到，建議讀者可以先行閱讀下面兩篇文章 :  MoBot : LINE Bot 開發紀錄 ( LINE &#x2F; Heroku ) 芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2021-08-30T11:06:19.000Z">
+<meta property="article:modified_time" content="2021-08-30T11:34:04.061Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2021/08/30/Line%20Bot%20%E5%9C%A8%E7%BE%A4%E7%B5%84%E4%B8%AD%E7%9A%84%E5%96%9A%E9%86%92_%E4%BC%91%E7%9C%A0%E6%A9%9F%E5%88%B6%20(Django%20Database%20%E4%B9%8B%E6%87%89%E7%94%A8)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2021/08/30/Line%20Bot%20%E5%9C%A8%E7%BE%A4%E7%B5%84%E4%B8%AD%E7%9A%84%E5%96%9A%E9%86%92_%E4%BC%91%E7%9C%A0%E6%A9%9F%E5%88%B6%20(Django%20Database%20%E4%B9%8B%E6%87%89%E7%94%A8)/","path":"2021/08/30/Line Bot 在群組中的喚醒_休眠機制 (Django Database 之應用)/","title":"Line Bot 在群組中的喚醒/休眠機制 (Django Database 之應用) "}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Line Bot 在群組中的喚醒/休眠機制 (Django Database 之應用)  | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">系列文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#line-bot-in-group"><span class="nav-number">2.</span> <span class="nav-text">Line Bot in Group</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%AD%E8%A8%88%E6%A6%82%E5%BF%B5"><span class="nav-number">3.</span> <span class="nav-text">設計概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E5%A2%9E%E8%B3%87%E6%96%99%E5%BA%AB%E8%A1%A8%E5%96%AE"><span class="nav-number">4.</span> <span class="nav-text">新增資料庫表單</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#models.py"><span class="nav-number">4.0.1.</span> <span class="nav-text">models.py</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#admin.py"><span class="nav-number">4.0.2.</span> <span class="nav-text">admin.py</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#settings.py"><span class="nav-number">4.0.3.</span> <span class="nav-text">settings.py</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#views.py"><span class="nav-number">4.0.4.</span> <span class="nav-text">views.py</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2021/08/30/Line%20Bot%20%E5%9C%A8%E7%BE%A4%E7%B5%84%E4%B8%AD%E7%9A%84%E5%96%9A%E9%86%92_%E4%BC%91%E7%9C%A0%E6%A9%9F%E5%88%B6%20(Django%20Database%20%E4%B9%8B%E6%87%89%E7%94%A8)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Line Bot 在群組中的喚醒/休眠機制 (Django Database 之應用) 
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2021-08-30 19:06:19 / 修改時間：19:34:04" itemprop="dateCreated datePublished" datetime="2021-08-30T19:06:19+08:00">2021-08-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%B0%88%E6%A1%88-Project/" itemprop="url" rel="index"><span itemprop="name">專案 Project</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2021/08/30/Line%20Bot%20%E5%9C%A8%E7%BE%A4%E7%B5%84%E4%B8%AD%E7%9A%84%E5%96%9A%E9%86%92_%E4%BC%91%E7%9C%A0%E6%A9%9F%E5%88%B6%20(Django%20Database%20%E4%B9%8B%E6%87%89%E7%94%A8)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/08/30/Line Bot 在群組中的喚醒_休眠機制 (Django Database 之應用)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="系列文章">系列文章</h2>
+<p>本文對於以 Django 為基礎設計的 Line Bot 細節並不會有太多著墨，這些都在先前文章中有提到，建議讀者可以先行閱讀下面兩篇文章 :</p>
+<ul>
+<li><a href="https://allen108108.github.io/blog/2020/03/26/MoBot%20_%20LINE%20Bot%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%28%20LINE%20_%20Heroku%20%29">MoBot : LINE Bot 開發紀錄 ( LINE / Heroku )</a></li>
+<li><a href="https://allen108108.github.io/blog/2020/06/26/%E8%8A%8B%E9%A6%99%E5%86%AC%E7%93%9C%E3%80%8C%E6%9F%A5%E3%80%8D%20_%20%E5%B0%88%E7%82%BA%E8%87%AA%E5%AE%B6%E9%9C%80%E6%B1%82%E7%9A%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%9F%A5%E8%A9%A2%E7%B3%BB%E7%B5%B1%20App%20%28%20MoBot%20ver.2%20%29/">芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )</a></li>
+</ul>
+<span id="more"></span>
+<h2 id="line-bot-in-group">Line Bot in Group</h2>
+<p>一般來說，Line Bot 在群組中，會將所有人的對話都視為一個 event，既然監聽到 event 的發生，那麼就很容易會執行回覆，最後造成的結果就是 Line Bot 像跳針一樣一直跳出來回應。</p>
+<p>通常要解決這種狀況，有兩種方法，一種是在 Line Bot 的設計上，均使用招呼語與 Line Bot 進行對話 : 「小黑 今天天氣如何 ?」、「小白 使用方式 ?」....諸如此類的對話方式，但這種方式通常太過不自然，而且如果今天我們設計的機器人不完全是 for 群組使用，在一般個人與 Line Bot 的應對上還得加上招呼語也顯得太過麻煩。</p>
+<p>另外的方法，也是蠻多線上的群組機器人比較常用的方式就是讓機器人本身有休眠的機制存在，也就是說，當我們要使用 Line Bot 時再喚醒他，不需要用的時候可以主動讓它休眠，也可以讓它在一定時間後自動休眠。這，也是我們今天要討論的方式。</p>
+<h2 id="設計概念">設計概念</h2>
+<p>要達成這種喚醒機制，就必須要利用資料庫來記錄 Line Bot 的喚醒時間以及到期時間。當收到每一次的群組 event 時，便會跟資料庫中的資料進行比對，若時間超過了到期時間，便不作任何回應，並且刪除資料庫中的資料，直到下一次接收到喚醒的指令。</p>
+<p>概念其實不難，接著就是實作的部分。</p>
+<p>筆者沿用之前的 Line Bot 設計，使用 Django python 框架，在這樣的條件下應該怎麼進行資料庫的操作呢 ? 這就是接下來的主題了。</p>
+<h2 id="新增資料庫表單">新增資料庫表單</h2>
+<p>要在 Django 中建立資料庫表單並且進行存取、寫入等動作，連結的就是四個檔案 :</p>
+<p><code>models.py</code> : 負責定義資料庫表單的初始狀態，包含欄位資料以及預設資料，除此之外，也可以定義針對這個表單進行各種動作的函數等....</p>
+<p><code>admin.py</code> : 此處針對建立的表單進行註冊的動作，註冊後，我們可以於 Django 的管理後台進行表單的管理。</p>
+<p><code>settings.py</code> : 這邊我們使用的是 SQLite 資料庫系統，因此在此處進行 QLㄔㄛ設定。</p>
+<p><code>views.py</code> : 這裡就不用多說了，使用者與資料庫的互動主要發生在此處，使用者進行什麼樣的動作，而可以對資料庫進行怎麼樣的行為，主要都是定義在這邊。</p>
+<h4 id="models.py">models.py</h4>
+<p>因為我們希望可以當使用者利用某些方式 ( 例如 : 招呼語 ) 喚醒 Line Bot 時，可以在資料庫中洩入被喚醒的時間及到期的時間 ( 此處預設三分鐘 Line Bot 會休眠 )，因此我們建立以下的表單 :</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GroupAliveTbl</span>(<span class="params">models.Model</span>):</span></span><br><span class="line">    <span class="comment"># 定義 GroupAliveTbl 的欄位以及資料型態</span></span><br><span class="line">    GroupID = models.CharField(max_length=<span class="number">40</span>)</span><br><span class="line">    AliveDate = models.DateTimeField()</span><br><span class="line">    Expired = models.DateTimeField(null=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 定義 GroupAliveTbl 的函數</span></span><br><span class="line">    <span class="comment"># 新增一筆資料</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">creatAlive</span>(<span class="params"><span class="built_in">id</span></span>):</span></span><br><span class="line">        GroupAliveTbl.objects.<span class="built_in">filter</span>(GroupID=<span class="built_in">id</span>).delete()</span><br><span class="line">        groupAlive = GroupAliveTbl(</span><br><span class="line">            GroupID = <span class="built_in">id</span>,</span><br><span class="line">            AliveDate = timezone.now(),</span><br><span class="line">            Expired = timezone.now() + timedelta(minutes = <span class="number">3</span>)</span><br><span class="line">        )</span><br><span class="line">        groupAlive.save()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 判斷 Line Bot 是否休眠</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isAlive</span>(<span class="params"><span class="built_in">id</span></span>):</span></span><br><span class="line">        groupAlive = GroupAliveTbl.objects.<span class="built_in">filter</span>(GroupID=<span class="built_in">id</span>)</span><br><span class="line">        <span class="keyword">if</span> groupAlive.exists() == <span class="literal">False</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        groupAlive = groupAlive[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">return</span> timezone.now() &lt; groupAlive.expire</span><br></pre></td></tr></table></figure>
+<p>資料型態的部分，常見的欄位型態有：</p>
+<table>
+<thead>
+<tr class="header">
+<th>欄位型態</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CharField</td>
+<td>欄位型態為字串</td>
+</tr>
+<tr class="even">
+<td>TextField</td>
+<td>欄位型態為多行字串</td>
+</tr>
+<tr class="odd">
+<td>IntegerField</td>
+<td>欄位型態為整數</td>
+</tr>
+<tr class="even">
+<td>PositiveIntegerField</td>
+<td>欄位型態為正整數</td>
+</tr>
+<tr class="odd">
+<td>floatField</td>
+<td>欄位型態為浮點數</td>
+</tr>
+<tr class="even">
+<td>BooleanField</td>
+<td>欄位型態為布林值</td>
+</tr>
+<tr class="odd">
+<td>DateField</td>
+<td>欄位型態為日期</td>
+</tr>
+<tr class="even">
+<td>DateTimeField</td>
+<td>欄位型態為日期時間</td>
+</tr>
+</tbody>
+</table>
+<p>而我們也可以給欄位屬性 ：</p>
+<table>
+<thead>
+<tr class="header">
+<th>屬性</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>null</td>
+<td>是否為空值</td>
+</tr>
+<tr class="even">
+<td>primary_key</td>
+<td>是否為主鍵</td>
+</tr>
+<tr class="odd">
+<td>unique</td>
+<td>是否唯一值</td>
+</tr>
+<tr class="even">
+<td>null</td>
+<td>可為空值</td>
+</tr>
+</tbody>
+</table>
+<p>在 <code>model.py</code> 中以 <code>class</code> 定義表單，而在內部定義其函數方法以供後續利用。在此例中，定義了 <code>creatAlive</code> 函式來建立一筆新的 Alive 資料，並且計算出到期時間 (Expired)，另外，利用 <code>isAlive</code> 來判斷是否 Line Bot 已休眠。</p>
+<h4 id="admin.py">admin.py</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GroupAliveTbl_Admin</span>(<span class="params">admin.ModelAdmin</span>):</span></span><br><span class="line">    list_display = (<span class="string">&#x27;GroupID&#x27;</span>,<span class="string">&#x27;AliveDate&#x27;</span>,<span class="string">&#x27;Expired&#x27;</span>)</span><br><span class="line"></span><br><span class="line">admin.site.register(GroupAlive,GroupAliveTbl_Admin)</span><br></pre></td></tr></table></figure>
+<p>在這個步驟，我們加入了 ModelAdmin 類別來定義要在 admin 後台管理介面顯示的欄位，之後再用 <code>register</code> 來進行註冊。不過這部分並非我們此篇文章的重點，因此筆者不會利用太多篇幅來進行解釋。</p>
+<h4 id="settings.py">settings.py</h4>
+<p>這部分應該在初期建構 Line Bot 時就已經寫進 <code>setting.py</code> 之中，但有個部分還是要稍微提醒一下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">&#x27;default&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;ENGINE&#x27;</span>: <span class="string">&#x27;django.db.backends.sqlite3&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;NAME&#x27;</span>: BASE_DIR / <span class="string">&quot;db.sqlite3&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原本上述的設定，在實際應用上會一直報錯，經查詢過後，需要改為 <code>str(BASE_DIR / "db.sqlite3")</code> 才可正常運作。</p>
+<h4 id="views.py">views.py</h4>
+<p>在 Line Bot 的設計上，筆者希望能將 Line Bot 在群組內外的動作進行切割，這樣可以確保，我們在單獨跟機器人進行溝通的時候可以避免掉喚醒/休眠的機制。</p>
+<p>為了達成這個目的，我們得先了解到 Line Bot 怎麼判斷現在是群組訊息還是個人訊息</p>
+<p>從每一個 Line Bot 接收到的 event，我們其實除了可以知道接收到來自於哪個使用者的訊息外，還可以知道目前的對話是跟個人還是在群組內的對話</p>
+<p><code>event.source.use_id</code> : 接收到訊息是來自於哪一個使用者 id <code>event.source.group_id</code> : 接收到訊息是來自於哪一個群組 id <code>event.source.text</code> : 訊息內容 <code>event.source.type</code> : 這個對話是來自於客人 <code>user</code> 還是群組 <code>group</code></p>
+<p>確定了 Line Bot event 是來自於個人或群組後，便可以針對不同的條件進行不同的動作，當 event 來自於群組並接受到招呼語時應該如何、當 event 來自於群組並接受到休眠提示語時應該如何而當 event 來自於個人時又應該如何回應 :</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> event <span class="keyword">in</span> events:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(event, MessageEvent):</span><br><span class="line">        inGroup = <span class="literal">False</span></span><br><span class="line">        group_id = <span class="string">&#x27;&#x27;</span></span><br><span class="line">        user_id = event.source.user_id</span><br><span class="line">        mtext = event.message.text</span><br><span class="line">        <span class="keyword">if</span> (event.source.<span class="built_in">type</span> == <span class="string">&#x27;group&#x27;</span>):</span><br><span class="line">            <span class="comment">#當 event 來自於群組，這邊設置一個參數，以區別後續回覆函式 sendResponse 辨別用</span></span><br><span class="line">            inGroup = <span class="literal">True</span></span><br><span class="line">            group_id = event.source.group_id</span><br><span class="line">            <span class="comment">#當 event 來自於群組，並接受到喚醒提示語</span></span><br><span class="line">            <span class="keyword">if</span> event.message.text == <span class="string">&#x27;嗨 LineBot&#x27;</span>:</span><br><span class="line">                GroupAlive.creatAlive(event.source.group_id)</span><br><span class="line">                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=<span class="string">&#x27;找我幹嘛 ?&#x27;</span>))</span><br><span class="line">            <span class="comment">#當 event 來自於群組，並接受到休眠提示語</span></span><br><span class="line">            <span class="keyword">elif</span> event.message.text == <span class="string">&#x27;LineBot 掰&#x27;</span>:</span><br><span class="line">                GroupAlive.objects.<span class="built_in">filter</span>(groupId=event.source.group_id).delete()</span><br><span class="line">                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=<span class="string">&#x27;OK~掰&#x27;</span>))</span><br><span class="line">            <span class="comment">#當 event 來自於群組，且未進入休眠狀態</span></span><br><span class="line">            <span class="keyword">elif</span> GroupTicket.isAlive(event.source.group_id)):</span><br><span class="line">                sendResponse(event, mtext, user_id, inGroup, group_id)</span><br><span class="line">        <span class="comment">#當 event 來自於個人</span></span><br><span class="line">        <span class="keyword">elif</span> event.source.<span class="built_in">type</span> == <span class="string">&#x27;user&#x27;</span> :</span><br><span class="line">            sendResponse(event, mtext, user_id, inGroup, group_id)</span><br></pre></td></tr></table></figure>
+<p>如此一來，Line Bot 便可以在群組對話時，不會一直回覆所有使用者的對話，在需要它時再將其喚醒進行動作即可。當然，Line Bot 在群組間的動作還可以有更複雜的變化，例如當群組有心加入成員時，Line Bot 亦可以針對這樣的事件進行有別於對話的主動回覆，這部份我們就留待下篇文章再來討論吧 !</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2021/08/30/Line%20Bot%20%E5%9C%A8%E7%BE%A4%E7%B5%84%E4%B8%AD%E7%9A%84%E5%96%9A%E9%86%92_%E4%BC%91%E7%9C%A0%E6%A9%9F%E5%88%B6%20(Django%20Database%20%E4%B9%8B%E6%87%89%E7%94%A8)/" title="Line Bot 在群組中的喚醒&#x2F;休眠機制 (Django Database 之應用) ">https://allen108108.github.io/blog/2021/08/30/Line Bot 在群組中的喚醒_休眠機制 (Django Database 之應用)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/11/04/Nyquist-Shannon%20Theorem%20%E5%8F%96%E6%A8%A3%E5%AE%9A%E7%90%86%20(1)%20_%20%E6%B7%BA%E8%AB%87%E5%82%85%E7%AB%8B%E8%91%89%E5%88%86%E6%9E%90/" rel="prev" title="Nyquist-Shannon Theorem 取樣定理 (1) : 淺談傅立葉分析">
+                  <i class="fa fa-chevron-left"></i> Nyquist-Shannon Theorem 取樣定理 (1) : 淺談傅立葉分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

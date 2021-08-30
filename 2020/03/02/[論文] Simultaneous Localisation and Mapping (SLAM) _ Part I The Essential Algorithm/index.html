@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="筆者前言 此篇論文距今已有十多年歷史，但就初入 SLAM 領域的初心者來說，這仍是一篇入門的論文可讓我們以極短時間了解 SLAM 的整個核心概念與一些經典的解決方法。但雖說入門，仍然需要不少的先備知識 (例如 : 機率統計、卡爾曼濾波器、粒子濾波器....) ，要能完全掌握也必須要花一些時間。 比較需要注意的是，這篇真的僅是入門，不能作為理解 SLAM 問題的全貌，畢竟在 2006年以後到現在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[論文] Simultaneous Localisation and Mapping (SLAM) : Part I The Essential Algorithm">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/03/02/[%E8%AB%96%E6%96%87]%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="筆者前言 此篇論文距今已有十多年歷史，但就初入 SLAM 領域的初心者來說，這仍是一篇入門的論文可讓我們以極短時間了解 SLAM 的整個核心概念與一些經典的解決方法。但雖說入門，仍然需要不少的先備知識 (例如 : 機率統計、卡爾曼濾波器、粒子濾波器....) ，要能完全掌握也必須要花一些時間。 比較需要注意的是，這篇真的僅是入門，不能作為理解 SLAM 問題的全貌，畢竟在 2006年以後到現在">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/gKhc8hV.png">
+<meta property="og:image" content="https://i.imgur.com/AfVYGqc.png">
+<meta property="og:image" content="https://i.imgur.com/McDwVG8.png">
+<meta property="og:image" content="https://i.imgur.com/WOQ6Vtp.png">
+<meta property="og:image" content="https://i.imgur.com/bG9Au14.png">
+<meta property="og:image" content="https://i.imgur.com/KYXZU8r.png">
+<meta property="og:image" content="https://i.imgur.com/xWI3gdR.png">
+<meta property="og:image" content="https://i.imgur.com/X7uChRt.png">
+<meta property="og:image" content="https://i.imgur.com/qZ7jeQN.gif">
+<meta property="og:image" content="https://i.imgur.com/I2Jyw94.png">
+<meta property="og:image" content="https://i.imgur.com/BRp7CvP.png">
+<meta property="article:published_time" content="2020-03-02T07:35:54.000Z">
+<meta property="article:modified_time" content="2020-03-02T07:38:06.204Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/gKhc8hV.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/03/02/[%E8%AB%96%E6%96%87]%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/03/02/[%E8%AB%96%E6%96%87]%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/","path":"2020/03/02/[論文] Simultaneous Localisation and Mapping (SLAM) _ Part I The Essential Algorithm/","title":"[論文] Simultaneous Localisation and Mapping (SLAM) : Part I The Essential Algorithm"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[論文] Simultaneous Localisation and Mapping (SLAM) : Part I The Essential Algorithm | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%86%E8%80%85%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">筆者前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B0%A1%E4%BB%8B-introduce"><span class="nav-number">2.</span> <span class="nav-text">簡介 Introduce</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%B7%E5%8F%B2-history-of-the-slam-problem"><span class="nav-number">3.</span> <span class="nav-text">歷史 History of the SLAM Problem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%9C%E5%85%85-%E5%AE%9A%E4%BD%8D%E8%88%87%E6%B8%AC%E9%87%8F-localisation-and-measurement"><span class="nav-number">4.</span> <span class="nav-text">( 補充 ) 定位與測量 Localisation and Measurement</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%80%E6%B8%AC-measurement"><span class="nav-number">4.1.</span> <span class="nav-text">觀測 Measurement</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E5%8B%95-motion"><span class="nav-number">4.2.</span> <span class="nav-text">移動 Motion</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AC%E5%BC%8F%E5%8C%96%E5%8F%8A%E7%B5%90%E6%A7%8B-formulation-and-structure-of-the-slam-problem"><span class="nav-number">5.</span> <span class="nav-text">公式化及結構 Formulation and Structure of the SLAM Problem</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a.-%E9%A0%90%E5%82%99%E7%9F%A5%E8%AD%98-preliminaries"><span class="nav-number">5.1.</span> <span class="nav-text">A. 預備知識 Preliminaries</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b.-probabilistic-slam"><span class="nav-number">5.2.</span> <span class="nav-text">B. Probabilistic SLAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#structure-of-probabilistic-slam"><span class="nav-number">5.3.</span> <span class="nav-text">Structure of Probabilistic SLAM</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E5%BC%8F-soutions-of-the-slam-problem"><span class="nav-number">6.</span> <span class="nav-text">解決方式 Soutions of the SLAM Problem</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%B4%E5%B1%95%E5%8D%A1%E7%88%BE%E6%9B%BC%E6%BF%BE%E6%B3%A2%E5%99%A8-extended-kalman-filter-ekf-slam"><span class="nav-number">6.1.</span> <span class="nav-text">擴展卡爾曼濾波器 Extended Kalman Filter ( EKF-SLAM )</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#time-update"><span class="nav-number">6.1.1.</span> <span class="nav-text">Time-Update</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#observation-update"><span class="nav-number">6.1.2.</span> <span class="nav-text">Observation-update</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rb-%E7%B2%92%E5%AD%90%E6%BF%BE%E6%B3%A2%E5%99%A8-rao-blackwellised-filter-fast-slam"><span class="nav-number">6.2.</span> <span class="nav-text">RB 粒子濾波器 Rao-Blackwellised Filter (Fast-SLAM)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%A6%E7%8F%BE-implementation-of-slam"><span class="nav-number">7.</span> <span class="nav-text">實現 Implementation of SLAM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#appendix-slam-algorithm-derive"><span class="nav-number">8.</span> <span class="nav-text">APPENDIX : SLAM algorithm Derive</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#measurement-update-derive"><span class="nav-number">8.1.</span> <span class="nav-text">Measurement-Update Derive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#time-updata-derive"><span class="nav-number">8.2.</span> <span class="nav-text">Time-Updata Derive</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99-reference"><span class="nav-number">9.</span> <span class="nav-text">參考資料 Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/03/02/[%E8%AB%96%E6%96%87]%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [論文] Simultaneous Localisation and Mapping (SLAM) : Part I The Essential Algorithm
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-03-02 15:35:54 / 修改時間：15:38:06" itemprop="dateCreated datePublished" datetime="2020-03-02T15:35:54+08:00">2020-03-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/03/02/%5B%E8%AB%96%E6%96%87%5D%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/02/[論文] Simultaneous Localisation and Mapping (SLAM) _ Part I The Essential Algorithm/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="筆者前言">筆者前言</h2>
+<p>此篇論文距今已有十多年歷史，但就初入 SLAM 領域的初心者來說，這仍是一篇入門的論文可讓我們以極短時間了解 SLAM 的整個核心概念與一些經典的解決方法。但雖說入門，仍然需要不少的先備知識 (例如 : 機率統計、卡爾曼濾波器、粒子濾波器....) ，要能完全掌握也必須要花一些時間。</p>
+<p>比較需要注意的是，這篇真的僅是入門，不能作為理解 SLAM 問題的全貌，畢竟在 2006年以後到現在，十多年的時間也發展了不少新技術，更有甚者結合了 Deep Learning 有更好的 performance，但我相信在此論文的基礎下，去了解最新技術會相對來說簡單一些，而這也是我會選擇閱讀此篇論文的主要原因之一。</p>
+<p>另外，本篇論文筆記會加入一些補充資料在其中，以利完全沒有相關經驗及先備知識的讀者在進行論文閱讀時能更加清楚整個論文的內容。因此整篇論文筆記的內容或許會與原文有一些差異，並不會完全相同，在對照原始論文時可能要稍微注意的地方。</p>
+<span id="more"></span>
+<h2 id="簡介-introduce">簡介 Introduce</h2>
+<p>若將一個移動式機器人置於一未知環境中，是否能讓其同時進行定位並建立此環境的精確地圖，這一直是在機器人領域中一個重要的問題，這種問題我們統稱為 SLAM ( Simultaneous Localisation and Mapping )。</p>
+<p>在此篇論文提出的近十年中 ( 約 1996-2006)，SLAM 問題已有不少進展，在這些進展底下看似已經出現 SLAM 問題的解決方案，但就現實來說仍然存在不少問題。</p>
+<p>在這篇論文中，第一與第二部分主要介紹 SLAM 的歷史與演進，第三部分定義出了 SLAM 之架構，第四部份則是針對這樣的 SLAM 架構介紹當時兩種主流解決方案 :以擴展卡爾曼波器 Extended Kalman Filter 為基礎的 EKF-SLAM 與以粒子濾波器為基礎的 FastSLAM。</p>
+<p>下一篇論文 "<em>Simultaneous Localisation and Mapping (SLAM) : Part II State of the Art</em>" 則是會介紹當時較為先進的做法以及一些 SLAM 的相關實現。( 此篇論文筆者暫無計畫閱讀 )</p>
+<h2 id="歷史-history-of-the-slam-problem">歷史 History of the SLAM Problem</h2>
+<p>最早 SLAM 概念發展主要是在 1986 年於舊金山舉行的 IEEE Robotics and Automation Conference 會議上，在這個時候，機率概念正被引入到 AI 與機器人領域之中，也因此許多研究人員也努力想利用估計的方式處理定位及製圖的問題。</p>
+<p>在當時取得一致的共識，同意機率映射 (Probablistic mapping) 是在機器人技術中的一個重要概念，並且可以應用在許多的計算問題之中。在後續的幾年中，產出了相當多的關鍵論文，在這個領域中建立了完整的統計基礎，其中最重要的是，確定了定位的估計與地圖中不同地標應具有高度相關性，並且這樣的相關性會因後續持續的觀測而增長。</p>
+<p>在 " <em>Estimating uncertain spatial relationships in robotics.</em> " 這篇關鍵論文中也說明了當移動式機器人在未知環境中移動觀測時，針對這些地標的估計值會因為定位產生的一般性誤差而具有相關性。這項發現表明了，定位跟製圖這兩個問題必須要一起解決，也就是說，移動式機器人本身的定位與地標的估計應視為一個聯合狀態 (joint state)，在每一次地標觀測後都進行一次整體的更新。但，這也表示說狀態向量的維度會非常高 ( 除了定位的座標資訊外，還要包含所有的地標資訊 )，而且計算的複雜度將會提高到地標數量的平方。</p>
+<p>這樣的研究方向非常好，但後來卻停滯不前。主要的原因是當時的人們並不認為持續觀察的誤差會收斂，最可能的狀況是地圖的估計誤差會持續增長並沒有上界，如果要避免這樣的狀況，研究人員就必須假設或強迫所有地標估計之間的相關性必須要盡可能的小或是甚至無相關性，最終會導致地標估計與定位估計會分開來處理。</p>
+<p>但隨著整個概念的進展，大家開始意識到將定位以及地標估計統一進行估計，事實上估計值會收斂，且前述提到的相關性越高反而會讓解決方案越成功。</p>
+<p>SLAM 這個名詞的發表主要是在 1995 年 International Symposium on Robotics Research 會議上，不管是其收斂性或是製圖定位的問題都有不同的單位著手進行。</p>
+<p>目前 (此篇論文提出的當時)，SLAM 的研究方向大多在計算效率的提升以及解決資料間關聯性或閉環問題。而 SLAM 會議在 1999 年第一次舉行，著重在融合 Kalman-Filter、機率定位 (Probabilistic localisation) 以及製圖方法 (Mapping method)，後續的 SLAM 相關會議也吸引越來越多研究人員參與。</p>
+<h2 id="補充-定位與測量-localisation-and-measurement">( 補充 ) 定位與測量 Localisation and Measurement</h2>
+<p>在正式進入 SLAM 的領域前，先來談一下機器人怎麼利用觀測來為自己進行定位。我們先用一張圖，來非常概要的解釋整個機器人、自駕車的定位概念。</p>
+<p><img src="https://i.imgur.com/gKhc8hV.png" /></p>
+<ul>
+<li>最上面描繪出一個一維的機器人運動，在移動過程中會對周遭的環境進行測量 (measure)，在這個例子中，機器人會去觀測是否有看到綠色的門。</li>
+<li>BELIEF 指的是在這一維的 location 中，機器人的定位初始分佈，一開始並不確定機器人位置在哪，因此初始分佈會是呈現 Uniform 狀態。</li>
+<li>後驗分佈 Posterior Distribution 即當機器人第一次觀測到綠色門時，機器人的定位分佈會有所變化，機器人的定位會有較高的機率在綠色門位置的地方。之所以稱為 Posterior 因為這個分佈是考慮觀測 (measurement) 後得到的機率分佈。</li>
+<li>當機器人往右移動時，機率分佈也會隨之平移，這很合理，此時的機器人會有較高機率出現在綠門位置的旁邊一點點。這樣的分佈並非觀測後而得到的分佈，因此可以做為下一次觀測前的先驗分佈 Perior Distribution。</li>
+<li>機器人繼續往右移動，神奇的是因為連續觀察到兩個綠色門，因此這個後驗分佈會在第二扇門的地方達到最高波峰，換句話說，也就是更確定了機器人的定位在哪個位置。</li>
+</ul>
+<p>從上面的例子，我們可以知道，在機器人定位的理論當中，其實就是兩個步驟在重複運作 : 觀測 Measurement 與移動 Motion。藉由觀測獲得後驗機率，再利用移動的先驗機率預測移動的路徑，如此一直重複進行。</p>
+<p>接下來，我們利用簡單的、離散的例子來理解這整個過程的數學原理</p>
+<h3 id="觀測-measurement">觀測 Measurement</h3>
+<p><img src="https://i.imgur.com/AfVYGqc.png" /></p>
+<ul>
+<li>初始的 Belief 假設均為 0.2</li>
+<li>當移動機器人在某個位置中有觀測到紅色的 Landmark 時，會給予紅色地標比較高的分數 (此例假設為 0.6)，非紅色的地標則給予較低的分數 (0.2)</li>
+<li>此時，對於此機器人位置的後驗機率 <span class="math inline">\(P(x_i\mid Z)\)</span> 便會經由初始分佈與觀測的比重之乘積產生</li>
+</ul>
+<h3 id="移動-motion">移動 Motion</h3>
+<p>機器人的移動最麻煩的地方就是無法有一個確切的路徑，我們可以說，它們的移動具有不確定性。</p>
+<p><img src="https://i.imgur.com/McDwVG8.png" /></p>
+<ul>
+<li>上圖敘述了一維運動的不確定性。</li>
+<li>當我們希望機器人以步伐為 1 的方式運動，我們可以預期他們會有很高的機率( 此例假設 0.8 ) 一次移動一個單位。當我們希望機器人以步伐為 2 的方式運動，我們可以預期他們會有很高的機率( 此例假設 0.8 ) 一次移動兩個單位。</li>
+</ul>
+<p>了解了機器人定位的步驟與方法後，我們可以開始進入論文的最關鍵部分。</p>
+<h2 id="公式化及結構-formulation-and-structure-of-the-slam-problem">公式化及結構 Formulation and Structure of the SLAM Problem</h2>
+<p>SLAM 是一個過程，在無須任何先驗知識下，移動機器人可以利用這樣的過程進行地圖建置並同時於此地圖中推斷其位置。</p>
+<p><img src="https://i.imgur.com/WOQ6Vtp.png" /></p>
+<h3 id="a.-預備知識-preliminaries">A. 預備知識 Preliminaries</h3>
+<p>這裡定義幾個符號 : * <span class="math inline">\(\mathrm{x}_k\)</span> 移動設備本身的位置向量及其面向之方向 * <span class="math inline">\(\mathrm{u}_k\)</span> 控制向量，可使移動設備自 <span class="math inline">\(\mathrm{x}_{k-1}\)</span> 移動至 <span class="math inline">\(\mathrm{x}_k\)</span> * <span class="math inline">\(\mathrm{m}_i\)</span> 第 <span class="math inline">\(i\)</span> 個地標的位置向量 * <span class="math inline">\(\mathrm{z}_{ik}\)</span> 移動設備在時間 <span class="math inline">\(k\)</span> 時針對第 <span class="math inline">\(i\)</span> 個地標進行的觀測，若每個時間點都針對多個地標做觀測可簡寫為 <span class="math inline">\(\mathrm{z}_k\)</span> * <span class="math inline">\(\mathrm{X}_{0:k}=\{\mathrm{x}_0,\mathrm{x}_1,\cdots,\mathrm{x}_k\}=\{\mathrm{X}_{0:k-1},\mathrm{x}_k \}\)</span> 移動設備在 <span class="math inline">\(k\)</span> 時間內的移動歷程 * <span class="math inline">\(\mathrm{U}_{0:k}=\{\mathrm{u}_1,\mathrm{u}_2,\cdots,\mathrm{u}_k\}=\{\mathrm{U}_{0:k-1},\mathrm{u}_k \}\)</span> 在 <span class="math inline">\(k\)</span> 時間內的控制輸入歷程 * <span class="math inline">\(\mathrm{m}=\{\mathrm{m}_1,\mathrm{m}_2,\cdots,\mathrm{m}_n\}\)</span> 所有的地標集合 * <span class="math inline">\(\mathrm{Z}_{0:k}=\{\mathrm{z}_1,\mathrm{z}_2,\cdots,\mathrm{z}_k\}=\{\mathrm{Z}_{0:k-1},\mathrm{z}_k \}\)</span> 移動設備在 <span class="math inline">\(k\)</span> 時間內的觀測歷程</p>
+<h3 id="b.-probabilistic-slam">B. Probabilistic SLAM</h3>
+<p>首先，我們先引入一個分佈</p>
+<p><span class="math display">\[
+P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k},\mathrm{U}_{0:k},\mathrm{x}_0)
+\]</span></p>
+<p>我們假設，在任一個時間點 <span class="math inline">\(k\)</span> 時，在已知起始點 <span class="math inline">\(\mathrm{x}_0\)</span>、觀測 <span class="math inline">\(\mathrm{Z}_{0:k}\)</span> 以及控制輸入 <span class="math inline">\(\mathrm{U}_{0:k}\)</span> 的條件下，移動設備對於自身的定位 <span class="math inline">\(\mathrm{x}_k\)</span> 與 所有地標的估計 <span class="math inline">\(\mathrm{m}\)</span> 均服從上述的聯合後驗分佈 ( joint posterior distribution )。</p>
+<p>而我們也很直觀的可以了解到這樣的機率分佈其時是一個遞迴的狀態，也就是說</p>
+<p><span class="math display">\[
+P(\mathrm{x}_{k-1},\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k-1},\mathrm{x}_0)\overset{\mathrm{u}_k,\mathrm{z}_k}{\longrightarrow}P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k},\mathrm{U}_{0:k},\mathrm{x}_0)
+\]</span></p>
+<p>這樣的過程應該也要符合貝式定理 ( Bayes Theorem )。然而上述的過程，看似一步驟完成，實際上是由兩個步驟所組合而成 : 移動加上觀測。</p>
+<p>移動設備的移動過程，這樣的過程需要一個模型來進行描述，我們稱之為 Motion Model，其遵從馬可夫假設 ( Markov Assumptions ) :</p>
+<p><span class="math display">\[
+P(\mathrm{x}_k\mid \mathrm{x}_{k-1},\mathrm{m},\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)=P(\mathrm{x}_k\mid \mathrm{x}_{k-1},\mathrm{u}_k)
+\]</span></p>
+<p>而觀測也會需要一個觀測模型 Observation Model 來進行描述，亦遵從馬可夫假設 :</p>
+<p><span class="math display">\[
+P(\mathrm{z}_k\mid \mathrm{x}_{k},\mathrm{m},\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)=P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{m})
+\]</span></p>
+<p><img src="https://i.imgur.com/bG9Au14.png" /></p>
+<p>這兩個分佈都很直覺，不需要太多解釋，現在我們利用這兩個步驟可以來描述一個 SLAM 演算法了，第一步驟我們稱為 <strong>Time-Update</strong></p>
+<p><span class="math display">\[
+P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)=\int P(\mathrm{x}_k\mid \mathrm{x}_{k-1},\mathrm{u}_k)\cdot P(\mathrm{x}_{k-1},\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k-1},\mathrm{x}_0)d\mathrm{x}_{k-1}
+\]</span></p>
+<p>第二步驟則稱之為 <strong>Measurement-Update</strong></p>
+<p><span class="math display">\[
+P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k},\mathrm{U}_{0:k},\mathrm{x}_0)=\displaystyle{\frac{P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{m})P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)}{P(\mathrm{z}_k\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k})}}
+\]</span></p>
+<h3 id="structure-of-probabilistic-slam">Structure of Probabilistic SLAM</h3>
+<p>為了簡化討論過程，作者會將符號做一些省略，像最前面提到的聯合後驗分佈</p>
+<p><span class="math display">\[
+P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k},\mathrm{U}_{0:k},\mathrm{x}_0)
+\]</span></p>
+<p>可能會簡化成為 <span class="math inline">\(P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{z}_k)\)</span> 或 <span class="math inline">\(P(\mathrm{x}_k,\mathrm{m})\)</span>，這裡比較需要注意的地方在於，我們由 Observation Model 中可以看出 <span class="math inline">\(\mathrm{x}_k\)</span> 與 <span class="math inline">\(\mathrm{m}\)</span> 並非互斥，因此這個聯合後驗分佈不能簡化成以下形式</p>
+<p><span class="math display">\[
+P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{z}_k)\neq P(\mathrm{x}_k\mid \mathrm{z}_k)\cdot P(\mathrm{m}\mid \mathrm{z}_k)
+\]</span></p>
+<p>回到上面的 Fig. 1.，其實不難發現誤差的出現是很常見的現象，而且幾乎都是因為移動設備本身定位誤差所造成。雖然我們很難準確估測某個地標的位置，但基本上對於地標與地標之間相對位置的預測都不太會有太大的誤差。</p>
+<p>從機率的形式來看上述的現象，無法準確估測某一個地標 <span class="math inline">\(\mathrm{m}_i\)</span>，可以看成其分佈 <span class="math inline">\(P(\mathrm{m}_i)\)</span> 非常的分散，但是對於 <span class="math inline">\(\mathrm{m}_i, \mathrm{m}_j\)</span> 的相對位置的估測仍然準確，就表明了 <span class="math inline">\(P(\mathrm{m}_i,\mathrm{m}_j)\)</span> 的分佈集中。</p>
+<p>在 SLAM 的相關研究中，最重要的是理解到隨著觀測的增加，地標估計的相關性會單調增加，也就是說，就機率的角度來說，當觀測數量越來越多，<span class="math inline">\(P(\mathrm{m})=P(\mathrm{m}_1,\mathrm{m}_1,\cdots,\mathrm{m}_n)\)</span> 的分佈會越來越集中，就論文的說法就是</p>
+<blockquote>
+<p><span class="math inline">\(P(\mathrm{m})\text{ becomes monotonically more peaked as more observations are made.}\)</span></p>
+</blockquote>
+<p>這種估測的收斂性最主要是因為移動設備對於自身定位估測與地標估測兩者間是「幾乎獨立」的。</p>
+<p>再回到 Fig. 1. 來看，當估計自身的位置於 <span class="math inline">\(\mathrm{x}_k\)</span> 時，會觀察到 <span class="math inline">\(\mathrm{m}_i\)</span> 與 <span class="math inline">\(\mathrm{m}_j\)</span> 兩個地標，這兩個地標的相對位置顯然獨立於移動設備本身的坐標系之外。當移動設備繼續前進至 <span class="math inline">\(\mathrm{x}_{k+1}\)</span>，此時只會觀測到 <span class="math inline">\(\mathrm{m}_j\)</span> 這一個地標，藉由這一次的觀測可以對地標的估測位置來進行更新。</p>
+<p>雖說一次並沒有觀測到 <span class="math inline">\(\mathrm{m}_i\)</span>，但因為 <span class="math inline">\(\mathrm{m}_i\)</span> 與 <span class="math inline">\(\mathrm{m}_j\)</span> 兩者的相對位置獨立坐標系外，我們仍然可以藉由這一次的觀測同時更新 <span class="math inline">\(\mathrm{m}_i\)</span> 與 <span class="math inline">\(\mathrm{m}_j\)</span>，也同時增加這兩個地標的估測之間相關性。</p>
+<p><img src="https://i.imgur.com/KYXZU8r.png" /></p>
+<p>上圖其時可以看出來，在觀測初期，相對位置接近的地標，相關性會高很多，反之，距離較遠的相關性則低，這樣的訊息很直接，因為距離相近的，在觀測時容易被同時觀測到，爾後不管是否同時被設備觀測到，也能一同更新估測的位置。但隨著移動設備的來回走動，不管距離遠近，地標之間相關性都會單調增加。</p>
+<h2 id="解決方式-soutions-of-the-slam-problem">解決方式 Soutions of the SLAM Problem</h2>
+<p>要解決 SLAM 的問題，最主要的核心就是要找到最適合的 Observation Model 與 Motion Model 表示法，來提供 Time-Update 與 Measurement-Update 有效率且一致的計算。</p>
+<p><strong><em>[ 補充 ] : 上面的描述看起來很簡單，反正就是找兩個方程式來處理就好，然而，這中間最麻煩的問題就是 Noise。雖然理想化狀態相關性會隨觀測次數而遞增，但相對來說 Noise 也是，當一開始有 Noise 造成估測誤差後，後面的地標估測會因為相關性而傳遞誤差甚至疊加各自的誤差。這就是整個 SLAM 問題最需要解決的部分，也因此才會需要用到 「濾波器」的概念。</em></strong></p>
+<p>在這一個部分主要介紹兩個經典的方法 :</p>
+<ul>
+<li>加入 Gaussian Noise 建立的狀態模型，進而利用擴展卡爾曼濾波器來解決 SLAM 問題，我們稱之為 EKF-SLAM</li>
+<li>將移動設備模型描述成一個更通用的非高斯分佈模型 ( Non-Gaussian Distribution )，進而利用 RB 粒子濾波器 ( Rao-Blackwellised Particle Filter ) 來解決 SLAM 問題，我們稱之為 Fast-SLAM。</li>
+</ul>
+<h3 id="擴展卡爾曼濾波器-extended-kalman-filter-ekf-slam">擴展卡爾曼濾波器 Extended Kalman Filter ( EKF-SLAM )</h3>
+<p>( 在進入以下論文內容前，建議先閱讀 Bzarg 的文章 " <a target="_blank" rel="noopener" href="https://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/">How a Kalman filter works, in pictures</a> " 以及 <a target="_blank" rel="noopener" href="https://www.udacity.com/course/artificial-intelligence-for-robotics--cs373">Udacity - Artificial Intelligence for Robotics</a>，這些應該是目前最通俗易懂的 Kalman Filter 解釋文章 / 課程了。 )</p>
+<p>在 EKF-SLAM 中，我們利用下面的方式為 Motion 與 Observation 建模</p>
+<p><span class="math display">\[
+\mathrm{x}_k=f(\mathrm{x}_{k-1},\mathrm{u}_k)+\mathrm{w}_k\cdots\cdots(1)\\
+\mathrm{z}_k=h(\mathrm{x}_{k},\mathrm{m})+\mathrm{v}_k\cdots\cdots(2)\\
+\]</span></p>
+<p>其中，<span class="math inline">\(\mathrm{w}_k\)</span> 與 <span class="math inline">\(\mathrm{v}_k\)</span> 是一個均值為 <span class="math inline">\(0\)</span> 並具有共變異數各為 <span class="math inline">\(\mathrm{Q}_k\)</span> 與 <span class="math inline">\(\mathrm{R}_k\)</span> 的高斯擾動，白話一點說，就是 Noise 。</p>
+<p><span class="math display">\[
+\mathrm{w}_k\sim N(0,\mathrm{Q}_k)\\
+\mathrm{v}_k\sim N(0,\mathrm{R}_k)
+\]</span></p>
+<p><img src="https://i.imgur.com/xWI3gdR.png" /></p>
+<p>左下角為前一個狀態下的分佈，當經過 <span class="math inline">\(f\)</span> 轉換後會呈現另外一個分佈 (上圖橢圓形) ，但轉換過程還會受到 Noise <span class="math inline">\(v_k\)</span> 的影響，因此最終分佈應該會再一次的轉變 ( 當然以 <span class="math inline">\(\mathrm{m}\)</span> 來說亦是如此 )</p>
+<p><img src="https://i.imgur.com/X7uChRt.png" /></p>
+<p>既然確定了分佈，就可以找出 <span class="math inline">\(P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k},\mathrm{U}_{0:k},\mathrm{x}_0)\)</span> 的期望值及共變異數</p>
+<p><span class="math display">\[
+\begin{bmatrix}\hat{\mathrm{x}}_{k\mid k}\\ \hat{\mathrm{m}}_k\end{bmatrix}=E\begin{bmatrix}\mathrm{x}_k\\ \mathrm{m}_k \end{bmatrix}\cdots\cdots(3)\\
+P_{k\mid k}=\begin{bmatrix}P_{xx}&amp;P_{xm}\\P_{xm}&amp;P_{mm}\end{bmatrix}_{k\mid k}=E\begin{bmatrix}\dbinom{\mathrm{x}_k-\hat{\mathrm{x}}_k}{\mathrm{m}_k-\hat{\mathrm{m}}_k}\dbinom{\mathrm{x}_k-\hat{\mathrm{x}}_k}{\mathrm{m}_k-\hat{\mathrm{m}}_k}^T\end{bmatrix}\cdots\cdots(4)
+\]</span></p>
+<p>論文這邊的符號很混亂，且沒有另外說明，原則上都是引用 " <em>A Solution to the Simultaneous Localization and Map Building (SLAM) Problem</em> " 這篇論文再加以調整</p>
+<ul>
+<li><span class="math inline">\(\hat{\mathrm{x}}_{p\mid q}=E\begin{bmatrix}\mathrm{x}_p\mid \mathrm{Z}_{0:q}\end{bmatrix}\)</span> ,where <span class="math inline">\(p\geq q\)</span></li>
+<li><span class="math inline">\(P_{p\mid q}=E\begin{bmatrix}\big(\hat{\mathrm{x}}_{p\mid q}-\mathrm{x}_p\big)\big(\hat{\mathrm{x}}_{p\mid q}-\mathrm{x}_p\big)^T\mid \mathrm{Z}_q\end{bmatrix}\)</span></li>
+<li><span class="math inline">\(P_{xx,p\mid q} :\)</span> 在 <span class="math inline">\(p,q\)</span> 兩個狀態下定位誤差之共變異矩陣</li>
+<li><span class="math inline">\(P_{mm,p\mid q} :\)</span> 在 <span class="math inline">\(p,q\)</span> 兩個狀態下地標估測誤差之共變異矩陣</li>
+<li><span class="math inline">\(P_{xm,p\mid q} :\)</span> 在 <span class="math inline">\(p,q\)</span> 兩個狀態下定位與地標估測誤差之共變異矩陣</li>
+</ul>
+<p>有了這兩部分，就可以進行 Time-Update 與 Measurement-Update ( 這邊的相關知識及理論推導很多，這裡我們大多 follow 論文，再加一點補充，詳細完整證明過程可以參閱 " <em>Stochastic Models, Estimation and Control Volume 1</em> " 一書 )</p>
+<h4 id="time-update">Time-Update</h4>
+<p>若今天有一組一維定位的先驗分佈 <span class="math inline">\((\mu_1,\sigma^2_1)\)</span>，以及「移動」本身的分佈 <span class="math inline">\((\mu_2,\sigma^2_2)\)</span>，很清楚可以得到移動後的分佈 <span class="math inline">\((\mu&#39;,\sigma&#39;^2)\)</span></p>
+<p><span class="math display">\[
+\mu&#39;=\mu_1+\mu_2\\
+\sigma&#39;^2=\sigma^2_1+\sigma^2_2
+\]</span></p>
+<p>推廣到高維度的矩陣型態</p>
+<p><span class="math display">\[
+\mu&#39;=\mu_1+\mu_2\cdots\cdots(5)\\
+\Sigma&#39;^2=\Sigma^2_1+\Sigma^2_2\cdots\cdots(6)\\
+\text{where }\mu\text{ is mean matrix}, \Sigma\text{ is the covariance matrix}\\
+\]</span></p>
+<p>整合 <span class="math inline">\((1),(3),(4),(5),(6)\)</span> 式便可進行 Time-update</p>
+<p><span class="math display">\[
+\hat{\mathrm{x}}_{k\mid k-1}=f(\hat{\mathrm{x}}_{k-1\mid k-1},\mathrm{u}_k)\\
+P_{xx,k\mid k-1}=\nabla fP_{xx,k-1\mid k-1}\nabla f^T
++Q_k
+\]</span></p>
+<p>這裡會取 <span class="math inline">\(f\)</span> 的 Jacobian 主要考量到如果這是一個連續性的運動，所有的變動將會以極小的方式在進行。</p>
+<h4 id="observation-update">Observation-update</h4>
+<p>假如我們今天有一組一維地標的先驗分佈 <span class="math inline">\((\mu_1,\sigma^2_1)\)</span>，以及經過觀測後得到的後驗分佈 <span class="math inline">\((\mu_2,\sigma^2_2)\)</span>，經由 Bayes Theorem 兩者相乘後即可得出下一個時間點地標的先驗分佈 <span class="math inline">\((\mu&#39;,\sigma&#39;^2)\)</span> ，經過數學可以證明</p>
+<p><span class="math display">\[
+\mu&#39;=\dfrac{\mu_1\sigma^2_2+\mu_2\sigma^2_1}{\sigma^2_1+\sigma^2_2}=\mu_1+\mathrm{k}(\mu_2-\mu_1)\\
+\sigma&#39;^2=\dfrac{1}{\frac{1}{\sigma^2_1}+\frac{1}{\sigma^2_2}}=\sigma^2_1-\mathrm{k}\sigma_2^2\\
+\text{where }\mathrm{k}=\dfrac{\sigma_1^2}{\sigma_1^2+\sigma_2^2}
+\]</span></p>
+<p>我們也可以推廣到多維以矩陣形式來呈現</p>
+<p><span class="math display">\[
+\mu&#39;=\mu_1+\mathrm{K}(\mu_2-\mu_1)\cdots\cdots(7)\\
+\Sigma&#39;=\Sigma_1-\mathrm{K}\Sigma_2\\
+\text{where }\mu\text{ is mean matrix}, \Sigma\text{ is the covariance matrix}\\
+\text{and }\mathrm{K}\text{ is called
+Kalman Gain}
+\]</span></p>
+<p>接下來整合 <span class="math inline">\((2),(3),(4),(7)\)</span> 式便可進行 Observation-update</p>
+<p><span class="math display">\[
+\begin{bmatrix}\hat{\mathrm{x}}_{k\mid k}\\ \hat{\mathrm{m}_k}\end{bmatrix}=\begin{bmatrix}\hat{\mathrm{x}}_{k\mid k-1}\\ \hat{\mathrm{m}_{k-1}}\end{bmatrix}+K_k\cdot \tilde{y}_k
+\]</span></p>
+<p>其中</p>
+<ul>
+<li>測量剩餘 Measurement Residual <span class="math inline">\(\tilde{\mathrm{y}}_k=\mathrm{z}_k-h(\hat{x}_{k\mid k-1},\mathrm{m}_{k-1})\)</span></li>
+<li>測量剩餘共變異數 Measurement Residual Covariance <span class="math inline">\(\mathrm{S}_k=\nabla hP_{k\mid k-1}\nabla h^T+R_k\)</span></li>
+<li>卡爾曼增益 Kalman Gain <span class="math inline">\(\mathrm{K}_k=P_{k\mid k-1}\nabla h^TS^{-1}\)</span></li>
+</ul>
+<p>EKF-SLAM 是一種非常經典而且常見的 SLAM 解決方案，其優缺點如下 :</p>
+<p><strong>[優點]</strong></p>
+<ul>
+<li>收斂性 : 在地標估測的過程中，其不確定性 (也就是分佈的標準差) 會收斂至一個下界</li>
+</ul>
+<p><strong>[缺點]</strong></p>
+<ul>
+<li>計算成本 : 每一次進行 Observation-Update 都必須要計算共變異矩陣，這樣的計算複雜度高達 <span class="math inline">\(O(n^2)\)</span> ，但 EKF-SLAM 的變體可以解決這方面的問題。</li>
+<li>資料關聯性 : 標準的 EFK-SLAM 容易造成地標間估測的錯誤關聯，當移動設備經過一大圈後返回時，這樣的狀況容易造成閉環 (Loop Closure) 不易。</li>
+<li>通用性 : EKF-SLAM 利用線性模型來描述非線性的 Motion 與 Observation model，唯有在這樣的條件才能確保其收斂性。</li>
+</ul>
+<h3 id="rb-粒子濾波器-rao-blackwellised-filter-fast-slam">RB 粒子濾波器 Rao-Blackwellised Filter (Fast-SLAM)</h3>
+<p>開始理解論文之前，我們先用下面這張還蠻有名的動畫來理解整個粒子濾波器的作用是什麼</p>
+<p><img src="https://i.imgur.com/qZ7jeQN.gif" /></p>
+<ul>
+<li>一開始，我們會對機器人的定位給予一個先驗分佈，由於一開始完全不能確定機器人的位置，因此其定位分佈可能遍布整個領域。</li>
+<li>隨著機器人的移動以及觀測，每一次移動都會根據觀測後的結果進行重要性採樣 (<span class="math inline">\(SIS\)</span>, Sequential Importance Sampling)，篩除掉可能性低的部分。</li>
+</ul>
+<p>Fast-SLAM 中，利用了遞迴 Monte-Carlo method 來進行非線性、非高斯分佈的建模過程。此外，在 Fast-SLAM 中，估計的會是整個歷程 (trajectory) ，而不是針對某一個時間點的 Location。這樣做的原因是，可以將自身位置的估計與地標估計視為互相獨立的事件，使得整個地標估計視為一個獨立 Gaussian Distribution，僅具有線性複雜度而不用去計算二次複雜度的聯合地標估計共變異數，這是 Fast-SLAM 之所以 Fast 的原因之一。</p>
+<p>結合上面的簡單介紹， Fast-SLAM 在 Motion-Update 上，將每一個抽樣出來的歷程視為一個「粒子」。然後我們要利用隨機的抽樣「粒子」來估測母體，這便是 Monte-Carlo method 的精隨所在。除此之外，在 Measurement-Update Fast-SLAM 將每一個地標估計都視為一個分佈，具有其均值 <span class="math inline">\(\mu\)</span> 與變異數 <span class="math inline">\(\Sigma\)</span>。</p>
+<p>下圖描述了 Fast-SLAM 的中粒子的基本型態。(PS:對應論文，下標應該改為 <span class="math inline">\(0:t\)</span> )</p>
+<p><img src="https://i.imgur.com/I2Jyw94.png" /></p>
+<p>Fast-SLAM 的結構是 Rao-Blackwellised 狀態，這種狀態在某時間點 <span class="math inline">\(k\)</span> 的聯合分佈可由下面的集合表示</p>
+<p><span class="math display">\[
+\{w_k^{(i)},\mathrm{X}_{0:k}^{(i)},P(\mathrm{m}\mid \mathrm{X}_{0:k}^{(i)},\mathrm{Z}_{0:k})\}_i^N\\
+\text{where }P(\mathrm{m}\mid \mathrm{X}_{0:k}^{(i)},\mathrm{Z}_{0:k})=\prod_j^MP(\mathrm{m}_j\mid \mathrm{X}_{0:k}^{(i)},\mathrm{Z}_{0:k})
+\]</span></p>
+<p>整個 Fast-SLAM 利用粒子濾波器進行定位更新，而地標預測更新則是使用 EKF 遞迴估計。對任一個粒子 (整個移動歷程)來說，地圖地標位置的更新非常簡單，只要進行單獨的 EFK 更新即可，沒有觀察到的地標估測就不予更新。</p>
+<p>至於要預估路徑/整個移動歷程，就相對來說困難許多。</p>
+<p>在某一個時間 <span class="math inline">\(T\)</span> 要進行路徑的預估，就必須要有一個先驗分佈，而這一個先驗分佈也不是人為指定的，而是從先前的分佈中遞迴而得</p>
+<p><span class="math display">\[
+P(\mathrm{X}_{0:T}\mid \mathrm{Z}_{0:T})\\=P(\mathrm{x}_0\mid \mathrm{Z}_{0:T})P(\mathrm{x}_1\mid \mathrm{x}_0,\mathrm{Z}_{0:T})P(\mathrm{x}_2\mid \mathrm{X}_{0:1},\mathrm{Z}_{0:T})P(\mathrm{x}_3\mid \mathrm{X}_{0:2} \mathrm{Z}_{0:T})\cdots P(\mathrm{x}_T\mid \mathrm{X}_{0:T-1} \mathrm{Z}_{0:T})
+\]</span></p>
+<p>接著就是要對這個分佈進行 <span class="math inline">\(SIS\)</span>，但此時會遇到一個問題，<span class="math inline">\(P(\mathrm{x}_k\mid \mathrm{X}_{0:k-1} \mathrm{Z}_{0:T})\)</span> 這個真實的分佈我們並不知道，怎麼去重新進行採樣 ?</p>
+<p>這裡引進了一個 Proposal Distribution <span class="math inline">\(\pi\)</span> ，我們既然無法直接知道 <span class="math inline">\(P\)</span> ，那我們就換一個方向，希望找到一個分佈 <span class="math inline">\(\pi\)</span> 是逼近 <span class="math inline">\(P\)</span> 的</p>
+<p><span class="math display">\[
+\mathrm{x}_k^{(i)}\sim \pi(\mathrm{x}_k\mid \mathrm{X}_{0:k-1}^{(i)},\mathrm{Z}_{0:k},\mathrm{u}_k)
+\]</span></p>
+<p>也藉此可以定義出進行 <span class="math inline">\(SIS\)</span> 所需要的重要性權重</p>
+<p><span class="math display">\[
+w_{k}^{(i)}=\dfrac{\text{target distribution}}{\text{proposal distribution}}=\dfrac{P(\mathrm{X}_{k}^{(i)}\mid \mathrm{Z}_{0:k},\mathrm{U}_{0:k})}{\pi(\mathrm{X}_{k}^{(i)}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k})}=w_{k-1}^{(i)}\dfrac{P(\mathrm{z}_k\mid \mathrm{X}_{0:k}^{(i)},\mathrm{Z}_{0:k-1})P(\mathrm{x}_k^{(i)}\mid \mathrm{x}_{k-1}^{(i)},\mathrm{u}_k)}{\pi(\mathrm{x}_{k}^{(i)}\mid \mathrm{X}_{0:k-1}^{(i)},\mathrm{Z}_{0:k},\mathrm{u}_{k})}
+\]</span></p>
+<p>藉由上式計算出來的重要性權重重新進行抽樣。</p>
+<p><span class="math inline">\(SIS\)</span> 在每一次更新時都會進行重新抽樣，這使得 Fast-SLAM 有一個很重要的特性，那就是執行過 <span class="math inline">\(SIS\)</span> 後，系統會「遺忘」過去，而使得 Noise 不會持續累積下去。</p>
+<p>下圖非常清楚的展示了 Fast-SLAM 的演算過程</p>
+<p><img src="https://i.imgur.com/BRp7CvP.png" /> ("<em>Adaptive prior boosting technique for the efficient sample size in FastSLAM</em>")</p>
+<p>在文獻上，有 Fast-SLAM 1.0 及 Fast-SLAM 2.0 兩種版本，兩者的差別只在於 proposal distribution 的形式以及重要性權重的計算上有所更動。</p>
+<p>Fast-SLAM 1.0</p>
+<p><span class="math display">\[
+\text{Proposal Distribution is Motion Model : } P(\mathrm{x}_k\mid \mathrm{x}_{k-1}^{(i)},\mathrm{u}_k)\\
+w_k^i=w_{k-1}^iP(\mathrm{z}_k\mid \mathrm{X}_{0:k},\mathrm{Z}_{0:k-1})
+\]</span></p>
+<p>Fast-SLAM 2.0</p>
+<p><span class="math display">\[
+\text{Proposal Distribution is Motion Model including observation : } P(\mathrm{x}_k\mid \mathrm{X}_{0:k}^{(i)},\mathrm{Z}_{0:k},\mathrm{u}_k)\\
+w_k^i=w_{k-1}^iC\\
+\text{where }C=\dfrac{P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{X}_{0:k-1}^{(i)},\mathrm{Z}_{k-1})P(\mathrm{x}_k\mid \mathrm{x}_{k-1}^{(i)},\mathrm{u}_k)}{P(\mathrm{x}_k\mid \mathrm{X}_{0:k-1}^{(i)},\mathrm{Z}_{k-1},\mathrm{u}_k)}
+\]</span></p>
+<p>Fast-SLAM 2.0 的優點在於，Proposal Distribution 是一個局部最佳解，也就是對於每一個粒子，都可以借此計算出一個最小的重要性權重。且可在室外生成準確的地圖。</p>
+<p>但，不論是 Fast-SLAM 1.0 或 2.0，當重新採樣次數到達一定程度時，整個演算法會產生退化而失去準確度。</p>
+<h2 id="實現-implementation-of-slam">實現 Implementation of SLAM</h2>
+<p>(略)</p>
+<h2 id="appendix-slam-algorithm-derive">APPENDIX : SLAM algorithm Derive</h2>
+<h3 id="measurement-update-derive">Measurement-Update Derive</h3>
+<p>(略，其實就是 Bayes Theorem )</p>
+<h3 id="time-updata-derive">Time-Updata Derive</h3>
+<p><span class="math display">\[
+P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k},\mathrm{U}_{0:k},\mathrm{x}_0)\propto P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{m},\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)\cdot P(\mathrm{x}_k,\mathrm{m},\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)\\
+\Big(\because P(B\mid A)=\displaystyle{\frac{P(A\mid B)P(B)}{P(A)}}\Longrightarrow P(B\mid A)\propto P(A\mid B)P(B)\Big)\\
+\Longrightarrow P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k},\mathrm{U}_{0:k},\mathrm{x}_0)=\eta  P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{m},\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)\cdot P(\mathrm{x}_k,\mathrm{m},\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)\\
+=\eta P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{m})\cdot \int P(\mathrm{x}_k,\mathrm{m},\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0,\mathrm{x}_{k-1})d\mathrm{x}_{k-1}\\
+\Big(\text{By the definition of marginal probability density function :} f_X(x)=\int f(x,y)dy  \Big)\\
+=\eta P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{m})\cdot\int P(\mathrm{x}_k\mid \mathrm{x}_{k-1},\mathrm{m},\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)\cdot P(\mathrm{x}_{k-1},\mathrm{m},\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)d\mathrm{x}_{k-1}\\
+\Big(\text{By Bayes Theorem}\Big)\\
+=\eta P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{m})\cdot\int P(\mathrm{x}_k\mid \mathrm{x}_{k-1},\mathrm{m})\cdot P(\mathrm{x}_{k-1},\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0) \cdot P(\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)d\mathrm{x}_{k-1}\\
+=\eta P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{m})\cdot\int P(\mathrm{x}_k\mid \mathrm{x}_{k-1},\mathrm{m})\cdot P(\mathrm{x}_{k-1},\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k-1},\mathrm{x}_0) \cdot P(\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)d\mathrm{x}_{k-1}\\
+\Big(\because (\mathrm{x}_{k-1},\mathrm{m})\text{ is independent from }\mathrm{u}_k\Big)\\
+=\eta P(\mathrm{z}_k\mid \mathrm{x}_k,\mathrm{m})\cdot\int P(\mathrm{x}_k\mid \mathrm{x}_{k-1},\mathrm{m})\cdot P(\mathrm{x}_{k-1},\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k-1},\mathrm{x}_0)d\mathrm{x}_{k-1}\\
+\Big(\because P(\mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)\text{ is a constant for } \mathrm{x}_{k-1}\text{ and it can be fused into }\eta\Big)\\
+\]</span></p>
+<p>到了這一步驟後，將上式積分部分與 Measurement-Update 型態做比較便可以得到結果</p>
+<p><span class="math display">\[
+P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)=\int P(\mathrm{x}_k\mid \mathrm{x}_{k-1},\mathrm{u}_k)\cdot P(\mathrm{x}_{k-1},\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k-1},\mathrm{x}_0)d\mathrm{x}_{k-1}
+\]</span></p>
+<h2 id="參考資料-reference">參考資料 Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://robotics.stackexchange.com/questions/19152/how-to-derive-the-time-update-equation-of-slam">StackExchange - How to derive the Time-Update equation of SLAM</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/">Bzarg - How a Kalman filter works, in pictures</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.leiphone.com/news/201607/GLQj0wrjKD4eHvq5.html">机器人的双眸：视觉SLAM是如何实现的？</a></li>
+<li><a target="_blank" rel="noopener" href="https://gaoyichao.com/Xiaotu/?book=probabilistic_robotics&amp;title=pr_chapter13">FastSLAM算法</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.udacity.com/course/artificial-intelligence-for-robotics--cs373">Udacity - Artificial Intelligence for Robotics</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41217212">知乎 - 重要性採樣（Importance Sampling）</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/03/02/[%E8%AB%96%E6%96%87]%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/" title="[論文] Simultaneous Localisation and Mapping (SLAM) : Part I The Essential Algorithm">https://allen108108.github.io/blog/2020/03/02/[論文] Simultaneous Localisation and Mapping (SLAM) _ Part I The Essential Algorithm/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/03/02/Android%20%E5%88%9D%E6%8E%A2%20(%E4%BA%8C)%20%EF%BC%9A%20%E5%BE%9E%20Hi,%20Android%20!%20%E4%BE%86%E8%AA%8D%E8%AD%98%20Activity%20%E8%88%87%20UI/" rel="prev" title="Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI">
+                  <i class="fa fa-chevron-left"></i> Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/03/25/%E5%8F%A4%E5%85%B8%E7%B7%9A%E6%80%A7%E6%A8%A1%E5%9E%8B%20v.s%20%E5%BB%A3%E7%BE%A9%E7%B7%9A%E6%80%A7%E6%A8%A1%E5%9E%8B/" rel="next" title="古典線性模型 v.s 廣義線性模型">
+                  古典線性模型 v.s 廣義線性模型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

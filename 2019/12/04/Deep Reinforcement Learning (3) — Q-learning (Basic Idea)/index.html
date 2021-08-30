@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="State-Value function \(V^{\pi}(s)\) Q-Learning 是 Reinforcement Learning 中一種 Value-Based 的方法，在 Q-Learning 中，並不直接去學習一個 Policy 而是要學習一個評價函數 Critic，來評價某一個 policy \(\pi\) 在某一個 state \(s\) 中採取行為後，後續得到的期望 Re">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Reinforcement Learning (3) --- Q-learning (Basic Idea)">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="State-Value function \(V^{\pi}(s)\) Q-Learning 是 Reinforcement Learning 中一種 Value-Based 的方法，在 Q-Learning 中，並不直接去學習一個 Policy 而是要學習一個評價函數 Critic，來評價某一個 policy \(\pi\) 在某一個 state \(s\) 中採取行為後，後續得到的期望 Re">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/j81cCdN.png">
+<meta property="og:image" content="https://i.imgur.com/KmOrfBx.png">
+<meta property="og:image" content="https://i.imgur.com/CihBNxm.png">
+<meta property="og:image" content="https://i.imgur.com/mVAvTip.jpg">
+<meta property="og:image" content="https://i.imgur.com/8owvxSl.png">
+<meta property="og:image" content="https://i.imgur.com/2oyQEY1.png">
+<meta property="og:image" content="https://i.imgur.com/HGkoTaN.jpg">
+<meta property="article:published_time" content="2019-12-04T04:13:34.000Z">
+<meta property="article:modified_time" content="2019-12-07T16:15:56.925Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/j81cCdN.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/","path":"2019/12/04/Deep Reinforcement Learning (3) — Q-learning (Basic Idea)/","title":"Deep Reinforcement Learning (3) --- Q-learning (Basic Idea)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Reinforcement Learning (3) --- Q-learning (Basic Idea) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#state-value-function-vpis"><span class="nav-number">1.</span> <span class="nav-text">State-Value function \(V^{\pi}(s)\)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#monte-carlo-mc-based-approach"><span class="nav-number">1.1.</span> <span class="nav-text">Monte Carlo (MC) based approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#temporal-difference-td-approach"><span class="nav-number">1.2.</span> <span class="nav-text">Temporal difference (TD) approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mc-v.s.-td"><span class="nav-number">1.3.</span> <span class="nav-text">MC v.s. TD</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#example"><span class="nav-number">1.3.1.</span> <span class="nav-text">Example</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#state-action-value-function-qpisa"><span class="nav-number">2.</span> <span class="nav-text">State-action Value function \(Q^{\pi}(s,a)\)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#q-learning"><span class="nav-number">3.</span> <span class="nav-text">Q-Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tips-of-q-learning"><span class="nav-number">4.</span> <span class="nav-text">Tips of Q-Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#target-function"><span class="nav-number">4.1.</span> <span class="nav-text">Target Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exploration"><span class="nav-number">4.2.</span> <span class="nav-text">Exploration</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#epsilon-greedy"><span class="nav-number">4.2.1.</span> <span class="nav-text">Epsilon Greedy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#boltzmann-exploration"><span class="nav-number">4.2.2.</span> <span class="nav-text">Boltzmann Exploration</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#replay-buffer"><span class="nav-number">4.3.</span> <span class="nav-text">Replay Buffer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#typical-q-learning-algorithm"><span class="nav-number">5.</span> <span class="nav-text">Typical Q-Learning Algorithm</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Reinforcement Learning (3) --- Q-learning (Basic Idea)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-12-04 12:13:34" itemprop="dateCreated datePublished" datetime="2019-12-04T12:13:34+08:00">2019-12-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-12-08 00:15:56" itemprop="dateModified" datetime="2019-12-08T00:15:56+08:00">2019-12-08</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/04/Deep Reinforcement Learning (3) — Q-learning (Basic Idea)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="state-value-function-vpis">State-Value function <span class="math inline">\(V^{\pi}(s)\)</span></h2>
+<p>Q-Learning 是 Reinforcement Learning 中一種 Value-Based 的方法，在 Q-Learning 中，並不直接去學習一個 Policy 而是要學習一個評價函數 Critic，來評價某一個 policy <span class="math inline">\(\pi\)</span> 在某一個 state <span class="math inline">\(s\)</span> 中採取行為後，後續得到的期望 Reward 有多少。</p>
+<p>因此，我們可以知道，一個 Critic <span class="math inline">\(V^{\pi}(s)\)</span> 必須配合一個 policy <span class="math inline">\(\pi\)</span> ，才能來計算後續的 Reward 有多少。</p>
+<span id="more"></span>
+<p><img width=500 src="https://i.imgur.com/j81cCdN.png" ></p>
+<p>在 <span class="math inline">\(V^{\pi}(s)\)</span> 的訓練上，我們要怎麼訓練 ? 一般來說有兩種方法 : 1. Monte Carlo (MC) based approach 2. Temporal difference (TD) approach</p>
+<h3 id="monte-carlo-mc-based-approach">Monte Carlo (MC) based approach</h3>
+<p>在 " Deep Reinforcement Learning (2) — Proximal Policy Optimization (PPO) " 一文中有提到， Monte Carlo approach 就是利用抽樣來針對一個無法估測的函數進行逼近。在這邊也是類似的概念，我們無法窮舉所有的 <span class="math inline">\(s\)</span> 來訓練 <span class="math inline">\(V^{\pi}(s)\)</span>，因此讓 <span class="math inline">\(\pi\)</span> 與 Environment 作互動來獲得有限筆資料，直接對 <span class="math inline">\(V^{\pi}(s)\)</span> 訓練。</p>
+<p><img src="https://i.imgur.com/KmOrfBx.png" /></p>
+<h3 id="temporal-difference-td-approach">Temporal difference (TD) approach</h3>
+<p>Monte Carlo approach 的一個問題是，我們必須要讓 <span class="math inline">\(\pi\)</span> 與 Environment 作一次又一次的完整互動，這樣所需要的時間實在太長，於是有了 Temporal difference approach。</p>
+<p>TD 的概念是這樣，我們不再需要讓 <span class="math inline">\(\pi\)</span> 與 Environment 作一次又一次的完整互動，只需要在某一個時間點 <span class="math inline">\(t\)</span> 就可以來做 <span class="math inline">\(V^{\pi}(s)\)</span> 的 estimate。</p>
+<p>從 <span class="math inline">\(V^{\pi}(s)\)</span> 的定義來看，在時間 <span class="math inline">\(t\)</span> 時，很顯然的下列式子會成立 :</p>
+<p><span class="math display">\[
+V^{\pi}(s_t)=r_t+V^{\pi}(s_{t+1})\\
+\Longrightarrow V^{\pi}(s_t)-V^{\pi}(s_{t+1})=r_t
+\]</span></p>
+<p>利用上面的式子，我們估測 <span class="math inline">\(V^{\pi}(s)\)</span> 的方式不再是看看最終 Reward 是否接近，而是只需要看看在 <span class="math inline">\(t\)</span> 時，得到的 reward <span class="math inline">\(r_t\)</span> 是不是接近即可。</p>
+<p><img src="https://i.imgur.com/CihBNxm.png" /></p>
+<h3 id="mc-v.s.-td">MC v.s. TD</h3>
+<p>Monte Carlo approach 與 Temporal difference approach 最主要的差異是目標函數的 Variance 差異。</p>
+<p>在 MC method 中，目標函數為後續的最終 Reward 期望值，這是一個一個 <span class="math inline">\(r_t\)</span> 累加起來的結果，其實可以直觀的理解，當每一個 <span class="math inline">\(r_t\)</span> 都有所變動時，最後得到的 Reward 就會差異很大。而 TD method 關注在某一個時間點的 reward <span class="math inline">\(r_t\)</span> ，當然相對來說 variance 會小很多。</p>
+<p>但 TD method 有一個比較麻煩的問題在於往往估測出來的 <span class="math inline">\(V^{\pi}\)</span> 可能會是不準的。</p>
+<h4 id="example">Example</h4>
+<p>以下是一個實際例子來看出兩者間的不同，假設有一個 policy <span class="math inline">\(\pi\)</span> 與 Environment 進行了 8 輪的互動。</p>
+<p><img src="https://i.imgur.com/mVAvTip.jpg" /></p>
+<p>這八次過程，面對的 state 就只有 <span class="math inline">\(s_a,s_b\)</span> 兩種，得到的 reward 不是 <span class="math inline">\(0\)</span> 就是 <span class="math inline">\(1\)</span>。</p>
+<p>從 MC method 角度來看，<span class="math inline">\(s_a\)</span> 僅出現過一次，就會依照這一次來計算 <span class="math inline">\(V^{\pi}(s_a)\)</span></p>
+<p><span class="math display">\[
+V^{\pi}(s_b)=\frac{6}{8}=\frac{3}{4}\\
+V^{\pi}(s_a)=0
+\]</span></p>
+<p>但從 TD method 的角度來看就會不太一樣，<span class="math inline">\(V^{\pi}(s_b)=\frac{3}{4}\)</span> 這是不變的，但 <span class="math inline">\(V^{\pi}(s_a)\)</span> 的計算方式就有差別</p>
+<p><span class="math display">\[
+V^{\pi}(s_a)=r+V^{\pi}(s_b)=0+\frac{3}{4}=\frac{3}{4}
+\]</span></p>
+<p>嚴格說起來，這兩個答案其實並不衝突，端看我們怎麼定位 <span class="math inline">\(s_a\)</span> 這樣的 state，如果你認為 <span class="math inline">\(s_a\)</span> 就是導致 reward<span class="math inline">\(=0\)</span> 的 state，那 <span class="math inline">\(V^{\pi}(s_a)=0\)</span> 是很合理的 ; 但若 reward<span class="math inline">\(=0\)</span> 並不一定是 <span class="math inline">\(s_a\)</span> 所造成，可能跟 <span class="math inline">\(s_b\)</span> 的隨機性有關，那 <span class="math inline">\(V^{\pi}(s_a)=\frac{3}{4}\)</span> 也是可以接受的不是嗎 ?</p>
+<h2 id="state-action-value-function-qpisa">State-action Value function <span class="math inline">\(Q^{\pi}(s,a)\)</span></h2>
+<p><span class="math inline">\(Q^{\pi}(s,a)\)</span> 跟 <span class="math inline">\(V^{\pi}(s)\)</span> 都是 Critic，但是評價的東西不太一樣。</p>
+<p><span class="math inline">\(V^{\pi}(s)\)</span> 的輸入只有 state，因此他只評價這個 state，當看到這個 state 後，我們後續會累積的期望 reward 是多少。 <span class="math inline">\(Q^{\pi}(s,a)\)</span> 是指在 state <span class="math inline">\(s\)</span> 中，強制採取 action <span class="math inline">\(a\)</span> ，後續累積的期望 reward 是多少。</p>
+<p><img src="https://i.imgur.com/8owvxSl.png" /></p>
+<p>上圖是 Q-function 的兩種結構，但要注意的是，右邊的方法只有離散 action 才可以使用，如果 action 是連續的、無法窮舉的，就只能使用右邊的結構。</p>
+<p>下面是文獻上的結果，當四種不同 state 出現時，我們可以利用 Q-function 來算出強制使用三種不同 actions 後會獲得的期望分數。</p>
+<p><img src="https://i.imgur.com/2oyQEY1.png" /></p>
+<h2 id="q-learning">Q-Learning</h2>
+<p>在這邊，我們先講結論 : 當我們隨機初始一個 policy <span class="math inline">\(\pi\)</span>，並利用這個 policy 學習出一個 Q-function <span class="math inline">\(Q^{\pi}(s,a)\)</span> 時，必然可以找到一個 <span class="math inline">\(\pi&#39;\)</span> 滿足 <span class="math inline">\(V^{\pi&#39;}(s)\geq V^{\pi}(s)\)</span> , <span class="math inline">\(\forall\ s\)</span>。</p>
+<p>翻譯蒟蒻 (嚼) : 當我們隨機得到一個 policy <span class="math inline">\(\pi\)</span>，我們可以利用其 Q-function 來找到一個比 <span class="math inline">\(\pi\)</span> 還要更好的 <span class="math inline">\(\pi&#39;\)</span>，這個 <span class="math inline">\(\pi&#39;\)</span> 不管在哪一個 state 上，都可以得到比較高的累積期望 reward。</p>
+<p>當上面的結論可以成立，我們便可以利用 Q-function 不斷的更新 policy,最終得到一個最好的 policy 可以在與 environment 互動中得到最高的 reward，這就是所謂的 Q-Learning。</p>
+<p><strong>Claim : <span class="math inline">\(\pi&#39;=\arg\max\limits_{a}Q^{\pi}(s,a)\Longrightarrow V^{\pi&#39;}(s)\geq V^{\pi}(s)\)</span>, <span class="math inline">\(\forall\ s\)</span></strong></p>
+<p><strong>&lt; Proof &gt;</strong></p>
+<p><span class="math display">\[
+V^{\pi}(s)=Q^{\pi}(s,\pi(s))\leq\max\limits_{a}Q^{\pi}(s,a)=Q^{\pi}(s,\pi&#39;(s))\\
+\Longrightarrow V^{\pi}(s)\leq Q^{\pi}(s,\pi&#39;(s))\\
+=\mathbb{E}\big[r_t+V^{\pi}(s_{t+1})\big]|_{s_t=s,a_t=\pi&#39;(s_t)}\\
+\leq\mathbb{E}\big[r_t+Q^{\pi}(s_{t+1},\pi&#39;(s_{t+1}))|_{s_t=s,a_t=\pi&#39;(s_t)}\\
+=\mathbb{E}\big[r_t+r_{t+1}+V^{\pi}(s_{t+2})\big]|_{s_t=s,a_t=\pi&#39;(s_t)}\\
+\leq\cdots\\
+\leq\mathbb{E}\big[r_t+r_{t+1}+r_{t+2}+\cdots+r_T\big]|_{s_t=s,a_t=\pi&#39;(s_t)}\\
+=V^{\pi&#39;}(s)
+\]</span></p>
+<h2 id="tips-of-q-learning">Tips of Q-Learning</h2>
+<h3 id="target-function">Target Function</h3>
+<p>在基本的 Q-Learning 中要學習一個 Q-function 通常使用的是前面提過的 TD method : <span class="math inline">\(Q^{\pi}(s_t,a_t)=r_t+Q^{\pi}(s_{t+1},a_{t+1})\)</span>，但 TD 在實務上處理往往會有訓練不穩定的狀況，因為訓練過程中等號左右兩邊都是在變動的值，在訓練過程中要收斂變得非常困難。要解決這樣的問題，我們會讓等號右邊的 "Target" 先固定，只 train 等號右邊的 Q-function。待 Q-function 迭代更新數次後再用其替換掉 Target Network 繼續更新 Q-function。</p>
+<p><img src="https://i.imgur.com/HGkoTaN.jpg" /></p>
+<h3 id="exploration">Exploration</h3>
+<p><span class="math display">\[
+\pi&#39;=\arg\max\limits_{a}Q^{\pi}(s,a)
+\]</span></p>
+<p>當我們在進行 Q-Learning 時，policy 的更新會依照可以使 Q-function 產生最大值的 action 來更新。這樣其實會有一點問題，假使初期都沒有 action 被選取到，每一個 action 可以獲得的 Q 值都為 0，那麼該選擇哪一個就會是隨機的。但是，一旦我們選到一個 action 可以獲得正 Q 值，那麼後面的更新都「只」會採取這個 action。這樣的訓練很有問題，因為我們可能因此錯過其他可能得到更高 Q 值的 action。</p>
+<p>處理這樣的問題在實務上大概概念上就是必須要給予其他選擇一定的機率被選取到，這樣才能夠「探索」到更多可能性。下面兩個方法基本上都是基於這樣的概念來設計的。</p>
+<h4 id="epsilon-greedy">Epsilon Greedy</h4>
+<p><span class="math display">\[
+\pi&#39;=\begin{cases}\arg\max\limits_{a}Q^{\pi}(s,a),&amp;\mbox{with probability }1-\epsilon_t\\random,&amp;\mbox{with probability }\epsilon_t\end{cases}
+\]</span></p>
+<p>Epsilon Greedy 這個方法很直覺，反正就是給予其他可能性一個機率被選取到，唯一要注意的是， <span class="math inline">\(\epsilon_t\)</span> 應該隨著 <span class="math inline">\(t\)</span> 的增加而減少。</p>
+<h4 id="boltzmann-exploration">Boltzmann Exploration</h4>
+<p><span class="math display">\[
+P(a|s)=\frac{\exp(Q^{\pi}(s,a))}{\sum\limits_{a}\exp(Q^{\pi}(s,a))}
+\]</span></p>
+<p>這是利用 Q 值來給定 action 的分佈，技巧上取 <span class="math inline">\(\exp\)</span> 再進行 normalization。</p>
+<h3 id="replay-buffer">Replay Buffer</h3>
+<p>在實務上，我們會給予 Q-Learning 一個足夠大的 buffer。這樣的緩衝區可以收集 <span class="math inline">\(\pi\)</span> 與 environment 互動的資料，甚至可以放進兩三輪不同 policy 互動的資料。</p>
+<p>Buffer 的主要功能有幾個 : 1. 讓訓練更有效率 : 一般我們再進行 RL 的時候，最耗時間的就是再進行資料的收集 ( policy 與環境的互動 )，有了這樣的 buffer 設置後，我們可以放進很多不同 policy 產生的資料，就可以進行比較有效率的 Q-function 訓練。 2. 確保訓練資料的分散性 : 若訓練資料過於集中，往往訓練出來的模型效果都不是太好，但現在我們的 buffer 裡面有許多不同 policy 產生的資料，每一次在取 batch 訓練時，可以確保資料的分散性，讓訓練出來的模型表現更好。</p>
+<p>在這裡其實有一個問題 : 不同的 policy 產生的資料用來訓練特定 policy 的 Q-function 到底有沒有問題 ? 其實理論上是可行的，雖然說不同的 policy 產生的資料，但其實仔細想想，我們根本不用管資料本身是從哪個 policy 出來的不是嗎 ? 我們重點只放在 「當遇到 state <span class="math inline">\(s\)</span>，採取了 action <span class="math inline">\(a\)</span>，得到的 reward 是多少。」即使不同 policy ，其實不會影響這個資料的可用性。</p>
+<h2 id="typical-q-learning-algorithm">Typical Q-Learning Algorithm</h2>
+<ul>
+<li>初始化 Q-funtion <span class="math inline">\(Q\)</span> 與 target function <span class="math inline">\(\hat{Q}=Q\)</span></li>
+<li>在每一個 episode 中 :
+<ul>
+<li>每 <span class="math inline">\(t\)</span> 個時間段 :
+<ul>
+<li>當遇見 state <span class="math inline">\(s_t\)</span>，利用 epsilon greedy 的方式從 Q-function 來決定 action <span class="math inline">\(a_t\)</span></li>
+<li>我們會得到 <span class="math inline">\(r_t\)</span>， state 轉換成 <span class="math inline">\(s_{t+1}\)</span></li>
+<li>將資料 <span class="math inline">\((s_t,a_t,r_t,s_{t+1})\)</span> 儲存到 buffer 中</li>
+<li>從 buffer 裡面抽樣一個 batch 的資料 <span class="math inline">\(\{(s_i,a_i,r_i,s_{i+1})\}_{i=1}^{n}\)</span> 出來</li>
+<li>利用 <span class="math inline">\(\hat{Q}\)</span> 計算這一個 batch 的 target <span class="math inline">\(y_i=r_i+\max\limits_{a}\hat{Q}(s_{i+1},a)\)</span></li>
+<li>訓練 <span class="math inline">\(Q\)</span> 使 <span class="math inline">\(Q(s_i,a_i)\)</span> 盡可能地接近 <span class="math inline">\(y_i\)</span></li>
+<li>更新 <span class="math inline">\(C\)</span> 次後，用 <span class="math inline">\(Q\)</span> 來取代 <span class="math inline">\(\hat{Q}\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/" title="Deep Reinforcement Learning (3) --- Q-learning (Basic Idea)">https://allen108108.github.io/blog/2019/12/04/Deep Reinforcement Learning (3) — Q-learning (Basic Idea)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(2)%20%E2%80%94%20Proximal%20Policy%20Optimization%20(PPO)/" rel="prev" title="Deep Reinforcement Learning (2) --- Proximal Policy Optimization (PPO)">
+                  <i class="fa fa-chevron-left"></i> Deep Reinforcement Learning (2) --- Proximal Policy Optimization (PPO)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/" rel="next" title="Deep Reinforcement Learning (4) --- Q-learning (Advanced Tips)">
+                  Deep Reinforcement Learning (4) --- Q-learning (Advanced Tips) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

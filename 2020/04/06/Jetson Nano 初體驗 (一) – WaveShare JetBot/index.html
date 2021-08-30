@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="系列文章  Jetson Nano 初體驗 (一) -- WaveShare JetBot Jetson Nano 初體驗 (二) -- Jetson Nano Jetson Nano 初體驗 (三) -- Deep Learning Model">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jetson Nano 初體驗 (一) -- WaveShare JetBot">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%80)%20%E2%80%93%20WaveShare%20JetBot/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="系列文章  Jetson Nano 初體驗 (一) -- WaveShare JetBot Jetson Nano 初體驗 (二) -- Jetson Nano Jetson Nano 初體驗 (三) -- Deep Learning Model">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/ZRfWDMq.png">
+<meta property="og:image" content="https://i.imgur.com/LjVHI2v.png">
+<meta property="og:image" content="https://i.imgur.com/FWbXUTm.png">
+<meta property="og:image" content="https://i.imgur.com/65oUVUK.jpg">
+<meta property="og:image" content="https://i.imgur.com/ruFqhbM.jpg">
+<meta property="og:image" content="https://i.imgur.com/8ZU0PKn.png">
+<meta property="og:image" content="https://i.imgur.com/rB5EAu7.jpg">
+<meta property="og:image" content="https://i.imgur.com/xjHMV1H.png">
+<meta property="og:image" content="https://i.imgur.com/lKalzUX.jpg">
+<meta property="og:image" content="https://i.imgur.com/IphsQZa.jpg">
+<meta property="og:image" content="https://i.imgur.com/RXvO9HA.png">
+<meta property="og:image" content="https://i.imgur.com/LyXXlxL.png">
+<meta property="og:image" content="https://i.imgur.com/T2CfVkV.png">
+<meta property="og:image" content="https://i.imgur.com/9yd4Dlj.png">
+<meta property="article:published_time" content="2020-04-06T00:40:29.000Z">
+<meta property="article:modified_time" content="2020-04-16T10:55:41.260Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/ZRfWDMq.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%80)%20%E2%80%93%20WaveShare%20JetBot/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%80)%20%E2%80%93%20WaveShare%20JetBot/","path":"2020/04/06/Jetson Nano 初體驗 (一) – WaveShare JetBot/","title":"Jetson Nano 初體驗 (一) -- WaveShare JetBot"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Jetson Nano 初體驗 (一) -- WaveShare JetBot | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">系列文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jetson-nano-jetbot"><span class="nav-number">3.</span> <span class="nav-text">Jetson Nano &amp; JetBot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E9%AB%94%E5%AE%89%E8%A3%9D"><span class="nav-number">4.</span> <span class="nav-text">硬體安裝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%84%A1%E7%B7%9A%E7%B6%B2%E5%8D%A1%E6%8E%A5%E7%B7%9A"><span class="nav-number">4.1.</span> <span class="nav-text">無線網卡接線</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pin-%E6%8E%92%E7%B7%9A"><span class="nav-number">4.2.</span> <span class="nav-text">6 pin 排線</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#noctua-nf-a4x10-5v-pwm"><span class="nav-number">4.3.</span> <span class="nav-text">Noctua NF-A4x10 5V PWM</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%92%B0%E5%A2%83%E5%AE%89%E8%A3%9D"><span class="nav-number">5.</span> <span class="nav-text">環境安裝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96-sd-card"><span class="nav-number">5.1.</span> <span class="nav-text">格式化 SD Card</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%87%92%E5%AF%AB%E7%B3%BB%E7%B5%B1"><span class="nav-number">5.2.</span> <span class="nav-text">燒寫系統</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%A8%E6%89%87%E9%96%8B%E5%95%9F"><span class="nav-number">5.3.</span> <span class="nav-text">風扇開啟</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%AC%E8%A9%A6"><span class="nav-number">6.</span> <span class="nav-text">測試</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%8F%A1%E9%A0%AD%E7%B4%AB%E9%82%8A"><span class="nav-number">6.1.</span> <span class="nav-text">鏡頭紫邊</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">7.</span> <span class="nav-text">後記</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%80)%20%E2%80%93%20WaveShare%20JetBot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Jetson Nano 初體驗 (一) -- WaveShare JetBot
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2020-04-06 08:40:29" itemprop="dateCreated datePublished" datetime="2020-04-06T08:40:29+08:00">2020-04-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-04-16 18:55:41" itemprop="dateModified" datetime="2020-04-16T18:55:41+08:00">2020-04-16</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%89%B5%E5%AE%A2-Maker/" itemprop="url" rel="index"><span itemprop="name">創客 Maker</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%80)%20%E2%80%93%20WaveShare%20JetBot/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/06/Jetson Nano 初體驗 (一) – WaveShare JetBot/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="系列文章">系列文章</h2>
+<ul>
+<li><a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%B8%80%29%20%E2%80%93%20WaveShare%20JetBot/"><em>Jetson Nano 初體驗 (一) -- WaveShare JetBot</em></a></li>
+<li><a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%BA%8C%29%20%E2%80%93%20Jetson%20Nano/"><em>Jetson Nano 初體驗 (二) -- Jetson Nano</em></a></li>
+<li><a href="https://allen108108.github.io/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%B8%89%29%20%E2%80%93%20Deep%20Learning%20Model/"><em>Jetson Nano 初體驗 (三) -- Deep Learning Model</em></a></li>
+</ul>
+<span id="more"></span>
+<h2 id="前言">前言</h2>
+<p>一直都想玩玩看開發板，但由於自己實在不懂 Linux 系統，再加上硬體安裝也不熟，深怕一個不小心就被我給搞壞，所以一直抱持著「可遠觀而不可褻玩焉」的心態在面對 Jason Nano。</p>
+<p>適逢最近工作上面筆者想要有一些突破，希望能夠有一個平台可以更方便作 Model 的推論，也想要親自驗證自己看過的論文或是一些新方法，便趁此機會購入一台 Jetson Nano &amp; WaveShare JetBot。( 謎之音 :　這也是新挑戰的開始．．．．． )</p>
+<p>從東西到手，到完全將環境建好，一共花了我大約一週多的時間，期間的坑真的是靠血淚去填平的。先不說一堆安裝上面會出現的問題，一度我還以為自己手殘把 OLED 給毀了，還好後來也算是救了回來。總結這一段時間來的心得。</p>
+<p>這個系列筆者會分成兩篇文章，第一篇，主要介紹純粹 JetBot 的安裝及環境設置。而第二篇就單純介紹 Jetson Nano 本身的應用，這樣的順序編排主要是因為 JetBot 的環境已經被 Nvidia 或 JetBot 開發商完整建構，使用者在進行環境安裝的過程會簡單非常多。</p>
+<h2 id="jetson-nano-jetbot">Jetson Nano &amp; JetBot</h2>
+<p>Jason Nano 是 Nvidia 官方出產的開發板，與樹莓派 (Raspberry Pi) 最大的不同之處就是其搭載了 GPU ，可以在上面進行深度學習的各種應用，而不用侷限在硬體效能上，而 JetBot 則是基於 Jetson Nano 發展出的人工智慧機器人套件。</p>
+<p>我們可以從 <a target="_blank" rel="noopener" href="https://www.nvidia.com/zh-tw/autonomous-machines/embedded-systems/jetbot-ai-robot-kit/">Nvidia 官網</a>上看到，JetBot 種類繁多，分屬 Nvidia 不同合作夥伴所開發，當然，在功能、外型、供電系統上都有著不同程度上的差異，台灣目前可以購入的多為中國廠商所製作的，其中又以微雪電子 ( WaveShare ) 開發的 JetBot 最常見。本文便是以 WaveShare JetBot AI Tool Kits 為基礎所撰寫的入門文章。</p>
+<p><img src="https://i.imgur.com/ZRfWDMq.png" /></p>
+<h2 id="硬體安裝">硬體安裝</h2>
+<p><img src="https://i.imgur.com/LjVHI2v.png" /></p>
+<p>上圖為 WaveShare JetBot 的整個零組件 :</p>
+<ol type="1">
+<li>Jetson Nano ( 不含在 JetBot 中，需另購 )</li>
+<li>Micro SD card ( 不含在 JetBot 中，需另購，建議64G以上容量 )</li>
+<li>JetBot 車殼及底板</li>
+<li>鏡頭支架</li>
+<li>壓克力板</li>
+<li>JetBot 擴展板</li>
+<li>IMX218-160 鏡頭，八百萬畫素，160度廣角</li>
+<li>無線網卡</li>
+<li>直流馬達 x 2</li>
+<li>車輪</li>
+<li>萬向輪</li>
+<li>18650 電池 x 3</li>
+<li>12.6V 電源線</li>
+<li>無線遙控手把</li>
+<li>十字起</li>
+<li>排線</li>
+<li>螺絲材料包</li>
+<li>板手</li>
+<li>風扇 ( 本文另裝風扇 )</li>
+</ol>
+<p>基本上的一些安裝，可以參考說明書以及下列影片進行安裝，本文不另贅述。</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/jGna0oGKdV4" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>這裡指出幾個要小心的部分</p>
+<ul>
+<li><h3 id="無線網卡接線">無線網卡接線</h3></li>
+</ul>
+<p>天線要連接無線網卡的細線請由下圖中機殼的中間偏後方孔洞穿出 ( 筆者拿到的 Waveshare JetBot 機殼孔洞為圓形 )，經筆者試驗過，線由這個地方穿出可以確保連接到無線網路不會不夠長，而且線也不會露在外面感覺很雜亂。</p>
+<p><img width=500 src="https://i.imgur.com/FWbXUTm.png" ></p>
+<p>完成如下圖所示</p>
+<p><img width=500 src="https://i.imgur.com/65oUVUK.jpg" ></p>
+<ul>
+<li><h3 id="pin-排線">6 pin 排線</h3></li>
+</ul>
+<p>當硬體全部安裝完成後，這個排線先不要接上，原因是要先進行 Jetson Nano 的系統設置，確定 Jetson Nano 系統沒有問題後再接回測試硬體的連接。</p>
+<p>當要接上 Jetson Nano 時，請務必記得排線的位置必須正確</p>
+<p><img src="https://i.imgur.com/ruFqhbM.jpg" /></p>
+<ul>
+<li><h3 id="noctua-nf-a4x10-5v-pwm">Noctua NF-A4x10 5V PWM</h3></li>
+</ul>
+<p><img src="https://i.imgur.com/8ZU0PKn.png" /></p>
+<p>這是一款頗多人推薦的小型風扇，其優點莫過於超靜音，即使貼近廳都聽不太到風扇運轉的聲音。Noctua NF-A4 有出幾個不同的版本 :</p>
+<ul>
+<li>A4x10 與 A4x20 : 在於風扇厚度的差異，筆者對於整體外觀還是有點要求的，裝上A4x20整個風扇的比例實在不太對，因此筆者使用的是 A4x20 的版本，這僅差在外觀的不同，對於系統本身均適用。</li>
+<li>5V 與 12V : 由於整個 Jetson Nano 的供電系統屬於 5V 電壓，因此必須確定買的是 5V 版本的風扇，不然將無法使用。</li>
+</ul>
+<p>Noctua NF-A4 建議在 Jetson Nano 上自攻 m3 螺絲孔徑，這對筆者來說太麻煩而且還要注意攻牙後的鋁屑若未清理乾淨可能有短路的風險，因此筆者僅利用一般的 PVC 電線綁帶作固定，除了簡單方便外，還可以有整線的功能。</p>
+<p><img src="https://i.imgur.com/rB5EAu7.jpg" /></p>
+<h2 id="環境安裝">環境安裝</h2>
+<p>這一個部分大致上就是分作幾個步驟</p>
+<ol type="1">
+<li>將準備好的 Micro SD Card 格式化</li>
+<li>將系統燒寫進 Micro SD Card 中</li>
+<li>開機確定系統運作無異狀</li>
+</ol>
+<p>而其中第一、第二步驟，均在 Desktop 上進行，請勿務必小心，如果真的不小心把自己的硬碟格式化或是覆蓋，那我也只能送給你一個慘字。</p>
+<h3 id="格式化-sd-card">格式化 SD Card</h3>
+<p>無論新舊，都建議將 SD Card 先進行格式化，以免出現問題，至於格式化，在 Windows 系統中只要 SD Card 的硬碟槽上按滑鼠右鍵即可選擇格式化。( 有些文章會有建議的格式化軟體，大家也可以參考看看 )</p>
+<h3 id="燒寫系統">燒寫系統</h3>
+<p>所謂的燒寫系統，其實就是把一整個硬碟環境複製到任一個硬碟中的概念，為了避免不同設備、環境設置的不同，可能會導致 JetBot 在使用上的各種問題，因此利用這樣燒寫的方式，把官方可用的環境原封不動地放進你的 SD Card 中。這樣一來可以省下許多麻煩的工作，僅需要下載、燒寫就可以使用。</p>
+<p>首先，先下載 Nvidia 官方的 <a target="_blank" rel="noopener" href="https://drive.google.com/open?id=1G5nw0o3Q6E08xZM99ZfzQAe7-qAXxzHN">JetBot image</a> 檔案以及燒寫工具 <a target="_blank" rel="noopener" href="https://freewarehome.tw/pc/win32-disk-imager/">Win32DiskImager</a> 或 <a target="_blank" rel="noopener" href="https://www.balena.io/etcher/">Etcher</a>。(本文使用 Win32DiskImager)</p>
+<p><img width=500 src="https://i.imgur.com/xjHMV1H.png" ></p>
+<p>上圖兩個部份選擇好後，就可以按下 <code>write</code> 進行燒寫。( 請務必確定磁碟機位置沒有錯誤。)這需要一段時間，當燒寫完成後，便可將 SD Card 轉移至 Jetson Nano 來確認系統可以正常運作。</p>
+<p>Jetson Nano 的記憶卡插槽十分隱密，位置在風扇、散熱片的正下方底下，插入後暫時<strong>先以 Jetson Nano 本身的供電方式 ( Jetson Nano 適用之電源線)，並且連接滑鼠、鍵盤以及螢幕進行開機</strong>。</p>
+<p><img src="https://i.imgur.com/lKalzUX.jpg" /></p>
+<p>因為是整個系統的移植，開機之後就是可以立即使用的 Ubuntu 系統電腦，使用者名稱及密碼均預設為 <code>jetbot</code>，且已經安裝所有必需的依賴軟體。開機如果一切順利，我們最重要的事情就是讓其可以連上網路供我們遠端操作，連上網的方式也跟一般電腦相同，選擇 WIFI 輸入密碼後之後就會開機自動連線。</p>
+<p>接下來，利用 Ubuntu 的關機程序進行(螢幕右上方)關機，並且移除 Jetson Nano 的電源以及鍵鼠、螢幕。</p>
+<p>最緊張的時刻來了，我們將 6 pin 排線接上，並且將 Jetson Nano 接上 JetBot 本身的供電裝置 ( WaveShare 支援邊充電邊使用，因此我們可以直接接上 JetBot 擴展板的電源線進行後續動作 )。</p>
+<p>上面的所有安裝都完成後，打開擴展板上的開關應該可以順利開機 ( 若開機， Jetson Nano 左後方的電源燈會亮 )。</p>
+<p>沒有接上螢幕，所有的資訊會來自於擴展板後面的 PiOLED 面板</p>
+<p><img src="https://i.imgur.com/IphsQZa.jpg" /> ( 剛裝好的 PiOLED 顯示應該會跟我的不太一樣，這很正常，因為剛裝好的裡面用的是預設的系統 )</p>
+<p>我們只關注在 IP 位址上面就好，請記住這個 IP 位址，這代表目前 JetBot 上網的 IP 位址，有了這個位址，我們就可以從其他電腦使用 Jupyter Notebook 來進行遠端控制。</p>
+<p>找一台電腦，在瀏覽器網址輸入 <code>&lt;IP_Address&gt;:8888</code> 即會進入 Jupyter Notebook ，密碼一樣為 <code>jetbot</code>。先不管裡面有什麼內容，先按下左上方的 <code>+</code> 準備進入終端機來進行指令操作</p>
+<p><img src="https://i.imgur.com/RXvO9HA.png" /></p>
+<p>按下下圖紅框圖示進入終端機</p>
+<p><img src="https://i.imgur.com/LyXXlxL.png" /></p>
+<p>進入終端機後，我們要作的就是更新 JetBot 專案，這個專案就是 JetBot 所有運作的關鍵。然而有個部分要注意，在許多的文章說明中都指出，你可以由下列擇一下載</p>
+<ul>
+<li>Nvidia 官方的 JetBot Repository ( https://github.com/NVIDIA-AI-IOT/jetbot )</li>
+<li>WaveShare 的 JetBot Repository ( https://github.com/waveshare/jetbot )</li>
+</ul>
+<p>但經由筆者實測，若是 WaveShare JetBot 則必須要使用 WaveShare JetBot Repository 才可以運作，否則會造成 PiOLED 正常但是發動機無法作動的情況。</p>
+<p>因此在本文推薦使用 WaveShare 版本來更新，請依序輸入下列指令 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git clone https://github.com/waveshare/jetbot</span><br><span class="line">$ cd jetbot</span><br><span class="line">$ sudo python3 setup.py install</span><br><span class="line"></span><br><span class="line">$ cd</span><br><span class="line">$ sudo apt-get install rsync</span><br><span class="line">$ rsync -av jetbot/notebooks/ Notebooks/</span><br></pre></td></tr></table></figure>
+<p>微雪版本並非最新的版本，較 Nvidia 官方的為舊，但是其優點在於 PiOLED 中可以顯示電量，在使用 JetBot 時便可以清楚什麼時候必須要充電，避免因為電量不足而關機的狀況，這就也是會呈現出上面 PiOLED 圖片的顯示。</p>
+<h3 id="風扇開啟">風扇開啟</h3>
+<p>前面我們只進行了風扇的安裝，但仍未對系統開啟風扇，所以你會發現風扇一直都沒有運傳。開啟風扇很簡單，只要依照下列步驟將風扇加入 service 之中，使其可以於開機時便開始運作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git clone https://github.com/Pyrestone/jetson-fan-ctl.git</span><br><span class="line">$ cd jetson-fan-ctl</span><br><span class="line">$ ./install.sh</span><br></pre></td></tr></table></figure>
+<h2 id="測試">測試</h2>
+<blockquote>
+<p><strong>在測試之前，建議先確定車子所在位置是足夠空曠且有足夠活動空間，不然執行下&gt;去車子亂跑可能會「發生車禍」，可以將車輪先拆除或是將車體架高來進行測試。</strong></p>
+</blockquote>
+<p>使用 Jupyter Notebook 遠端連進 JetBot 時，可以從 <code>jetbot/notebooks</code> 裡面看到許多不同範例的資料夾</p>
+<ul>
+<li>basic_motion</li>
+<li>collision_avoidance</li>
+<li>object_following</li>
+<li>road_follwing</li>
+<li>teleoperation</li>
+</ul>
+<p>可以試著執行看看每一個 <code>ipynb</code> 檔，按照上面的順序進行，應該是可以順利執行這些動作。這裡就僅僅是執行程式，筆者也就不花費太多時間說明。</p>
+<h3 id="鏡頭紫邊">鏡頭紫邊</h3>
+<p>在測試的時候，或許會發現，執行鏡頭時畫面會出現嚴重的色差、紫邊，一度筆者覺得自己也太過幸運拿到機王，但查閱資料後發現，這似乎是 Jetson Nano 在使用 CSI 鏡頭時很容易會有的狀況。</p>
+<p><img src="https://i.imgur.com/T2CfVkV.png" /></p>
+<p>如果我們的 Model 在訓練的時候有作 Data Augmentation，這樣的色差或許可以對於我們在 inference 上面不會有非常大的影響，但這非常的難以控制，因此在作電腦視覺的專案時，盡可能的還是得避免 input image 的色差狀況。</p>
+<p>所幸，這個問題可以被解決。</p>
+<p>依序執行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ wget https://www.waveshare.com/w/upload/e/eb/Camera_overrides.tar.gz</span><br><span class="line">$ tar zxvf Camera_overrides.tar.gz</span><br><span class="line">$ sudo cp camera_overrides.isp / var / nvidia / nvcam / settings / </span><br><span class="line">$ sudo chmod 664 /var/nvidia/nvcam/settings/camera_overrides.isp </span><br><span class="line">$ sudo chown root：root /var/nvidia/nvcam/settings/camera_overrides.isp</span><br></pre></td></tr></table></figure>
+<p>執行完後我們就可以來看一下結果。</p>
+<p><img src="https://i.imgur.com/9yd4Dlj.png" /></p>
+<h2 id="後記">後記</h2>
+<p>這一整趟下來，也是花了將近兩周的時間在處理。不過完成環境的建構後，就可以開始想想看可以進行什麼樣子的專案。</p>
+<p>目前有兩個比較大的 Project 想要進行 :</p>
+<ol type="1">
+<li><strong>利用 JetBot 進行 SLAM 任務</strong></li>
+<li><strong>人臉辨識配置紅外線體溫偵測</strong></li>
+</ol>
+<p>另外 <strong>利用手勢遙控 JetBot</strong> 感覺也是個有趣的方向可以玩玩呢 ! 其實有些專案並不需要 JetBot 環境就可以作，如果我們今天只需要單純的 Jetson Nano 又該怎麼建構環境呢 ? 這就是下一篇要來提的了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%80)%20%E2%80%93%20WaveShare%20JetBot/" title="Jetson Nano 初體驗 (一) -- WaveShare JetBot">https://allen108108.github.io/blog/2020/04/06/Jetson Nano 初體驗 (一) – WaveShare JetBot/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/03/26/MoBot%20_%20LINE%20Bot%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20(%20LINE%20_%20Heroku%20)/" rel="prev" title="MoBot : LINE Bot 開發紀錄 ( LINE / Heroku ) ">
+                  <i class="fa fa-chevron-left"></i> MoBot : LINE Bot 開發紀錄 ( LINE / Heroku ) 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%BA%8C)%20%E2%80%93%20Jetson%20Nano/" rel="next" title="Jetson Nano 初體驗 (二) -- Jetson Nano">
+                  Jetson Nano 初體驗 (二) -- Jetson Nano <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

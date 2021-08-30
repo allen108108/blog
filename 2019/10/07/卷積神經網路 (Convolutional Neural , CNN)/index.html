@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文內容以李宏毅 Machine Learning (2017) 第十講 : Convolutional Neural Network ( CNN ) 為主，搭配參考資料編輯而成。 本篇圖片部分出自 Machine Learning (2017) 課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卷積神經網路 (Convolutional Neural , CNN)">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文內容以李宏毅 Machine Learning (2017) 第十講 : Convolutional Neural Network ( CNN ) 為主，搭配參考資料編輯而成。 本篇圖片部分出自 Machine Learning (2017) 課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/zVa11Vr.png">
+<meta property="og:image" content="https://i.imgur.com/77bPBr3.png">
+<meta property="og:image" content="https://i.imgur.com/JTqr2Yw.png">
+<meta property="og:image" content="https://i.imgur.com/v4VM3qu.gif">
+<meta property="og:image" content="https://i.imgur.com/z4wLQJn.png">
+<meta property="og:image" content="https://i.imgur.com/0xP0Ins.png%20=350x">
+<meta property="og:image" content="https://i.imgur.com/3YHkC4o.gif%20=400x">
+<meta property="og:image" content="https://i.imgur.com/m1qlenn.jpg">
+<meta property="og:image" content="https://i.imgur.com/UST7EeO.png%20=350x">
+<meta property="og:image" content="https://i.imgur.com/xRiuMSa.png">
+<meta property="og:image" content="https://i.imgur.com/8nFL49Q.png%20=350x">
+<meta property="og:image" content="https://i.imgur.com/EyuzvUr.png%20=350x">
+<meta property="og:image" content="https://i.imgur.com/YdM0KdM.png">
+<meta property="og:image" content="https://i.imgur.com/laTqCxB.jpg">
+<meta property="og:image" content="https://i.imgur.com/7iq1A6K.jpg">
+<meta property="og:image" content="https://i.imgur.com/88V2T2X.png%20=400x">
+<meta property="og:image" content="https://i.imgur.com/gs0K20B.png">
+<meta property="og:image" content="https://i.imgur.com/Ok5FuhJ.png%20=450x">
+<meta property="og:image" content="https://i.imgur.com/crpxYlI.jpg">
+<meta property="og:image" content="https://i.imgur.com/QCJRHPL.png">
+<meta property="og:image" content="https://i.imgur.com/VeWOyba.png%20=350x">
+<meta property="og:image" content="https://i.imgur.com/EwFeKmh.png">
+<meta property="og:image" content="https://i.imgur.com/TDpCK3e.png">
+<meta property="og:image" content="https://i.imgur.com/IjfZQbT.png">
+<meta property="og:image" content="https://i.imgur.com/xhPyOiU.png">
+<meta property="og:image" content="https://i.imgur.com/gwyPhGV.png">
+<meta property="article:published_time" content="2019-10-06T19:08:31.000Z">
+<meta property="article:modified_time" content="2019-10-22T08:00:00.046Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/zVa11Vr.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/","path":"2019/10/07/卷積神經網路 (Convolutional Neural , CNN)/","title":"卷積神經網路 (Convolutional Neural , CNN)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>卷積神經網路 (Convolutional Neural , CNN) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#convolution-layer-%E5%8D%B7%E7%A9%8D%E5%B1%A4"><span class="nav-number">1.</span> <span class="nav-text">Convolution Layer 卷積層</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%B7%E7%A9%8D%E5%B1%A4%E7%9A%84%E7%89%B9%E8%89%B2"><span class="nav-number">1.1.</span> <span class="nav-text">卷積層的特色</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pooling-layer-%E6%B1%A0%E5%8C%96%E5%B1%A4"><span class="nav-number">2.</span> <span class="nav-text">Pooling Layer 池化層</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%A0%E5%8C%96%E5%B1%A4%E7%9A%84%E7%89%B9%E8%89%B2"><span class="nav-number">2.1.</span> <span class="nav-text">池化層的特色</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fully-connected-layer-%E5%85%A8%E9%80%A3%E6%8E%A5%E5%B1%A4"><span class="nav-number">3.</span> <span class="nav-text">Fully Connected Layer 全連接層</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cnn-%E7%9A%84%E6%87%89%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">CNN 的應用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%87%89%E7%94%A8%E4%B8%80-alpha-go"><span class="nav-number">4.1.</span> <span class="nav-text">應用一 : Alpha Go</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%87%89%E7%94%A8%E4%BA%8C-%E8%AA%9E%E9%9F%B3%E8%BE%A8%E8%AD%98"><span class="nav-number">4.2.</span> <span class="nav-text">應用二 : 語音辨識</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%87%89%E7%94%A8%E4%B8%89-%E6%96%87%E6%9C%AC%E5%88%86%E6%9E%90"><span class="nav-number">4.3.</span> <span class="nav-text">應用三 : 文本分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">5.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          卷積神經網路 (Convolutional Neural , CNN)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-07 03:08:31" itemprop="dateCreated datePublished" datetime="2019-10-07T03:08:31+08:00">2019-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 16:00:00" itemprop="dateModified" datetime="2019-10-22T16:00:00+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/07/卷積神經網路 (Convolutional Neural , CNN)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文內容以李宏毅 Machine Learning (2017) 第十講 : Convolutional Neural Network ( CNN ) 為主，搭配參考資料編輯而成。</strong></p></li>
+<li><p><strong>本篇圖片部分出自 Machine Learning (2017) 課程內容講義</strong></p></li>
+</ul>
+</blockquote>
+<span id="more"></span>
+<p>當我們剛開始接觸深度學習的時候，最常看到的例子便是使用 MINST 資料庫進行手寫數字的辨識。概念如下圖所示，將所有像素灰階數值壓成一維資料後再丟進全連接層進行學習。</p>
+<p><img width=500 src="https://i.imgur.com/zVa11Vr.png" > (圖片來源 : 3Blue1Brown Youtube : <a target="_blank" rel="noopener" href="https://youtu.be/aircAruvnKk">究竟神經網路是什麼？ 第一章 深度學習</a>)</p>
+<p>如果在進行一般的圖片辨識時，我們不會使用上面的方式，因為這樣子做會有幾個問題 :</p>
+<ol type="1">
+<li><p>在一般的圖片辨識問題中，事實上會有一些 pattern 可能會出現在圖片中的某個部位，且這樣的 pattern 可能由許多個鄰近像素構成，如果依照上面的方式會破壞這樣的 pattern 結構。</p></li>
+<li><p>全連接層搭配高像素的圖片，會讓整個計算成本大幅增加。</p></li>
+</ol>
+<p>基於上面幾個理由便衍伸出 Convolutional Neural Network ( CNN ) 卷積神經網路來進行圖像辨識。</p>
+<p>整個 CNN 結構主要分成幾個部分 : <strong>卷積層 ( Convolution layer )、池化層 (Pooling layer) 以及最後一個全連接層 ( Fully Connected layer )</strong>。</p>
+<p><img width=500 src="https://i.imgur.com/77bPBr3.png" ></p>
+<h2 id="convolution-layer-卷積層">Convolution Layer 卷積層</h2>
+<p>卷積層主要是由許多不同的 kernel 在輸入圖片上進行卷積運算。</p>
+<p>什麼是卷積 ? 在這邊卷積其實就是兩個步驟組成的運算 : 滑動 + 內積，利用 filter 在輸入圖片上滑動並且持續進行矩陣內積，卷積後得到的圖片我們稱之為 feature map。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p><img src="https://i.imgur.com/JTqr2Yw.png" /> <img src="https://i.imgur.com/v4VM3qu.gif" /> (圖片取自 : <a target="_blank" rel="noopener" href="https://medium.com/%E9%9B%9E%E9%9B%9E%E8%88%87%E5%85%94%E5%85%94%E7%9A%84%E5%B7%A5%E7%A8%8B%E4%B8%96%E7%95%8C/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-ml-note-convolution-neural-network-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-bfa8566744e9">[ 機器學習 ML NOTE ] Convolution Neural Network 卷積神經網路</a>)</p>
+<p>kernel 我們也稱為 filter ， 我認為 filter 這樣的概念可以讓人更體會卷積層的作用，一般我們使用修圖軟體的各種濾鏡功能即是不同的 kernel 在圖片上作用後的結果。 ( 想知道許多不同的 filter 造成的效果可以參考 Wikipedia -- <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Kernel_%28image_processing%29">Kernel ( image processing )</a> )</p>
+<p>在全連接層神經網路中經由學習不斷更新的權重，在 CNN 這邊指的就是 filter ，如上圖 3X3 的 filter 內就相當於有 9 個權重。我們可以想像，CNN 訓練的過程就是不斷地在改變 filter 來凸顯這個輸入圖像上的特徵。</p>
+<p>不過，CNN 還是有一些值得注意的地方 :</p>
+<p><strong>1. 每一層卷積層的 filter 不會只有一個</strong></p>
+<p>我們引用 CNN 的經典論文 GradientBased Learning Applied to Document Recognition 中的 LeNet-5 結構，第一層的卷積層就給了 6 個 3X3 kernel，也就是說在這同一層中就有 54 個權重需要同時更新，而這六個 filter 也會相對應給出六個 feature map 。</p>
+<p><img src="https://i.imgur.com/z4wLQJn.png" /> (圖片來源 : Yann LeCun Leon Bottou Yoshua Bengio and Patrick Haffner.(1998).<em>GradientBased Learning Applied to Document Recognition</em><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>)</p>
+<p><strong>2. 彩色的圖片同時會有 RGB 三個 channel</strong></p>
+<p>也就是說，我們每一張圖片都會有深度，既然輸入圖有深度，那麼我們的 filter 也相同的會有一個深度，每一個 channel 會對應著 filter 的深度做卷積，filter 每一個深度的數值可能會不一樣。</p>
+<p><img src="https://i.imgur.com/0xP0Ins.png%20=350x" /></p>
+<p>攤開看大概會像這樣子</p>
+<p><img src="https://i.imgur.com/3YHkC4o.gif%20=400x" /> (圖片取自 : <a target="_blank" rel="noopener" href="http://machinelearninguru.com/computer_vision/basics/convolution/convolution_layer.html">Undrestanding Convolutional Layers in Convolutional Neural Networks (CNNs)</a>)</p>
+<p><strong>3. 經過卷積層過後的 feature map 會變得比原尺寸小</strong></p>
+<p>這其實不難看出來，只要親自做一輪卷積運算便可以很容易地發現這個結論，如果不想要讓整個 feature map 縮小，我們可以使用 padding 的方法 ( 於輸入圖片的周圍補上一圈 0 )，來避免 feature map 縮小的狀況。</p>
+<p><img src="https://i.imgur.com/m1qlenn.jpg" /></p>
+<p><strong>4. filter 滑動的步伐 (Stride) 不一定必須是 1</strong></p>
+<p>當我們滑動的步伐加大，那麼出來的 feature map 尺寸會相對縮得更小</p>
+<p><img src="https://i.imgur.com/UST7EeO.png%20=350x" /></p>
+<h3 id="卷積層的特色">卷積層的特色</h3>
+<p><strong>1. 可以保留圖片中的空間結構，並從這樣的結構中萃取出特徵</strong></p>
+<p><img src="https://i.imgur.com/xRiuMSa.png" /></p>
+<p>每一個 filter 我們可以視為是一個圖像上的 「pattern」，經過卷積運算的滑動過程，其實就是在檢驗每一個圖片的部分是否有符合這個 pattern 的區域，有相同 pattern 出現的區域便在 feature map 上有相對高的分數，最後我們也是經由整體分數的高低來檢驗並調整 filter。</p>
+<p><img src="https://i.imgur.com/8nFL49Q.png%20=350x" /> ( feature map 中的數值總和我們可以當作這個 filter 的 degree，我們希望找到的 filter 能讓 feature map 的數值和最大 )</p>
+<p><strong>2. 利用權重共享的方式減少參數</strong></p>
+<p>從李宏毅 Machine Learning 課程中的講義可以看出來「權重共享」的概念是什麼意思。當我們進行 filter 滑動的時候，也是表示我們同一組權重正作用在不同區域，這樣的過程我們這個 filter 並沒有改變，也就是權重是不會變動的。</p>
+<p>下圖中，李宏毅將整個卷積層排列成類似全連接層的型態，這樣可以很明白的看出共享權重的過程。</p>
+<p><img src="https://i.imgur.com/EyuzvUr.png%20=350x" /></p>
+<p><em>在這裡我想補充一點，我自己在自學卷積這一部分時，一直對於卷積過後的數值與呈現出來的 feature map 之間的關聯性沒有很明確的理解，以上圖來看，經過卷積運算後的 3X3 矩陣表示的到底是什麼東西 ?</em></p>
+<p><em>以下幾個卷積層操作影片可以幫助我們對於整個卷積層的運作有更深刻的理解</em><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/KiftWz544_8" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>(影片來源 : Henry Warren -- <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=KiftWz544_8">The Convolution Layer (CNN Visualization)</a>)</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/z6k_RMKExlQ" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>(影片來源 : Gene Kogan -- <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=z6k_RMKExlQ&amp;">ml4a @ itp nyu :: 03 convolutional neural networks</a> )</p>
+<table style="width:6%;">
+<colgroup>
+<col style="width: 5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>### [ 補充 ]</td>
+</tr>
+<tr class="even">
+<td>最近在看 " <em>Network In Network</em> " 以及 " <em>Going deeper with convolutions.</em> " 這兩篇論文的時候，又重新審視了一下自己對於 CNN 的了解，這才發現，如果沒有辦法理解 <span class="math inline">\(1\times 1\)</span> Convolution Layer 的作用的話，對於 CNN 的了解確實是不足的。因此特別在這裡做了一個補充。</td>
+</tr>
+<tr class="odd">
+<td><strong>「你認為，經過一個卷積層後的輸出，究竟有幾張圖像 ?」</strong></td>
+</tr>
+<tr class="even">
+<td><img src="https://i.imgur.com/YdM0KdM.png" /></td>
+</tr>
+<tr class="odd">
+<td>我們拿 " <em>Gradient-Based Learning Applied to Document Recognition</em> " 論文內的 LeNet-5 model 來看看。就單看第一層卷積層吧，一張 <span class="math inline">\(32\times 32\)</span> 的輸入，經過了五個 <span class="math inline">\(28\times 28\)</span> 的 Kernel，形成了五張 feature maps，所以第一層卷積層應該是輸出五張圖像，看上圖也似乎是如此沒有錯。</td>
+</tr>
+<tr class="even">
+<td>不過真的是這樣嗎 ?</td>
+</tr>
+<tr class="odd">
+<td>事實上，這五張 feature maps 的確是卷積後的結果，但並非整個卷積層最後的輸出，卷積層還必須將這五張 feature maps 疊合在一起，這才是真正第一層卷積層的輸出。</td>
+</tr>
+<tr class="even">
+<td><strong>也就是說，輸出仍然為一張圖像，但是變厚了</strong></td>
+</tr>
+<tr class="odd">
+<td>我自己會把它想像成，一張完整的圖像，會是許多特徵疊加後的結果，而卷積層也會做到這個工作。</td>
+</tr>
+<tr class="even">
+<td>所以，當我們卷積層的 Kernel 數量越多，輸出的圖像就會越厚 ( 專業的講法是這圖像的深度變得更深了 )，相對的參數也會越多。</td>
+</tr>
+<tr class="odd">
+<td><img src="https://i.imgur.com/laTqCxB.jpg" /> ( 圖片來源 : <a target="_blank" rel="noopener" href="https://medium.com/@chih.sheng.huang821/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-convolutional-neural-network-cnn-1-1%E5%8D%B7%E7%A9%8D%E8%A8%88%E7%AE%97%E5%9C%A8%E5%81%9A%E4%BB%80%E9%BA%BC-7d7ebfe34b8">卷積神經網路(Convolutional neural network, CNN): 1×1卷積計算在做什麼</a> )</td>
+</tr>
+<tr class="even">
+<td>### <span class="math inline">\(1\times 1\)</span> 卷積層到底在做什麼 ?</td>
+</tr>
+<tr class="odd">
+<td>如果我們把卷積層只看作是一個逐步向量內積的過程，那一定會覺得 <span class="math inline">\(1\times 1\)</span> 卷積層只是單純的純量相乘的結果而已。當然，就運算上的確只是如此，但是如果我們了解了真正卷積層的運作，你就不難發現，<span class="math inline">\(1\times 1\)</span> 卷積層還能有一個非常好用的功能。</td>
+</tr>
+<tr class="even">
+<td><strong>降維 Dimension Reduction</strong></td>
+</tr>
+<tr class="odd">
+<td><img src="https://i.imgur.com/7iq1A6K.jpg" /> ( 圖片來源 : <a target="_blank" rel="noopener" href="https://medium.com/@chih.sheng.huang821/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-convolutional-neural-network-cnn-1-1%E5%8D%B7%E7%A9%8D%E8%A8%88%E7%AE%97%E5%9C%A8%E5%81%9A%E4%BB%80%E9%BA%BC-7d7ebfe34b8">卷積神經網路(Convolutional neural network, CNN): 1×1卷積計算在做什麼</a> )</td>
+</tr>
+<tr class="even">
+<td>上圖作者認為這樣的表示方式比較容易理解，但我個人還是比較建議以下圖的方式來呈現，原因無它，下圖比較能真正表現出圖像「深度」的概念。</td>
+</tr>
+<tr class="odd">
+<td><img src="https://i.imgur.com/88V2T2X.png%20=400x" /></td>
+</tr>
+<tr class="even">
+<td>經過了一個 <span class="math inline">\(1\times 1\)</span> 卷積層後，圖像大小不變，但卻能有效的控制參數的增加，這樣的方式在 " <em>Network In Network</em> " 以及 " <em>Going deeper with convolutions.</em> " 這兩篇論文中有效的控制了整個模型的複雜度。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pooling-layer-池化層">Pooling Layer 池化層</h2>
+<p><img src="https://i.imgur.com/gs0K20B.png" /></p>
+<p>池化層的主要概念是，當我們在做圖片的特徵萃取的過程中，圖形的縮放應該不會影響到我們的目的，經由這樣的 scaling 我們也可以再一次的減少神經網路的參數。</p>
+<p>常用的 pooling 方式有 Max pooling 與 Average pooling : 如同卷積層，pooling 也有一個 kernel，也是在輸入圖像上進行滑動運算但和卷積層不同的地方是滑動方式不會互相覆蓋，且運算是以 kernel 涵蓋範圍的最大值 ( Max pooling ) 或平均值 ( Average pooling )。</p>
+<p><img src="https://i.imgur.com/Ok5FuhJ.png%20=450x" /> (圖片來源 : Quora -- <a target="_blank" rel="noopener" href="https://www.quora.com/What-is-the-benefit-of-using-average-pooling-rather-than-max-pooling">What is the benefit of using average pooling rather than max pooling?</a>)</p>
+<p>許多研究都發現，Max pooling 的效果會比 Average pooling 來的好，因此現在大多使用 Max pooling 。( LeNet-5 則是使用 Average pooling )</p>
+<h3 id="池化層的特色">池化層的特色</h3>
+<p><strong>1. 藉由對輸入圖片的 subsampling 來減少參數，減少計算成本</strong></p>
+<p>從 pooling 過程來看，如果原本的輸入圖片，經過 2x2 pooling kernel 之後，整個圖片的尺寸將會縮小 <span class="math inline">\(\displaystyle{\frac{1}{2}}\)</span>，如此一來，計算成本也將節省一半。</p>
+<p><strong>2. 具有特徵不變性</strong></p>
+<p>以下面三個圖來看看，經過池化後如何保持特徵不變性，圖一平移，圖二旋轉以及圖三是縮小。</p>
+<p>我們可以發現，經過池化後，這些特徵最後呈現的 feature map 會是相同的，這也符合了我們當初對於池化層的期待與概念，經過 subsampling 後相對於原圖並不會有什麼太多的改變。</p>
+<p><img src="https://i.imgur.com/crpxYlI.jpg" /> (圖片來源 : 知乎 -- <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/36686900">CNN网络的pooling层有什么用？</a>)</p>
+<p><strong>3. 提高 Receptive Field (中國翻譯為 : 感受野)</strong></p>
+<p>Receptive field 指的是我們在 feature map 中的一個像素內能看到輸入圖像區域</p>
+<p><img src="https://i.imgur.com/QCJRHPL.png" /></p>
+<p>不管卷積層或是池化層都能夠有提高 Receptive field 的作用，所謂的「提高 Receptive field」，依上圖來看就是當我們經過池化或是卷積層後，feature map 對應的原圖區域就會越大，也就是我們可以「見微知著」，從一個點看到整個原圖蘊含的資訊。</p>
+<p>這個有趣的影片我認為也可以展示 pooling layer subsampling 的概念</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/fApFKmXcp2Y" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<h2 id="fully-connected-layer-全連接層">Fully Connected Layer 全連接層</h2>
+<p>這邊的全連接層跟我們進行手寫辨識的方式一樣，說穿了就是一個分類器，把我們經過數個卷積、池化後的結果進行分類。</p>
+<p>這邊可能會有人有一個問題 : 「 不是說全連接層會破壞圖片的空間結構嗎 ? 」</p>
+<p>是的，但是別忘了，我們已經經過數個卷積池化層了，現在每一個節點已經包含了空間結構的資訊在裡面，這個時候進行全連接層的分類就不會有破壞空間結構的問題。</p>
+<p>在全連接層有趣的地方是，如果我們把這一層的輸出視覺化，直覺上會認為他輸出的視覺化圖形會接近我們認知的分類。舉例來說，我們丟手寫數字進去經過 CNN 最後全連接層的輸出，理應出來的圖形會接近我們認知的數字型態。然而我們實際將全連接層最後輸出視覺化會是下圖。</p>
+<p><img src="https://i.imgur.com/VeWOyba.png%20=350x" /></p>
+<p>問題在於，CNN 與人腦的視覺模式有很大的不同，這樣的結論在許多的論文中都有被提及。<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<p>我們如果將上圖加上ㄧ些 constrain (Regularization)，來告知系統說有些點不是我們需要的部分，就可以稍微看出一些端倪。</p>
+<p><img src="https://i.imgur.com/EwFeKmh.png" /></p>
+<h2 id="cnn-的應用">CNN 的應用</h2>
+<p>我們了解到 CNN 對於空間結構上有非常好的表現，因此，需要保留空間結構的學習模式， CNN 就有機會在這樣的條件下訓練出非常好的 model。</p>
+<h3 id="應用一-alpha-go">應用一 : Alpha Go</h3>
+<p><img src="https://i.imgur.com/TDpCK3e.png" /></p>
+<p>如圖所示，棋盤本身就具有一定的空間結構，而 CNN 也的確在下棋這件事上面有著很不錯的表現，我們可以餵進許多的棋譜讓它學習到各種狀況下的下棋策略。</p>
+<p>然而，我們在 CNN 上面有經過 Max pooling subsampling 來縮小尺度保留特徵，棋盤似乎無法這樣做。</p>
+<p>我們從 Aloha Go 的結構也發現，他們的確將 pooling layer 拿掉了。</p>
+<p><img src="https://i.imgur.com/IjfZQbT.png" /></p>
+<h3 id="應用二-語音辨識">應用二 : 語音辨識</h3>
+<p><img src="https://i.imgur.com/xhPyOiU.png" /></p>
+<p>由於人類的說話本身也具有結構，因此利用語音建立的 Spectrogram 來進行 CNN 的訓練。</p>
+<h3 id="應用三-文本分析">應用三 : 文本分析</h3>
+<p><img src="https://i.imgur.com/gwyPhGV.png" /></p>
+<p>跟上面語音的概念相似，文本也具有類似的空間概念，因此也可以利用 CNN 來訓練出一個不錯的文本分析模型。</p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>在數學上對於卷積的定義更加抽象且準確，而卷積這樣的概念也被廣泛的應用在許多領域中，而在 " 知乎 -- <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/22298352">如何通俗易懂地解释卷积？</a> " 這篇文章中對於卷積有多面向的討論，非常建議大家可以閱讀。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>論文連結 : Yann LeCun Leon Bottou Yoshua Bengio and Patrick Haffner.(1998).<a target="_blank" rel="noopener" href="http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf"><em>GradientBased Learning Applied to Document Recognition</em></a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>除此之外，對於卷積層的運作也可參考以下文章 : (1) CH.Tseng -- <a target="_blank" rel="noopener" href="https://chtseng.wordpress.com/2019/06/02/opencv的捲積操作/?fbclid=IwAR0S1Kdf3pAbrwmiRrXNNSqxIf_GUnat0IcMFkCMxjAy6Z8HYi8kFLXwK0I">OpenCV的捲積操作</a> (2) Steven Shen -- <a target="_blank" rel="noopener" href="https://medium.com/@syshen/%E5%85%A5%E9%96%80%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-2-d694cad7d1e5">入門深度學習 — 2</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>參考論文 : (1) Anh Nguyen,Jason Yosinski and Jeff Clune .(2014).<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1412.1897.pdf"><em>Deep Neural Networks are Easily Fooled: High Confidence Predictions for Unrecognizable Images.</em></a> (2)Karen Simonyan, Andrea Vedaldi and Andrew Zisserman .(2013).<em><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1312.6034.pdf">Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps.</a></em><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/" title="卷積神經網路 (Convolutional Neural , CNN)">https://allen108108.github.io/blog/2019/10/07/卷積神經網路 (Convolutional Neural , CNN)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/Regularization%20%E6%96%B9%E6%B3%95%20_%20Weight%20Decay%20,%20Early%20Stopping%20and%20Dropout/" rel="prev" title="Regularization 方法 : Weight Decay , Early Stopping and Dropout">
+                  <i class="fa fa-chevron-left"></i> Regularization 方法 : Weight Decay , Early Stopping and Dropout
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%E4%BD%BF%E7%94%A8%20Github%20page%20%E8%A3%BD%E4%BD%9C%E5%80%8B%E4%BA%BA%E7%B6%B2%E7%AB%99%20%E2%80%93%20%E4%BB%A5%20Hexo%20_%20Next%20%E8%A3%BD%E4%BD%9C%E9%83%A8%E8%90%BD%E6%A0%BC/" rel="next" title="使用 Github page 製作個人網站 -- 以 Hexo / Next 製作部落格">
+                  使用 Github page 製作個人網站 -- 以 Hexo / Next 製作部落格 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

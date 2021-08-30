@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="我們在進行 Reinforcement Learning 的過程，其實很常會遇到的狀況就是，大部分的時間都沒有 Reward，在這樣的狀態下，機器只能一直隨機的選擇 Action，這樣其實不會學習到任何東西。 以下介紹三種方式，可以讓機器從 0 開始學習，最後可以達到目標。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Reinforcement Learning (7) --- Sparse Reward">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(7)%20%E2%80%94%20Sparse%20Reward/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="我們在進行 Reinforcement Learning 的過程，其實很常會遇到的狀況就是，大部分的時間都沒有 Reward，在這樣的狀態下，機器只能一直隨機的選擇 Action，這樣其實不會學習到任何東西。 以下介紹三種方式，可以讓機器從 0 開始學習，最後可以達到目標。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/MJDh15h.png">
+<meta property="og:image" content="https://i.imgur.com/ufzJxBy.png">
+<meta property="og:image" content="https://i.imgur.com/lFwD1hr.png">
+<meta property="og:image" content="https://i.imgur.com/Sp3vve5.png">
+<meta property="og:image" content="https://i.imgur.com/uxxJMj7.png">
+<meta property="article:published_time" content="2020-04-21T00:56:14.000Z">
+<meta property="article:modified_time" content="2020-04-21T00:57:09.470Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/MJDh15h.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(7)%20%E2%80%94%20Sparse%20Reward/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(7)%20%E2%80%94%20Sparse%20Reward/","path":"2020/04/21/Deep Reinforcement Learning (7) — Sparse Reward/","title":"Deep Reinforcement Learning (7) --- Sparse Reward"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Reinforcement Learning (7) --- Sparse Reward | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#reward-shaping"><span class="nav-number">1.</span> <span class="nav-text">Reward Shaping</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#intrinsic-curiosity-module-icm"><span class="nav-number">1.1.</span> <span class="nav-text">Intrinsic Curiosity Module ( ICM )</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#curriculum-learning"><span class="nav-number">2.</span> <span class="nav-text">Curriculum Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#reverse-curriculum-generation"><span class="nav-number">2.1.</span> <span class="nav-text">Reverse Curriculum Generation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hierarchical-reinforcement-learning"><span class="nav-number">3.</span> <span class="nav-text">Hierarchical Reinforcement Learning</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(7)%20%E2%80%94%20Sparse%20Reward/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Reinforcement Learning (7) --- Sparse Reward
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-04-21 08:56:14 / 修改時間：08:57:09" itemprop="dateCreated datePublished" datetime="2020-04-21T08:56:14+08:00">2020-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(7)%20%E2%80%94%20Sparse%20Reward/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/21/Deep Reinforcement Learning (7) — Sparse Reward/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>我們在進行 Reinforcement Learning 的過程，其實很常會遇到的狀況就是，大部分的時間都沒有 Reward，在這樣的狀態下，機器只能一直隨機的選擇 Action，這樣其實不會學習到任何東西。</p>
+<p>以下介紹三種方式，可以讓機器從 0 開始學習，最後可以達到目標。</p>
+<span id="more"></span>
+<h2 id="reward-shaping">Reward Shaping</h2>
+<p>Reward Shaping 其實非常直接，在一開始到真正得到 Reward 之前，我們人工幫機器設計一些額外的 Reward，讓機器可以在學習的過程中一直都有得到 reward，然後逐漸地藉由這些設計好的、非環境給予的 reward 來引導機器達到最後的目標，進而獲得最終的 reward。</p>
+<p>在 OpenAI 研究團隊所提出的論文 " <em>Training Agent for First-Person Shooter Game with Actor-Critic Curriculum Learning</em> " 中，利用 Reinforcement Learning 來玩 VizDoom 這個射擊遊戲。</p>
+<p><img src="https://i.imgur.com/MJDh15h.png" /></p>
+<p>在論文中，設計了一些 reward 在遊戲過程如下 :</p>
+<p><img src="https://i.imgur.com/ufzJxBy.png" /></p>
+<p>當失血、彈藥耗損、躲起來不動、一直存活都會有負 reward 的發生，而當撿到補給品跟彈藥或是移動都會有正 reward 的獲得。依照這樣的 reward 設計，可以讓機器成為一個具有攻擊力、積極探索的射手。</p>
+<p>然而要如何設計這些額外的 reward ，需要的其實就是該領域的 domain knowledge，唯有融入領域的專業知識才不會讓整個 reward 設計反而弄巧成拙。</p>
+<h3 id="intrinsic-curiosity-module-icm">Intrinsic Curiosity Module ( ICM )</h3>
+<p>一種實現 Reward Shaping 的方式就是利用 Intrinsic Curiosity Module function，當我們給予 state <span class="math inline">\(s_t, a_t, s_{t+1}\)</span>，ICM 便會輸出另外一個 reward <span class="math inline">\(r_t^i\)</span>，而最後我們希望的就是整個 total reward 應該要越大越好。</p>
+<p><span class="math display">\[
+\max R(\tau)=\max\sum\limits_{t=1}^T\big(r_t+r_t^i\big)
+\]</span></p>
+<p><img src="https://i.imgur.com/lFwD1hr.png" /></p>
+<p>ICM 到底是一個什麼東西呢 ? 它其實就是機器的好奇力的表徵，可以是一個 Neural Network，藉由 <span class="math inline">\(s_t,a_t\)</span> 的輸入，來做 <span class="math inline">\(s_{t+1}\)</span> 的預測，如果預測出來的 <span class="math inline">\(\hat{s}_{t+1}\)</span> 與 <span class="math inline">\(s_{t+1}\)</span> 差距越大，則給予越高的 reward。</p>
+<p>但在環境中，其實往往會存在一些無法預測，但其實並不是太重要的因素。如果 ICM 也將這些因素考慮進去，那很可能會造成干擾。</p>
+<p>舉例來說，在一個遊戲畫面，可能會有一些背景的變動，例如樹葉飄動、草枝擺(?)、...，雖然無法預測，但其與遊戲過程幾乎是無關，若 ICM 也會對這些因素進行考慮，很可能訓練出來的角色就會一直看著這些畫面而不進行其他動作，因為這樣可以上它得到很大的 reward。</p>
+<p>所以我們會對 ICM 結構再做一點調整，除了針對 <span class="math inline">\(s_t,a_t\)</span> 的輸入，來做 <span class="math inline">\(s_{t+1}\)</span> 預測的 network 之外，我們還會增加另外一個 network 來對 state 做特徵萃取。</p>
+<p><img src="https://i.imgur.com/Sp3vve5.png" /></p>
+<p>這個特徵萃取的 network 最主要的工作就是將 <span class="math inline">\(s_t,s_{t+1}\)</span> 輸出 <span class="math inline">\(\phi(s_t),\phi(s_{t+1})\)</span> 再對這兩個空間轉換後的向量來預測 <span class="math inline">\(a_t\)</span>，如果可以讓預測的 <span class="math inline">\(\hat{a}_t\)</span> 越接近 <span class="math inline">\(a_t\)</span> 越好。</p>
+<p>當訓練出來這樣的 network 後，其實就表示可以把 state 中無關的訊息過濾掉，這樣讓 <span class="math inline">\(\phi\)</span> 輸入之前的 network 就不會有上面說的問題。</p>
+<h2 id="curriculum-learning">Curriculum Learning</h2>
+<p>這是一種循序漸進的學習方式，讓機器在達到最終目標以前，我們先給予一些簡單的任務，讓它可以逐漸完成，隨著難度的增加，然後達到最後我們希望它完成的工作。</p>
+<p>這樣的學習方式也一樣要利用人工來為機器設計一系列的課程。</p>
+<h3 id="reverse-curriculum-generation">Reverse Curriculum Generation</h3>
+<p>這是一個比較通用的 Curriculum Learning 方式 : 1. 首先我們先確定我們最終希望達到的目標是什麼，稱為 golden state <span class="math inline">\(s_g\)</span>， 2. 找出與 <span class="math inline">\(s_g\)</span> 接近的 <span class="math inline">\(s_1\)</span>，利用機器從這些 <span class="math inline">\(s_1\)</span> 與環境做運動，得到 reward， 3. 找出可以到達 <span class="math inline">\(s_g\)</span> 的state，並且刪除極端值 (reward 太大或太小，表示任務太簡單或太困難)。 4. 根據上述挑選出來的 state，再去抽樣更多的 state 重複上述步驟。</p>
+<p>這裡有一個比較困難的部分，就是怎麼定義其他 state 與 <span class="math inline">\(s_g\)</span> 的距離。這其實是 case by case 的，根據任務的不同，兩個向量「接近」的定義也會有所不同。</p>
+<h2 id="hierarchical-reinforcement-learning">Hierarchical Reinforcement Learning</h2>
+<p>階層式的強化學習指的就是我們會訓練多個有階層關係的 Agent，根據階層的位階不同，其負責的任務也會有階層的關係。</p>
+<p>而每一個 Agent 都是將較高階層的 Agent 輸出作為輸入。</p>
+<p>較高階層的 Agent 提出願景，中階 Agent 將願景作為輸入，輸出一些實現的構想，而低階的 Agent 則是將這些構想輸入來輸出最終結果。</p>
+<p>但是當較低階 Agent 無法完成任務，則較高階 Agent 則會得到 penalty。另外，如果低階 Agent 最後輸出並不是高階 Agent 期望的結果，那麼則改寫高階 Agent 的期望。(?)</p>
+<p>這邊的確有點莫名其妙，有興趣的可以來看看原始論文 " <em>Hierarchical Reinforcement Learning with Hindsight</em> "。</p>
+<p><img src="https://i.imgur.com/uxxJMj7.png" /></p>
+<p>上圖桃紅色部分就是高階 Agent 給予低階 Agent 的目標，而低階 Agent 則是負責將藍色部分移動到桃紅色部分即算達成目標。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(7)%20%E2%80%94%20Sparse%20Reward/" title="Deep Reinforcement Learning (7) --- Sparse Reward">https://allen108108.github.io/blog/2020/04/21/Deep Reinforcement Learning (7) — Sparse Reward/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%89)%20%E2%80%93%20Deep%20Learning%20Model/" rel="prev" title="Jetson Nano 初體驗 (三) -- Deep Learning Model">
+                  <i class="fa fa-chevron-left"></i> Jetson Nano 初體驗 (三) -- Deep Learning Model
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(6)%20%E2%80%94%20Actor-Critic/" rel="next" title="Deep Reinforcement Learning (6) --- Actor-Critic">
+                  Deep Reinforcement Learning (6) --- Actor-Critic <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

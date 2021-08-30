@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 &quot; Reinforcement Learning &quot; 及 &quot; Generative Adversarial Network (9) — Sequence Ge">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Reinforcement Learning (1) --- Policy Gradient (Review)">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(1)%20%E2%80%94%20Policy%20Gradient%20(Review)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 &quot; Reinforcement Learning &quot; 及 &quot; Generative Adversarial Network (9) — Sequence Ge">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/xNvQEIO.png">
+<meta property="og:image" content="https://i.imgur.com/fdl672p.png">
+<meta property="og:image" content="https://i.imgur.com/Hoc50Qa.png">
+<meta property="og:image" content="https://i.imgur.com/sRBCQ3V.png">
+<meta property="og:image" content="https://i.imgur.com/e2n4gsh.png">
+<meta property="og:image" content="https://i.imgur.com/9TbT86D.png">
+<meta property="article:published_time" content="2019-12-04T04:10:09.000Z">
+<meta property="article:modified_time" content="2019-12-04T04:10:10.381Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/xNvQEIO.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(1)%20%E2%80%94%20Policy%20Gradient%20(Review)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(1)%20%E2%80%94%20Policy%20Gradient%20(Review)/","path":"2019/12/04/Deep Reinforcement Learning (1) — Policy Gradient (Review)/","title":"Deep Reinforcement Learning (1) --- Policy Gradient (Review)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Reinforcement Learning (1) --- Policy Gradient (Review) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#reinforcement-learning"><span class="nav-number">1.</span> <span class="nav-text">Reinforcement Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#policy-gradient"><span class="nav-number">2.</span> <span class="nav-text">Policy Gradient</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tips-of-reinforcement-learning"><span class="nav-number">3.</span> <span class="nav-text">Tips of Reinforcement Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tip-1.-add-baselinethreshold"><span class="nav-number">3.1.</span> <span class="nav-text">Tip 1. Add baseline&#x2F;threshold</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tip-2.-assign-suitable-credit"><span class="nav-number">3.2.</span> <span class="nav-text">Tip 2. Assign Suitable Credit</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(1)%20%E2%80%94%20Policy%20Gradient%20(Review)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Reinforcement Learning (1) --- Policy Gradient (Review)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-12-04 12:10:09 / 修改時間：12:10:10" itemprop="dateCreated datePublished" datetime="2019-12-04T12:10:09+08:00">2019-12-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(1)%20%E2%80%94%20Policy%20Gradient%20(Review)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/04/Deep Reinforcement Learning (1) — Policy Gradient (Review)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 " <a href="https://">Reinforcement Learning</a> " 及 " <a target="_blank" rel="noopener" href="http://bit.ly/2D6MEMp">Generative Adversarial Network (9) — Sequence Generation</a> " 這兩篇筆記。</p>
+<span id="more"></span>
+<h2 id="reinforcement-learning">Reinforcement Learning</h2>
+<p>Reinforcement Learning 說穿了就是利用機器進行實作，並且從錯誤中自行學習應該採取什麼樣子的「策略」，可以讓自己在任務中得到最大的獎勵、分數。如果拿玩遊戲跟 AlphaGO 作為例子，我們可以將整個 Reinforcement Learning 分成三個主要的部份 : <strong>Actor, Environment 以及 Reward Function</strong>，其中 Environment 以及 Reward Function 是我們無法調整的部分。</p>
+<p><img src="https://i.imgur.com/xNvQEIO.png" /></p>
+<p>機器進行 Actor 跟 Environment 的每一個 State 作互動會經過 Reward Function 得到 Reward。我們藉由這個 Reward Function 來調整 Actor 使 Reward 最大化。</p>
+<p>機器決定怎麼進行 Actor 便是由 Policy <span class="math inline">\(\pi\)</span> 這個 Neural Network 來決定，當我們輸入一個 State 這個網路 <span class="math inline">\(\pi\)</span> 會輸出一個 Actor 分佈。利用這個分佈來決定我們要採用哪一個 Actor。</p>
+<p>整個互動的過程就如同下圖所展示 :</p>
+<p><img src="https://i.imgur.com/fdl672p.png" /></p>
+<p>我們通常將一整個得到最終 Reward 的過程稱為一個 Episode ( 舉例來說，遊戲從開始到 Game Over、棋盤從開始到分出勝負、... )，那麼一個 Episode 可以用以下的歷程 <span class="math inline">\(trajectory\)</span> 來表示</p>
+<p><span class="math display">\[
+trajectory\ \tau=\{s_1,a_1,r_1,s_2,a_2,r_2,\cdots\cdots s_T,a_T,r_T\}
+\]</span></p>
+<p>所以這樣的 <span class="math inline">\(trajectory\)</span> 出現的機率是我們可以進行估算的</p>
+<p><span class="math display">\[
+P_{\theta}(\tau)=P(s_1)P_{\theta}(a_1\mid s_1)P(s_2\mid s_1,a_1)\cdot P_{\theta}(a_2\mid s_2)P(s_3\mid s_2,a_2)\cdots\\
+=P(s_1)\prod\limits_{t=1}^{T}P_{\theta}(a_t\mid s_t)P(s_{t+1}\mid s_t,a_t)
+\]</span></p>
+<p>每一個 Actor 過後，我們會得到一個 reward <span class="math inline">\(r_t\)</span>，當一整個歷程結束後，reward 的總和是 <span class="math inline">\(R(\tau)=\sum\limits_{t=1}^{T}r_t\)</span>，我們希望經過 Actor 這個網路的優化可以讓最後的 reward 總和盡量的高。也就是說，我們會希望藉由 <span class="math inline">\(\theta\)</span> 的調整下，使期望 reward <span class="math inline">\(\bar{R}_{\theta}\)</span> 可以盡可能的高。</p>
+<p><span class="math display">\[
+\bar{R}_{\theta}=\sum\limits_{\tau}R(\tau)P_{\theta}(\tau)=\mathbb{E}_{\tau\sim P_{\theta}(\tau)}\big[R(\tau)\big]
+\]</span></p>
+<h2 id="policy-gradient">Policy Gradient</h2>
+<p>我們將上面的 reward 期望值做一些調整</p>
+<p><span class="math display">\[
+\nabla\bar{R}_{\theta}=\sum\limits_{\tau}R(\tau)\nabla P_{\theta}(\tau)\\
+=\sum\limits_{\tau}R(\tau)P_{\theta}(\tau)\frac{\nabla P_{\theta}(\tau)}{P_{\theta}(\tau)}\\
+=\sum\limits_{\tau}R(\tau)P_{\theta}(\tau)\nabla\log P_{\theta}(\tau)\\
+=\mathbb{E}_{\tau\sim P_{\theta}(\tau)}\big[R(\tau)\nabla\log P_{\theta}(\tau)\big]\\
+\approx\frac{1}{N}\sum\limits_{i=1}^{N}R(\tau^n)\nabla\log P_{\theta}(\tau^n)\\
+=\frac{1}{N}\sum\limits_{i=1}^{N}\sum\limits_{t=1}^{T_n}R(\tau^n)\nabla\log P_{\theta}(a_t^n|s_t^n)
+\]</span></p>
+<p>在這邊想提一下 "Policy" 這樣的名詞，直接翻譯叫做「策略」。我想說的是，為什麼要特別提到 Policy 這樣的詞彙 ? 跟我們以前所了解的梯度下降到底有什麼不同 ?</p>
+<p>上面的討論簡化了一些部分，如果依照以往的整個神經網路優化過程來看，我們應該要優化網路來使 Loss 盡可能的小。但在 Reinforcement Learning 中，我們卻沒辦法這樣做。</p>
+<p>在 Reinforcement Learning 中，我們用的是 Reward Function 取代 Loss function，目標也從最小化 Loss 改成最大化 Reward。現在的問題就是，我們很無法對 Reward 進行梯度下降法來優化 Actor 這個神經網路。主要的原因是因為 Actor 輸出的是一個 Action ，並不是 Reward，而且最後得到的 Reward <span class="math inline">\(R(\tau)\)</span> 事實上我們會看不到與 Actor 的參數 <span class="math inline">\(\theta\)</span> 之關係。</p>
+<p>因此我們會用上面的方式調整來進行梯度下降，雖然我們要求的是 <span class="math inline">\(\nabla\bar{R}_{\theta}\)</span> 但其實是在求 <span class="math inline">\(\nabla P_{\theta}(\tau)\)</span> 其實也就是對 「策略」本身求梯度。</p>
+<p>在進行 Policy Gradient 必須要注意的是，每一次 Sample 的 Data 只能進行一次參數更新。當參數更新過後就必須要重新 Sample 一次 Data。</p>
+<p><img src="https://i.imgur.com/Hoc50Qa.png" /></p>
+<h2 id="tips-of-reinforcement-learning">Tips of Reinforcement Learning</h2>
+<h3 id="tip-1.-add-baselinethreshold">Tip 1. Add baseline/threshold</h3>
+<p><span class="math display">\[
+\nabla\bar{R}_{\theta}\approx\frac{1}{N}\sum\limits_{i=1}^{N}\sum\limits_{t=1}^{T_n}R(\tau^n)\nabla\log P_{\theta}(a_t^n|s_t^n)
+\]</span></p>
+<p>從上面的式子來看，當我們進行參數優化時，在意義上就是要將正的 <span class="math inline">\(R(\tau^n)\)</span> 之機率提升，然後將負的 <span class="math inline">\(R(\tau^n)\)</span> 之機率降低。</p>
+<p>雖然這樣說，但大部分的 Reinforcement Learning 場景都不會有「負分」的狀況出現，在這樣恆正的 Reward 下，會出現一些問題。</p>
+<p>在理想的狀態下，假設我們的 Actor 有三個選擇，各自能獲得不同的 <span class="math inline">\(R(\tau)\)</span> (綠色部分)，在三個選擇都會被 sample 到的前提下，三個狀況都會被增加機率，擁有較大 <span class="math inline">\(R(\tau)\)</span> 的機率會被增加的較多，而較小 <span class="math inline">\(R(\tau)\)</span> 的機率會被增加的較少。經過 Normalization 後，是可以達到我們想要的效果( 增加較少 reward 被降低機率、增加較多 reward 的被增加機率 )。</p>
+<p><img src="https://i.imgur.com/sRBCQ3V.png" /></p>
+<p>但是問題出在，我們在 sample 的過程中，不可能 sample 到所有的可能性，如果我們沒有 sample 到擁有較大 <span class="math inline">\(R(\tau)\)</span> 的 actor，那麼這 actor 經過 Normalization 後反而會降機機率。</p>
+<p><img src="https://i.imgur.com/e2n4gsh.png" /></p>
+<p>為了處理這樣的問題，我們在 <span class="math inline">\(R(\tau)\)</span> 的部份加上一個 threshold <span class="math inline">\(b\)</span>，使整個 reward 可以變成有正有負的狀況以避開上述的問題。而這樣的 <span class="math inline">\(b\)</span> 通常是取 <span class="math inline">\(R(\tau)\)</span> 的平均值 (期望值)。</p>
+<p><span class="math display">\[
+\nabla\bar{R}_{\theta}\approx\frac{1}{N}\sum\limits_{i=1}^{N}\sum\limits_{t=1}^{T_n}\big(R(\tau^n)-b\big)\nabla\log P_{\theta}(a_t^n|s_t^n)
+\]</span></p>
+<h3 id="tip-2.-assign-suitable-credit">Tip 2. Assign Suitable Credit</h3>
+<p>仔細看一下 Reward Function 仍是有不合理之處</p>
+<p><span class="math display">\[
+\nabla\bar{R}_{\theta}\approx\frac{1}{N}\sum\limits_{i=1}^{N}\sum\limits_{t=1}^{T_n}\big(R(\tau^n)-b\big)\nabla\log P_{\theta}(a_t^n|s_t^n)
+\]</span></p>
+<p>我們對每一個 state <span class="math inline">\(s_t^n\)</span> 跟 actor <span class="math inline">\(a_t^n\)</span> 都乘上同一個 total reward <span class="math inline">\(R(\tau^n)\)</span> 這顯然不合理。最後的 Reward 大，不見得在任一個 state 的 actor 都是好的，反之亦然。因此我們希望給每一個 actor 不同的 reward 權重。</p>
+<p>這裡的想法是，每一個時間點的 state <span class="math inline">\(s_t^n\)</span> 跟 actor <span class="math inline">\(a_t^n\)</span> 的重要性，跟前面時間點的 state 與 actor 無關。這在直覺上還算好理解，每一個狀況下我們要採取動作會對最後的 Reward 產生的影響跟之前是無關的，因為之前的 actor 已經結束了。</p>
+<p>因此我們不再給每一個 actor 同樣的 total reward 權重，而是將其與之後的 reward 作為權重( 之前的 reward 就不管了 )。</p>
+<p><img src="https://i.imgur.com/9TbT86D.png" /></p>
+<p>所以我們可以再把 reward function 進行更改</p>
+<p><span class="math display">\[
+\nabla\bar{R}_{\theta}\approx\frac{1}{N}\sum\limits_{i=1}^{N}\sum\limits_{t=1}^{T}\big(\sum\limits_{t&#39;=t}^{T_n}r_{t&#39;}^n-b\big)\nabla\log P_{\theta}(a_t^n|s_t^n)
+\]</span></p>
+<p>但這樣還不夠貼近現實，雖然我們說這樣的計算可以表徵在任一個時間點下做的決定，會影響到後面所有的決定，導致 reward 產生變化。但我們可以合理的假設，這樣的影響力會隨著時間拉長而造成衰減，因此我們可以在 <span class="math inline">\(r_{t&#39;}^n\)</span> 上再加上一個小於 <span class="math inline">\(1\)</span> 的 decay <span class="math inline">\(\alpha\)</span>。</p>
+<p><span class="math display">\[
+\nabla\bar{R}_{\theta}\approx\frac{1}{N}\sum\limits_{i=1}^{N}\sum\limits_{t=1}^{T}\big(\sum\limits_{t&#39;=t}^{T_n}\alpha^{t&#39;-t} r_{t&#39;}^n-b\big)\nabla\log P_{\theta}(a_t^n|s_t^n)
+\]</span></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(1)%20%E2%80%94%20Policy%20Gradient%20(Review)/" title="Deep Reinforcement Learning (1) --- Policy Gradient (Review)">https://allen108108.github.io/blog/2019/12/04/Deep Reinforcement Learning (1) — Policy Gradient (Review)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/24/%5B%E8%AB%96%E6%96%87%5D%20You%20Only%20Look%20Once%20_%20Unified,%20Real-Time%20Object%20Detection/" rel="prev" title="[論文] You Only Look Once : Unified, Real-Time Object Detection">
+                  <i class="fa fa-chevron-left"></i> [論文] You Only Look Once : Unified, Real-Time Object Detection
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(2)%20%E2%80%94%20Proximal%20Policy%20Optimization%20(PPO)/" rel="next" title="Deep Reinforcement Learning (2) --- Proximal Policy Optimization (PPO)">
+                  Deep Reinforcement Learning (2) --- Proximal Policy Optimization (PPO) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

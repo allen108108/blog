@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 &gt; 本文討論內容請參考: 機器學習基石第九講 : Linear Regression 機器學習基石第十講 : Logistic Regression 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林軒田機器學習基石筆記 - 第九講、第十講">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B9%9D%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E8%AC%9B/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 &gt; 本文討論內容請參考: 機器學習基石第九講 : Linear Regression 機器學習基石第十講 : Logistic Regression 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/4RQIFTU.png">
+<meta property="og:image" content="https://i.imgur.com/9Ff7ClN.png">
+<meta property="og:image" content="https://i.imgur.com/4nkAl7H.png">
+<meta property="og:image" content="https://i.imgur.com/PuLGZVT.png">
+<meta property="og:image" content="https://i.imgur.com/kr4qkyR.png">
+<meta property="og:image" content="https://i.imgur.com/N4eRcKO.png">
+<meta property="og:image" content="https://i.imgur.com/LqMNoeq.png">
+<meta property="og:image" content="https://i.imgur.com/2Ce4cew.png">
+<meta property="og:image" content="https://i.imgur.com/30cDMOj.png%20=290x">
+<meta property="og:image" content="https://i.imgur.com/J70UyQU.png%20=280x">
+<meta property="article:published_time" content="2019-10-07T05:19:26.000Z">
+<meta property="article:modified_time" content="2019-11-08T18:42:20.008Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/4RQIFTU.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B9%9D%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E8%AC%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B9%9D%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E8%AC%9B/","path":"2019/10/07/林軒田機器學習基石筆記 - 第九講、第十講/","title":"林軒田機器學習基石筆記 - 第九講、第十講"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>林軒田機器學習基石筆記 - 第九講、第十講 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#linear-regression"><span class="nav-number">1.</span> <span class="nav-text">Linear Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#linear-regression-algorithm"><span class="nav-number">1.1.</span> <span class="nav-text">Linear Regression Algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linear-regression-%E7%9A%84%E5%8F%AF%E8%A1%8C%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">Linear Regression 的可行性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linear-regression-for-binary-classification"><span class="nav-number">1.3.</span> <span class="nav-text">Linear Regression for Binary Classification</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#logistic-regression"><span class="nav-number">2.</span> <span class="nav-text">Logistic Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#logistic-regression-algorithm"><span class="nav-number">2.1.</span> <span class="nav-text">Logistic Regression Algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gradient-descent-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%A8%BB6"><span class="nav-number">2.2.</span> <span class="nav-text">Gradient Descent 梯度下降6</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#how-to-choose-eta-nu"><span class="nav-number">2.2.1.</span> <span class="nav-text">How to choose \(\eta\) &amp; \(\nu\) ?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E5%90%91-nu"><span class="nav-number">2.2.2.</span> <span class="nav-text">方向 \(\nu\) :</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E5%B0%8F-eta"><span class="nav-number">2.2.3.</span> <span class="nav-text">大小 \(\eta\) :</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">3.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B9%9D%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E8%AC%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          林軒田機器學習基石筆記 - 第九講、第十講
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-07 13:19:26" itemprop="dateCreated datePublished" datetime="2019-10-07T13:19:26+08:00">2019-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-11-09 02:42:20" itemprop="dateModified" datetime="2019-11-09T02:42:20+08:00">2019-11-09</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9E%97%E8%BB%92%E7%94%B0-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3/" itemprop="url" rel="index"><span itemprop="name">林軒田 機器學習基石</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B9%9D%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E8%AC%9B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/07/林軒田機器學習基石筆記 - 第九講、第十講/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文為一系列課程之筆記，建議從" <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryxzB7LwN">機器學習基石筆記-1</a> "開始閱讀</strong> &gt;</p></li>
+<li><p><strong>本文討論內容請參考: 機器學習基石第九講 : Linear Regression</strong> <strong>機器學習基石第十講 : Logistic Regression</strong></p></li>
+<li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
+</ul>
+<hr />
+</blockquote>
+<span id="more"></span>
+<p>在開始接下來的課程前，我想先緩一緩腳步。</p>
+<p>從前面的課程一路到現在，我們學到了這麼多的想法、概念、工具，究竟這些東西的關聯性是什麼 ? 它們跟機器學習的關係又是什麼 ?</p>
+<p>當我們手中有一堆資料 ( <span class="math inline">\(\mathbb{D}\)</span> )，我們會先問自己，我們想要從這些資料裡面知道什麼 ? 預測什麼 ? ( <span class="math inline">\(Classification\ or\ Regression\)</span> ) 在這樣的問題下，我們最終會希望有一個模型 ( <span class="math inline">\(g\)</span> ) 可以盡量準確地預測出我們想要知道的事情。( <span class="math inline">\(g\approx f\)</span> )</p>
+<p>想要得到這樣的模型，我們就得從許多可能性中 ( <span class="math inline">\(h\)</span> )，找出跟我們手中資料真實狀況誤差最小的 ( <span class="math inline">\(\min E_{in}(h)=\min err(y,\hat y)\)</span> ) 來作為我們的模型。而這樣找出最小值的過程，就是我們所謂演算法 ( <span class="math inline">\(algorithm\)</span> )。</p>
+<p>PS: 當我們決定了想要什麼樣子型態的模型 ( PLA , Pocket , Linear regression , Logistic regression...) ，那麼找出最小值的演算法也同時被確定下來。</p>
+<p>當我們理清楚其中的關係後，很清楚地可以知道，<font color="#dd0000">所有演算法就是針對某一個error measure 尋找最小值的方法</font>，也就是說，當我們要決定模型的型態，也要先決定出來我們要用什麼樣子的 error measure 。( 回想一下，當我們決定了 error measure 後，機器學習的可行性便也可以確定<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>)</p>
+<h2 id="linear-regression">Linear Regression</h2>
+<p><img src="https://i.imgur.com/4RQIFTU.png" /> ( 紅線部分我們稱為 剩餘residuals )</p>
+<p>Linear regression : 找出 line / hyperplane 有最小的 residuals</p>
+<h3 id="linear-regression-algorithm">Linear Regression Algorithm</h3>
+<p>在線性回歸中，最常用的 error measure 就是 square error</p>
+<p><span class="math inline">\(err(y,\hat y)=(y-\hat y)^2\)</span> <span class="math inline">\(\Longrightarrow E_{in}(h)=\frac{1}{N}\sum\limits_{n=1}^{N}(h(\mathbb{X}_n)-y_n)^2\ and\ E_{out}(h)=\underset{(\mathbb{X},y)\sim\mathbb{P}}{\mathbb{E}}(\mathbb{W}^T\mathbb{X}-y)^2\)</span></p>
+<p><img src="https://i.imgur.com/9Ff7ClN.png" /></p>
+<p>Step 1 : 先將資料整理成矩陣型態，找出以每一筆資料為列向量的 <span class="math inline">\(\mathbb{X}\)</span> 矩陣及 <span class="math inline">\(\mathbb{Y}\)</span> 矩陣</p>
+<p>Step 2 : 計算出 pseudo-inverse<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> <span class="math inline">\(\mathbb{X}^\dagger=\begin{cases}(\mathbb{X}^T\mathbb{X})^{-1}\mathbb{X}^T,&amp; \mbox{if}\ \mathbb{X}^T\mathbb{X}\ \mbox{is invertible}\\defined\ by\ other\ way,&amp;\mbox{if}\ \mathbb{X}^T\mathbb{X}\ \mbox{is&#39;nt invertible}\end{cases}\)</span></p>
+<p>Step 3 : 最佳解 <span class="math inline">\(\mathbb{W}_{lin}=\mathbb{X}^\dagger\mathbb{Y}\)</span></p>
+<hr />
+<p><span class="math inline">\(Proof\)</span></p>
+<ol type="1">
+<li><span class="math inline">\(Existence :\)</span></li>
+</ol>
+<p><span class="math inline">\(E_{in}(\mathbb{W})=\frac{1}{N}\sum\limits_{n=1}^{N}(\mathbb{W}^T\mathbb{X}_n-y_n)^2=\frac{1}{N}\sum\limits_{n=1}^{N}({\mathbb{X}_n}^T\mathbb{W}-y_n)^2\)</span></p>
+<p><span class="math inline">\(=\frac{1}{N}\begin{Vmatrix} {\mathbb{X}_1}^T\mathbb{W}-y_1 \\ {\mathbb{X}_2}^T\mathbb{W}-y_2 \\ \vdots\\ {\mathbb{X}_N}^T\mathbb{W}-y_N \\ \end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}\begin{bmatrix}{\mathbb{X}_1}^T \\{\mathbb{X}_2}^T\\ \vdots \\{\mathbb{X}_N}^T\end{bmatrix}\mathbb{W}-\begin{bmatrix}y_1\\y_2\\ \vdots \\y_N\end{bmatrix} \end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}\mathbb{X}\mathbb{W}-\mathbb{Y}\end{Vmatrix}^2\)</span></p>
+<p><span class="math inline">\(\because E_{in}(\mathbb{W})\)</span> is a conti , diff ,convex function</p>
+<p><span class="math inline">\(\therefore \exists \mathbb{W}_{lin}\)</span> s.t. <span class="math inline">\(\nabla E_{in}(\mathbb{W}_{lin})=\begin{bmatrix}\frac{\partial E_{in}}{\partial w_0}(\mathbb{W}_{lin})\\\frac{\partial E_{in}}{\partial w_1}(\mathbb{W}_{lin})\\ \vdots\\\frac{\partial E_{in}}{\partial w_d}(\mathbb{W}_{lin})\\\end{bmatrix}=\begin{bmatrix}0\\0\\\vdots\\0\end{bmatrix}\)</span></p>
+<ol start="2" type="1">
+<li></li>
+</ol>
+<p><span class="math inline">\(\because E_{in}(\mathbb{W})=\frac{1}{N}\begin{Vmatrix}\mathbb{X}\mathbb{W}-\mathbb{Y}\end{Vmatrix}^2=\frac{1}{N}(\mathbb{W}^T\mathbb{X}^T\mathbb{X}\mathbb{W}-2\mathbb{W}^T\mathbb{X}^T\mathbb{Y}+\mathbb{Y}^T\mathbb{Y})\)</span></p>
+<p><span class="math inline">\(\overset{let}{=}\frac{1}{N}(\mathbb{W}^T\mathbb{A}\mathbb{W}-2\mathbb{W}^T\mathbb{B}+\mathbb{C})\)</span></p>
+<p><span class="math inline">\(\Longrightarrow \nabla E_{in}(\mathbb{W})=\frac{1}{N}(2\mathbb{A}\mathbb{W}-2\mathbb{B})=\frac{2}{N}(\mathbb{X}^T\mathbb{X}\mathbb{W}-\mathbb{X}^T\mathbb{Y})\overset{let}{=}0\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\mathbb{W}=\mathbb{W}_{lin}=\mathbb{X}^\dagger\mathbb{Y}\ where\ \mathbb{X}^\dagger=\begin{cases}(\mathbb{X}^T\mathbb{X})^{-1}\mathbb{X}^T,&amp; \mbox{if}\ \mathbb{X}^T\mathbb{X}\ \mbox{is invertible}\\defined\ by\ other\ way,&amp;\mbox{if}\ \mathbb{X}^T\mathbb{X}\ \mbox{is&#39;nt invertible}\end{cases}\)</span></p>
+<h3 id="linear-regression-的可行性">Linear Regression 的可行性</h3>
+<p>由上述我們可以找出有最小誤差的預測模型 <span class="math inline">\(\hat{\mathbb{Y}}=\mathbb{X}\mathbb{W}_{lin}=\mathbb{X}(\mathbb{X}^T\mathbb{X})^{-1}\mathbb{X}^T\mathbb{Y}\overset{let}{=}\mathbb{H}\mathbb{Y}\)</span></p>
+<p>我們可以把這個 <span class="math inline">\(\mathbb{H}\)</span> 看作是一種線性變換，將 <span class="math inline">\(\mathbb{Y}\)</span> 轉換到 <span class="math inline">\(\hat{\mathbb{Y}}\)</span> ，再更白話一點說，<span class="math inline">\(\mathbb{H}\)</span> 就是 <span class="math inline">\(\mathbb{Y}\)</span> 與 <span class="math inline">\(\hat{\mathbb{Y}}\)</span> 的一個線性關係。而這樣的一個關係它有一些特別的特性 : 1. <span class="math inline">\(\mathbb{H}\)</span> is symmetric 2. <span class="math inline">\(\mathbb{H}^k=\mathbb{H}\)</span> 3. <span class="math inline">\((\mathbb{I}-\mathbb{H})^k=\mathbb{I}-\mathbb{H}\)</span> 4. <span class="math inline">\(tr(\mathbb{H})=d+1\)</span></p>
+<p>我們可以利用這些特性推導出 <span class="math inline">\(\overline{E_{in}}=\underset{\mathbb{D}\overset{i.i.d}{\sim}\mathbb{P}}{\mathbb{E}}[E_{in}(\mathbb{W}_{lin}\ w.r.t\ \mathbb{D})]=noise\ level\cdot(1-\frac{d+1}{N})\)</span><a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> <span class="math inline">\(\overline{E_{out}}=noise\ level\cdot(1+\frac{d+1}{N})\)</span> ( 此式在僅用於Linear Regression，因此證明僅放在註釋中 )</p>
+<p>這兩式指出，只要是從 <span class="math inline">\(\mathbb{P}\)</span> 這個分佈出來的，且尺寸為 <span class="math inline">\(N\)</span> ，那麼 <span class="math inline">\(E_{in}\)</span> 與 <span class="math inline">\(E_{out}\)</span> 的平均都會跟 <span class="math inline">\(Noise\)</span> 的平均有上述關係。</p>
+<p>所以我們可以得出下圖 :</p>
+<p><img src="https://i.imgur.com/4nkAl7H.png" /></p>
+<p>當 <span class="math inline">\(N\longrightarrow\infty\)</span> ，<span class="math inline">\(\overline{E_{in}}\)</span> 與 <span class="math inline">\(\overline{E_{out}}\longrightarrow\sigma^2\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\overline{E_{out}}\)</span> 會被限制住</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> Linear Regression 是可行的 !</p>
+<h3 id="linear-regression-for-binary-classification">Linear Regression for Binary Classification</h3>
+<p><img src="https://i.imgur.com/PuLGZVT.png" /></p>
+<p><span class="math inline">\(\Longrightarrow err_{0/1}=([\![sign(\mathbb{W}^T\mathbb{X})\neq y_n]\!])\leq err_{sqr}=(\mathbb{W}^T\mathbb{X}-y_n)^2\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\ classification\ E_{out}\leq\ classification\ E_{in}+\Omega(N,\mathbb{H},\delta)\leq\ regression\ E_{in}+\Omega(N,\mathbb{H},\delta)\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> Linear regression 的誤差上界的確比 classification 的誤差上界來的大，但是其為解析解，非常容易可以求出解，所以用一些準確度來換得效率也是一個可以接受的選項，誘惑者可先用regression求出解析解後，再拿這個解作為初始值放入PLA去求得更好的解，這樣也可以避免PLA花太多時間再做迭代。</p>
+<h2 id="logistic-regression">Logistic Regression</h2>
+<p>在現實生活中，我們有時候會想知道的事情不是單純的、絕對的、硬性的是非問題 ( 病人是否活著? )，或許我們會希望能夠有比較 soft 的分類 ( 病人活著的機率? )，或許，我們可以把這樣的 soft binary classification 視為是帶有 <span class="math inline">\(Noise\)</span> 的 classification ( <a target="_blank" rel="noopener" href="https://hackmd.io/s/rJaSpwpFV">機器學習基石筆記-5</a> 內談到的 "翻轉"機率 flipping noise level )。</p>
+<p><span class="math inline">\(\mathbb{X}\overset{i.i.d}{\sim}\mathbb{P}\)</span> , <span class="math inline">\(\mathbb{Y}\overset{i.i.d}{\sim}\mathbb{P}(\mathbb{Y}\mid\mathbb{X})\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\begin{cases}Binary\ classification\ f(\mathbb{X})=Sign(\mathbb{P}(+1\mid\mathbb{X})-\frac{1}{2})\in\left\{+1,-1\right\}\\Soft\ binary\ classification\ f(\mathbb{X})=\mathbb{P}(+1\mid\mathbb{X})\in\left[0,1\right]\end{cases}\)</span></p>
+<p><img src="https://i.imgur.com/kr4qkyR.png" /></p>
+<p>上圖白話翻譯就是 : 對於每一個特徵，我們一樣可以給予不同的權重，計算出一個分數，再將這分數經由一個 連續(conti) , 可微(diff) , 單調(monotonic) <span class="math inline">\(\theta\)</span> 函數轉換成機率 ( <span class="math inline">\(\theta:\mathbb{R}\rightarrow\left[0,1\right]\)</span>)，這樣的 <span class="math inline">\(\theta\)</span> 函數最常用的是 <span class="math inline">\(Sigmoid\ function=\theta(s)=\frac{1}{1+e^s}\)</span></p>
+<p><img src="https://i.imgur.com/N4eRcKO.png" /></p>
+<h3 id="logistic-regression-algorithm">Logistic Regression Algorithm</h3>
+<p>這樣機率型態的 error measure 我們使用 cross-entropy ( 交叉熵 ) error</p>
+<p><span class="math inline">\(E_{in}(\mathbb{W})=cross-entropy=\frac{1}{N}\sum\limits_{n=1}^{N}\ln(1+e^{-y_n\mathbb{W}^T\mathbb{X_n}})\)</span><a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p><img src="https://i.imgur.com/LqMNoeq.png" /></p>
+<p>挑選一個初始值 <span class="math inline">\(\mathbb{W}_0\)</span> Step 1 : 計算當下 <span class="math inline">\(\mathbb{W}_t\)</span> 的梯度 <span class="math inline">\(\nabla E_{in}(\mathbb{W}_t)=\frac{1}{N}\sum\limits_{n=1}^{N}\theta(-y_n\mathbb{W}^T\mathbb{X})(-y_n\mathbb{X}_n)\)</span></p>
+<p>Step 2 : 進行權重迭代更新 <span class="math inline">\(\mathbb{W}_{t+1}=\mathbb{W}_t-\eta\cdot\nabla E_{in}(\mathbb{W}_t)\)</span></p>
+<p>停止條件 : (1) <span class="math inline">\(\nabla E_{in}(\mathbb{W}_{t+1})=0\)</span> (2) 迭代次數夠多</p>
+<hr />
+<p><span class="math inline">\(Proof\)</span></p>
+<p><span class="math inline">\(\because\)</span> 我們要找出 <span class="math inline">\(\min ( cross-entropy\ error)=\min(\frac{1}{N}\sum\limits_{n=1}^{N}\ln(1+e^{(-y_n\mathbb{W}^T\mathbb{X})})\)</span> 以求出 <span class="math inline">\(g\)</span></p>
+<p><span class="math inline">\(\therefore \nabla E_{in}(\mathbb{W})\overset{let}{=}0\)</span></p>
+<p><span class="math inline">\(\frac{\partial E_{in}}{\partial w_i}(\mathbb{W})=\frac{1}{N}\sum\frac{\partial\ln(A)}{\partial A}\cdot\frac{\partial A}{\partial B}\cdot\frac{\partial B}{\partial w_i}\)</span> , where A<span class="math inline">\(=1+e^{(-y_n\mathbb{W}^T\mathbb{X})}\)</span> , B<span class="math inline">\(=-y_n\mathbb{W}^T\mathbb{X}\)</span> <span class="math inline">\(=\frac{1}{N}\sum\frac{1}{A}\cdot e^B\cdot(-y_n\cdot x_{n_i})\)</span> <span class="math inline">\(=\frac{1}{N}\sum\frac{e^B}{1+e^B}\cdot(-y_n\cdot x_{n_i})\)</span> <span class="math inline">\(=\frac{1}{N}\sum\theta(B)\cdot(-y_n\cdot x_{n_i})\)</span> <span class="math inline">\(\Longrightarrow\nabla E_{in}(\mathbb{W})=\frac{1}{N}\sum\theta(-y_n\mathbb{W}^T\mathbb{X})\cdot(-y_n\cdot x_{n_i})\overset{let}{=}0\)</span></p>
+<p>在這裡有兩種可能性 :</p>
+<p>Case 1 : <span class="math inline">\(\theta(-y_n\mathbb{W}^T\mathbb{X})=0\ ,\ \forall\mathbb{W}\Longrightarrow y_n\mathbb{W}^T\mathbb{X}\longrightarrow +\infty\Longrightarrow\mathbb{D}\)</span> is linear separable ( <span class="math inline">\(\because\forall i\)</span> , <span class="math inline">\(y_i\)</span> 與 <span class="math inline">\(\mathbb{W}^T\mathbb{X}\)</span> 同號 )</p>
+<p>Case 2 : <span class="math inline">\(\frac{1}{N}\sum\theta(-y_n\mathbb{W}^T\mathbb{X})\cdot(-y_n\cdot x_{n_i})=0\Longrightarrow\)</span> 非線性方程求解困難不可行</p>
+<p>這邊我們可以發現想要找到類似 Linear Regression 的解析解會非常窒礙難行，所以我們要利用類似PLA的方式做迭代優化 :</p>
+<p><span class="math inline">\(\mathbb{W}_{t+1}=\mathbb{W}_t+\eta&#39;\cdot\nu\)</span></p>
+<h3 id="gradient-descent-梯度下降註6">Gradient Descent 梯度下降<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></h3>
+<h4 id="how-to-choose-eta-nu">How to choose <span class="math inline">\(\eta\)</span> &amp; <span class="math inline">\(\nu\)</span> ?</h4>
+<p>Assume <span class="math inline">\(\left\lVert\nu\right\rVert=1\)</span> and <span class="math inline">\(\eta&#39;&gt;0\)</span> is small enough</p>
+<p><span class="math inline">\(E_{in}(\mathbb{W}_{t+1})=E_{in}(\mathbb{W}_t+\eta&#39;\cdot\nu)\approx E_{in}(\mathbb{W}_{t+1})+\eta&#39;\cdot\nu^T\cdot\nabla E_{in}(\mathbb{W}_t)\)</span></p>
+<p>( <span class="math inline">\(\eta&#39;\)</span> : 大小 , <span class="math inline">\(\nu\)</span> : 方向 , <span class="math inline">\(\nabla E_{in}(\mathbb{W}_t) : 角度\)</span>)</p>
+<h4 id="方向-nu">方向 <span class="math inline">\(\nu\)</span> :</h4>
+<p>最好的方向是 <span class="math inline">\(-\nabla E_{in}(\mathbb{W}_t)\)</span> 且 <span class="math inline">\(\left\lVert\nu\right\rVert=1\)</span></p>
+<p><span class="math inline">\(\therefore\nu=-\frac{\nabla E_{in}(\mathbb{W}_t)}{\left\lVert\nabla E_{in}(\mathbb{W}_t)\right\rVert}\)</span></p>
+<h4 id="大小-eta">大小 <span class="math inline">\(\eta\)</span> :</h4>
+<p>若 <span class="math inline">\(\eta&#39;\)</span> 太小，迭代次數會很多且容易落在相對極小值 ( 而非絕對最小值 ) 若 <span class="math inline">\(\eta&#39;\)</span> 太大，迭代結果震盪大，不夠穩定 因此最好的方式是 <span class="math inline">\(\eta&#39;\)</span> 隨著每一次迭代做調整</p>
+<p><img src="https://i.imgur.com/2Ce4cew.png" /></p>
+<p><span class="math inline">\(\Rightarrow \eta&#39;\varpropto\left\lVert\nabla E_{in}(\mathbb{W}_t)\right\rVert\Rightarrow\eta&#39;=\eta\cdot\left\lVert\nabla E_{in}(\mathbb{W}_t)\right\rVert\)</span></p>
+<p><span class="math inline">\(PS: \eta&#39;\)</span> 隨著迭代不斷更動，但更動"固定"比例為 <span class="math inline">\(\eta\)</span></p>
+<p>綜合上述 :</p>
+<p><span class="math inline">\(\mathbb{W}_{t+1}\leftarrow\mathbb{W}_t+\eta&#39;\cdot\nu\Longrightarrow\mathbb{W}_{t+1}\leftarrow\mathbb{W}_t+\eta&#39;\cdot-\frac{\nabla E_{in}(\mathbb{W}_t)}{\left\lVert\nabla E_{in}(\mathbb{W}_t)\right\rVert}\Longrightarrow\mathbb{W}_{t+1}\leftarrow\mathbb{W}_t-\eta\cdot\nabla E_{in}(\mathbb{W}_t)\)</span></p>
+<h2 id="註釋">註釋</h2>
+<ol start="2" type="1">
+<li><img src="https://i.imgur.com/30cDMOj.png%20=290x" /> <img src="https://i.imgur.com/J70UyQU.png%20=280x" /></li>
+</ol>
+<p><span class="math inline">\(\because\mathbb{H}\mathbb{Y}=\hat{\mathbb{Y}}\Longrightarrow\mathbb{H}\)</span> transform <span class="math inline">\(\mathbb{Y}\)</span> to <span class="math inline">\(\hat{\mathbb{Y}}\)</span> <span class="math inline">\(\because\mathbb{Y}-\hat{\mathbb{Y}}=(\mathbb{I}-\mathbb{H})\mathbb{Y}\Longrightarrow(\mathbb{I}-\mathbb{H})\)</span> transform <span class="math inline">\(\mathbb{Y}\)</span> to <span class="math inline">\(\mathbb{Y}-\hat{\mathbb{Y}}\)</span> <span class="math inline">\(Suppose\ that\ f(\mathbb{X})\in\hat{\mathbb{Y}}=\mathbb{X}\mathbb{W}_{lin}\)</span> <span class="math inline">\(\therefore(\mathbb{I}-\mathbb{H})\)</span> transform <span class="math inline">\(Noise\)</span> to <span class="math inline">\(\mathbb{Y}-\hat{\mathbb{Y}}\)</span> ( <span class="math inline">\(\because\mathbb{Y}=f(\mathbb{X})+Noise\)</span> ) 3. <span class="math inline">\(E_{in}(\mathbb{W}_{lin})=\frac{1}{N}\begin{Vmatrix}\mathbb{Y}-\hat{\mathbb{Y}}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}(\mathbb{I}-\mathbb{H})\cdot Noise\end{Vmatrix}^2=\frac{1}{N}(N-(d+1))\begin{Vmatrix}Noise\end{Vmatrix}^2\)</span> ( <span class="math inline">\(\because\begin{Vmatrix}\mathbb{I}-\mathbb{H}\end{Vmatrix}^2=tr(\mathbb{I}-\mathbb{H})=tr(\mathbb{I})-tr(\mathbb{H})=N-(d+1)\)</span> ) <span class="math inline">\(\Longrightarrow\overline{E_{in}}=\underset{\mathbb{D}\overset{i.i.d}{\sim}\mathbb{P}}{\mathbb{E}}[E_{in}(\mathbb{W}_{lin}\ w.r.t\ \mathbb{D})]=noise\ level\cdot(1-\frac{d+1}{N})\)</span> 同理可證 : <span class="math inline">\(\overline{E_{out}}=noise\ level\cdot(1+\frac{d+1}{N})\)</span></p>
+<p><span class="math inline">\(g=\arg\max\limits_{\forall h}( likelyhood(h) )\)</span> <span class="math inline">\(\Leftrightarrow g=\arg\max\limits_{\forall\mathbb{W}}(\prod_{n=1}^{N}\theta(y_n\mathbb{W}^T\mathbb{X}))\)</span> <span class="math inline">\(\Leftrightarrow g=\arg\max\limits_{\forall\mathbb{W}}(\ln\prod_{n=1}^{N}\theta(y_n\mathbb{W}^T\mathbb{X}))\)</span> <span class="math inline">\(\Leftrightarrow g=\arg\min\limits_{\forall\mathbb{W}}(\frac{1}{N}\sum\limits_{n=1}^{N}-\ln\theta(y_n\mathbb{W}^T\mathbb{X}))\)</span> <span class="math inline">\(=\arg\min\limits_{\forall\mathbb{W}}(\frac{1}{N}\sum\limits_{n=1}^{N}-\ln(1+e^{(-y_n\mathbb{W}^T\mathbb{X})})^{-1})\)</span> <span class="math inline">\(\begin{matrix}=\arg\min\limits_{\forall\mathbb{W}}(\underbrace{\frac{1}{N}\sum\limits_{n=1}^{N}\ln(1+e^{(-y_n\mathbb{W}^T\mathbb{X})})})\\cross-entropy\ error\end{matrix}\)</span></p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>可參閱 <a target="_blank" rel="noopener" href="https://hackmd.io/s/Sk6y3RMYE">機器學習基石筆記-4</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>擬反矩陣pseudo-inverse 又稱廣義反矩陣 <span class="math inline">\(\forall A\in\mathbb{C}^{m\times n}\ ,\ \exists !A^\dagger\)</span> s.t. :<br />
+<span class="math inline">\(1.AA^{\dagger}A=A\)</span> <span class="math inline">\(2.A^{\dagger}AA{^\dagger}=A^{\dagger}\)</span> <span class="math inline">\(3.(A^\dagger A)^T=A^\dagger A\)</span> <span class="math inline">\(4.(AA^\dagger)^T=AA^\dagger\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>廣義反矩陣在數學上的應用之一便是用來求出最小平方法之解 <span class="math inline">\(Assume\ \min\parallel AX-Y\parallel_2\ ,\ then\ X=A^\dagger Y+(I-A^\dagger A)w\ ,\ where\ w\ is\ arbitrary\ vector\)</span><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>此證明為簡易證明，雖不夠嚴謹，但仍可有不錯的解釋力 <span class="math inline">\(Proof\)</span> 1. <span class="math inline">\(E_{in}(\mathbb{W}_{lin})=\frac{1}{N}\begin{Vmatrix}\mathbb{Y}-\hat{\mathbb{Y}}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}\mathbb{Y}-\mathbb{X}\mathbb{X}^\dagger\mathbb{Y}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}(\mathbb{I}-\mathbb{X}\mathbb{X}^\dagger)\mathbb{Y}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}(\mathbb{I}-\mathbb{H})\mathbb{Y}\end{Vmatrix}^2\)</span><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5" role="doc-endnote"><p>Cross-Entropy <span class="math inline">\(f(\mathbb{X})=\mathbb{P}(+1\mid\mathbb{X})\iff\mathbb{P}(\mathbb{Y}\mid\mathbb{X})=\begin{cases}f(\mathbb{X})&amp;y=+1\\1-f(\mathbb{X})&amp;y=-1\end{cases}\)</span> <span class="math inline">\(\Longrightarrow\prod_{n=1}^{N}\mathbb{P}(\mathbb{X}_n)\mathbb{P}(y_n\mid\mathbb{X}_n)\)</span> <span class="math inline">\(\Longrightarrow\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)f(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)(1-f(\mathbb{X}_m))\)</span> ---(1) 我們希望我們的預測 <span class="math inline">\(h\)</span> 可以有 <span class="math inline">\(f\)</span> 的表現 <span class="math inline">\(\therefore\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)h(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)(1-h(\mathbb{X}_m))\)</span> --- (2) * 若 <span class="math inline">\(h\approx f\)</span>，則上述(1)(2)兩式理應接近 且 (1)式應該會非常接近1 * 我們將(2)式定義成一個函數 稱為 <span class="math inline">\(likelyhood(h)\)</span>，則我們想要的 <span class="math inline">\(g=\arg\max\limits_{\forall h}(likelyhood(h))\)</span> <span class="math inline">\(\therefore likelyhood(h)\)</span> <span class="math inline">\(=\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)h(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)(1-h(\mathbb{X}_m))\)</span> <span class="math inline">\(=\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)h(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)\)</span><font color="#dd0000"><span class="math inline">\((-h(\mathbb{X}_m))\)</span></font> <span class="math inline">\(( \because h(\mathbb{X})=\theta(\mathbb{W}^T\mathbb{X})\ and\ 1-\theta(s)=-\theta(s) )\)</span> <span class="math inline">\(\propto\prod_{n=1}^{N}h(y_n\mathbb{X}_n)=\prod_{n=1}^{N}\theta(y_n\mathbb{W}^T\mathbb{X})\)</span><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6" role="doc-endnote"><p>有關於梯度下降法的更詳細討論可以參閱 <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryQypiDK4">Gradient descent 梯度下降</a> 一文<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B9%9D%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E8%AC%9B/" title="林軒田機器學習基石筆記 - 第九講、第十講">https://allen108108.github.io/blog/2019/10/07/林軒田機器學習基石筆記 - 第九講、第十講/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%E5%88%A9%E7%94%A8%20ImageDataGenerator%20(%E8%B3%87%E6%96%99%E5%A2%9E%E5%BC%B7)%20%E5%8A%A0%E5%BC%B7%20CNN%20%E8%BE%A8%E8%AD%98%E7%8E%87/" rel="prev" title="利用 ImageDataGenerator (資料增強) 加強 CNN 辨識率">
+                  <i class="fa fa-chevron-left"></i> 利用 ImageDataGenerator (資料增強) 加強 CNN 辨識率
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%B8%80%E8%AC%9B/" rel="next" title="林軒田機器學習基石筆記 - 第十一講">
+                  林軒田機器學習基石筆記 - 第十一講 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

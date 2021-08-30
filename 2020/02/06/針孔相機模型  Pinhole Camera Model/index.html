@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="光學基本平面 Cardinal Plane 在搞清楚 Pinhole Camera Model 以前，或許我們要先理解一些專有名詞 ： * 光學基本平面 (Cardinal Plane) * 基點（cardinal points） * 主平面（principle plane） * 主點（principle point） * 焦平面（focal plane） * 焦點（focal point）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="針孔相機模型  Pinhole Camera Model">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/02/06/%E9%87%9D%E5%AD%94%E7%9B%B8%E6%A9%9F%E6%A8%A1%E5%9E%8B%20%20Pinhole%20Camera%20Model/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="光學基本平面 Cardinal Plane 在搞清楚 Pinhole Camera Model 以前，或許我們要先理解一些專有名詞 ： * 光學基本平面 (Cardinal Plane) * 基點（cardinal points） * 主平面（principle plane） * 主點（principle point） * 焦平面（focal plane） * 焦點（focal point）">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/Hn4cVyP.png">
+<meta property="og:image" content="https://i.imgur.com/RwYTful.png">
+<meta property="og:image" content="https://i.imgur.com/KqZ4UQy.jpg">
+<meta property="og:image" content="https://i.imgur.com/LCvcD1Z.png">
+<meta property="og:image" content="https://i.imgur.com/muXKisw.png">
+<meta property="og:image" content="https://i.imgur.com/XzsNHeT.png">
+<meta property="article:published_time" content="2020-02-06T10:35:16.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:11:47.725Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/Hn4cVyP.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/02/06/%E9%87%9D%E5%AD%94%E7%9B%B8%E6%A9%9F%E6%A8%A1%E5%9E%8B%20%20Pinhole%20Camera%20Model/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/02/06/%E9%87%9D%E5%AD%94%E7%9B%B8%E6%A9%9F%E6%A8%A1%E5%9E%8B%20%20Pinhole%20Camera%20Model/","path":"2020/02/06/針孔相機模型  Pinhole Camera Model/","title":"針孔相機模型  Pinhole Camera Model"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>針孔相機模型  Pinhole Camera Model | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%89%E5%AD%B8%E5%9F%BA%E6%9C%AC%E5%B9%B3%E9%9D%A2-cardinal-plane"><span class="nav-number">1.</span> <span class="nav-text">光學基本平面 Cardinal Plane</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%9D%E5%AD%94%E7%9B%B8%E6%A9%9F%E6%A8%A1%E5%9E%8B-pinhole-camera-model"><span class="nav-number">2.</span> <span class="nav-text">針孔相機模型 Pinhole Camera Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B8%E5%AD%B8%E6%8E%A8%E5%B0%8E-derivative-of-formula"><span class="nav-number">2.1.</span> <span class="nav-text">數學推導 Derivative of Formula</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#appendix"><span class="nav-number">3.</span> <span class="nav-text">APPENDIX</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a.-%E9%BD%8A%E6%AC%A1%E5%BA%A7%E6%A8%99%E7%B3%BB%E7%B5%B1-homogeneous-coordinate-system"><span class="nav-number">3.1.</span> <span class="nav-text">A. 齊次座標系統 Homogeneous Coordinate System</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b.-%E5%81%8F%E6%96%9C%E4%BF%82%E6%95%B8-skew-parameter"><span class="nav-number">3.2.</span> <span class="nav-text">B. 偏斜係數 Skew Parameter</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">5.</span> <span class="nav-text">系列文章</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/02/06/%E9%87%9D%E5%AD%94%E7%9B%B8%E6%A9%9F%E6%A8%A1%E5%9E%8B%20%20Pinhole%20Camera%20Model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          針孔相機模型  Pinhole Camera Model
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2020-02-06 18:35:16" itemprop="dateCreated datePublished" datetime="2020-02-06T18:35:16+08:00">2020-02-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-09-06 10:11:47" itemprop="dateModified" datetime="2020-09-06T10:11:47+08:00">2020-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%BD%B1%E5%83%8F%E8%99%95%E7%90%86-Image-processing/" itemprop="url" rel="index"><span itemprop="name">影像處理 Image processing</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/02/06/%E9%87%9D%E5%AD%94%E7%9B%B8%E6%A9%9F%E6%A8%A1%E5%9E%8B%20%20Pinhole%20Camera%20Model/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/06/針孔相機模型  Pinhole Camera Model/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="光學基本平面-cardinal-plane">光學基本平面 Cardinal Plane</h2>
+<p>在搞清楚 Pinhole Camera Model 以前，或許我們要先理解一些專有名詞 ： * 光學基本平面 (Cardinal Plane) * 基點（cardinal points） * 主平面（principle plane） * 主點（principle point） * 焦平面（focal plane） * 焦點（focal point）</p>
+<span id="more"></span>
+<p><img src="https://i.imgur.com/Hn4cVyP.png" /></p>
+<p>光線由物體發出，經過鏡頭成像，可區分空間為物空間 (object space) 及像空間 (image space)，物空間指的是光線在經過鏡頭前的空間，而像空間則是光線經過鏡頭過後的空間稱之。</p>
+<p>從物空間的角度來看，入射光與出射光之延伸會交會於一平面，我們稱之為第一主平面 (The First Principle Plane)，相反的，從像空間的角度來看，入射光與出射光之延伸也會教會於一平面，我們稱之為第二主平面。此兩平面與光軸的交會點則稱之為第一、二主點 (<span class="math inline">\(H_1,\ H_2\)</span> The Principle Point)</p>
+<p>在透鏡厚度極薄的情況下，兩個主平面會幾乎重合，而兩主點會重合於透鏡中心。</p>
+<h2 id="針孔相機模型-pinhole-camera-model">針孔相機模型 Pinhole Camera Model</h2>
+<p>在 Computer Vision 的領域中，Pinhole Camera Model 的用途時十分廣泛，不管是要做相機的校準或者是 3D 重建都會需要用到 Pinhole Camera Model 的基礎進行。</p>
+<p>所謂的 Pinhole Camera Model 描繪的其實就是一個理想的針孔相機 （ 針孔孔徑無限小 ）如何將 3D 世界中的物體投影到一個 2D 平面上，其數學表達式可以下列呈現 ：</p>
+<p><span class="math display">\[
+m=K\begin{bmatrix}R|T\end{bmatrix}M\\
+\Longrightarrow \begin{bmatrix}u\\v\\1\end{bmatrix}=\begin{bmatrix}f_x &amp; s &amp;c_x\\0 &amp; f_y &amp; c_y\\0&amp;0&amp;1 \end{bmatrix}\begin{bmatrix}r_{11}&amp;r_{12}&amp;r_{13}&amp;t_x\\r_{21}&amp;r_{22}&amp;r_{23}&amp;t_y\\r_{31}&amp;r_{32}&amp;r_{33}&amp;t_z\end{bmatrix}\begin{bmatrix}X_w\\Y_w\\Z_w\\1\end{bmatrix}
+\]</span></p>
+<p>其中</p>
+<p><span class="math inline">\((X_w,Y_w,Z_w):\)</span> 世界座標，即一絕對座標系 <span class="math inline">\((X_c,Y_c,Z_c):\)</span> 相機座標，以相機為中心的相對坐標系 <span class="math inline">\(s:\)</span> 投射平面若兩軸非垂直的調整參數 <span class="math inline">\((u,v):\)</span> 投射平面上的座標 ( 單位為像素 ) <span class="math inline">\((c_x,c_y):\)</span> 主點 Principle Point <span class="math inline">\(\begin{bmatrix}R|T\end{bmatrix}:\)</span> 將世界座標轉換為相機座標之轉換矩陣，其實就是一個旋轉平移的線性變換</p>
+<p><img width=500 src="https://i.imgur.com/RwYTful.png" ></p>
+<h3 id="數學推導-derivative-of-formula">數學推導 Derivative of Formula</h3>
+<p><strong>Step 1.</strong></p>
+<p>假設物體的世界座標為 <span class="math inline">\((X_w,Y_w,Z_w)\)</span>，那我們必須先做一個線性變換，轉換成以相機為主的相機座標。</p>
+<p><span class="math display">\[
+\begin{bmatrix}X_c\\Y_c\\Z_c\end{bmatrix}=R\begin{bmatrix}X_w\\Y_w\\Z_w\end{bmatrix}+T=\begin{bmatrix}r_{11}&amp;r_{12}&amp;r_{13}\\r_{21}&amp;r_{22}&amp;r_{23}\\r_{31}&amp;r_{32}&amp;r_{33}\end{bmatrix}\begin{bmatrix}X_w\\Y_w\\Z_w\end{bmatrix}+\begin{bmatrix}t_x\\t_y\\t_z\end{bmatrix}\\\Longrightarrow\begin{bmatrix}X_c\\Y_c\\Z_c\end{bmatrix}=\begin{bmatrix}r_{11}&amp;r_{12}&amp;r_{13}&amp;t_x\\r_{21}&amp;r_{22}&amp;r_{23}&amp;t_y\\r_{31}&amp;r_{32}&amp;r_{33}&amp;t_z\end{bmatrix}\begin{bmatrix}X_w\\Y_w\\Z_w\\1\end{bmatrix}
+\]</span></p>
+<p><strong>Step 2.</strong></p>
+<p>接下來我們要計算物件投影到平面的座標，根據三角關係，我們可以知道 ：</p>
+<p><span class="math display">\[
+u_c=\frac{f}{Z_c}\cdot X_c\\
+v_c=\frac{f}{Z_c}\cdot Y_c\\
+\]</span></p>
+<p>我們當然可以改寫成以下形式 ：</p>
+<p><span class="math display">\[
+\begin{bmatrix}u_c\\v_c\end{bmatrix}=\begin{bmatrix}{\frac{f}{Z_c}}&amp;0\\0&amp;{\frac{f}{Z_c}}\end{bmatrix}\begin{bmatrix}X_c\\Y_c\end{bmatrix}
+\]</span></p>
+<p>但在圖像的座標中，圓點往往不是中心點，而是圖像的左下角，因此，以圖像中心為原點的<span class="math inline">\((u_c,v_c)\)</span> 座標還需要做修正</p>
+<p><span class="math display">\[
+\begin{bmatrix}u\\v\end{bmatrix}=\begin{bmatrix}{\frac{f}{Z_c}}&amp;0\\0&amp;{\frac{f}{Z_c}}\end{bmatrix}\begin{bmatrix}X_c\\Y_c\end{bmatrix}+\begin{bmatrix}c_x\\c_y\end{bmatrix}
+\]</span></p>
+<p>接下來要做的是單位的轉換，目前 <span class="math inline">\((u,v)\)</span> 是以長度為單位 (cm, inch,...)，然而在圖像上通常是以像素 (pixel) 為計算單位，所以必須要再做一個單位上的轉換。</p>
+<p>每一個像素長寬比並非都是 <span class="math inline">\(1:1\)</span> 因此在長與寬上，每長度單位上的像素數量也可能會不同，因此我們引進 <span class="math inline">\(k\)</span>, <span class="math inline">\(l\)</span> 兩個參數進來，其單位為 ( <span class="math inline">\(\frac{pixel}{cm}\)</span> )，意義即為長與寬中每長度單位的像素數量。</p>
+<p>我們便可以修改上式：</p>
+<p><span class="math display">\[
+\begin{bmatrix}u\\v\end{bmatrix}=\begin{bmatrix}{\frac{f}{Z_c}\cdot k}&amp;0\\0&amp;{\frac{f}{Z_c}\cdot l}\end{bmatrix}\begin{bmatrix}X_c\\Y_c\end{bmatrix}+\begin{bmatrix}c_x\\c_y\end{bmatrix}\\
+\Longrightarrow \begin{bmatrix}u\\v\end{bmatrix}=\begin{bmatrix}{\frac{f_x}{Z_c}}&amp;0\\0&amp;{\frac{f_y}{Z_c}}\end{bmatrix}\begin{bmatrix}X_c\\Y_c\end{bmatrix}+\begin{bmatrix}c_x\\c_y\end{bmatrix}=\begin{bmatrix}{\frac{f_x}{Z_c}}X_c+c_x\\{\frac{f_y}{Z_c}}Y_c+c_y\end{bmatrix}\\
+\text{where }(f_x,f_y)\text{ are the focal lenths express in pixel units.}
+\]</span></p>
+<p><strong>Step 3.</strong></p>
+<p>然而，有沒有一種方式可以將這種非線性變換用類似線性變換的矩陣乘法來做更好的表述 ？在電腦視覺領域中，最常用的方式就是齊次座標系 (Homogeneous coordinate system) 的轉換 :</p>
+<p><span class="math display">\[
+Euclidean\ Coordinate\sim Homogeneous\ Coordinate\\
+(\frac{a}{d},\frac{b}{d},\frac{c}{d})\sim (a,b,c,d)
+\]</span></p>
+<p>所以我們可以齊次坐標系來重新表述 ：</p>
+<p><span class="math display">\[
+\begin{bmatrix}u\\v\\1\end{bmatrix}=\begin{bmatrix}f_x&amp;0&amp;c_x\\0&amp;f_y&amp;c_y\\0&amp;0&amp;1\end{bmatrix}\begin{bmatrix}X_c\\Y_c\\Z_c\end{bmatrix}\\
+\text{where }(u,v)=(\frac{f_x}{Z_c}X_c,\frac{f_y}{Z_c}Y_c)\sim (u,v,1)=(\frac{f_x}{Z_c}X_c,\frac{f_y}{Z_c}Y_c, 1)\sim (f_xX_c,f_yY_c,Z_c)\\
+\Longrightarrow \begin{bmatrix}u\\v\\1\end{bmatrix}=\begin{bmatrix}f_x&amp;0&amp;c_x\\0&amp;f_y&amp;c_y\\0&amp;0&amp;1\end{bmatrix}\begin{bmatrix}X_c\\Y_c\\Z_c\end{bmatrix}\\
+=\begin{bmatrix}f_x&amp;0&amp;c_x\\0&amp;f_y&amp;c_y\\0&amp;0&amp;1\end{bmatrix}\begin{bmatrix}r_{11}&amp;r_{12}&amp;r_{13}&amp;t_x\\r_{21}&amp;r_{22}&amp;r_{23}&amp;t_y\\r_{31}&amp;r_{32}&amp;r_{33}&amp;t_z\end{bmatrix}\begin{bmatrix}X_w\\Y_w\\Z_w\\1\end{bmatrix}
+\]</span></p>
+<p><strong>Step 4.</strong></p>
+<p>此外，以上都是假設當相機 CCD 兩軸為垂直時，投影的圖像不會有變形的狀況，某些特別的相機成像中，兩軸本身並不一定會是完全方正的，可能存在一些微小的變形，這個時候就需要 <span class="math inline">\(s\)</span> (skew parameter) 這個參數來做調整</p>
+<p><span class="math display">\[
+K=\begin{bmatrix}f_x&amp;s&amp;c_x\\0&amp;f_y&amp;c_y\\0&amp;0&amp;1\end{bmatrix}\\
+\text{where } s=f_y\tan\theta
+\]</span></p>
+<p>這個 <span class="math inline">\(K\)</span> 矩陣完全由相機本身的參數所構成，我們會稱這樣的矩陣為「內部參數矩陣」（ Intrinsic Parameter Matrix）。</p>
+<p>總結以上便可以推得</p>
+<p><span class="math display">\[
+m=K\begin{bmatrix}R|T\end{bmatrix}M
+\]</span></p>
+<h2 id="appendix">APPENDIX</h2>
+<h3 id="a.-齊次座標系統-homogeneous-coordinate-system">A. 齊次座標系統 Homogeneous Coordinate System</h3>
+<p><img src="https://i.imgur.com/KqZ4UQy.jpg" /></p>
+<p>鐵軌的兩側是平行的，在我們常用的笛卡爾座標系 ( Cartesian Coordinate System )中，平行的兩條線不會有交點，然而在上面的圖像中，鐵軌的兩側交會了。再舉一個例子，一個長方體的面紙盒，如果我們拿相機從某一個角度進行拍攝，你也會發現，整個面紙盒不再以矩形的方式呈現在照片中。</p>
+<p>在數學上，要處理這樣的問題，便要使用到「投影幾何」( Projactive Geometry )，來處理相關的問題。</p>
+<p>在投影幾何中，相對應要處理的變換 (transformation) 遠比一般歐氏幾何來得多樣且廣泛，不只有旋轉平移跟縮放，而數學家要處理這樣的變換，使用到的方法便是齊次座標系 ( Homogeneous Coordinate System ) 的轉換。</p>
+<p>轉換方式很簡單</p>
+<p><span class="math display">\[
+\text{Catesain Coordinate System :}(x,y)\longrightarrow \text{Homogeneous Coordinate System :}(x,y,1)\\
+\text{Homogeneous Coordinate System :}(u,v,w)\longrightarrow \text{Catesain Coordinate System :}(\frac{u}{w},\frac{v}{w})
+\]</span></p>
+<p>在這樣的轉換之下，我們便可以說，兩條平行線交會於某一點 <span class="math inline">\((x,y,0)\)</span></p>
+<p>此外，從上面的轉換來看，我們可以發現，一個 Catesain Coordinate 可以用無限個 Homogeneous Coodinate 來表示 ：</p>
+<p><span class="math display">\[
+(1,2)\sim (1,2,1)\sim (2,4,2)\sim(w\cdot1,w\cdot 2,w)\\
+\text{where }w\neq 0
+\]</span></p>
+<p><img width=500 src="https://i.imgur.com/LCvcD1Z.png" ></p>
+<h3 id="b.-偏斜係數-skew-parameter">B. 偏斜係數 Skew Parameter</h3>
+<p><img src="https://i.imgur.com/muXKisw.png" /></p>
+<p>在現今的相機硬體技術上，幾乎已經克服了這樣的問題，從一些書籍或是文獻上其實都已經可以將其忽略不看，從 OpenCV 的<a target="_blank" rel="noopener" href="https://docs.opencv.org/4.0.1/d9/d0c/group__calib3d.html#ga3207604e4b1a1758aa66acb6ed5aa65d">文件</a>中也可以發現他們已經將其省略，但我們這邊還是稍微討論一下。</p>
+<p>首先，不管是哪一種變換，我們可以知道 <span class="math inline">\(x\)</span> 的單位長度不變，僅平移。而兩者差異在於 <span class="math inline">\(y\)</span> 軸單位長度是否會發生變化。( Case1： <span class="math inline">\(y\)</span> 軸單位長會變長 )</p>
+<p>一般來說在討論 "skew" 這樣的轉換，我們會比較偏向於 Case(2) 的情況，但在現實情況中兩者均可能會發生。</p>
+<p><strong>Case(1)</strong></p>
+<p>如果是這樣的狀況，稱作 "Shear Transformation"，其高度不變，但取而代之的是 Y 軸變長（斜邊較長），因此在座標的轉換上就僅需考量 X 軸方向的偏移即可。</p>
+<p><img width=500 src="https://i.imgur.com/XzsNHeT.png" ></p>
+<p>原本 <span class="math inline">\(P\)</span> 點應該是 <span class="math inline">\((\hat{x},\hat{y})\)</span>，經過變換後應該變成 <span class="math inline">\((\hat{x}-\hat{y}\cot\theta,\displaystyle{\frac{\hat{y}}{\sin\theta}})\)</span>，所以 ：</p>
+<p><span class="math display">\[
+K=\begin{bmatrix}f_x&amp;-f_x\cot\theta&amp;c_x\\0&amp;f_y&amp;c_y\\0&amp;0&amp;1\end{bmatrix}
+\]</span></p>
+<p>要注意的地方是，<span class="math inline">\(f_y\)</span> 其實也會跟著調整，但調整過後再轉換便會抵銷掉，我們寫清楚的話應該是 ：</p>
+<p><span class="math display">\[
+f_y^{shear}=f_y^{original}\cdot \sin\theta\\
+\]</span> 調整完再經過變換後 <span class="math display">\[
+f_y^{shear}\cdot\frac{1}{\sin\theta}=f_y^{original}
+\]</span></p>
+<p><strong>Case(2)</strong></p>
+<p><span class="math inline">\(P\)</span> 點經過變換後一樣變成 <span class="math inline">\((\hat{x}-\hat{y}\cot\theta,\displaystyle{\frac{\hat{y}}{\sin\theta}})\)</span>，但差別在於 <span class="math inline">\(f_y\)</span> 不需要再做調整，所以 ：</p>
+<p><span class="math display">\[
+K=\begin{bmatrix}f_x&amp;-f_x\cot\theta&amp;c_x\\0&amp;\displaystyle{\frac{f_y}{\sin\theta}}&amp;c_y\\0&amp;0&amp;1\end{bmatrix}
+\]</span></p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://prateekvjoshi.com/2014/06/13/the-concept-of-homogeneous-coordinates/">The Concept Of Homogeneous Coordinates</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.songho.ca/math/homogeneous/homogeneous.html">Homogeneous Coordinates</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.immenselyhappy.com/post/camera-axis-skew/#pixel-coordinates-with-the-shear-transform">Camera intrinsics: Axis skew</a></li>
+</ol>
+<h2 id="系列文章">系列文章</h2>
+<ul>
+<li><a href="https://allen108108.github.io/blog/2020/02/06/%E9%87%9D%E5%AD%94%E7%9B%B8%E6%A9%9F%E6%A8%A1%E5%9E%8B%20%20Pinhole%20Camera%20Model/">針孔相機模型 Pinhole Camera Model</a></li>
+<li><a href="https://allen108108.github.io/blog/2020/02/15/%E5%BD%B1%E5%83%8F%E7%95%B8%E8%AE%8A%20Image%20Distortion/">影像畸變 Image Distortion</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/02/06/%E9%87%9D%E5%AD%94%E7%9B%B8%E6%A9%9F%E6%A8%A1%E5%9E%8B%20%20Pinhole%20Camera%20Model/" title="針孔相機模型  Pinhole Camera Model">https://allen108108.github.io/blog/2020/02/06/針孔相機模型  Pinhole Camera Model/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/02/05/%5B%E8%AB%96%E6%96%87%5D%20YOLO9000%20_%20Better,%20Faster,%20Stronger/" rel="prev" title="[論文] YOLO9000 : Better, Faster, Stronger">
+                  <i class="fa fa-chevron-left"></i> [論文] YOLO9000 : Better, Faster, Stronger
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/02/15/%E5%BD%B1%E5%83%8F%E7%95%B8%E8%AE%8A%20Image%20Distortion/" rel="next" title="影像畸變 Image Distortion">
+                  影像畸變 Image Distortion <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

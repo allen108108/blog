@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="以 Wordpress 作為部落格的主要平台也已經大半年了，文章也已經到了 70+ 的數量，但 Wordpress 商業化的實在太嚴重，許多為人稱羨的外掛都必須要升級為商務版才能夠使用，每個月要六、七百元的花費實在是太誇張，畢竟不是每一個人都是專業收費寫手。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Github page 製作個人網站 -- 以 Hexo &#x2F; Next 製作部落格">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/07/%E4%BD%BF%E7%94%A8%20Github%20page%20%E8%A3%BD%E4%BD%9C%E5%80%8B%E4%BA%BA%E7%B6%B2%E7%AB%99%20%E2%80%93%20%E4%BB%A5%20Hexo%20_%20Next%20%E8%A3%BD%E4%BD%9C%E9%83%A8%E8%90%BD%E6%A0%BC/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="以 Wordpress 作為部落格的主要平台也已經大半年了，文章也已經到了 70+ 的數量，但 Wordpress 商業化的實在太嚴重，許多為人稱羨的外掛都必須要升級為商務版才能夠使用，每個月要六、七百元的花費實在是太誇張，畢竟不是每一個人都是專業收費寫手。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/70P8ltx.png">
+<meta property="og:image" content="https://i.imgur.com/S1n6Red.png">
+<meta property="og:image" content="https://i.imgur.com/CqCLW3R.png">
+<meta property="og:image" content="https://i.imgur.com/lQ97x53.jpg">
+<meta property="og:image" content="https://i.imgur.com/fP8QRop.png">
+<meta property="article:published_time" content="2019-10-06T19:27:11.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:10:53.386Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/70P8ltx.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/07/%E4%BD%BF%E7%94%A8%20Github%20page%20%E8%A3%BD%E4%BD%9C%E5%80%8B%E4%BA%BA%E7%B6%B2%E7%AB%99%20%E2%80%93%20%E4%BB%A5%20Hexo%20_%20Next%20%E8%A3%BD%E4%BD%9C%E9%83%A8%E8%90%BD%E6%A0%BC/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/07/%E4%BD%BF%E7%94%A8%20Github%20page%20%E8%A3%BD%E4%BD%9C%E5%80%8B%E4%BA%BA%E7%B6%B2%E7%AB%99%20%E2%80%93%20%E4%BB%A5%20Hexo%20_%20Next%20%E8%A3%BD%E4%BD%9C%E9%83%A8%E8%90%BD%E6%A0%BC/","path":"2019/10/07/使用 Github page 製作個人網站 – 以 Hexo _ Next 製作部落格/","title":"使用 Github page 製作個人網站 -- 以 Hexo / Next 製作部落格"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>使用 Github page 製作個人網站 -- 以 Hexo / Next 製作部落格 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E8%90%BD%E6%A0%BC%E9%9C%80%E6%B1%82"><span class="nav-number">1.</span> <span class="nav-text">部落格需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#github-repo-%E8%A8%AD%E5%AE%9A-hexo-%E6%90%AD%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text">Github repo 設定 &amp; Hexo 搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#step-1-%E6%96%B0%E5%A2%9E%E4%B8%80%E5%80%8B-github-repository"><span class="nav-number">2.1.</span> <span class="nav-text">STEP 1 : 新增一個 github repository</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-2-%E5%AE%89%E8%A3%9D-node.js-%E5%A5%97%E4%BB%B6%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7"><span class="nav-number">2.2.</span> <span class="nav-text">STEP 2 : 安裝 Node.js 套件管理工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-3-%E5%AE%89%E8%A3%9D-hexo"><span class="nav-number">2.3.</span> <span class="nav-text">STEP 3 : 安裝 Hexo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-4-%E5%AE%89%E8%A3%9D-theme-next"><span class="nav-number">2.4.</span> <span class="nav-text">STEP 4 : 安裝 Theme ( Next )</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%A8%AD%E5%AE%9A"><span class="nav-number">3.</span> <span class="nav-text">基本設定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#config.yml"><span class="nav-number">3.1.</span> <span class="nav-text">\_config.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#themesnext_config.yml"><span class="nav-number">3.2.</span> <span class="nav-text">\themes\next\_config.yml</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AA%9E%E8%A8%80%E8%A8%AD%E5%AE%9A"><span class="nav-number">4.</span> <span class="nav-text">語言設定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#latex-renderer"><span class="nav-number">5.</span> <span class="nav-text">\(\LaTeX\) renderer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%89%B2%E5%BD%A9%E9%85%8D%E7%BD%AE-%E8%83%8C%E6%99%AF%E8%89%B2%E6%96%87%E7%AB%A0%E6%96%B9%E5%A1%8A%E9%A1%8F%E8%89%B2%E5%81%B4%E9%82%8A%E6%AC%84%E9%A1%8F%E8%89%B2%E6%96%87%E5%AD%97%E9%A1%8F%E8%89%B2%E6%A8%99%E9%A1%8C%E6%AC%84%E9%A1%8F%E8%89%B2"><span class="nav-number">6.</span> <span class="nav-text">色彩配置 ( 背景色、文章方塊顏色、側邊欄顏色、文字顏色、標題欄顏色 )</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E9%AB%94%E5%A4%A7%E5%B0%8F"><span class="nav-number">7.</span> <span class="nav-text">字體大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%88%E9%9D%A2%E6%AF%94%E4%BE%8B"><span class="nav-number">8.</span> <span class="nav-text">版面比例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8B%95%E6%85%8B%E8%83%8C%E6%99%AF"><span class="nav-number">9.</span> <span class="nav-text">動態背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AA%BF%E6%95%B4%E5%8F%8A%E9%83%A8%E5%B1%AC"><span class="nav-number">10.</span> <span class="nav-text">調整及部屬</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E7%99%BC%E5%B8%83"><span class="nav-number">11.</span> <span class="nav-text">文章發布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#markdown-%E7%B7%A8%E8%BC%AF%E5%99%A8"><span class="nav-number">11.1.</span> <span class="nav-text">Markdown 編輯器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#front-matter"><span class="nav-number">11.2.</span> <span class="nav-text">Front-matter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E7%99%BC%E5%B8%83%E6%99%82%E9%96%93"><span class="nav-number">11.3.</span> <span class="nav-text">文章發布時間</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E5%88%86%E9%A1%9E"><span class="nav-number">11.4.</span> <span class="nav-text">文章分類</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A6%96%E9%A0%81%E6%91%98%E8%A6%81%E5%8F%8A%E5%9C%96%E7%89%87%E8%A8%AD%E7%BD%AE"><span class="nav-number">11.5.</span> <span class="nav-text">首頁摘要及圖片設置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">12.</span> <span class="nav-text">後記</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/07/%E4%BD%BF%E7%94%A8%20Github%20page%20%E8%A3%BD%E4%BD%9C%E5%80%8B%E4%BA%BA%E7%B6%B2%E7%AB%99%20%E2%80%93%20%E4%BB%A5%20Hexo%20_%20Next%20%E8%A3%BD%E4%BD%9C%E9%83%A8%E8%90%BD%E6%A0%BC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 Github page 製作個人網站 -- 以 Hexo / Next 製作部落格
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-07 03:27:11" itemprop="dateCreated datePublished" datetime="2019-10-07T03:27:11+08:00">2019-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-09-06 10:10:53" itemprop="dateModified" datetime="2020-09-06T10:10:53+08:00">2020-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%89%8D%E7%AB%AF%E9%96%8B%E7%99%BC-Frontend-Development/" itemprop="url" rel="index"><span itemprop="name">前端開發 Frontend Development</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/07/%E4%BD%BF%E7%94%A8%20Github%20page%20%E8%A3%BD%E4%BD%9C%E5%80%8B%E4%BA%BA%E7%B6%B2%E7%AB%99%20%E2%80%93%20%E4%BB%A5%20Hexo%20_%20Next%20%E8%A3%BD%E4%BD%9C%E9%83%A8%E8%90%BD%E6%A0%BC/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/07/使用 Github page 製作個人網站 – 以 Hexo _ Next 製作部落格/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>以 Wordpress 作為部落格的主要平台也已經大半年了，文章也已經到了 70+ 的數量，但 Wordpress 商業化的實在太嚴重，許多為人稱羨的外掛都必須要升級為商務版才能夠使用，每個月要六、七百元的花費實在是太誇張，畢竟不是每一個人都是專業收費寫手。 <span id="more"></span> 沒有了外掛的 Wordpress 就完全不是 Wordpress 了。</p>
+<p>最近剛好碰到身邊有人在做 github page，就來了解看看這樣的方式是否能達到自己想要呈現的方式。事實上在寫這篇文章的時候，我已經做完一個 Blog 了，但在過程中實在碰到太多的坑，每一次都讓人想直接放棄...，那乾脆來寫一篇文統整一下整個建構的過程吧。</p>
+<h2 id="部落格需求">部落格需求</h2>
+<p>要建構一個自己期待的部落格，首先必須要釐清自己對於部落格 ( 網站 ) 的要求，而我的要求大概是如此 :</p>
+<ol type="1">
+<li>排版不要太過鬆散。很多人使用的 Medium 對我來說就是比較鬆散的排版方式，我自己看起來的確是不太習慣。</li>
+<li>可以直接使用 Markdown 編輯。我還是都會先用 HackMD 作為編輯平台，再發布到部落格上，因此最好是可以直接沿用其格式，不用進行太多改動。</li>
+<li>支援 <span class="math inline">\(\LaTeX\)</span>。對我來說，這是最最重要的一點，我的筆記內涵蓋太多數學式，若無法支援 <span class="math inline">\(\LaTeX\)</span>，改用圖片方式呈現會讓整個頁面變得很亂，且無法行內插入數學式也會導致整個文章的流暢性會銳減。</li>
+</ol>
+<p>從幾個使用 Github page 的部落格來看，是蠻有可能達到我期望的效果，那我們就開始來進行吧 !</p>
+<h2 id="github-repo-設定-hexo-搭建">Github repo 設定 &amp; Hexo 搭建</h2>
+<p>設置 Github page 專案一般有兩個方式 : 1. 以 <code>&lt;user_name&gt;.github.io</code> 為專案名稱，利用 master branch 建構，這樣生成的網址將會是 <code>https://&lt;user_name&gt;.github.io</code> 2. 以自訂專案名稱 <code>&lt;repo_name&gt;</code> 利用 gh-pages banch 建構，，這樣生成的網址將會是 <code>https://&lt;user_name&gt;.github.io/&lt;repo_name&gt;</code></p>
+<p>我自己想要做的是一個比較完整個個人網站，因此想保留 <code>https://&lt;user_name&gt;.github.io</code> 作為首頁網址，在這邊我就使用第二種方式來做部落格部分的建構。</p>
+<h3 id="step-1-新增一個-github-repository">STEP 1 : 新增一個 github repository</h3>
+<p>在個人的 github 頁面上新增一個 repository (此處我就使用 blog 作為專案名稱)，不需建立 README.md</p>
+<p><img src="https://i.imgur.com/70P8ltx.png" /></p>
+<h3 id="step-2-安裝-node.js-套件管理工具">STEP 2 : 安裝 Node.js 套件管理工具</h3>
+<p>還有很多重要的事情要解說，請原諒我，接下來的部分我就簡單介紹一下， 中間可能會有一些坑，上網找一下應該都會有很多解決方式。 (EX: git 過程中 Permission denied (publickey) problem...)</p>
+<p>Hexo 是一個用 Node.js 所寫成的部落格框架，因此在安裝前必須先確定我們是否有 Node.js 套件管理工具 npm ( 本文使用 ) 或 yarn。</p>
+<p>我們可以從 <a target="_blank" rel="noopener" href="https://nodejs.org/en/?source=post_page-----317beefdf182----------------------">Node.js 官網</a> 下載安裝，安裝完後至終端機輸入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm -v</span><br></pre></td></tr></table></figure>
+<p>輸出版本後便表示安裝已完成</p>
+<h3 id="step-3-安裝-hexo">STEP 3 : 安裝 Hexo</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br><span class="line"># 安裝 hexo</span><br><span class="line"></span><br><span class="line">$ hexo init &lt;repo_name&gt;</span><br><span class="line"># 初始化安裝 hexo 的資料夾</span><br><span class="line"></span><br><span class="line">$ git clone https://github.com/&lt;user_name&gt;/&lt;repo_name&gt;.git</span><br><span class="line"># 將安裝 hexo 資料夾內的檔案全部複製到這裡</span><br></pre></td></tr></table></figure>
+<p>這樣我們就可以從這邊修改部落格內容，並且推上 github 專案中。</p>
+<p>這裡有幾個常用指令要記住，之後再進行˙部落格修改的時候會很常使用到 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line"># 清除舊 publish設定</span><br><span class="line"></span><br><span class="line">$ hexo g</span><br><span class="line"># 建立新 publish</span><br><span class="line"></span><br><span class="line">$ hexo deploy</span><br><span class="line"># deploy 到伺服器</span><br><span class="line"></span><br><span class="line">$ hexo server</span><br><span class="line"># 在本地瀏覽網站內容 (預設 http://localhost:4000)</span><br></pre></td></tr></table></figure>
+<h3 id="step-4-安裝-theme-next">STEP 4 : 安裝 Theme ( Next )</h3>
+<p>Next 大概是目前 Hexo 主題中最受歡迎的一個，事實上仍有許多不同的主題深受各取向部落客喜歡，大家可以先看過一輪之後再做決定，不然改到後來實在真的會懶得重來一次。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cd &lt;repo_name&gt;</span><br><span class="line"># 切換到要部屬至 github 的資料夾路徑</span><br><span class="line"></span><br><span class="line">$ git clone https://github.com/iissnan/hexo-theme-next themes/next</span><br><span class="line"># clone Next 主題專案到站點裡的themes資料夾中</span><br></pre></td></tr></table></figure>
+<p>這樣並不算完成，接下來要到設定檔中將主題改為 next ( 預設是 landscape )</p>
+<h2 id="基本設定">基本設定</h2>
+<p>我們先做一些網站的基本設定，主要的設定檔有兩個</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">\_config.yml</span><br><span class="line">\themes\next\_config.yml</span><br></pre></td></tr></table></figure>
+<h3 id="config.yml"><code>\_config.yml</code></h3>
+<p>網站的基本資訊設置，比較要注意的地方是 <code>language</code> 的部分，之後要配合 Next 的語言統一做設定。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Site</span><br><span class="line">title: #網站/部落格名稱</span><br><span class="line">subtitle: #網站/部落格副標題</span><br><span class="line">description: #網站/部落格基本描述 </span><br><span class="line">keywords:</span><br><span class="line">author: #作者</span><br><span class="line">language: #語言 zh-TW</span><br><span class="line">timezone: #時區 Asia/Taipei</span><br></pre></td></tr></table></figure></p>
+<p>設定文章網址型態，這裡主要是讓某些地方會需要顯示文章網址 (例如版權宣告區塊)的部分可以正確顯示。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># URL</span><br><span class="line">## If your site is put in a subdirectory, set url as &#x27;http://yoursite.com/child&#x27; and root as &#x27;/child/&#x27;</span><br><span class="line">url: https://&lt;user_name&gt;.github.io/&lt;repo_name&gt;</span><br><span class="line">root: /&lt;repo_name&gt;/</span><br><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">permalink_defaults:</span><br></pre></td></tr></table></figure></p>
+<p>將主題改為 next</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: next</span><br></pre></td></tr></table></figure>
+<p>最後這裡最重要，之後我們要利用 hexo 指令進行部屬，就會調用這部份來進行部屬，如果這部分沒有正確便無法部屬上去。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/&lt;user_name&gt;/&lt;repo_name&gt;.git</span><br><span class="line">  branch: gh-pages</span><br></pre></td></tr></table></figure>
+<p>如果我們並不是利用 gh-pages 來進行網站設置，那麼 branch 的部分就要改成 master。</p>
+<h3 id="themesnext_config.yml"><code>\themes\next\_config.yml</code></h3>
+<p>版權頁設定，這裡可以設定文末 (或 sidebar) 版權宣告的型態，這裡我選用的是 <code>by-nc-sa</code> ( 姓名標示-非商業性-相同方式分享 )。</p>
+<p><img src="https://i.imgur.com/S1n6Red.png" /></p>
+<p><code>language</code> 部分則是設定 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW">cc 版權說明網頁</a>的語言內容，剛好台灣有人處理這部分，所以有繁體中文可以使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Creative Commons 4.0 International License.</span><br><span class="line"># See: https://creativecommons.org/share-your-work/licensing-types-examples</span><br><span class="line"># Available values of license: by | by-nc | by-nc-nd | by-nc-sa | by-nd | by-sa | zero</span><br><span class="line"># You can set a language value if you prefer a translated version of CC license, e.g. deed.zh</span><br><span class="line"># CC licenses are available in 39 languages, you can find the specific and correct abbreviation you need on https://creativecommons.org</span><br><span class="line">creative_commons:</span><br><span class="line">  license: by-nc-sa</span><br><span class="line">  sidebar: false</span><br><span class="line">  post: true</span><br><span class="line">  language: deed.zh_TW</span><br></pre></td></tr></table></figure>
+<p>Next 一共有四種版型可以選擇，大家可以自行選擇版型，將不要用的版型用 <code>#</code> 註釋掉即可。( 我自己使用的是 Gemini 版型 ) <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Schemes</span><br><span class="line">#scheme: Muse</span><br><span class="line">#scheme: Mist</span><br><span class="line">#scheme: Pisces</span><br><span class="line">scheme: Gemini</span><br></pre></td></tr></table></figure></p>
+<p>側邊 menu 區塊設定，我自己文章不會使用標籤tag，所以只留分類categories部分。之後如果要使用 SEO 優化，還會開啟 sitemap 的部分。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menu:</span><br><span class="line">  home: / || home</span><br><span class="line">  #about: /about/ || user</span><br><span class="line">  #tags: /tags/ || tags</span><br><span class="line">  categories: /categories/ || th</span><br><span class="line">  archives: /archives/ || archive</span><br><span class="line">  #schedule: /schedule/ || calendar</span><br><span class="line">  #sitemap: /sitemap.xml || sitemap</span><br><span class="line">  #commonweal: /404/ || heartbeat</span><br></pre></td></tr></table></figure>
+<p>大頭照設定，url 部分可以給圖片網址，也可以給資料路徑。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">avatar:</span><br><span class="line">  # In theme directory (source/images): /images/avatar.gif</span><br><span class="line">  # In site directory (source/uploads): /uploads/avatar.gif</span><br><span class="line">  # You can also use other linking images.</span><br><span class="line">  url: /images/圖片.jpg</span><br><span class="line">  # If true, the avatar would be dispalyed in circle.</span><br><span class="line">  rounded: true</span><br><span class="line">  # If true, the avatar would be rotated with the cursor.</span><br><span class="line">  rotated: false</span><br></pre></td></tr></table></figure></p>
+<p>sidebar 部分可以顯示我們自己想提供給讀者的社交平台連結，底下這段便是要進行設定。 第一行是我自己加進去的，因為我需要從部落格連回去個人主頁的部分，就利用這裡來進行連結設定。</p>
+<p><code>||</code> 後面後面是進行圖示的設定，可以從 <a target="_blank" rel="noopener" href="https://fontawesome.com/icons?d=gallery">Font Awesome</a> 進行選擇，從網站上將圖示名稱加進去即可。</p>
+<p><img src="https://i.imgur.com/CqCLW3R.png" /></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">social:</span><br><span class="line">  #Github page: https://username.github.io/ || github-alt  </span><br><span class="line">  #GitHub: https://github.com/username || github</span><br><span class="line">  #E-Mail: mailto:username@mail.com || envelope</span><br><span class="line">  #Google: https://plus.google.com/yourname || google</span><br><span class="line">  #Twitter: https://twitter.com/yourname || twitter</span><br><span class="line">  #FB Page: https://www.facebook.com/username|| facebook</span><br><span class="line">  #Wordpress: https://mathpy655905385.wordpress.com/ || wordpress</span><br><span class="line">  #VK Group: https://vk.com/yourname || vk</span><br><span class="line">  #StackOverflow: https://stackoverflow.com/yourname || stack-overflow</span><br><span class="line">  #YouTube: https://youtube.com/yourname || youtube</span><br><span class="line">  #Instagram: https://instagram.com/yourname || instagram</span><br><span class="line">  #Skype: skype:yourname?call|chat || skype</span><br></pre></td></tr></table></figure>
+<p>開啟瀏覽人次設定。<code>busuanzi_count</code> 在比較新版的 Next 主題內都已經包含在其中了，不需另外安裝或是從 css 部分調整原始碼，我們只要在 <code>enable</code> 的設定上改為 true 即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">busuanzi_count:</span><br><span class="line">  enable: true</span><br><span class="line">  total_visitors: true</span><br><span class="line">  total_visitors_icon: user</span><br><span class="line">  total_views: true</span><br><span class="line">  total_views_icon: eye</span><br><span class="line">  post_views: true</span><br><span class="line">  post_views_icon: eye</span><br></pre></td></tr></table></figure>
+<p>其實裡面還有幾個可以調整的地方，但由於跟接下來我們要解說的部分有關，就留待各部分分開解釋。</p>
+<h2 id="語言設定">語言設定</h2>
+<p>在 Hexo 的語言設定中，幾乎都是用參照的方式來去對整個網站中的欄位做語言上的轉換。</p>
+<p>在站點的設定檔 (_config.yml) 中語言部份設定為 zh-TW，那麼我們就必須要有一個 zh-TW.yml 檔，裡面就是針對每一個欄位名稱給予其繁體中文翻譯。</p>
+<p>這樣的檔案位在主題 next 中的 language 資料夾中 ( )，如果裡面沒有 zh-TW.yml 檔案，那我們就必須自己寫一個檔案放在裡面。</p>
+<p>檔案內容如下 : <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title:</span><br><span class="line">  archive: 歸檔</span><br><span class="line">  category: 分類</span><br><span class="line">  tag: 標籤</span><br><span class="line">  schedule: 時間表</span><br><span class="line">menu:</span><br><span class="line">  home: 首頁</span><br><span class="line">  archives: 歸檔</span><br><span class="line">  categories: 分類</span><br><span class="line">  tags: 標籤</span><br><span class="line">  about: 關於</span><br><span class="line">  search: 搜尋</span><br><span class="line">  schedule: 時間表</span><br><span class="line">  sitemap: 網站地圖</span><br><span class="line">  commonweal: 公益 404</span><br><span class="line">sidebar:</span><br><span class="line">  overview: 本站概要</span><br><span class="line">  toc: 文章目錄</span><br><span class="line">post:</span><br><span class="line">  posted: 發表於</span><br><span class="line">  edited: 更新於</span><br><span class="line">  created: 創建時間</span><br><span class="line">  modified: 修改時間</span><br><span class="line">  edit: 編輯</span><br><span class="line">  in: 分類於</span><br><span class="line">  more: 更多</span><br><span class="line">  read_more: 閱讀全文</span><br><span class="line">  untitled: 未命名</span><br><span class="line">  sticky: 置頂</span><br><span class="line">  views: 閱讀次數</span><br><span class="line">  related_posts: 相關文章</span><br><span class="line">  copy_button: 複製</span><br><span class="line">  copy_success: 複製成功</span><br><span class="line">  copy_failure: 複製失敗</span><br><span class="line">  copyright:</span><br><span class="line">    author: 作者</span><br><span class="line">    link: 文章連結</span><br><span class="line">    license_title: 版權聲明</span><br><span class="line">    license_content: &quot;本網誌所有文章除特別聲明外，均採用 %s 許可協議。轉載請註明出處！&quot;</span><br><span class="line">page:</span><br><span class="line">  totally: 共有</span><br><span class="line">  tags: 標籤</span><br><span class="line">footer:</span><br><span class="line">  powered: &quot;由 %s 強力驅動&quot;</span><br><span class="line">  theme: 主題</span><br><span class="line">  total_views: 總瀏覽次數</span><br><span class="line">  total_visitors: 訪客總數</span><br><span class="line">counter:</span><br><span class="line">  tag_cloud:</span><br><span class="line">    zero: 沒有標籤</span><br><span class="line">    one: 目前共有 1 個標籤</span><br><span class="line">    other: &quot;目前共有 %d 個標籤&quot;</span><br><span class="line">  categories:</span><br><span class="line">    zero: 沒有分類</span><br><span class="line">    one: 目前共有 1 個分類</span><br><span class="line">    other: &quot;目前共有 %d 個分類&quot;</span><br><span class="line">  archive_posts:</span><br><span class="line">    zero: 沒有文章。</span><br><span class="line">    one: 目前共有 1 篇文章。</span><br><span class="line">    other: &quot;目前共有 %d 篇文章。&quot;</span><br><span class="line">state:</span><br><span class="line">  posts: 文章</span><br><span class="line">  pages: 頁面</span><br><span class="line">  tags: 標籤</span><br><span class="line">  categories: 分類</span><br><span class="line">search:</span><br><span class="line">  placeholder: 搜尋...</span><br><span class="line">cheers:</span><br><span class="line">  um: 嗯..</span><br><span class="line">  ok: 還行</span><br><span class="line">  nice: 好</span><br><span class="line">  good: 很好</span><br><span class="line">  great: 非常好</span><br><span class="line">  excellent: 太棒了</span><br><span class="line">keep_on: 繼續努力。</span><br><span class="line">symbol:</span><br><span class="line">  comma: &quot;，&quot;</span><br><span class="line">  period: &quot;。&quot;</span><br><span class="line">  colon: &quot;：&quot;</span><br><span class="line">reward:</span><br><span class="line">  donate: 捐贈</span><br><span class="line">  wechatpay: 微信支付</span><br><span class="line">  alipay: 支付寶</span><br><span class="line">  bitcoin: 比特幣</span><br><span class="line">accessibility:</span><br><span class="line">  nav_toggle: 切換導航欄</span><br><span class="line">  prev_page: 上一頁</span><br><span class="line">  next_page: 下一頁</span><br><span class="line">symbols_count_time:</span><br><span class="line">  count: 文章字數</span><br><span class="line">  count_total: 總字數</span><br><span class="line">  time: 所需閱讀時間</span><br><span class="line">  time_total: 所需總閱讀時間</span><br><span class="line">  time_minutes: 分鐘</span><br></pre></td></tr></table></figure></p>
+<p>這樣的方式應該可以用在各種主題上面，如果今天我們有看到一個主題想要使用，但卻沒有繁體中文，應該可以使用這樣的方式來做更改。( 但我不確定這樣會不會有侵權疑慮XD )</p>
+<h2 id="latex-renderer"><span class="math inline">\(\LaTeX\)</span> renderer</h2>
+<p>在 hexo 中，預設的 markdown renderer 是 <code>hexo-renderer-marked</code>，但這樣的 renderer 並無法使用 <span class="math inline">\(\LaTeX\)</span> 語法，因此要將 renderer 替換成 <code>hexo-renderer-kramed</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm uninstall hexo-renderer-marked --save</span><br><span class="line">$ npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure>
+<p>但即使 renderer 更換以後仍然有一些地方會在行內插入 <span class="math inline">\(\LaTeX\)</span> 時造成衝突，我們要對這部分進行程式碼更改 ( <code>\node_modules\kramed\lib\rules\inline.js</code> )</p>
+<p>找到下面兩列，進行相對應的更改 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//escape: /^\\([\\`*&#123;&#125;\[\]()#$+\-.!_&gt;])/,</span><br><span class="line">escape: /^\\([`*\[\]()#$+\-.!_&gt;])/,</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//em: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,</span><br><span class="line">em: /^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,</span><br></pre></td></tr></table></figure>
+<p>正常狀況下，這樣就能開始使用 <span class="math inline">\(\LaTeX\)</span> 了，但是當我實際上在使用時，還是會遇到報錯的狀況 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Template render error: (unknown path) [Line 37, Column 81]</span><br><span class="line">  expected variable end</span><br></pre></td></tr></table></figure>
+<p>由於我們使用 <span class="math inline">\(\LaTeX\)</span> 時，會有很多的符號可能會相連著使用，這導致會與 hexo 裡面的一些模板引擎 ( nunjucks ) 相衝突，所以我們要做相應的更改 ( <code>\node_modules\nunjucks\src\lexer.js</code> ) :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var VARIABLE_START = &#x27;&#123;$&#x27;;</span><br><span class="line">var VARIABLE_END = &#x27;$&#125;&#x27;;</span><br></pre></td></tr></table></figure>
+<p>如此修改過後，截至目前為止使用就沒有太大的問題了。</p>
+<h2 id="色彩配置-背景色文章方塊顏色側邊欄顏色文字顏色標題欄顏色">色彩配置 ( 背景色、文章方塊顏色、側邊欄顏色、文字顏色、標題欄顏色 )</h2>
+<p>這幾個部分的顏色必須相互做搭配，不然整體的配色會變得非常奇怪，所以這邊我一起來解釋。</p>
+<p>首先背景顏色是整個部落格映入眼簾最大範圍的部分，也可以想成是整個部落格主題的基底，因此要選擇白色底還是深色底都會牽動接下來其他顏色的配置。</p>
+<p>這個部分的更動要在 <code>\themes\next\source\css\_variables\&lt;你選擇的版型&gt;.styl</code> 中更動，我選擇以深藍色 ( #1d1d30 ) 為底</p>
+<p>這裡的部分要使用 Hex Code 還是 RGB Code 都可以。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// Settings for some of the most global styles.</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">$body-bg-color           = #1d1d30;</span><br></pre></td></tr></table></figure>
+<p>接下來我針對文章方塊、側邊欄 ( 包含 menu 跟 sidebar ) 做統一設定，不然顏色通通不一樣會太花，風格容易跑掉。</p>
+<p>統一都設定成 <code>rgba(0, 153, 153, 0.1)</code> ，這裡的 0.1 指的是透明度。</p>
+<p><code>\themes\next\source\css\_schemes\Gemini\index.styl</code> 中設定文章方塊顏色 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// Post &amp; Comments blocks.</span><br><span class="line">.post-block &#123;</span><br><span class="line">  background: rgba(0, 153, 153, 0.1);</span><br><span class="line">  border-radius: $border-radius-inner;</span><br><span class="line">  box-shadow: $box-shadow-inner;</span><br><span class="line">  padding: $content-desktop-padding;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> <code>\themes\next\source\css\_schemes\Pisces\_layout.styl</code> 設定 menu 區塊顏色</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">.header-inner &#123;</span><br><span class="line">  background: rgba(0, 153, 153, 0.1);</span><br><span class="line">  border-radius: $border-radius-inner;</span><br><span class="line">  box-shadow: $box-shadow-inner;</span><br><span class="line">  overflow: hidden;</span><br><span class="line">  padding: 0;</span><br><span class="line">  position: absolute;</span><br><span class="line">  top: 0;</span><br><span class="line">  width: $sidebar-desktop;</span><br><span class="line"></span><br><span class="line">  +desktop-large() &#123;</span><br><span class="line">    .container &amp; &#123;</span><br><span class="line">      width: $sidebar-desktop;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p><code>\themes\next\source\css\_schemes\Pisces\_sidebar.styl</code> 設定側邊欄顏色 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">.sidebar-inner &#123;</span><br><span class="line">  background: rgba(0, 153, 153, 0.1);</span><br><span class="line">  border-radius: $border-radius;</span><br><span class="line">  box-shadow: $box-shadow;</span><br><span class="line">  // padding: 20px 10px 0;</span><br><span class="line">  box-sizing: border-box;</span><br><span class="line">  color: $text-color;</span><br><span class="line">  width: $sidebar-desktop;</span><br><span class="line"></span><br><span class="line">  if (hexo-config(&#x27;motion.enable&#x27;) &amp;&amp; hexo-config(&#x27;motion.transition.sidebar&#x27;)) &#123;</span><br><span class="line">    opacity: 0;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>接下來我們做文字顏色的設定 <code>\themes\next\source\css\_variables\base.styl</code> 這一個區塊決定了所有文字或分隔線等等的顏色定義，在整個 next 主題裡面大概都會從這裡來抓顏色。</p>
+<p>所以大家可以嘗試著更動每一個部分，你就會知道那些顏色對應到那些文字區塊。 這裡的部分我已經改動非常多了，所以文字跟色碼基本上對不太上 XDDD</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// Colors</span><br><span class="line">// colors for use across theme.</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">$whitesmoke   = #f5f5f5;</span><br><span class="line">$gainsboro    = #000d33;</span><br><span class="line">$gray-lighter = #ddd;</span><br><span class="line">$grey-light   = #eee;</span><br><span class="line">$grey         = #bbb;</span><br><span class="line">$grey-dark    = #999;</span><br><span class="line">$grey-dim     = #eee;</span><br><span class="line">$black-light  = #bbb; </span><br><span class="line">$black-dim    = #333;</span><br><span class="line">$black-deep   = #eee;</span><br><span class="line">$red          = #ff2a2a;</span><br><span class="line">$blue-bright  = #87daff;</span><br><span class="line">$blue         = #0684bd;</span><br><span class="line">$blue-deep    = #262a30;</span><br><span class="line">$orange       = #fc6423;</span><br></pre></td></tr></table></figure>
+<p>當然，有些顏色會有很多區塊共用，當你在這裡做更改時，很有可能一次改動很多區塊的顏色，這部分實在很繁雜，我會建議先從這裡做更改，真的必須要切割不同區塊分開處理再個別到該區塊去做處理。</p>
+<p>最後，標題欄位的顏色從 <code>\themes\next\source\css\_schemes\&lt;你選擇的版型&gt;\index.styl</code> 來做更改</p>
+<p>更改的方式只要在最後加上這段即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.site-meta &#123;</span><br><span class="line">  background: #660033; //我使用酒紅色來作為標題欄的背景色</span><br></pre></td></tr></table></figure>
+<p>我自己部落格的整體顏色配置大概是像這樣 ( 有一種延禧攻略的配色XD )</p>
+<p><img src="https://i.imgur.com/lQ97x53.jpg" /></p>
+<h2 id="字體大小">字體大小</h2>
+<p>字體大小的更改直接到 <code>\themes\next\source\css\_variables\&lt;所選擇的版型&gt;.styl</code> 的最後加入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 部落格文字的大小</span><br><span class="line">$font-size-base = 15px</span><br><span class="line"></span><br><span class="line">// Code字體的大小</span><br><span class="line">$code-font-size = 13px</span><br></pre></td></tr></table></figure>
+<h2 id="版面比例">版面比例</h2>
+<p>設置到這裡，大概會完成個雛型了，這邊我們要調整一下整個版面的比例配置。 在預設的狀況，左右留白會很多，以電腦桌面版本來看，總覺得留白太多。要改變這樣的比例我們可以在 <code>\themes\next\source\css\_variables\&lt;所選擇的版型&gt;.styl</code> 最後加入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$content-desktop         = 80%</span><br><span class="line">$content-desktop-large   = 80%</span><br><span class="line">$content-desktop-largest = 80%</span><br></pre></td></tr></table></figure>
+<p>比例可自行調整看看哪一種比較適合自己</p>
+<h2 id="動態背景">動態背景</h2>
+<p>Next 使用者大部分都使用 canvas-nest 這套動態背景，我也不例外，但要注意的是動態背景其實會吃掉一部分資源，當我瀏覽器停在部落格一段時間後，會很明顯聽到筆電風扇狂轉的聲音 @.@，這部分大家可以斟酌使用。</p>
+<p>使用方法如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">先切換到 next 路徑底下</span><br><span class="line"></span><br><span class="line">$ git clone https://github.com/theme-next/theme-next-canvas-nest source/lib/canvas-nest</span><br></pre></td></tr></table></figure>
+<p>之後可以到 next 設定檔 <code>\themes\next\_config.yml</code> 中設置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Canvas-nest</span><br><span class="line"># Dependencies: https://github.com/theme-next/theme-next-canvas-nest</span><br><span class="line"># For more information: https://github.com/hustcc/canvas-nest.js</span><br><span class="line">canvas_nest:</span><br><span class="line">  enable: true #開啟或關閉</span><br><span class="line">  onmobile: false # Display on mobile or not 是否在手機上顯示</span><br><span class="line">  color: &quot;255, 80, 219&quot; # RGB values, use `,` to separate #線條顏色</span><br><span class="line">  opacity: 1 # The opacity of line: 0~1 #線條透明度</span><br><span class="line">  zIndex: -1 # z-index property of the background #位在哪一層</span><br><span class="line">  count: 100 # The number of lines #線條數量</span><br></pre></td></tr></table></figure>
+<h2 id="調整及部屬">調整及部屬</h2>
+<p>在每一個設定更動後，我習慣會做以下動作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line">$ hexo g</span><br><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>先在本機上看看是否有什麼問題，持續地進行微調，待最後設定都沒有問題後再進行部屬</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<h2 id="文章發布">文章發布</h2>
+<h3 id="markdown-編輯器">Markdown 編輯器</h3>
+<p>由於 Hexo 支援 markdown 編輯，因此我強烈建議大家使用 VS Code 來做為 markdown 編輯器，原因有幾個 : 1. 高亮設計，在編輯上會輕鬆很多 2. 可利用 <code>Markdown Shortcuts</code>、<code>Markdown Preview Github Styling</code> 套件協助編輯 3. <code>Insert Date String</code> 套件可以快速加上時間</p>
+<p>總歸來說就是 VS Code 有很多好用的套件可以讓文章編輯變得更簡單。</p>
+<h3 id="front-matter"><code>Front-matter</code></h3>
+<p>在文章編輯上，每一篇空白 md 檔開頭加上 <code>Front-matter</code> 來指定每一篇文章的參數，以下是我自己常用的部分，還有更多參數可以設定，詳情可參閱 <a target="_blank" rel="noopener" href="https://hexo.io/zh-tw/docs/front-matter">Hexo 中文官方文檔</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: 文章標題 </span><br><span class="line">date: 文章發布時間</span><br><span class="line">categories:</span><br><span class="line">- &lt;category&gt;</span><br><span class="line">image: 首頁呈現的圖片網址</span><br><span class="line">mathjax: true 開啟 LaTeX</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+<h3 id="文章發布時間">文章發布時間</h3>
+<p>若有使用 VS Code 的 <code>Insert Date String</code> 套件，可直接 <code>Ctrl+Shift+i</code> 直接插入當前時間。</p>
+<h3 id="文章分類">文章分類</h3>
+<p>在我們的 menu 欄位有一個分類頁面，可利用以下方式設置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">切換到站點路徑下</span><br><span class="line">$ hexo new page categories #建立分類頁面</span><br></pre></td></tr></table></figure>
+<p>之後每一篇文章在 <code>Front-matter</code> 中設置 <code>categories</code> 就會在分類頁面中呈現。</p>
+<p><img src="https://i.imgur.com/fP8QRop.png" /></p>
+<h3 id="首頁摘要及圖片設置">首頁摘要及圖片設置</h3>
+<p>一般在部落格首頁我們會希望每一篇文章只要呈現一小部分內容以及一張代表性圖片即可，藉由 " 閱讀全文 " 按鈕來閱讀每一篇文章完整內容，在 hexo 官方的建議作法是在文章中插入 <code>&lt;!-- more --&gt;</code> 便可以在首頁僅呈現此代碼之前的文章內容。</p>
+<p>至於閱讀全文的按鈕樣式，我們可以在 <code>\themes\next\source\css\_schemes\&lt;選擇的版型&gt;\index.styl</code> 最後加入以下內容來做調整</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">//閱讀全文樣式設置</span><br><span class="line">.post-button &#123;</span><br><span class="line">    margin-top: 30px;</span><br><span class="line">    text-align: center;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.post-button .btn &#123;</span><br><span class="line">    color: white;</span><br><span class="line">    font-size: 15px;</span><br><span class="line">    background: #000d33;</span><br><span class="line">    border-radius: 16px;</span><br><span class="line">    line-height: 2;</span><br><span class="line">    margin: 0 4px 8px 4px;</span><br><span class="line">    padding: 0 20px;</span><br><span class="line">    border:none;</span><br><span class="line">    -webkit-box-shadow: 0px 5px 30px -3px rgba(0,0,0,0.75);</span><br><span class="line">    -moz-box-shadow: 0px 5px 30px -3px rgba(0,0,0,0.75);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.post-button .btn:hover &#123;</span><br><span class="line">    color: #000d33;</span><br><span class="line">    background: #ffffff;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至於圖片部分只要在 <code>Front-matter</code> 給定圖片網址，即可在首頁呈現此文章的代表圖片，且不會在文章全文中出現。</p>
+<p>但由於圖片大小的不同，可能會導致整個首頁版面會稍嫌雜亂，我們可以在上面的檔案中最後加入以下內容來限制圖片寬度要相同</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//摘要圖片大小設置 </span><br><span class="line">img.img-topic &#123;</span><br><span class="line">    width: 100%;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="後記">後記</h2>
+<p>其實認真要玩起來，這裡面的坑還真不少，從完全沒有概念到最後弄到有點樣子也足足是花了三天時間在調整。顏色的配置應該會花最多時間調整，如果單純用原白底配色就會簡單很多，但常看電腦的我實在不是太喜歡白色 XDDD</p>
+<p>但當這些設置都完成以後，要進行文章發布就會簡單很多，也希望這篇文章可以幫助大家填一些坑，讓建構部落格的過程中可以更順利。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/07/%E4%BD%BF%E7%94%A8%20Github%20page%20%E8%A3%BD%E4%BD%9C%E5%80%8B%E4%BA%BA%E7%B6%B2%E7%AB%99%20%E2%80%93%20%E4%BB%A5%20Hexo%20_%20Next%20%E8%A3%BD%E4%BD%9C%E9%83%A8%E8%90%BD%E6%A0%BC/" title="使用 Github page 製作個人網站 -- 以 Hexo &#x2F; Next 製作部落格">https://allen108108.github.io/blog/2019/10/07/使用 Github page 製作個人網站 – 以 Hexo _ Next 製作部落格/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/" rel="prev" title="卷積神經網路 (Convolutional Neural , CNN)">
+                  <i class="fa fa-chevron-left"></i> 卷積神經網路 (Convolutional Neural , CNN)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%E5%88%A9%E7%94%A8%20ImageDataGenerator%20(%E8%B3%87%E6%96%99%E5%A2%9E%E5%BC%B7)%20%E5%8A%A0%E5%BC%B7%20CNN%20%E8%BE%A8%E8%AD%98%E7%8E%87/" rel="next" title="利用 ImageDataGenerator (資料增強) 加強 CNN 辨識率">
+                  利用 ImageDataGenerator (資料增強) 加強 CNN 辨識率 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="機器學習的可解釋性在近年來越來越被重視，尤其是大量引用深度學習技術之後更是如此。然而在許多的 Computer Vision ( CV, 電腦視覺 ) 領域中有卓越成就的許多方法，很多都無法真正的解釋電腦究竟提取出了什麼樣子的特徵，即使能夠解釋，提取出來的特徵也往往不是我們人類所想像的那樣。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="電腦用什麼方式理解這個世界 ?">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/22/%E9%9B%BB%E8%85%A6%E7%94%A8%E4%BB%80%E9%BA%BC%E6%96%B9%E5%BC%8F%E7%90%86%E8%A7%A3%E9%80%99%E5%80%8B%E4%B8%96%E7%95%8C%20_/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="機器學習的可解釋性在近年來越來越被重視，尤其是大量引用深度學習技術之後更是如此。然而在許多的 Computer Vision ( CV, 電腦視覺 ) 領域中有卓越成就的許多方法，很多都無法真正的解釋電腦究竟提取出了什麼樣子的特徵，即使能夠解釋，提取出來的特徵也往往不是我們人類所想像的那樣。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/oiPA6PP.png">
+<meta property="og:image" content="https://i.imgur.com/3Ss231F.png">
+<meta property="og:image" content="https://i.imgur.com/Dfnrtxn.png">
+<meta property="og:image" content="https://i.imgur.com/N1CfbvG.png">
+<meta property="og:image" content="https://i.imgur.com/QV0du2g.png">
+<meta property="article:published_time" content="2019-10-22T14:24:56.000Z">
+<meta property="article:modified_time" content="2019-10-22T14:28:58.048Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/oiPA6PP.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/22/%E9%9B%BB%E8%85%A6%E7%94%A8%E4%BB%80%E9%BA%BC%E6%96%B9%E5%BC%8F%E7%90%86%E8%A7%A3%E9%80%99%E5%80%8B%E4%B8%96%E7%95%8C%20_/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/22/%E9%9B%BB%E8%85%A6%E7%94%A8%E4%BB%80%E9%BA%BC%E6%96%B9%E5%BC%8F%E7%90%86%E8%A7%A3%E9%80%99%E5%80%8B%E4%B8%96%E7%95%8C%20_/","path":"2019/10/22/電腦用什麼方式理解這個世界 _/","title":"電腦用什麼方式理解這個世界 ?"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>電腦用什麼方式理解這個世界 ? | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#automatic-concept-based-explanations"><span class="nav-number">1.</span> <span class="nav-text">Automatic Concept-based Explanations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiments-and-results"><span class="nav-number">2.</span> <span class="nav-text">Experiments and Results</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%B5%90"><span class="nav-number">3.</span> <span class="nav-text">小結</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/22/%E9%9B%BB%E8%85%A6%E7%94%A8%E4%BB%80%E9%BA%BC%E6%96%B9%E5%BC%8F%E7%90%86%E8%A7%A3%E9%80%99%E5%80%8B%E4%B8%96%E7%95%8C%20_/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          電腦用什麼方式理解這個世界 ?
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-10-22 22:24:56 / 修改時間：22:28:58" itemprop="dateCreated datePublished" datetime="2019-10-22T22:24:56+08:00">2019-10-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E9%9B%9C%E8%A8%98-Essay/" itemprop="url" rel="index"><span itemprop="name">雜記 Essay</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/22/%E9%9B%BB%E8%85%A6%E7%94%A8%E4%BB%80%E9%BA%BC%E6%96%B9%E5%BC%8F%E7%90%86%E8%A7%A3%E9%80%99%E5%80%8B%E4%B8%96%E7%95%8C%20_/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/22/電腦用什麼方式理解這個世界 _/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>機器學習的可解釋性在近年來越來越被重視，尤其是大量引用深度學習技術之後更是如此。然而在許多的 Computer Vision ( CV, 電腦視覺 ) 領域中有卓越成就的許多方法，很多都無法真正的解釋電腦究竟提取出了什麼樣子的特徵，即使能夠解釋，提取出來的特徵也往往不是我們人類所想像的那樣。</p>
+<span id="more"></span>
+<p>最近 Google Brain 針對這個問題前後發表了兩篇論文 : " <em>Interpretability Beyond Feature Attribution: Quantitative Testing with Concept Activation Vectors (TCAV)</em> " 以及 " <em>Towards Automatic Concept-based Explanations</em> "，前者將圖像中的「概念」( concept ) 利用 CAV ( Creative Activation Vectors, 概念激活向量 ) 來定義並提出了 TCAV ( Testing with CAV ) 來量化預測這些 CAV 的敏感度，這可視為是一種線性可解釋方法。 後者提出對於概念解釋了一些原則與看法，同時也發表了一個 ACE ( Automatic Concept-based Explanations ) Algorithm，試圖要讓電腦能夠提取出我們能夠理解的特徵出來，讓整個 CV 算法的可解釋性更強，也可以利用這樣的特徵做出更貼近問題的決策。</p>
+<h2 id="automatic-concept-based-explanations">Automatic Concept-based Explanations</h2>
+<p><img src="https://i.imgur.com/oiPA6PP.png" /></p>
+<p>Step 1 : 將整個圖像進行不同解析程度( Multi-resolution )的分割，並將所有分割出來的部件集合在一起。(上圖 a )</p>
+<p>Step 2 : 將這些部件尺寸經過一些標準化動作後通過一個目前最好的 Pre-train CNN Model，在其 Bottleneck Layer 後會生成一個 Activation Space (激活空間)，而這也等同於一個相似性空間 ( Similarity Space )，把這些部件聚合成一個一個的 Cluster。然後排除掉一些 Outlier 異常部件。(上圖 b)</p>
+<p>Step 3 : 最後利用 TCAV 來針對這些 Clusters 進行重要性的度量。(上圖 c )</p>
+<h2 id="experiments-and-results">Experiments and Results</h2>
+<p>利用 ImageNet 隨機抽選的 100個分類進行 ACE Algorithm 的操作，並取出 TCAV 前四高分的部件進行分析。</p>
+<p><img src="https://i.imgur.com/3Ss231F.png" /></p>
+<p>上圖從實驗中的 100 個類別中隨機抽選三個類別 ( Lionfish,Police Van 以及 Basketball ) 並展示出各自四個 TCAV 最高分部件及其在原圖像的分割區域。</p>
+<p>就上面的結果看來，電腦在針對圖像辨識上的確有學習到一些「概念」 : * Lionfish 的紋路、魚鰭 * 警車的輪胎及字樣 * 籃球的形狀、紋路及運動員球衣、持球方式</p>
+<p>論文中利用 TCAV 所得到的分數將我們可以將所有概念進行排序，論文中也做出實驗發現，只要給予前五個最高分 TCAV 的概念，就可以達到近 80% 的預測準確率。然而，如果原圖移除最重要的五個概念再進行預測，則預測準確率會掉到 80% 以下。</p>
+<p><img src="https://i.imgur.com/Dfnrtxn.png" /></p>
+<p>這些經由 ACE 產生的概念，其實符合人類的直覺，高度重要性的概念大都是直接的 ( 例如警車 VS 警察字樣，下圖(a) )，而間接概念的重要性就會稍微低一點 ( 籃球 VS 球衣，下圖(b) )，如果一個類別本身極為複雜，可能會包含許多種部件(概念)，這些概念之間也可能會有不同的相關程度 ( 例如下圖的旋轉木馬，燈光的重要性高於木馬本身 )。</p>
+<p><img src="https://i.imgur.com/N1CfbvG.png" /></p>
+<p>接下來的問題則是，如果我們只有這些「概念」，而不保留原本的圖像結構呢 ? 機器是否還能對圖像進行正確的分類 ?</p>
+<p><img src="https://i.imgur.com/QV0du2g.png" /></p>
+<p>研究團隊利用大雜燴的方式將重要的概念通通塞再一起，完全沒有任何結構可言的狀態下，機器也能針對這些圖像進行正確的分類。</p>
+<h2 id="小結">小結</h2>
+<p>Google Brain 的這些研究的確能讓電腦視覺的整個思維邏輯具象化，也讓整個深度學習的可解釋性增強不少，這對於人類未來使用這些經過訓練過後的模型能夠更有洞見、做出更好的決策。</p>
+<p>然而，即使現在許多科學家也同意不論是深度學習也好，人工智慧也好都已經不把重點放在如何取代人類，但是在追求可解釋性的同時，仍然其實在使人工智慧的運作可以更近似人腦。</p>
+<p>「你不能用我看不懂的方式來進行，一定要用我可以理解的方式解釋給我聽」</p>
+<p>但，這些解釋出來的過程，真的是我們想要的結果嗎 ? 我們真的滿足於這樣的解釋嗎 ? 又或許，尋找人工智慧的可解釋性只是個次要目標。</p>
+<p>最終，我們還是會回到一開始的期待。 總還是希望能在人工智慧與人類大腦之間找尋一個共通的模式，真正形成一個「大一統理論」。而在這樣的目的達成以前，我們能做的便是藉由這些可操作框架來嘗試解釋這一切。</p>
+<p>或許真的有一天能夠有一個可以解釋一切的演算法橫空出世，就讓我們一起期待吧 !</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/22/%E9%9B%BB%E8%85%A6%E7%94%A8%E4%BB%80%E9%BA%BC%E6%96%B9%E5%BC%8F%E7%90%86%E8%A7%A3%E9%80%99%E5%80%8B%E4%B8%96%E7%95%8C%20_/" title="電腦用什麼方式理解這個世界 ?">https://allen108108.github.io/blog/2019/10/22/電腦用什麼方式理解這個世界 _/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/22/Gradient%20descent%20%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/" rel="prev" title="Gradient descent 梯度下降">
+                  <i class="fa fa-chevron-left"></i> Gradient descent 梯度下降
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/24/Chapter%203%20%E2%80%93%20Graph%20(%203%20)/" rel="next" title="Chapter 3 -- Graph ( 3 )">
+                  Chapter 3 -- Graph ( 3 ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

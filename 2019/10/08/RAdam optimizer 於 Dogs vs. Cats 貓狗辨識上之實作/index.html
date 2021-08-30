@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="就在 Lookahead Optimizer 發表後的一個月，University of Illinois, Urbana-Champaign 的博士生 Liyuan Liu 發表了一個新的優化器 Rectified Adam (RAdam)，有別於 Lookahead ，RAdam 在某種程度上直接對 Adam 進行改良，使其兼具 Adam 及 SGD 的優點，改善 Adam 落入 Local">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAdam optimizer 於 Dogs vs. Cats 貓狗辨識上之實作">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/RAdam%20optimizer%20%E6%96%BC%20Dogs%20vs.%20Cats%20%E8%B2%93%E7%8B%97%E8%BE%A8%E8%AD%98%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="就在 Lookahead Optimizer 發表後的一個月，University of Illinois, Urbana-Champaign 的博士生 Liyuan Liu 發表了一個新的優化器 Rectified Adam (RAdam)，有別於 Lookahead ，RAdam 在某種程度上直接對 Adam 進行改良，使其兼具 Adam 及 SGD 的優點，改善 Adam 落入 Local">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/YJD9QOZ.png%20=400x">
+<meta property="og:image" content="https://i.imgur.com/j3pxCuV.jpg%20=500x">
+<meta property="og:image" content="https://i.imgur.com/kqLr2eL.png">
+<meta property="og:image" content="https://i.imgur.com/T0wRLLh.png">
+<meta property="og:image" content="https://i.imgur.com/55DwJRn.png">
+<meta property="og:image" content="https://i.imgur.com/BFhsFfx.png">
+<meta property="article:published_time" content="2019-10-07T17:18:22.000Z">
+<meta property="article:modified_time" content="2019-10-07T17:18:54.295Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/YJD9QOZ.png%20=400x">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/RAdam%20optimizer%20%E6%96%BC%20Dogs%20vs.%20Cats%20%E8%B2%93%E7%8B%97%E8%BE%A8%E8%AD%98%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/RAdam%20optimizer%20%E6%96%BC%20Dogs%20vs.%20Cats%20%E8%B2%93%E7%8B%97%E8%BE%A8%E8%AD%98%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/","path":"2019/10/08/RAdam optimizer 於 Dogs vs. Cats 貓狗辨識上之實作/","title":"RAdam optimizer 於 Dogs vs. Cats 貓狗辨識上之實作"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RAdam optimizer 於 Dogs vs. Cats 貓狗辨識上之實作 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#learning-rate-warmup-in-adam"><span class="nav-number">1.</span> <span class="nav-text">Learning Rate Warmup in Adam</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rectified-adam-radam"><span class="nav-number">2.</span> <span class="nav-text">Rectified Adam (RAdam)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#adam-vs.-radam"><span class="nav-number">3.</span> <span class="nav-text">Adam VS. RAdam</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">4.</span> <span class="nav-text">後記</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">5.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/RAdam%20optimizer%20%E6%96%BC%20Dogs%20vs.%20Cats%20%E8%B2%93%E7%8B%97%E8%BE%A8%E8%AD%98%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RAdam optimizer 於 Dogs vs. Cats 貓狗辨識上之實作
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-10-08 01:18:22 / 修改時間：01:18:54" itemprop="dateCreated datePublished" datetime="2019-10-08T01:18:22+08:00">2019-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%AF%A6%E4%BD%9C-Implementation/" itemprop="url" rel="index"><span itemprop="name">實作 Implementation</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/RAdam%20optimizer%20%E6%96%BC%20Dogs%20vs.%20Cats%20%E8%B2%93%E7%8B%97%E8%BE%A8%E8%AD%98%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/RAdam optimizer 於 Dogs vs. Cats 貓狗辨識上之實作/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>就在 Lookahead Optimizer 發表後的一個月，University of Illinois, Urbana-Champaign 的博士生 Liyuan Liu 發表了一個新的優化器 Rectified Adam (RAdam)，有別於 Lookahead ，RAdam 在某種程度上直接對 Adam 進行改良，使其兼具 Adam 及 SGD 的優點，改善 Adam 落入 Local Minimum 導致效果不夠好以及 SGD 收斂速度慢的缺點。</p>
+<span id="more"></span>
+<h2 id="learning-rate-warmup-in-adam">Learning Rate Warmup in Adam</h2>
+<p>Adam 是一種自適應學習率的演算法，而 Warm Up 是調整學習率的一種常見策略。在 RAdam 的論文 " <em>On the Variance of the Adaptive Learning Rate and Beyond</em> " 中，作者也對於 Warm Up 有一些討論。</p>
+<p>所謂的 Warm up 就是在訓練初期，先利用較小(、遞增)的學習率來先讓整個模型有一定程度的收斂後，再讓學習率遞減來進行訓練。</p>
+<p>在一個原始的 Adam 中進行訓練，Training Perplexity<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 大概收斂在 500 左右，但若先進行 Warm up ，Training Perplexity 便可迅速降至 10 左右。</p>
+<p><img src="https://i.imgur.com/YJD9QOZ.png%20=400x" /></p>
+<p>下圖是一個在不同迭代次數時梯度的機率分布圖，這是一個三維視覺圖像，X軸指的是梯度大小，Y軸是不同的迭代次數，Z軸是各梯度大小的頻率。</p>
+<p>上面的兩張圖顯示出，Adam 在沒有 Warm up 的情況下，初期的迭代梯度會有很劇烈的變化 ( 紅框標示處 )</p>
+<p><img src="https://i.imgur.com/j3pxCuV.jpg%20=500x" /></p>
+<p>這樣劇烈的變動表示，當我們資料不足，迭代次數不夠多，Adam 如果處在較差的 Local Minimum 附近，就會容易陷進去，而得不到更好的解，而整個訓練也會因為初始值選的不夠好而導致優化時間拉長、優化效率可能更差。</p>
+<p>總歸來說，問題還是在於如果訓練初期樣本數缺乏就會導致 Adam 的收斂出現問題。</p>
+<p>這個根本的問題在論文中也嘗試利用 Variance Reduction 解決，但是效能仍然相對於 Adam-warmup、Adam-2K 較差。因此這才延伸出 Rectified Adam 這個嶄新的優化器。</p>
+<h2 id="rectified-adam-radam">Rectified Adam (RAdam)</h2>
+<p>雖然 Warm up 有類似 Variance Reduction 的效果，也能獲得不差的優化結果，但是 Warm up 所需要的時間隨著資料集不同而有所差異，我們並無法確認 Warm up 的時間。因此作者利用一個整流器來製造出動態 Variance Reduction 的效果。</p>
+<p>完整 RAdam 演算法如下 :</p>
+<p><img src="https://i.imgur.com/kqLr2eL.png" /></p>
+<p>在論文裡面，RAdam 在 CIFAR-10 或是 ImageNet 上都有相對好的表現，除此之外，我認為有一個很有趣的現象值得討論</p>
+<p><img src="https://i.imgur.com/T0wRLLh.png" /></p>
+<p>上圖顯示了三種不同的優化器在不同的學習率上的表現，以往我們都會認為學習率作為一個超參數在決定模型的表現上也佔有一定的決定性，但從 RAdam 的數據看來，學習率從 0.003 到 0.1 這麼大的範圍內，RAdam 都能有穩定的優化效能，這是與其他的優化器不同的地方。</p>
+<p>RAdam 的 robustness (強健性) 不只展現在學習率上，在各種資料上也幾乎都適用，有著不錯的優化效能。</p>
+<h2 id="adam-vs.-radam">Adam VS. RAdam</h2>
+<p>我在貓狗辨識上使用不含分類器的 VGG19 model，接上我們自己的一個簡單分類器，且所有權重均重新訓練。</p>
+<p>我們將不同優化器的訓練結果儲存，以利後續的比較。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">results=&#123;&#125;</span><br><span class="line">OPTIMIZERS=[Adam(lr=<span class="number">1e-3</span>) , RectifiedAdam(lr=<span class="number">1e-3</span>)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> optim <span class="keyword">in</span> OPTIMIZERS:</span><br><span class="line">    base_model=VGG16(input_shape=(<span class="number">224</span>,<span class="number">224</span>,<span class="number">3</span>),include_top=<span class="literal">False</span>)</span><br><span class="line">    base_model.trainable = <span class="literal">False</span></span><br><span class="line"> </span><br><span class="line">    model = models.Sequential()</span><br><span class="line">    model.add(base_model)</span><br><span class="line">    model.add(layers.Flatten())</span><br><span class="line">    model.add(layers.Dense(<span class="number">256</span>, activation=<span class="string">&#x27;relu&#x27;</span>))</span><br><span class="line">    model.add(layers.Dense(<span class="number">1</span>, activation=<span class="string">&#x27;sigmoid&#x27;</span>))</span><br><span class="line">    model.summary()</span><br><span class="line"></span><br><span class="line">    model.<span class="built_in">compile</span>(optimizer=optim ,</span><br><span class="line">                  loss=<span class="string">&#x27;binary_crossentropy&#x27;</span> , </span><br><span class="line">                  metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br><span class="line">    model.fit_generator(train_batches,</span><br><span class="line">                    steps_per_epoch = train_batches.samples / <span class="number">64</span>,</span><br><span class="line">                    validation_data = valid_batches,</span><br><span class="line">                    validation_steps = valid_batches.samples /<span class="number">64</span>,</span><br><span class="line">                    epochs = <span class="number">100</span>,</span><br><span class="line">                    callbacks=[LR_function])</span><br><span class="line">    </span><br><span class="line">    train_acc=model.history.history[<span class="string">&#x27;acc&#x27;</span>]</span><br><span class="line">    train_loss=model.history.history[<span class="string">&#x27;loss&#x27;</span>]</span><br><span class="line">    val_acc=model.history.history[<span class="string">&#x27;val_acc&#x27;</span>]</span><br><span class="line">    val_loss=model.history.history[<span class="string">&#x27;val_acc&#x27;</span>]</span><br><span class="line">    </span><br><span class="line">    exp_tag_name=<span class="string">f&#x27;exp-optimizer-<span class="subst">&#123;optim&#125;</span>&#x27;</span></span><br><span class="line">    results[exp_tag_name] = &#123;<span class="string">&#x27;train-acc&#x27;</span>:train_acc,</span><br><span class="line">                          <span class="string">&#x27;train-loss&#x27;</span>:train_loss,</span><br><span class="line">                          <span class="string">&#x27;val-acc&#x27;</span>:val_acc,</span><br><span class="line">                          <span class="string">&#x27;val-loss&#x27;</span>:val_loss&#125;    </span><br></pre></td></tr></table></figure>
+<p>訓練過後，我們將 Loss 與 Accuracy 視覺化</p>
+<p><img src="https://i.imgur.com/55DwJRn.png" /> <img src="https://i.imgur.com/BFhsFfx.png" /> (實線為 train-loss (accuracy)，虛線為 valid-loss(accuracy))</p>
+<p>從我們的實驗中可以發現 RAdam 收斂速度快，且最後結果也均較 Adam 來的好。</p>
+<h2 id="後記">後記</h2>
+<p>我自己使用的顯示卡是 GTX 1060 6g ，在使用 RAdam 的時候，有時候會碰到 OOM error，這樣的情況看似是顯示卡記憶體不敷使用所導致。最後的解決方式就是將 batch_size 降低使其可正常運行。</p>
+<p>原本以為 Lookahead 同時操作兩組參數比較容易跑不動，沒想到 RAdam 的演算反而對算力的要求較高。</p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Training Perplexity 可以視為一種衡量 model 的指標，Training Perplexity 越低就表示此 model 可以更好的預測樣本。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/RAdam%20optimizer%20%E6%96%BC%20Dogs%20vs.%20Cats%20%E8%B2%93%E7%8B%97%E8%BE%A8%E8%AD%98%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/" title="RAdam optimizer 於 Dogs vs. Cats 貓狗辨識上之實作">https://allen108108.github.io/blog/2019/10/08/RAdam optimizer 於 Dogs vs. Cats 貓狗辨識上之實作/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Lookahead%20optimizer%20%E6%96%BC%20Dogs%20vs.%20Cats%20%E8%B2%93%E7%8B%97%E8%BE%A8%E8%AD%98%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/" rel="prev" title="Lookahead optimizer 於 Dogs vs. Cats 貓狗辨識上之實作">
+                  <i class="fa fa-chevron-left"></i> Lookahead optimizer 於 Dogs vs. Cats 貓狗辨識上之實作
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/%E8%A6%96%E8%A6%BA%E5%8C%96%20(%20Visualization%20)%20%E6%A6%82%E8%BF%B0/" rel="next" title="視覺化 ( Visualization ) 概述">
+                  視覺化 ( Visualization ) 概述 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

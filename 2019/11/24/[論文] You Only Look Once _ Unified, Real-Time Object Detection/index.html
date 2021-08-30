@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="概要 Abstrct 在這篇論文中，作者推出了一個嶄新的物件偵測方式 -- YOLO。原本的物件偵測任務是利用分類器來進行，但在 YOLO 中，作者們將物件偵測視為一個回歸任務，來從空間中分割出邊界框 ( Bounding Box )並且計算出類別機率。僅利用一個神經網路進行一次計算來直接預測邊界框及類別機率，也因為整個偵測過程只有使用單一個神經網路，因此可以視為是一個 End-to-End 的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[論文] You Only Look Once : Unified, Real-Time Object Detection">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/11/24/[%E8%AB%96%E6%96%87]%20You%20Only%20Look%20Once%20_%20Unified,%20Real-Time%20Object%20Detection/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="概要 Abstrct 在這篇論文中，作者推出了一個嶄新的物件偵測方式 -- YOLO。原本的物件偵測任務是利用分類器來進行，但在 YOLO 中，作者們將物件偵測視為一個回歸任務，來從空間中分割出邊界框 ( Bounding Box )並且計算出類別機率。僅利用一個神經網路進行一次計算來直接預測邊界框及類別機率，也因為整個偵測過程只有使用單一個神經網路，因此可以視為是一個 End-to-End 的">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/8bnOLQG.png">
+<meta property="og:image" content="https://i.imgur.com/DI18Kp4.png">
+<meta property="og:image" content="https://i.imgur.com/XzMMTjn.png">
+<meta property="og:image" content="https://i.imgur.com/nromwhe.jpg">
+<meta property="og:image" content="https://i.imgur.com/iMmpxNQ.png">
+<meta property="og:image" content="https://i.imgur.com/i4YtVCx.png%20=300x">
+<meta property="article:published_time" content="2019-11-24T07:32:22.000Z">
+<meta property="article:modified_time" content="2020-07-28T00:54:09.466Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/8bnOLQG.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/11/24/[%E8%AB%96%E6%96%87]%20You%20Only%20Look%20Once%20_%20Unified,%20Real-Time%20Object%20Detection/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/11/24/[%E8%AB%96%E6%96%87]%20You%20Only%20Look%20Once%20_%20Unified,%20Real-Time%20Object%20Detection/","path":"2019/11/24/[論文] You Only Look Once _ Unified, Real-Time Object Detection/","title":"[論文] You Only Look Once : Unified, Real-Time Object Detection"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[論文] You Only Look Once : Unified, Real-Time Object Detection | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%A6%81-abstrct"><span class="nav-number">1.</span> <span class="nav-text">概要 Abstrct</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B0%A1%E4%BB%8B-introduction"><span class="nav-number">2.</span> <span class="nav-text">簡介 Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%B1%E4%B8%80%E6%AA%A2%E6%B8%AC-unified-detection"><span class="nav-number">3.</span> <span class="nav-text">統一檢測 Unified Detection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B6%B2%E8%B7%AF%E8%A8%AD%E8%A8%88-network-design"><span class="nav-number">3.1.</span> <span class="nav-text">網路設計 Network Design</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A8%93%E7%B7%B4-training"><span class="nav-number">3.2.</span> <span class="nav-text">訓練 Training</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E8%AB%96-inference"><span class="nav-number">3.3.</span> <span class="nav-text">推論 Inference</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yolo-%E7%9A%84%E9%99%90%E5%88%B6-limitation-of-yolo"><span class="nav-number">3.4.</span> <span class="nav-text">YOLO 的限制 Limitation of YOLO</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%B5%E6%B8%AC%E7%B3%BB%E7%B5%B1%E6%AF%94%E8%BC%83-comparison-to-other-detection-system"><span class="nav-number">4.</span> <span class="nav-text">偵測系統比較 Comparison to Other Detection System</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#deformable-parts-models-dpm"><span class="nav-number">4.1.</span> <span class="nav-text">Deformable parts models ( DPM )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#r-cnn"><span class="nav-number">4.2.</span> <span class="nav-text">R-CNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#other-fast-detectors"><span class="nav-number">4.3.</span> <span class="nav-text">Other Fast Detectors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#deep-multibox"><span class="nav-number">4.4.</span> <span class="nav-text">Deep MultiBox</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#overfast"><span class="nav-number">4.5.</span> <span class="nav-text">OverFast</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#multigrasp"><span class="nav-number">4.6.</span> <span class="nav-text">MultiGrasp</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%A6%E9%A9%97-experiments"><span class="nav-number">5.</span> <span class="nav-text">實驗 Experiments</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8F%BE%E5%AF%A6%E4%B8%AD%E7%9A%84%E5%8D%B3%E6%99%82%E6%AA%A2%E6%B8%AC-real-time-detection-in-the-wild"><span class="nav-number">6.</span> <span class="nav-text">現實中的即時檢測 Real-Time Detection In The Wild</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%90%E8%AB%96-conclusion"><span class="nav-number">7.</span> <span class="nav-text">結論 Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">8.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">9.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/11/24/[%E8%AB%96%E6%96%87]%20You%20Only%20Look%20Once%20_%20Unified,%20Real-Time%20Object%20Detection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [論文] You Only Look Once : Unified, Real-Time Object Detection
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-11-24 15:32:22" itemprop="dateCreated datePublished" datetime="2019-11-24T15:32:22+08:00">2019-11-24</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-07-28 08:54:09" itemprop="dateModified" datetime="2020-07-28T08:54:09+08:00">2020-07-28</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/%E7%89%A9%E4%BB%B6%E5%81%B5%E6%B8%AC-Object-Detection/" itemprop="url" rel="index"><span itemprop="name">物件偵測 Object Detection</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/11/24/%5B%E8%AB%96%E6%96%87%5D%20You%20Only%20Look%20Once%20_%20Unified,%20Real-Time%20Object%20Detection/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/24/[論文] You Only Look Once _ Unified, Real-Time Object Detection/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="概要-abstrct">概要 Abstrct</h2>
+<p>在這篇論文中，作者推出了一個嶄新的物件偵測方式 -- YOLO。原本的物件偵測任務是利用分類器來進行，但在 YOLO 中，作者們將物件偵測視為一個回歸任務，來從空間中分割出邊界框 ( Bounding Box )並且計算出類別機率。僅利用一個神經網路進行一次計算來直接預測邊界框及類別機率，也因為整個偵測過程只有使用單一個神經網路，因此可以視為是一個 End-to-End 的優化過程。</p>
+<span id="more"></span>
+<p>這樣統一的架構的執行速度十分快速，YOLO 執行圖像任務上可以達到即時每秒 45 幀。而另外一個較小型的版本 Fast YOLO 不僅可以達到每秒 155 幀的執行速度，mAP ( Mean Average Precision ) 也是其他即時物件偵測系統的兩倍。</p>
+<p>跟其他的物件偵測系統相比，YOLO 雖然有較高的定位誤差，但在背景的預測上不太可能出現 False Positive 的狀況。最後，YOLO 不論在自然圖像或是藝術圖像等領域上，相較於其他的偵測法，如 DPM 及 R-CNN， 可以學習到泛化性更好的物體表示法。</p>
+<h2 id="簡介-introduction">簡介 Introduction</h2>
+<p>人類只要掃過一張圖像，就可以知道有那些物體在圖像中、它們的位置以及它們如何交互作用。人類的視覺系統非常快速且準確，使我們可以不用太多的意識思考就可以完成極為複雜的任務，如駕駛車輛。同樣的，快速且準確的物件偵測演算法可以幫助電腦駕駛車輛而不須特殊的感測器、讓輔助設備可以傳送即時資料給使用者並且釋放響應式通用機器人系統的潛力。</p>
+<p>現今的偵測系統都以分類器來進行偵測，這些系統在測試資料上使用物件分類器的多個位置上進行評估。像是 DPM 系統就是使用一個滑窗讓分類器在固定間隔的位置上對整張圖像進行判定。</p>
+<p>更多類似 R-CNN 的偵測系統，先使用了 Region Proposal Method<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>來找出圖像中可能的邊界框，再來針對這些可能的區域利用分類器進行預測。分類過後，再來調整邊界框、消除重複偵測並且根據圖像中其他物件重新估算邊界框。這樣複雜的流程也因為每一個別的部分都必須要分開訓練導致速度十分緩慢解難以優化。</p>
+<p>我們重新定義物件偵測，將其視為一個單一的回歸問題，直接從圖像的 pixel 來故算邊界框座標並且給出分類機率。利用這樣的系統，一張圖像，" You Only Look Once " (YOLO) 就可以預測物件類別及位置。</p>
+<p>我們從下圖可以知道 YOLO 非常的簡潔，只要一個 CNN 就可以同時進行多邊界框與其類別機率的預測。YOLO 對整張圖像進行訓練並且直接進行優化。這種統一模型對比其他傳統的物件偵測方法有非常多的優點。</p>
+<p><img src="https://i.imgur.com/8bnOLQG.png" /></p>
+<ol type="1">
+<li><p>YOLO 十分快速。 由於我們將整個偵測任務視為一個回歸問題，因此不需要太複雜的流程。在GPU Titan X 上針對測試資料進行偵測任務，我們於全新的圖像上簡單的運行 YOLO ，在沒有 batch 處理的狀態下可以達到每秒 45 幀，而在 Fast YOLO 上甚至可以超過每秒 150 幀。這表示我們可以除理即時的影像流，並且將延遲壓在25毫秒。再來，YOLO 比其他偵測系統有高出於兩倍的 mAP。作者將處理即使影像的 demo 都放在他的 project website : http://pjreddie.com/yolo/</p></li>
+<li><p>YOLO 可對整張圖像進行全面性的推論。 不同於滑窗或是 Region Proposal Method 的方式，YOLO 可以在訓練/測試過程中看見整個圖像的全貌，因此 YOLO 可以將全局互相關聯的類別資訊以及外觀隱藏在編碼內。一個非常優秀的偵測系統 Fast R-CNN ，因為僅會看見局部資訊，而導致它很容易將背景誤認為物件。YOLO 在這方面的背景錯誤率是 Fast R-CNN 的一半以下。</p></li>
+<li><p>YOLO 可以學習到物件的泛化表徵。 當我們在真實圖像上作訓練，而在藝術作品上進行測試時，YOLO 相較於 DPM 及 R-CNN 有更傑出的表現。因此，YOLO是一個高度泛化模型，在進行新領域或是沒接觸過的輸入圖像上比較不會出現問題。</p></li>
+</ol>
+<p>即使有上述的優點，YOLO 在準確度上仍然落後這些先進的偵測系統。即使它可以快速的定位物件，但在一些小物體上要進行精準的定位還是有一些困難。作者會在論文中的實驗檢視這樣的權衡。</p>
+<p>論文中的所有程式碼都已開源，多種預訓練好的模型也可供下載。</p>
+<h2 id="統一檢測-unified-detection">統一檢測 Unified Detection</h2>
+<p>作者將物件偵測中各個分開的部分全部整合到一個單一的神經網路中。這樣的網路結構從整張圖像上取得特徵並且用來預測邊界框。不僅如此，它還能同時間在整張圖像上針對不同類別進行邊界框的預測。這表示這樣的網路可以全局理解整張圖像的物件。因此，YOLO 可以進行 End to End 的訓練並且速度接近即時，同時維持高 mAP。</p>
+<p>YOLO 將圖像切成 <span class="math inline">\(S\times S\)</span> 個網格，如果物件的中心位於某一個網格內，則由此網格負責此物件的偵測。</p>
+<p>每一個網格可以同時預測 <span class="math inline">\(B\)</span> 個邊界框以及各自的信賴指數 (confidence score)。這些信賴指數反映了此模型對於邊界框包含某物件的信賴度，以及他認為這個邊界框預測的準確度。</p>
+<p><span class="math display">\[
+Confidence=P_r(Object)\times IOU_{pred.}^{truth}
+\]</span></p>
+<p>如果邊界框不含任何物件，則信賴指數為<span class="math inline">\(0\)</span>，否則，我們希望信賴指數會等於 <span class="math inline">\(IOU\)</span><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
+<p>每一個邊界框由五個預測值構成 : <span class="math inline">\(x,y,w,h,confidence\)</span>，其中 <span class="math inline">\((x,y)\)</span> 表示相對於所在網格邊界的邊界框的中心點座標。而 <span class="math inline">\((w,h)\)</span> 表示相對於整張圖像所預測出來的寬度及高度。最後，信賴預測值則為 <span class="math inline">\(IOU\)</span>。</p>
+<p>每一個網格也會預測 <span class="math inline">\(C\)</span> 個條件類別機率 <span class="math inline">\(P_r(Class_i|Object)\)</span>。這些機率值是指包含此物件的網格條件下預測為 <span class="math inline">\(Class_i\)</span> 類別的機率。值得注意的是，無論預測邊界框的數量 <span class="math inline">\(B\)</span> 有多少，每一個網格 YOLO 僅預測一組類別機率。</p>
+<p>在測試階段，作者將條件類別機率乘上個別邊界框的信賴預測指數，這給出了一個邊界框中針對特定類別的信賴指數。</p>
+<p><span class="math display">\[
+P_r(Class_i|Object)\times Confidence\\
+=P_r(Class_i|Object)\times P_r(Object)\times IOU_{pred.}^{truth}\\
+=P_r(Class_i)\times IOU_{pred.}^{truth}
+\]</span></p>
+<p>這種計算方式，等同於將類別出現機率與預測邊界框的配適程度一起進行編碼。</p>
+<p><img src="https://i.imgur.com/DI18Kp4.png" /></p>
+<p>論文內，利用 PASCAL VOC 資料集來評估 YOLO，作者們使用的參數 : <span class="math inline">\(S=7\)</span>， <span class="math inline">\(B=2\)</span>, <span class="math inline">\(C=20\)</span>，因此最後會產生出一個 <span class="math inline">\(7\times 7\times 30\)</span> 的張量。</p>
+<h3 id="網路設計-network-design">網路設計 Network Design</h3>
+<p>作者利用一個 CNN 結構實現這樣的 model，並且在 PASCAL VOC 資料集上做評估。初始的卷積層用來進行特徵萃取，而最後的全連接層則是輸出機率與座標。模型中的網路架構受到 GoogLeNet 所激勵，其中具有 24 個卷積層以及 2 個全連接層。作者也使用簡單的 <span class="math inline">\(3\times 3\)</span> 卷積層再接一個 <span class="math inline">\(1\times 1\)</span> 卷積層進行降維，用以取代 GoogLeNet 中的 Inception 模組。</p>
+<p><img src="https://i.imgur.com/XzMMTjn.png" /></p>
+<p>研究團隊也訓練了一組快速版本的 YOLO 用以推進快速物件偵測的界線。Fast YOLO 使用一個僅有 9 層卷積層的 CNN，並且減少 filters 數量。除了網路尺寸的差別外，其餘的參數設計都與 YOLO 相同。一樣最後的輸出都是一個 <span class="math inline">\(7\times 7\times 30\)</span> 的張量。</p>
+<h3 id="訓練-training">訓練 Training</h3>
+<p>在整個模型中，作者先將前面 20 層卷積層接上一個平均池化層與一個全連接層利用1000個類別的 ImageNet 資料集作預訓練。預訓練時間大約花了將近一周，在 ImageNet 2012 資料集中，驗證資料可以達到 <span class="math inline">\(88%\)</span> 的 top-5 error，這結果與 Caffe 的模型集中的 GoogLeNet 相當。</p>
+<p>接著轉換模型來進行偵測。在 Ren 等人的論文 " <em>Object Detection Networks on Convolutional Feature Maps</em> " 中有提到，在預訓練模型中加入卷積層以及連接層可以提升模型表現。依據他們論文中的範例，作者在預訓練模型中加入隨機初始化權重的 4 層卷積層以及兩層全連接層。由於物件偵測通常需要細粒度 (精細化) 的視覺資訊，因此增加網路輸入解析度，由<span class="math inline">\(224\times 224\)</span> 改變成 <span class="math inline">\(448\times 448\)</span>。</p>
+<p>模型中最後的全連接層用來預測類別機率與邊界框的座標。研究團隊藉由全圖像的寬度與高度來標準化邊界框的寬度與高度使其值介於 0 到 1 之間。同時也利用特定網格位置來參數化邊界框的中心座標 <span class="math inline">\((x,y)\)</span> ，使其值也介於 0 到 1 之間。</p>
+<p>除了最後一層使用 linear activation function 外，其餘都使用 leakly ReLU activation function。</p>
+<p><span class="math display">\[
+\phi(x)=\begin{cases}x,&amp;\mbox{if}x&gt;0\\
+0.1x,&amp;\mbox{otherwise}\end{cases}
+\]</span></p>
+<p>YOLO 利用誤差平方和 (sum-square error) 做為 Loss function ，使用這樣的方式計算 Loss 是因為這是非常容易優化的，但只有這樣卻無法符合我們要最大化平均精度的目標。如果只有這樣的計算，它會將定位誤差與分類誤差的權重調整成一樣，這樣的結果並不理想。另外一個角度來看，大部分的圖像中不含任何物件的網格通常都非常多，如果照上面的 Losse function 來看，最後 machine 會將這樣的網格計算出來的信賴指數都壓到 0，導致整個梯度下降的過程中，權重會偏向將所有網格都預測成不含物件的網格。這會導致整個模型的不穩定以及造成早期發散。</p>
+<p>這裡論文中說了這麼多，其實簡單來說就是一個資料不平衡的狀況，在機器學習中如果沒有處理資料不平衡的問題，那麼機器會傾向於往數量的爆炸多的那個類別做預測，這樣還能夠得到高準確度。</p>
+<p>為了解決這種資料不平衡問題，論文中的做法是在針對「有物件」及「沒有物件」的網格誤差另外給予一個權重做比例調整。加強有物件網格的 Loss，而壓低那些沒有物件網格的 Loss。作者們給了兩個參數 <span class="math inline">\(\lambda_{coord}=5\)</span> 及 <span class="math inline">\(\lambda_{noobj}=0.5\)</span> 來進行這樣的比例調整。</p>
+<p>除了上述這種不平衡的狀況，單純的誤差平方和的計算方法其實是不管邊界框的大小，僅單純將重點放在誤差上面。但是我們想要的誤差評估應該是要讓大邊界框的小誤差的影響小於小邊界框的小誤差。為了解決這個問題，論文中採取的方式是直接將寬度跟高度取平方根來進行計算。</p>
+<p>舉例來說，若我們有兩個真實邊界框長寬各為 <span class="math inline">\(16\times 16\)</span> 以及 <span class="math inline">\(1\times 1\)</span>，若我們有針對這兩個物件做出了兩個預測邊界框長寬各為 <span class="math inline">\(17\times 17\)</span> 以及 <span class="math inline">\(2\times 2\)</span>，者兩個預測按照我們的計算誤差都是 <span class="math inline">\(2\)</span>，但我們知道這樣的誤差在這兩個大小不同的邊界框上應該有不同程度上的影響。但藉由取平方根，便可以將這兩者的影響表現出來，在大邊界框上的誤差變為 <span class="math inline">\(0.0303\)</span>，而小邊界框上的誤差則變成 <span class="math inline">\(0.343\)</span>。</p>
+<p>YOLO 在每一個網格中會進行多個邊界框的預測。在訓練階段，我們只會需要一個預測子 (predictor, 其實就是邊界框) 來負責一個物件的偵測。決定預測子的方式就是看哪一個預測子可以得到最高的 <span class="math inline">\(IOU\)</span> 就讓其來負責此物件的偵測。這樣的做法，可以讓整個邊界框的預測與預測子之間的關係專項化。每一個預測子可以都可以針對大小尺寸、方向角、物件種類都有更好的預測能力，也可以增進整體的 recall。</p>
+<p>最後，我們在訓練階段要優化的 Loss Function 如下 :</p>
+<p><img src="https://i.imgur.com/nromwhe.jpg" /></p>
+<p>這裡有幾個符號是前面沒有提到的 :</p>
+<ul>
+<li><span class="math inline">\(\mathbb{I}_{i}^{obj}\)</span> : 在第 <span class="math inline">\(i\)</span> 個網格中有偵測到物件</li>
+<li><span class="math inline">\(\mathbb{I}_{ij}^{obj}\)</span> : 在第 <span class="math inline">\(i\)</span> 個網格中的第 <span class="math inline">\(j\)</span> 個偵測子(邊界框)負責偵測物件</li>
+</ul>
+<p>由於 <span class="math inline">\(\LaTeX\)</span> 支援問題，在這裡的 <span class="math inline">\(\mathbb{I}\)</span> 指的就是上圖的空心 <span class="math inline">\(1\)</span>。另外，<span class="math inline">\(\mathbb{I}\)</span> 我們可以視為一個條件判斷子，當符合條件時後面的算式才會進行運算( 這些部分應該也都可以用 <em>Iverson bracket</em> 來改寫 )。</p>
+<p>要注意的是，在這個 Loss Function 中，我們只對「含有物件網格的分類誤差」以及「作為預測子的邊界框座標誤差」( 高 <span class="math inline">\(IOU\)</span> 的邊界框 )做懲罰。這邊主要講的就是前面說的 <span class="math inline">\(\lambda_{coord}\)</span> 及 <span class="math inline">\(\lambda_{noobj}\)</span> 在 Loss Function 中的帶來的懲罰效果。</p>
+<p>研究團隊利用 PASCAL VOC 2007/2012 資料集，在訓練資料及驗證資料上進行 135 個 epochs 的訓練。統整一下整個訓練的參數設定如下 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">batch_size = 64</span><br><span class="line">momentum = 0.9</span><br><span class="line">decay = 0.0005</span><br><span class="line"></span><br><span class="line">Learning Rate :</span><br><span class="line">1-75    epochs LR = 0.01</span><br><span class="line">76-105  epochs LR = 0.001</span><br><span class="line">106-135 epochs LR = 0.0001</span><br><span class="line"></span><br><span class="line">Dropout : </span><br><span class="line">dropout = 0.5</span><br><span class="line"></span><br><span class="line">Data Augmentation :</span><br><span class="line">20% scaling 縮放 / translation 平移</span><br><span class="line">1.5 times exposure 曝光度 / saturation 飽和度</span><br></pre></td></tr></table></figure>
+<h3 id="推論-inference">推論 Inference</h3>
+<p>跟訓練階段一樣，在測試資料上進行偵測也只需要一個網路就可以做到。在 PASCAL VOC 資料集上，同樣的網路結構可在每一張圖像上預測 98 個邊界框並且給予分類機率。 YOLO 用這樣單一網路結構就可以達到非常快的預測速度，跟其他方法不一樣。</p>
+<p>網格的設計，強制在邊界框的預測中將空間進行切割。通常哪一個物件落在哪一個網格中是很明顯的，而一個邊界框只會預測一個物件。然而很多時候我們會遇到物件很大或者是會跨越多個網格的物件，這時候就會利用 Non-maximal suppression ( NMS, 非極大抑制 ) 來修正這種重複偵測的狀況。NSM 對 YOLO 的性能影響並不如同 R-CNN 或是 DPM 般重要，但仍能增加 <span class="math inline">\(2-3\%\)</span> mAP。</p>
+<h3 id="yolo-的限制-limitation-of-yolo">YOLO 的限制 Limitation of YOLO</h3>
+<p>YOLO 在邊界框預測上有很強的空間限制，因為每一個網格僅能預測兩個單一目標的邊界框。這樣的空間限制，限制了 YOLO 對相鄰目標的預測。換句話說，YOLO 對於成群聚集的小物件 ( 例如鳥群 ) 有著預測上的困難。</p>
+<p>再來，因為 YOLO 是利用資料來進行邊界框預測的學習，這表示模型很難泛化到新的、不常見的長寬比的物件。此外，YOLO 是利用較粗糙的特徵來進行邊界框的預測，因為 YOLO 的結構本身就對輸入圖像進行了多重的 downsampling。</p>
+<p>最後，我們利用上述的 Loss Function 進行訓練來逼近偵測性能，但即使我們有對邊界框取根號後計算長寬誤差，但仍然對於大小邊界框中的誤差所造成的影響區別不夠明顯，也就是說，整個網路仍然對於大邊界框與小邊界框中的誤差一視同仁。最後導致我們的整體誤差來源其實只有定位上的誤差。</p>
+<h2 id="偵測系統比較-comparison-to-other-detection-system">偵測系統比較 Comparison to Other Detection System</h2>
+<p>物件偵測是電腦視覺領域中最核心的問題，偵測流程通常始於圖像的特徵萃取 (方法有 Haar,SIFT,HOG 以及 卷積特徵)，再來進行分類及定位來對物體作識別。這些分類器或定位器利用滑窗的方式掃過整張圖像 ( 或某一個子區域 ) 。底下作者們比較了多種頂尖的物件偵測框架，來指出相似及相異處。</p>
+<h3 id="deformable-parts-models-dpm">Deformable parts models ( DPM )</h3>
+<p>DMP 是使用滑窗的方法來進行物件偵測。DPM 利用幾個獨立的流程來進行偵測 : 1. 特徵萃取 2. 對區域做分類 3. 利用區域分數來進行邊界框預測</p>
+<p>YOLO 則利用單一個 CNN 結構來取代上述的全部過程。這一個 CNN 會進行特徵萃取、邊界框預測、NMS 並同時進行上下文推理。跟 DPM 萃取的靜態特徵不同，這個 CNN 結構可以對特徵進行動態的持續性的訓練，並且再這個偵測任務中進行優化。YOLO 這個統一的結構不論就速度或是準確度而言都勝過 DPM。</p>
+<h3 id="r-cnn">R-CNN</h3>
+<p>R-CNN 及其變體都使用了 region proposals 來取代滑窗偵測。Selective Search ( SS )生成出許多潛在的邊界框，其次使用 CNN 進行特徵萃取，用 SVM 進行邊界框的評估，一個線性模型來調整邊界框，最後再使用 NMS 來消除重複的預測。這複雜流程中的每一個階段都必須要獨立進行精準的參數調整，導致最後的偵測系統速度緩慢，再測試階段偵測每一張圖像都要超過 40 秒的時間。</p>
+<p>YOLO 跟 R-CNN 有跟 R-CNN 有一些相似性，每一個網格利用卷積結構提出潛在邊界框並且給予分數。然而 YOLO 在每一個網格中加上了空間限制，這有助於處理同一個物件重複偵測的問題。此外， YOLO 提出的邊界框數目每張圖像最多僅 98 個邊界框，遠小於 R-CNN 利用 SS 所提出的將近 2000個邊界框。</p>
+<p>最後，YOLO 結合了這些單獨的流程到一個單一的、共同優化的模型。</p>
+<h3 id="other-fast-detectors">Other Fast Detectors</h3>
+<p>Fast R-CNN 與 Faster R-CNN 把重點放在利用運算共享以及利用神經網路來代替 SS 找出 region proposals 加速 R-CNN 上。雖然它們在速度與準確度的表現都勝過 R-CNN，但在即時的表現上仍顯不足。</p>
+<p>許多的研究試圖要利用 HOG 的加速、使用級聯並且在 GPU 上推進運算來加速 DPM 的偵測流程，然而只有 30Hz DPM 可以進行即時偵測。</p>
+<p>YOLO 試圖在結構設計上加速偵測，並不在各個獨立的偵測流程進行優化。</p>
+<p>偵測器在單一類別上 (人臉、人) 是可以被高度優化的，因為需要處理的變化相對少得多。YOLO 就是一個學習怎麼同時偵測多種物件的通用偵測器。</p>
+<h3 id="deep-multibox">Deep MultiBox</h3>
+<p>論文 : <em>Scalable object detection using deep neural networks.</em></p>
+<p>MultiBox 利用 CNN 來提出 region proposals，與 R-CNN 使用 SS 來提出 region proposal 不同。MultiBox 使用單一分類預測機率來取代信賴指數預測，可以針對單一分類進行物件偵測，但，MultiBox 無法進行廣泛的物件偵測。而且這些都還只是龐大的偵測流程中的一小部分，後續還需要更多圖像的 patch (怎麼翻譯都怪怪的XD) 分類。</p>
+<p>YOLO 跟 MultiBox 都是使用 CNN 來進行邊界框的預測，但 YOLO 是一個更完整的偵測系統。</p>
+<h3 id="overfast">OverFast</h3>
+<p>論文 : <em>Overfeat: Integrated recognition, localization and detection using convolutional networks.</em></p>
+<p>OverFast 利用一個 CNN 來進行定位並藉由此定位來偵測物件。它雖然使用有效率的滑窗偵測，但是一個獨立的系統。OverFast 在定位上取得優化，但這樣的優化卻沒有在偵測表現上。就如同 DPM ，定位器在預測時只看到局部的資訊，無法總結上下文資訊，因此需要特別的後處理來進行一連串的偵測。</p>
+<h3 id="multigrasp">MultiGrasp</h3>
+<p>論文 : <em>Real-time grasp detection using convolutional neural networks.</em></p>
+<p>YOLO 在做的其實類似於上述論文中的偵測方式，方法就是利用 MultiGrasp 系統來進行迴歸分析以達到邊界框的抓取。</p>
+<p>然而這種抓取偵測任務比物件偵測來的簡單，只需要為單一物件圖像預測單一個可抓取區域，不用估算物件尺寸、定位、邊界或其分類，只要找到可以抓取的區域即可。而 YOLO 則是要在多分類物件上進行邊界框及分類機率。</p>
+<h2 id="實驗-experiments">實驗 Experiments</h2>
+<p>( 依照慣例省略，有興趣者請直接參閱論文 )</p>
+<p>實驗這一大部分我覺得比較有趣的結論是這個</p>
+<p><img src="https://i.imgur.com/iMmpxNQ.png" /></p>
+<p>YOLO 的確在準確度上不如 R-CNN 的相關變體，但是卻大大降低背景誤判的機率，犧牲一點準確率換得背景誤判降低以及速度提升，在一些現實的考量上的確非常划算。</p>
+<h2 id="現實中的即時檢測-real-time-detection-in-the-wild">現實中的即時檢測 Real-Time Detection In The Wild</h2>
+<p>YOLO 是一個快速、準確的物件偵測系統，因此是電腦視覺應用上的理想選擇。可以將 YOLO 接上視訊鏡頭驗證其即時偵測的表現，包含了擷取圖像的時間以及展示這些偵測。</p>
+<p>最後產生的系統是具互動性且迷人的。雖然 YOLO 是一個獨立的圖像處理系統，但連接上視訊鏡頭後，它的功能會類似於一個追蹤系統，隨著物件移動或改變行為表現來進行物件偵測。</p>
+<p>這樣的系統已經開源，可以於下列網址中找到 : http://pjreddie.com/yolo/.</p>
+<h2 id="結論-conclusion">結論 Conclusion</h2>
+<p>研究團隊提出 YOLO 這樣一個統一的物件偵測模型。YOLO 本身非常容易打造並且可以直接在整張圖像上訓練。不像其他以分類器為基礎的方法，YOLO 直接使用檢測性能來對 Loss function 做訓練，而且整個模型是一起訓練的。</p>
+<p>Fast YOLO 是目前文獻中 ( 在當時 ) 最快的通用檢測系統，而 YOLO 則推進了即時物件偵測的發展。且 YOLO 也可以在新的領域上泛化得很好，使得 YOLO 可以成為快速、強健的物件偵測系統的理想選擇。</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://medium.com/@chih.sheng.huang821/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-%E4%BB%80%E9%BA%BC%E6%98%AFone-stage-%E4%BB%80%E9%BA%BC%E6%98%AFtwo-stage-%E7%89%A9%E4%BB%B6%E5%81%B5%E6%B8%AC-fc3ce505390f">深度學習-什麼是one stage，什麼是two stage 物件偵測</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_14845119/article/details/52625426">DPM（Deformable Part Model）原理详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/IAMoldpan/article/details/78799857">深度学习中IU、IoU(Intersection over Union)的概念理解以及python程序实现</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@chih.sheng.huang821/%E6%A9%9F%E5%99%A8-%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-%E7%89%A9%E4%BB%B6%E5%81%B5%E6%B8%AC-non-maximum-suppression-nms-aa70c45adffa">機器/深度學習: 物件偵測 Non-Maximum Suppression (NMS)</a></li>
+<li><a target="_blank" rel="noopener" href="https://blogs.nvidia.com.tw/2016/08/difference-deep-learning-training-inference-ai/">「深度學習訓練」與「推論」之間有什麼差別?</a></li>
+</ol>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>利用特殊方式先選出物件在進行偵測，而選出物件的這個過程我們稱之為 Region Proposal Method<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>intersection over union (<span class="math inline">\(IOU\)</span>)，指的是真實邊界框與預測邊界框的重疊面積除以兩個邊界框的聯集面積。 <span class="math display">\[IOU=\frac{overlap}{union}\]</span> <img src="https://i.imgur.com/i4YtVCx.png%20=300x" /><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/11/24/[%E8%AB%96%E6%96%87]%20You%20Only%20Look%20Once%20_%20Unified,%20Real-Time%20Object%20Detection/" title="[論文] You Only Look Once : Unified, Real-Time Object Detection">https://allen108108.github.io/blog/2019/11/24/[論文] You Only Look Once _ Unified, Real-Time Object Detection/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/23/Generative%20Adversarial%20Network%20(10)%20%E2%80%94%20Evaluation%20&%20Concluding%20Remarks/" rel="prev" title="Generative Adversarial Network (10) --- Evaluation & Concluding Remarks">
+                  <i class="fa fa-chevron-left"></i> Generative Adversarial Network (10) --- Evaluation & Concluding Remarks
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(1)%20%E2%80%94%20Policy%20Gradient%20(Review)/" rel="next" title="Deep Reinforcement Learning (1) --- Policy Gradient (Review)">
+                  Deep Reinforcement Learning (1) --- Policy Gradient (Review) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

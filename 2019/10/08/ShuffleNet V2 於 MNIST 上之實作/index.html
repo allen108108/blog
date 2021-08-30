@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="前陣子在微博的某一個公眾號看到了一篇文章 : ShufflenetV2_高效网络的4条实用准则 文章主要是針對於有限計算能力的限制下，如何設計高效率的模型來達到最好的精準度，文章中一句話清楚的敘述現在許多論文的研究方向 : 「輕量級架構設計與速度 -- 精度的權衡」。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShuffleNet V2 於 MNIST 上之實作">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/ShuffleNet%20V2%20%E6%96%BC%20MNIST%20%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="前陣子在微博的某一個公眾號看到了一篇文章 : ShufflenetV2_高效网络的4条实用准则 文章主要是針對於有限計算能力的限制下，如何設計高效率的模型來達到最好的精準度，文章中一句話清楚的敘述現在許多論文的研究方向 : 「輕量級架構設計與速度 -- 精度的權衡」。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/RKtWUEw.png">
+<meta property="og:image" content="https://i.imgur.com/Urwinee.png">
+<meta property="og:image" content="https://i.imgur.com/55tqS66.png">
+<meta property="og:image" content="https://i.imgur.com/a9CkuYL.png">
+<meta property="og:image" content="https://i.imgur.com/hYlPI5c.jpg">
+<meta property="article:published_time" content="2019-10-07T17:10:58.000Z">
+<meta property="article:modified_time" content="2019-10-07T17:14:39.130Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/RKtWUEw.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/ShuffleNet%20V2%20%E6%96%BC%20MNIST%20%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/ShuffleNet%20V2%20%E6%96%BC%20MNIST%20%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/","path":"2019/10/08/ShuffleNet V2 於 MNIST 上之實作/","title":"ShuffleNet V2 於 MNIST 上之實作"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ShuffleNet V2 於 MNIST 上之實作 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#shufflenet-v2-%E6%9E%B6%E6%A7%8B"><span class="nav-number">1.</span> <span class="nav-text">ShuffleNet V2 架構</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shufflenet-v2-%E6%96%BC-keras-%E4%B8%8A%E7%9A%84%E5%AF%A6%E7%8F%BE"><span class="nav-number">2.</span> <span class="nav-text">ShuffleNet V2 於 keras 上的實現</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">3.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/ShuffleNet%20V2%20%E6%96%BC%20MNIST%20%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ShuffleNet V2 於 MNIST 上之實作
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-10-08 01:10:58 / 修改時間：01:14:39" itemprop="dateCreated datePublished" datetime="2019-10-08T01:10:58+08:00">2019-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%AF%A6%E4%BD%9C-Implementation/" itemprop="url" rel="index"><span itemprop="name">實作 Implementation</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/ShuffleNet%20V2%20%E6%96%BC%20MNIST%20%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/ShuffleNet V2 於 MNIST 上之實作/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>前陣子在微博的某一個公眾號看到了一篇文章 : <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/42288448">ShufflenetV2_高效网络的4条实用准则</a></p>
+<p>文章主要是針對於有限計算能力的限制下，如何設計高效率的模型來達到最好的精準度，文章中一句話清楚的敘述現在許多論文的研究方向 : 「輕量級架構設計與速度 -- 精度的權衡」。</p>
+<span id="more"></span>
+<p>而文章內容主要在介紹 2018 年發表的論文 : <em>ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design</em>，論文中針對 2017 年發表的 ShuffleNet 進行改良升級，在論文中顯示出 ShuffleNet V2 在相同的複雜度下，準確度可以比 ShuffleNet 和 MobileNetv2 更高。</p>
+<p>論文中針對計算能力及速度利用了幾個指標來衡量 --- FLOPs 及 MAC (Memory Access Cost) --- 在論文中綜合評量發現 ShuffleNet V2 的表現優於 MobileNet、SHuffleNet、DenseNet 以及 Xception，本文不多加詳述，有興趣者可以參考論文內容。</p>
+<p><img src="https://i.imgur.com/RKtWUEw.png" /></p>
+<h2 id="shufflenet-v2-架構">ShuffleNet V2 架構</h2>
+<p>根據論文作者結合理論與實驗得出了高效率模型設計的四項準則 : 1. 相同的 channel 下，最小化記憶體訪問成本 MAC 2. 太多的 Group Convolution<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 會增加 MAC 3. 模型內部太多零碎操作<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>容易降低平行運算的能力 4. Element-Wise operation<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> 不可忽略</p>
+<p>在這樣的概念下，論文作者分析了 ShuffleNet 的缺失並加以改進而設計了 ShuffleNet V2 ，兩者的對比如下 :</p>
+<p><img src="https://i.imgur.com/Urwinee.png" /></p>
+<p>( a ) the basic ShuffleNet unit ( b ) the ShuffleNet unit for spatial down sampling (2X) (GConv : group convolution.) ( c ) the basic ShuffleNet V2 unit ( d ) the ShuffleNet V2 unit for spatial down sampling (2X) (DWConv : depthwise convolution.)</p>
+<h2 id="shufflenet-v2-於-keras-上的實現">ShuffleNet V2 於 keras 上的實現</h2>
+<p>在 Github 上已經有人將 ShuffleNet V2 實現在 keras 上，詳情可參考 :</p>
+<p>https://github.com/opconty/keras-shufflenetV2</p>
+<p>先前於 " <a target="_blank" rel="noopener" href="http://bit.ly/2oZH5f6">卷積神經網路 Convolutional Neural Network ( CNN ) 與 全連接神經網路 Fully Connected Feedforward Network 於 MNIST 上之實作</a> " 一文中我們比較了 CNN 與 Fully Connected Feedforward 的辨識能力比較，這次我仍然使用 MNIST 為資料集，配合上 ShuffleNet V2 進行 100 epochs 的訓練。</p>
+<p>比較讓人意外的是，最後在 test data 上的成果竟然不比一個單純 CNN model 來的好。</p>
+<p>CNN : <img src="https://i.imgur.com/55tqS66.png" /> ShuffleNer V2 : <img src="https://i.imgur.com/a9CkuYL.png" /></p>
+<p>剛好最近在逛 reddit ML 版，便想順便問了一下這樣的情況是否正常 所得到的回覆其實有點出乎我意料</p>
+<p><img src="https://i.imgur.com/hYlPI5c.jpg" /></p>
+<p>大致上的回覆都差不多，均指出 MNIST 這樣的資料集太過簡單，可以用來檢測自己的模型 how bad ，但若要拿來檢驗 how good 可能就並不適用，或許使用 CIFAR-10 或 CIFAR-100 可以比較明確比較租模型的優劣。</p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Group Convolution 最早於 AlexNet 中被提出，處理模型在雙 GPU 上的訓練。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>這裡所指的零碎操作指的是再多分支架構下，每一個分支底下的卷積層或池化層。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>Element-Wise operation 指的是 ReLU、AddTensor、AddBias...等等。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/ShuffleNet%20V2%20%E6%96%BC%20MNIST%20%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/" title="ShuffleNet V2 於 MNIST 上之實作">https://allen108108.github.io/blog/2019/10/08/ShuffleNet V2 於 MNIST 上之實作/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Unsupervised%20Learning%20(6)%20--%20Generation%20(%20PixelRNN%E3%80%81Variational%20Auto-Encoder%20(%20VAE%20)%20)/" rel="prev" title="Unsupervised Learning (6) -- Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )">
+                  <i class="fa fa-chevron-left"></i> Unsupervised Learning (6) -- Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Lookahead%20optimizer%20%E6%96%BC%20Dogs%20vs.%20Cats%20%E8%B2%93%E7%8B%97%E8%BE%A8%E8%AD%98%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/" rel="next" title="Lookahead optimizer 於 Dogs vs. Cats 貓狗辨識上之實作">
+                  Lookahead optimizer 於 Dogs vs. Cats 貓狗辨識上之實作 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

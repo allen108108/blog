@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本篇為此系列文中第二篇，若還沒有讀過前文的讀者，建議從&quot; Kaggle Case - Santander Customer Transaction Prediction (1) &quot;開始閱讀唷 !">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kaggle Case - Santander Customer Transaction Prediction (2)">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(2)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本篇為此系列文中第二篇，若還沒有讀過前文的讀者，建議從&quot; Kaggle Case - Santander Customer Transaction Prediction (1) &quot;開始閱讀唷 !">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/Cpl6q3z.png">
+<meta property="og:image" content="https://i.imgur.com/p92Y4qV.png">
+<meta property="og:image" content="https://i.imgur.com/1dpxjZq.png">
+<meta property="og:image" content="https://i.imgur.com/jEq3j6f.png">
+<meta property="og:image" content="https://i.imgur.com/7v0Vu7i.png">
+<meta property="og:image" content="https://i.imgur.com/155SSAg.png">
+<meta property="og:image" content="https://i.imgur.com/6YPVZIX.png">
+<meta property="og:image" content="https://i.imgur.com/ydSQ9Zi.png">
+<meta property="og:image" content="https://i.imgur.com/t7qPPi3.png">
+<meta property="og:image" content="https://i.imgur.com/dlOuPNI.png">
+<meta property="og:image" content="https://i.imgur.com/cvleG1R.png">
+<meta property="og:image" content="https://i.imgur.com/dp00T6D.png">
+<meta property="og:image" content="https://i.imgur.com/aPOZIyq.png">
+<meta property="article:published_time" content="2019-10-07T18:08:01.000Z">
+<meta property="article:modified_time" content="2019-10-07T18:08:02.081Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/Cpl6q3z.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(2)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(2)/","path":"2019/10/08/Kaggle Case - Santander Customer Transaction Prediction (2)/","title":"Kaggle Case - Santander Customer Transaction Prediction (2)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kaggle Case - Santander Customer Transaction Prediction (2) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#data-exploration"><span class="nav-number">1.</span> <span class="nav-text">Data exploration</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#density-plots-of-feature"><span class="nav-number">1.1.</span> <span class="nav-text">Density plots of feature</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#distribution-of-mean-and-std"><span class="nav-number">1.2.</span> <span class="nav-text">Distribution of mean and std</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#to-be-continue...."><span class="nav-number">2.</span> <span class="nav-text">To be Continue....</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(2)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kaggle Case - Santander Customer Transaction Prediction (2)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-10-08 02:08:01 / 修改時間：02:08:02" itemprop="dateCreated datePublished" datetime="2019-10-08T02:08:01+08:00">2019-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%A1%88%E4%BE%8B%E8%A8%8E%E8%AB%96-Case-Study/" itemprop="url" rel="index"><span itemprop="name">案例討論 Case Study</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(2)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/Kaggle Case - Santander Customer Transaction Prediction (2)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>本篇為此系列文中第二篇，若還沒有讀過前文的讀者，建議從" <a target="_blank" rel="noopener" href="https://hackmd.io/s/B1YMZu6wN">Kaggle Case - Santander Customer Transaction Prediction (1)</a> "開始閱讀唷 !</p>
+</blockquote>
+<span id="more"></span>
+<h3 id="data-exploration">Data exploration</h3>
+<p>我們在上一篇已經進行了初步的 Data Exploration ，本篇開始要對資料再作更進一步的探索，以便後續的特徵工程能夠順利進行。</p>
+<h4 id="density-plots-of-feature">Density plots of feature</h4>
+<p>首先，這邊先對 target 0,1 中各個欄位/特徵的密度做一個了解</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_feature_distribution</span>(<span class="params">df1, df2, label1, label2, features</span>):</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    sns.set_style(<span class="string">&#x27;whitegrid&#x27;</span>)</span><br><span class="line">    plt.figure()</span><br><span class="line">    fig, ax = plt.subplots(<span class="number">10</span>,<span class="number">10</span>,figsize=(<span class="number">18</span>,<span class="number">22</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> feature <span class="keyword">in</span> features:</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        plt.subplot(<span class="number">10</span>,<span class="number">10</span>,i)</span><br><span class="line">        sns.kdeplot(df1[feature], bw=<span class="number">0.5</span>,label=label1) <span class="comment">#核密度函數:繪製平滑分布估計圖</span></span><br><span class="line">        sns.kdeplot(df2[feature], bw=<span class="number">0.5</span>,label=label2)</span><br><span class="line">        plt.xlabel(feature, fontsize=<span class="number">9</span>)</span><br><span class="line">        locs, labels = plt.xticks()</span><br><span class="line">        plt.tick_params(axis=<span class="string">&#x27;x&#x27;</span>, which=<span class="string">&#x27;major&#x27;</span>, labelsize=<span class="number">6</span>, pad=-<span class="number">6</span>)</span><br><span class="line">        plt.tick_params(axis=<span class="string">&#x27;y&#x27;</span>, which=<span class="string">&#x27;major&#x27;</span>, labelsize=<span class="number">6</span>)</span><br><span class="line">    plt.show();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">t0 = train_df.loc[train_df[<span class="string">&#x27;target&#x27;</span>] == <span class="number">0</span>]</span><br><span class="line">t1 = train_df.loc[train_df[<span class="string">&#x27;target&#x27;</span>] == <span class="number">1</span>]</span><br><span class="line">features = train_df.columns.values[<span class="number">2</span>:<span class="number">102</span>]</span><br><span class="line">plot_feature_distribution(t0, t1, <span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, features)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/Cpl6q3z.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">features = train_df.columns.values[<span class="number">102</span>:<span class="number">202</span>]</span><br><span class="line">plot_feature_distribution(t0, t1, <span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, features)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/p92Y4qV.png" /></p>
+<p>OK，200個欄位/特徵在目標為0及1的表現都呈現在上面，看得真讓人眼花撩亂<del>然後想立刻關螢幕</del>。 雖然說這些圖實在讓人覺得很阿砸，但是這些圖其實沒有這麼困難，仔細看一下不管 target是0還是1，大部分特徵的分布都是幾乎一樣的。不過就是有這麼幾個( <strong>var_0, var_1, var_2, var_5, var_9, var_13, var_106, var_109, var_139 ...</strong> )在target不同下的分布明顯的不一樣，甚至其中少數幾個( <strong>var_2, var_13, var_26, var_55, var_175, var_184, var_196</strong> )更呈現了類似二元隨機變量的分布圖 (?) 。而這些資訊都可提供為接下來的特徵選擇上的參考指標。</p>
+<p>在訓練資料中，target 0或是1的特徵分布我們看完了，再來要對照一下訓練資料跟測試資料的特徵分部有沒有什麼不同。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">features = train_df.columns.values[<span class="number">2</span>:<span class="number">102</span>]</span><br><span class="line">plot_feature_distribution(train_df, test_df, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;test&#x27;</span>, features)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/1dpxjZq.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">features = train_df.columns.values[<span class="number">102</span>:<span class="number">202</span>]</span><br><span class="line">plot_feature_distribution(train_df, test_df, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;test&#x27;</span>, features)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/jEq3j6f.png" /></p>
+<p>我們可以發現到，儘管在上面我們提到的幾個"特別"的特徵分布上，訓練資料與測試資料上的表現幾乎呈現相同的狀況。</p>
+<h4 id="distribution-of-mean-and-std">Distribution of mean and std</h4>
+<p>首先，先來看看均值(mean)的分布 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">features = train_df.columns.values[<span class="number">2</span>:<span class="number">202</span>]</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of mean values per row in the train and test set&quot;</span>)</span><br><span class="line">sns.distplot(train_df[features].mean(axis=<span class="number">1</span>),color=<span class="string">&quot;green&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">sns.distplot(test_df[features].mean(axis=<span class="number">1</span>),color=<span class="string">&quot;blue&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure> <img src="https://i.imgur.com/7v0Vu7i.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of mean values per column in the train and test set&quot;</span>)</span><br><span class="line">sns.distplot(train_df[features].mean(axis=<span class="number">0</span>),color=<span class="string">&quot;magenta&quot;</span>,kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">sns.distplot(test_df[features].mean(axis=<span class="number">0</span>),color=<span class="string">&quot;darkblue&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/155SSAg.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of std values per row in the train and test set&quot;</span>)</span><br><span class="line">sns.distplot(train_df[features].std(axis=<span class="number">1</span>),color=<span class="string">&quot;black&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">sns.distplot(test_df[features].std(axis=<span class="number">1</span>),color=<span class="string">&quot;red&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">plt.legend();plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/6YPVZIX.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of std values per column in the train and test set&quot;</span>)</span><br><span class="line">sns.distplot(train_df[features].std(axis=<span class="number">0</span>),color=<span class="string">&quot;blue&quot;</span>,kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">sns.distplot(test_df[features].std(axis=<span class="number">0</span>),color=<span class="string">&quot;green&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">plt.legend(); plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/ydSQ9Zi.png" /></p>
+<p>很好，上面四張圖大概又要讓人崩潰了。 其實只要看懂上面兩張，下面兩張只是統計量不同罷了。</p>
+<p>(為了排版及整體性考量，我把解釋放在註解<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>)</p>
+<p>除了拿Training Data 與 Test Data來比較外，我們也可以比較Training Data內不同Target的均值(標準差)有什麼不同。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">t0 = train_df.loc[train_df[<span class="string">&#x27;target&#x27;</span>] == <span class="number">0</span>]</span><br><span class="line">t1 = train_df.loc[train_df[<span class="string">&#x27;target&#x27;</span>] == <span class="number">1</span>]</span><br><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of mean values per row in the train set&quot;</span>)</span><br><span class="line">sns.distplot(t0[features].mean(axis=<span class="number">1</span>),color=<span class="string">&quot;red&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;target = 0&#x27;</span>)</span><br><span class="line">sns.distplot(t1[features].mean(axis=<span class="number">1</span>),color=<span class="string">&quot;blue&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;target = 1&#x27;</span>)</span><br><span class="line">plt.legend(); plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/t7qPPi3.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of mean values per column in the train set&quot;</span>)</span><br><span class="line">sns.distplot(t0[features].mean(axis=<span class="number">0</span>),color=<span class="string">&quot;green&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;target = 0&#x27;</span>)</span><br><span class="line">sns.distplot(t1[features].mean(axis=<span class="number">0</span>),color=<span class="string">&quot;darkblue&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;target = 1&#x27;</span>)</span><br><span class="line">plt.legend(); plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/dlOuPNI.png" /></p>
+<p>以上面這幾張圖我們可以將各種統計量( <strong>min,Max,偏態skewness ,峰度Kurtosis</strong> )依樣畫葫蘆般的通通做過一遍，在此請容許小弟直接省略。</p>
+<blockquote>
+<p>Gabriel Preda在這一個部分上面，除了最小值的圖呈現比較明顯的右偏，基本上並沒有對這一連串的視覺化做出解釋及處理，那我們可以思考的是，這一連串的觀察中，圖形可能會出現哪些狀況?而我們又有哪些必要處理的部分?怎麼處理?</p>
+</blockquote>
+<p>做到這邊，冗長的Data Exploration總算告一段落，下一部分要面對的就是Feature Engineering以及 run Model 惹~</p>
+<h3 id="to-be-continue....">To be Continue....</h3>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>一樣都是均值(標準差)的分布，這兩張有什麼不同? 想要知道差別，我們要先了解code裡面<code>train_df[features]</code>以及<code>train_df[features].mean(axis=1)</code>各代表什麼意思。 <img src="https://i.imgur.com/cvleG1R.png" /> <code>train_df[features]</code>就是把原先的表格拿掉ID跟target單純以特徵呈現</p>
+<p><img src="https://i.imgur.com/dp00T6D.png" /></p>
+<p><img src="https://i.imgur.com/aPOZIyq.png" /> 上面兩張，可以知道axis參數代表的就是計算均值(標準差)的"方向"。當axis=0時，計算的方向便是以行(垂直)的方式計算，而當axis=1時，便是以列(水平)做計算方向。</p>
+<ul>
+<li>axis=0 : 呈現各別特徵的平均(標準差)</li>
+<li>axis=1 : 表示每一筆資料，所有特徵值的平均(標準差)</li>
+</ul>
+<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(2)/" title="Kaggle Case - Santander Customer Transaction Prediction (2)">https://allen108108.github.io/blog/2019/10/08/Kaggle Case - Santander Customer Transaction Prediction (2)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(1)/" rel="prev" title="Kaggle Case - Santander Customer Transaction Prediction (1)">
+                  <i class="fa fa-chevron-left"></i> Kaggle Case - Santander Customer Transaction Prediction (1)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(3)/" rel="next" title="Kaggle Case - Santander Customer Transaction Prediction (3)">
+                  Kaggle Case - Santander Customer Transaction Prediction (3) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="在 GAN 中，我們會隨機 input 一組向量，然後生成一個我們要的物件 ( 可能是圖片、文字、語句... )。直覺的，我們總會希望這一組向量的每一個維度都代表某一個特性、性質。 但是現實總是沒有想像中美好。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Generative Adversarial Network (7) --- InfoGAN, VAE-GAN, BiGAN">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/11/17/Generative%20Adversarial%20Network%20(7)%20%E2%80%94%20InfoGAN,%20VAE-GAN,%20BiGAN/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="在 GAN 中，我們會隨機 input 一組向量，然後生成一個我們要的物件 ( 可能是圖片、文字、語句... )。直覺的，我們總會希望這一組向量的每一個維度都代表某一個特性、性質。 但是現實總是沒有想像中美好。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/nb5B4wc.png">
+<meta property="og:image" content="https://i.imgur.com/CsqY3xH.png">
+<meta property="og:image" content="https://i.imgur.com/x2yPHoj.png">
+<meta property="og:image" content="https://i.imgur.com/lvaX2CH.png">
+<meta property="og:image" content="https://i.imgur.com/MoSzB5r.png">
+<meta property="og:image" content="https://i.imgur.com/7JGHowS.png">
+<meta property="og:image" content="https://i.imgur.com/aPAkgEv.png">
+<meta property="og:image" content="https://i.imgur.com/02dhSS4.png">
+<meta property="og:image" content="https://i.imgur.com/lB9474a.png">
+<meta property="og:image" content="https://i.imgur.com/JUrbO7G.png">
+<meta property="og:image" content="https://i.imgur.com/ZzDZXb5.png">
+<meta property="article:published_time" content="2019-11-16T19:25:36.000Z">
+<meta property="article:modified_time" content="2019-11-16T19:29:51.882Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/nb5B4wc.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/11/17/Generative%20Adversarial%20Network%20(7)%20%E2%80%94%20InfoGAN,%20VAE-GAN,%20BiGAN/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/11/17/Generative%20Adversarial%20Network%20(7)%20%E2%80%94%20InfoGAN,%20VAE-GAN,%20BiGAN/","path":"2019/11/17/Generative Adversarial Network (7) — InfoGAN, VAE-GAN, BiGAN/","title":"Generative Adversarial Network (7) --- InfoGAN, VAE-GAN, BiGAN"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Generative Adversarial Network (7) --- InfoGAN, VAE-GAN, BiGAN | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#info-gan"><span class="nav-number">1.</span> <span class="nav-text">Info GAN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#architecture"><span class="nav-number">1.1.</span> <span class="nav-text">Architecture</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vae-gan"><span class="nav-number">2.</span> <span class="nav-text">VAE GAN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#algorithm-of-vae-gan"><span class="nav-number">2.1.</span> <span class="nav-text">Algorithm of VAE GAN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bigan"><span class="nav-number">3.</span> <span class="nav-text">BiGAN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#algorithm-of-bigan"><span class="nav-number">3.1.</span> <span class="nav-text">Algorithm of BiGAN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#triple-gan"><span class="nav-number">4.</span> <span class="nav-text">Triple GAN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#domain-adversarial-neural-network"><span class="nav-number">5.</span> <span class="nav-text">Domain Adversarial Neural Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#feature-disentangle"><span class="nav-number">6.</span> <span class="nav-text">Feature Disentangle</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/11/17/Generative%20Adversarial%20Network%20(7)%20%E2%80%94%20InfoGAN,%20VAE-GAN,%20BiGAN/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Generative Adversarial Network (7) --- InfoGAN, VAE-GAN, BiGAN
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-11-17 03:25:36 / 修改時間：03:29:51" itemprop="dateCreated datePublished" datetime="2019-11-17T03:25:36+08:00">2019-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/11/17/Generative%20Adversarial%20Network%20(7)%20%E2%80%94%20InfoGAN,%20VAE-GAN,%20BiGAN/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/17/Generative Adversarial Network (7) — InfoGAN, VAE-GAN, BiGAN/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在 GAN 中，我們會隨機 input 一組向量，然後生成一個我們要的物件 ( 可能是圖片、文字、語句... )。直覺的，我們總會希望這一組向量的每一個維度都代表某一個特性、性質。</p>
+<p>但是現實總是沒有想像中美好。</p>
+<span id="more"></span>
+<p>往往我們調整向量的某一個維度，卻很難發現其生成物件的差異。以下圖為例，我們試圖對每一個維度進行調整，生成出來的手寫數字卻幾乎沒有什麼明顯變化，甚至有時候還會出現一些奇怪的狀態 ( 如圖中間的數字 7 )</p>
+<p><img src="https://i.imgur.com/nb5B4wc.png" /></p>
+<p>一個可能的解釋是，我們會有這樣的期待，是因為我們將其視為一個規律的、易預測的分佈，但是大多數這些向量的分佈極有可能是非常不規則的。</p>
+<p><img src="https://i.imgur.com/CsqY3xH.png" /></p>
+<h2 id="info-gan">Info GAN</h2>
+<p>Info GAN 便是為了解決這樣的問題而產生的一種 GAN 變體。</p>
+<h3 id="architecture">Architecture</h3>
+<p>首先我們將 vector <span class="math inline">\(z\)</span> 切成兩個部分，第一個部分稱為 <span class="math inline">\(c\)</span> ，而第二個部分則是 <span class="math inline">\(z&#39;\)</span> ( 如果 <span class="math inline">\(z\)</span> 為20維向量，可以前十維視為 <span class="math inline">\(c\)</span>，後十維視為 <span class="math inline">\(z&#39;\)</span> )。再來我們將 Generator 的輸出 <span class="math inline">\(x\)</span> 接上一個分類器以及一個 Discriminator。分類器的作用主要是判別 <span class="math inline">\(x\)</span> 是從哪一個 <span class="math inline">\(c\)</span> 向量生成。</p>
+<p><span class="math display">\[
+Generator+Classifier = Auto-Encoder
+\]</span></p>
+<p><img src="https://i.imgur.com/x2yPHoj.png" /></p>
+<p>光只有這樣的 Auto Encoder 很容易產生問題，Generator 只要產生一個直接含有 <span class="math inline">\(c\)</span> 資訊的 <span class="math inline">\(x\)</span> 就可以讓分類器正確分類，即使 <span class="math inline">\(x\)</span> 不夠真實也沒關係。因此 Discriminator 的作用便是要限制 <span class="math inline">\(x\)</span> 除了可以被正確分類外，還不能長得太奇怪，必須要越真實越好。</p>
+<p>在實作上，分類器與 Discriminator 會共用參數，只有最後的 Layer 會不同 ( 因為兩者的輸出本來就不一樣 )。</p>
+<p>Info GAN 有幾個值得思考的部分 :</p>
+<p><strong>1. Info GAN 為何可以解決 input features 不明確的問題 ?</strong> Info GAN 的概念是這樣，如果我們可以利用分類器將 <span class="math inline">\(x\)</span> 解回 <span class="math inline">\(c\)</span>，那麼勢必促使 <span class="math inline">\(c\)</span> 的每一個維度都必須要有所代表的意義在其中。這樣我們才能明確且清楚的將 <span class="math inline">\(x\)</span> 解回 <span class="math inline">\(c\)</span>。</p>
+<p><strong>2. 怎麼將 <span class="math inline">\(z\)</span> 分成 <span class="math inline">\(c\)</span> 跟 <span class="math inline">\(z&#39;\)</span> ? <span class="math inline">\(c\)</span> 跟 <span class="math inline">\(z&#39;\)</span> 代表的各是什麼 ?</strong> 這個問題其實我們也不會知道，但隨著你給定的切割方式，Network 便會依照你的 <span class="math inline">\(c\)</span> 來進行訓練。也就是說，隨著不同的切割方式，訓練出來的 <span class="math inline">\(c\)</span> 的每一個維度代表的意義可能會不同。既然 <span class="math inline">\(c\)</span> 中的每一個維度都可以代表某些特性，那麼 <span class="math inline">\(z&#39;\)</span> 代表的就是那些無法被表徵的因素。</p>
+<p><img src="https://i.imgur.com/lvaX2CH.png" /></p>
+<p>( a ) : Info GAN 改變第一維的數值可以改變數字 ( b ) : 一般 GAN 改變第一維的數值影響並不明顯 ( c ) : Info GAN 改變第二維的數值可以改變角度 ( d ) : Info GAN 改變第三維的數值可以改變手寫粗細</p>
+<h2 id="vae-gan">VAE GAN</h2>
+<p>VAE GAN 就是一種 VAE ( Variational Auto Encoder ) 與 GAN 互相輔助的 GAN 變體。關於 VAE 的詳細介紹可以參閱 " <em><a target="_blank" rel="noopener" href="http://bit.ly/35nij9b">Unsupervised Learning – Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a></em> " 一文。簡單來說，VAE 從原本 AE 內部要求取向量 Latent Code 改變成找出其分佈，來改善 AE 本身的不足。</p>
+<p>而 VAE GAN 其實就是將 VAE 的 decoder 視為 generator，後面再接上一個 Discriminator 的結構。</p>
+<p><img src="https://i.imgur.com/MoSzB5r.png" /></p>
+<p>VAE 藉由 Reconstruction Error 的優化來生成接近輸入的圖片，但 Reconstruction Error 低並不代表整個生成圖像夠真實，大多數 VAE 生成的圖片都是模糊不清楚的，因此 Discriminator 在這裡就是為了讓生成圖片可以更像真實的圖像。</p>
+<p>也就是說，整個 VAE GAN 除了要讓 Reconstruction Error 越小越好，也同時要讓輸出越真實越好。</p>
+<p>一般的 GAN ，我們輸入隨機的向量讓它生成出對應的圖像，但 Generator 並沒有看過真正的圖像，因此在訓練過程中，必須花非常多的時間調整參數。然而，VAE GAN 在一開始就見過真正的圖像，因此 VAE GAN 的訓練會相對穩定不少。</p>
+<h3 id="algorithm-of-vae-gan">Algorithm of VAE GAN</h3>
+<ul>
+<li>初始化 <span class="math inline">\(En\)</span> (Encoder), <span class="math inline">\(De\)</span> (Decoder) and <span class="math inline">\(Dis\)</span> (Discriminator)</li>
+<li>迭代進行 :
+<ul>
+<li>從 Dataset 中隨機抽樣 M 個真實樣本 <span class="math inline">\(\{x^1,x^2,\cdots,x^M\}\)</span></li>
+<li>利用 Encoder 生成 M 個 CODE <span class="math inline">\(\{\tilde{z}^1,\tilde{z}^2,\cdots,\tilde{z}^M|\tilde{z}^i=En(x^i)\}\)</span></li>
+<li>利用 Decoder 生成 M 個圖像 <span class="math inline">\(\{\tilde{x}^1,\tilde{x}^2,\cdots,\tilde{x}^M|\tilde{x}^i=De(\tilde{z}^i)\}\)</span></li>
+<li>從一個先驗分佈 <span class="math inline">\(P(z)\)</span> 中抽樣 M 個 CODEs <span class="math inline">\(\{z^1,z^2,\cdots,z^M\}\)</span></li>
+<li>將這些隨機抽樣的 CODEs 利用 Decoder 生成 M 個圖像<span class="math inline">\(\{\hat{x}^1,\hat{x}^2,\cdots,\hat{x}^M|\hat{x}^i=De(z^i)\}\)</span></li>
+<li>藉由更新 <span class="math inline">\(En\)</span> 來降低 Reconstruction Error <span class="math inline">\(\|\tilde{x}^i-x^i\|\)</span> ，且使 <span class="math inline">\(P(z), P(\tilde{z}^i|x^i)\)</span> 越接近越好( <span class="math inline">\(KL(P(\tilde{z}^i|x^i)|P(z))\)</span> 越小越好 )</li>
+<li>藉由更新 <span class="math inline">\(De\)</span> 來降低 Reconstruction Error <span class="math inline">\(\|\tilde{x}^i-x^i\|\)</span> ，且使 <span class="math inline">\(Dis(\tilde{x}^i)\)</span> 及 <span class="math inline">\(Dis(\hat{x}^i)\)</span> 越大越好</li>
+<li>藉由更新 <span class="math inline">\(Dis\)</span> 來增加 <span class="math inline">\(Dis(x^i)\)</span> ，且使 <span class="math inline">\(Dis(\tilde{x}^i)\)</span> 及 <span class="math inline">\(Dis(\hat{x}^i)\)</span> 越小越好</li>
+</ul></li>
+</ul>
+<p>PS : 我們也可以將上述 Binary Classificaiton Discriminator 改為 三元分類器。將 reconstruct image 與 隨機生成的 image 視為不同類別。</p>
+<h2 id="bigan">BiGAN</h2>
+<p>跟 VAE GAN 相同，BiGAN 也是一種更改 Auto Encoder 的 GAN 變體。</p>
+<p>BiGAN 將 Auto Encoder 中的 Encoder 與 Decoder 拆成兩個神經網路，Encoder 輸入 image <span class="math inline">\(x^i\)</span> 輸出 CODE <span class="math inline">\(\tilde{z}^i\)</span>，而 Decoder 輸入隨機 CODE <span class="math inline">\(z^i\)</span> 輸出 image <span class="math inline">\(\tilde{x}^i\)</span>。然後 Discriminator 便是用來判斷 <span class="math inline">\((\tilde{x}^i,z^i),(x^i,\tilde{z}^i)\)</span> 是來自 Encoder 還是 Decoder。</p>
+<p><img src="https://i.imgur.com/7JGHowS.png" /></p>
+<h3 id="algorithm-of-bigan">Algorithm of BiGAN</h3>
+<ul>
+<li>初始化 <span class="math inline">\(En\)</span> (Encoder), <span class="math inline">\(De\)</span> (Decoder) and <span class="math inline">\(Dis\)</span> (Discriminator)</li>
+<li>迭代進行 :
+<ul>
+<li>從 Dataset 中隨機抽樣 M 個真實樣本 <span class="math inline">\(\{x^1,x^2,\cdots,x^M\}\)</span></li>
+<li>利用 Encoder 生成 M 個 CODE <span class="math inline">\(\{\tilde{z}^1,\tilde{z}^2,\cdots,\tilde{z}^M|\tilde{z}^i=En(x^i)\}\)</span></li>
+<li>從一個先驗分佈 <span class="math inline">\(P(z)\)</span> 中抽樣 M 個 CODEs <span class="math inline">\(\{z^1,z^2,\cdots,z^M\}\)</span></li>
+<li>將這些隨機抽樣的 CODEs 利用 Decoder 生成 M 個圖像<span class="math inline">\(\{\tilde{x}^1,\tilde{x}^2,\cdots,\tilde{x}^M|\tilde{x}^i=De(z^i)\}\)</span></li>
+<li>藉由更新 <span class="math inline">\(Dis\)</span> 來增加 <span class="math inline">\(Dis(x^i,\tilde{z}^i)\)</span> ，並減少 <span class="math inline">\(Dis(\tilde{x}^i,z^i)\)</span></li>
+<li>藉由更新 <span class="math inline">\(En,De\)</span> 來減少 <span class="math inline">\(Dis(x^i,\tilde{z}^i)\)</span> ，並增加 <span class="math inline">\(Dis(\tilde{x}^i,z^i)\)</span> (騙過 Discriminator)</li>
+</ul></li>
+</ul>
+<p>這樣的演算法在做什麼事情 ?</p>
+<p>我們可以把 Encoder 的 input 與 output 視為從一個聯合分佈 <span class="math inline">\(P(x,z)\)</span> 抽樣出來的樣本，也可以把 Decoder 的 input 與 output 視為從一個聯合分佈 <span class="math inline">\(Q(x,z)\)</span> 抽樣出來的樣本。</p>
+<p>跟一般的 GAN 一樣，在 BiGAN 裡面，Discriminator 也是在計算兩個分佈的散度 (divergence)，只是計算的兩個分佈改成 <span class="math inline">\(P(x,z)\)</span> 與 <span class="math inline">\(Q(x,z)\)</span>。而 BiGAN 就是根據 Discriminator 計算出來的散度，來讓 <span class="math inline">\(P(x,z)\)</span> 與 <span class="math inline">\(Q(x,z)\)</span> 越來越接近。</p>
+<p>當 <span class="math inline">\(P,Q\)</span> 這兩個聯合分佈越來越接近時，如果 <span class="math inline">\(x^i\approx\tilde{x}^i\)</span>，則勢必 <span class="math inline">\(\tilde{z}^i\approx z^i\)</span>，也就是說，即使我們將 Encoder 跟 Decoder 分開來訓練，但訓練到 optimal，它們兩個會幾乎等同於一個完整的 auto encoder。</p>
+<p>但是要注意，這是指兩者的 optimal 狀況下，兩者會相等，但我們知道，基本上 optimal 的情況幾乎不會出現，所以兩種方式訓練出來的 model 還是會有所不同，在實務上 BiGAN 有較強的語意捕捉能力，也就是生成的圖片就意義上會與原輸入圖片的概念較為相近。</p>
+<h2 id="triple-gan">Triple GAN</h2>
+<p><img src="https://i.imgur.com/aPAkgEv.png" /></p>
+<p>在論文 " <em>Triple Generative Adversarial Nets</em> " 中提出的這個是 基於 Semi-Supervised Learning 的一種 GAN 變體。</p>
+<p>Generator <span class="math inline">\(G\)</span> 跟 Discriminator <span class="math inline">\(D\)</span> 構成了一個 Conditional GAN，這邊倒是沒有什麼問題。Triple GAN 最特別的就是引入了一個 Classifier <span class="math inline">\(C\)</span>。一般來說，我們手邊有 Label 的資料通常不會很多，我們可以利用這些已經標記好的資料先訓練出一個分類器，這個分類器的作用就是將生成的資料進行機器標註，在跟原本已經標註好的資料一起丟進 Discriminator。</p>
+<h2 id="domain-adversarial-neural-network">Domain Adversarial Neural Network</h2>
+<p><img src="https://i.imgur.com/02dhSS4.png" /></p>
+<p>DANN 在之前的課程 " <em><a target="_blank" rel="noopener" href="http://bit.ly/2OExmWb">Transfer Learning 遷移學習</a></em> " 中有過比較詳細的介紹。</p>
+<p>簡單來說，就是要訓練一個特徵萃取器可以不被 Domain 干擾 (所以要試圖騙過 domain classifier) ，另外，萃取出來的特徵還要確認可以被正確分類 ( label predict 的工作 )。</p>
+<p>DANN 的訓練過程可以同時進行，也可以如同 GAN 一樣利用迭代的方式進行。( 當然，GAN要同時訓練也是沒有問題，但是穩定性會變得較差 )</p>
+<h2 id="feature-disentangle">Feature Disentangle</h2>
+<p>上面的 DANN 主要就是想引入 Feature Disentangle 這樣的概念，Feature Disentangle 在語音、影像上的使用十分廣泛。</p>
+<p>一個特徵向量，其維度通常包含了所有面向的所有特徵資訊。但有時候我們只會對某一個面向的特徵有興趣，因此衍生出 Feature Disentangle 這樣的概念，試圖將不同面向的特徵藉由訓練時就將其作區別。</p>
+<p>舉例來說，一段聲音訊號勢必包含了語者的資訊以及發音的訊息...等等。當我們想要做語音轉換時，我們在乎的是語者的資訊，希望只調整跟語者相關的特徵來進行不同語者的模擬。</p>
+<p>我們會試著各自訓練一個 encoder 來進行特徵萃取。</p>
+<p><img src="https://i.imgur.com/lB9474a.png" /></p>
+<p>光只是這樣，我們還是很難確認、保證一定可以把不同面相特徵精準的分開， 因此還需使用類似 DANN 的概念。另外 train 一個語者分類器，接在發音的 encoder 之後，要盡可能地在訓練過程中，讓分類器分不出來發音這個 Encoder 萃取出來的特徵是哪一個語者發出的。經過這樣的訓練後，我們可以盡量讓發音的 encoder 不會萃取出有關語者的特徵。</p>
+<p><img src="https://i.imgur.com/JUrbO7G.png" /></p>
+<p>而下圖則是在 LibriSpeech 訓練的結果</p>
+<p><img src="https://i.imgur.com/ZzDZXb5.png" /></p>
+<p>左上 : 表示不同的發音訊息做分類 右上 : 如果以語者訊息做分類可以知道這些語音是兩個不同人講出來的</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/11/17/Generative%20Adversarial%20Network%20(7)%20%E2%80%94%20InfoGAN,%20VAE-GAN,%20BiGAN/" title="Generative Adversarial Network (7) --- InfoGAN, VAE-GAN, BiGAN">https://allen108108.github.io/blog/2019/11/17/Generative Adversarial Network (7) — InfoGAN, VAE-GAN, BiGAN/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/15/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%203%20)/" rel="prev" title="Chapter 4 -- Greedy algorithms ( 3 )">
+                  <i class="fa fa-chevron-left"></i> Chapter 4 -- Greedy algorithms ( 3 )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/18/Generative%20Adversarial%20Network%20(8)%20%E2%80%94%20Photo%20Editing/" rel="next" title="Generative Adversarial Network (8) --- Photo Editing">
+                  Generative Adversarial Network (8) --- Photo Editing <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

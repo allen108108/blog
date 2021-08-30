@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="IOT 的應用在現今的社會上已經十分普遍，智慧家庭、智慧工廠、....等 IOT 應用已經多不勝數，然而其中最關鍵的部件便是 Gateway (閘道器)，一台小小的黑色盒子，除了接收感應器接收到的資料外，還能接收外部指令對設備進行調整，甚至，我們還能在其中佈署 AI 模型進行邊緣運算，直接進行模型的推論。 然而，大多數的人對於 Gateway 的運作幾乎不甚了解，本文將會著重在 B2B 智慧空調">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gateway 在 IOT 中扮演的角色">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/09/06/Gateway%20%E5%9C%A8%20IOT%20%E4%B8%AD%E6%89%AE%E6%BC%94%E7%9A%84%E8%A7%92%E8%89%B2/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="IOT 的應用在現今的社會上已經十分普遍，智慧家庭、智慧工廠、....等 IOT 應用已經多不勝數，然而其中最關鍵的部件便是 Gateway (閘道器)，一台小小的黑色盒子，除了接收感應器接收到的資料外，還能接收外部指令對設備進行調整，甚至，我們還能在其中佈署 AI 模型進行邊緣運算，直接進行模型的推論。 然而，大多數的人對於 Gateway 的運作幾乎不甚了解，本文將會著重在 B2B 智慧空調">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/L0GWCnF.png">
+<meta property="og:image" content="https://i.imgur.com/FTlugXY.png">
+<meta property="article:published_time" content="2020-09-06T09:36:59.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:38:22.145Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/L0GWCnF.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/09/06/Gateway%20%E5%9C%A8%20IOT%20%E4%B8%AD%E6%89%AE%E6%BC%94%E7%9A%84%E8%A7%92%E8%89%B2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/09/06/Gateway%20%E5%9C%A8%20IOT%20%E4%B8%AD%E6%89%AE%E6%BC%94%E7%9A%84%E8%A7%92%E8%89%B2/","path":"2020/09/06/Gateway 在 IOT 中扮演的角色/","title":"Gateway 在 IOT 中扮演的角色"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Gateway 在 IOT 中扮演的角色 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E8%81%AF%E7%B6%B2-internet-of-things-iot"><span class="nav-number">1.</span> <span class="nav-text">物聯網 Internet of Things ( IOT )</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%96%98%E9%81%93%E5%99%A8-gateway"><span class="nav-number">2.</span> <span class="nav-text">閘道器 Gateway</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98-postscript"><span class="nav-number">3.</span> <span class="nav-text">後記 Postscript</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">參考資料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/09/06/Gateway%20%E5%9C%A8%20IOT%20%E4%B8%AD%E6%89%AE%E6%BC%94%E7%9A%84%E8%A7%92%E8%89%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Gateway 在 IOT 中扮演的角色
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-09-06 17:36:59 / 修改時間：17:38:22" itemprop="dateCreated datePublished" datetime="2020-09-06T17:36:59+08:00">2020-09-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC-Backend-Development/" itemprop="url" rel="index"><span itemprop="name">後端開發 Backend Development</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/09/06/Gateway%20%E5%9C%A8%20IOT%20%E4%B8%AD%E6%89%AE%E6%BC%94%E7%9A%84%E8%A7%92%E8%89%B2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/09/06/Gateway 在 IOT 中扮演的角色/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>IOT 的應用在現今的社會上已經十分普遍，智慧家庭、智慧工廠、....等 IOT 應用已經多不勝數，然而其中最關鍵的部件便是 Gateway (閘道器)，一台小小的黑色盒子，除了接收感應器接收到的資料外，還能接收外部指令對設備進行調整，甚至，我們還能在其中佈署 AI 模型進行邊緣運算，直接進行模型的推論。</p>
+<p>然而，大多數的人對於 Gateway 的運作幾乎不甚了解，本文將會著重在 B2B 智慧空調的角度上，依筆者最近工作上的接觸，來試圖解釋 Gateway 在 IOT 中扮演的角色是什麼。</p>
+<span id="more"></span>
+<h2 id="物聯網-internet-of-things-iot">物聯網 Internet of Things ( IOT )</h2>
+<p>物聯網這樣的概念已經在全世界流行了好幾年，實際上，第一個提出這個名詞的人大概已不可考，但物聯網概念早在 1980 年代就已經有類似的應用。物聯網，顧名思義，利用網路連線將物品進行連接，這樣的方式無論是在一般家庭抑或是工業應用上，都有非常優秀的應用，可以使得生活更加舒適便利，也可以讓工業產線效率上更加提升。</p>
+<p>舉例來說，將 IOT 概念應用於家庭之中，我們可以藉由溫度的感知讓空調自動進行調節，藉由自然光線的明暗來調整室內光線；應用於工業之中，可以將產線上的機器進行連結，隨時掌控機器狀態、進行瑕疵檢測...等；應用於交通之上，便可以結合路口監視器來掌握車流，進行適當的交通號誌調節。</p>
+<p>近幾年結合電腦視覺及深度學習的發展，將 AI 人工智慧結合 IOT 形成的 AIOT 更是炙手可熱，前一陣子中研院開發的 YOLOv4 在交通上的應用便是一個非常好的 AIOT 應用。</p>
+<p>IOT 的整個生態系，我們可以大致上做下面的描繪 :</p>
+<p><img width=500 src="https://i.imgur.com/L0GWCnF.png" > (圖片來源 :　" <em><a target="_blank" rel="noopener" href="https://link.springer.com/article/10.1007%2Fs10776-020-00483-7">IoT Ecosystem: A Survey on Devices, Gateways, Operating Systems, Middleware and Communication</a></em> ")</p>
+<p>上圖是一個比較完整的生態系，其中的 Middleware 及 Controller 可能都是包在一個 Cloud Server 之中，如果今天設備簡化，僅有一台 Gateway 甚至我們可以利用另一台 Gateway 直接與其對接 ( 也就是說我們可以不用 Cloud Server 來承接 )，這樣的狀況，整個 Web server, database server...等 Middleware 部分可能直接在 Gateway 中進行。</p>
+<h2 id="閘道器-gateway">閘道器 Gateway</h2>
+<p>從上面的生態系中我們可以發現，Gateway 的角色在整個 IOT 中扮演著無法替代的角色，甚至我們可以省略 Cloud Server，來讓 Gateway 兼任其角色，進行 request 解析任務分發等工作。</p>
+<p>除此之外，Gateway 的機構也相對於整個 IOT 中其他設備來的複雜，要處理無線訊號 ( wifi,Zigbee,... )、有線訊號 ( VRF,RS-485... )、資料存儲( SQL, MySQL, SQLite... )甚至是底層程序 ( process ) 的運行，幾乎可以說是集 IOT 大成於一身的重要設備。</p>
+<p>在很多的資料中，大概都會提及 Gateway 在 IOT 中的重要地位，也會介紹一下 Gateway 就是承接客戶端及設備端的中介者，但其實幾乎很少人會提及 Gateway 的內部運作流程。</p>
+<p><img src="https://i.imgur.com/FTlugXY.png" /></p>
+<p>筆者依照自己的經驗簡單繪製了一下 Gateway 的 workflow (如上圖)。<strong>這是一個無 Cloud Server 的情況</strong>，當使用者利用 APP 或是控制台遠端對 Gateway 下達指令時，Gateway 內部會先經由 Web Server 解析 HTML，確認使用者意向及參數取得，之後利用編寫好的 API 看是要對設備做設定還是要查詢設備狀態。</p>
+<p>如果只是要單純查詢設備狀況，我們直接利用 API 從 Database 撈資料即可，如果要對設備做設定，則會進入底層程序，利用 RS-485 或是 wifi 針對目標設備進行設定。與此同時，Gateway 連接的 Sensor 或是 wifi 也會定時對現場狀況或是設備狀態進行更新，寫入資料庫中。</p>
+<p>當然，Gateway 不比 Cloud Server ，所保存的資料及時限都會有所限制。</p>
+<h2 id="後記-postscript">後記 Postscript</h2>
+<p>大概在前兩天，筆者其實還搞不太懂 Gateway 到底在幹什麼，直到同事的講解以及自己這兩天的融會貫通跟大量的資料查詢後才好不容易稍微理解這中間 Gateway 實際扮演的角色到底是什麼。</p>
+<p>不過這其實也只是一篇粗淺的概略介紹，從某一個層面來看，也是寫給自己看的，裡面還有許多的細節都尚未釐清楚，或許等日後對 IOT 更加熟悉後，可以再做補充。</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li>Bansal, S., Kumar, D. <em>IoT Ecosystem: A Survey on Devices, Gateways, Operating Systems, Middleware and Communication.</em> Int J Wireless Inf Networks 27, 340–364 (2020). https://doi.org/10.1007/s10776-020-00483-7</li>
+<li>July Huang.(2018).<em>Gateway vs Router: What’s the Difference?</em> Web site : https://medium.com/<span class="citation" data-cites="july.huang666/gateway-vs-router-whats-the-difference-fb010ee3b5cc">@july.huang666/gateway-vs-router-whats-the-difference-fb010ee3b5cc</span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/09/06/Gateway%20%E5%9C%A8%20IOT%20%E4%B8%AD%E6%89%AE%E6%BC%94%E7%9A%84%E8%A7%92%E8%89%B2/" title="Gateway 在 IOT 中扮演的角色">https://allen108108.github.io/blog/2020/09/06/Gateway 在 IOT 中扮演的角色/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/09/05/%E5%B0%87%E5%B7%B2%E6%9C%89%E7%9A%84%E5%B0%88%E6%A1%88%E5%8A%A0%E5%85%A5%20TotoiseSVN%20%E9%80%B2%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/" rel="prev" title="將已有的專案加入 TotoiseSVN 進行版本控制">
+                  <i class="fa fa-chevron-left"></i> 將已有的專案加入 TotoiseSVN 進行版本控制
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/09/10/%E3%80%90PHP%E3%80%91%20require_once%20%E8%88%87%20__DIR__/" rel="next" title="【PHP】 require_once 與 __DIR__">
+                  【PHP】 require_once 與 __DIR__ <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

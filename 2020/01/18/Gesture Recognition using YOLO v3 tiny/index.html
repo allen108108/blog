@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="Introduction 此專案目標是利用 YOLOv3-tiny 進行七組手勢辨識，使用 11 萬張訓練資料以及 4 萬張驗證資料進行 300 epochs 訓練。（ 仍在訓練中，目前使用的是 60 epochs （訓練時間約80小時）訓練後的權重進行測試 ）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gesture Recognition using YOLO v3 tiny">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="Introduction 此專案目標是利用 YOLOv3-tiny 進行七組手勢辨識，使用 11 萬張訓練資料以及 4 萬張驗證資料進行 300 epochs 訓練。（ 仍在訓練中，目前使用的是 60 epochs （訓練時間約80小時）訓練後的權重進行測試 ）">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/pmNChkX.jpg">
+<meta property="og:image" content="https://i.imgur.com/MyXuUoP.png">
+<meta property="og:image" content="https://i.imgur.com/lDzRaTW.jpg">
+<meta property="og:image" content="https://i.imgur.com/TIvojzx.png">
+<meta property="og:image" content="https://i.imgur.com/WOlwkaf.jpg">
+<meta property="article:published_time" content="2020-01-18T01:38:00.000Z">
+<meta property="article:modified_time" content="2020-05-25T01:22:40.384Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/pmNChkX.jpg">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/","path":"2020/01/18/Gesture Recognition using YOLO v3 tiny/","title":"Gesture Recognition using YOLO v3 tiny"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Gesture Recognition using YOLO v3 tiny | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#datasets"><span class="nav-number">2.</span> <span class="nav-text">Datasets</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%99%E8%A8%BB%E5%9C%96%E5%83%8F-label"><span class="nav-number">3.</span> <span class="nav-text">標註圖像 Label</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#labelimg"><span class="nav-number">3.1.</span> <span class="nav-text">Labelimg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#darklabel"><span class="nav-number">3.2.</span> <span class="nav-text">DarkLabel</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%93%E7%B7%B4-training"><span class="nav-number">4.</span> <span class="nav-text">訓練 Training</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#real-time-inference"><span class="nav-number">5.</span> <span class="nav-text">Real-Time inference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E7%BA%8C%E5%B7%A5%E4%BD%9C-todos"><span class="nav-number">6.</span> <span class="nav-text">後續工作 TODOs</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Gesture Recognition using YOLO v3 tiny
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2020-01-18 09:38:00" itemprop="dateCreated datePublished" datetime="2020-01-18T09:38:00+08:00">2020-01-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-05-25 09:22:40" itemprop="dateModified" datetime="2020-05-25T09:22:40+08:00">2020-05-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%B0%88%E6%A1%88-Project/" itemprop="url" rel="index"><span itemprop="name">專案 Project</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/18/Gesture Recognition using YOLO v3 tiny/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="introduction">Introduction</h2>
+<p>此專案目標是利用 YOLOv3-tiny 進行七組手勢辨識，使用 11 萬張訓練資料以及 4 萬張驗證資料進行 300 epochs 訓練。（ 仍在訓練中，目前使用的是 60 epochs （訓練時間約80小時）訓練後的權重進行測試 ）</p>
+<span id="more"></span>
+<h2 id="datasets">Datasets</h2>
+<p>電腦視覺領域中，手勢辨識似乎都不是一門顯學，因此在資料集、論文...等等資源上都略顯缺乏，為了快速地可以看看 YOLO 在手勢辨識上的成效，又要兼顧資料本身分布的問題，主要還是尋找 Open Datasets 為主。</p>
+<p>找了許多的 Datasets 後，最後使用了論文 “ <em>Tiny hand gesture recognition without localization via a deep convolutional network</em> ” 所使用的<a target="_blank" rel="noopener" href="https://sites.google.com/view/handgesturedb/home">資料集</a>，這個資料集中使用了一共 40 個人的手勢圖像資料，並分七種手勢存放各別資料夾。</p>
+<p><img src="https://i.imgur.com/pmNChkX.jpg" /></p>
+<p><img src="https://i.imgur.com/MyXuUoP.png" /></p>
+<p>這樣的資料集就資料的分布上來說並不算太好，取景的角度及距離大概如同上圖，只有兩種取景距離，這嚴重地影響了之後模型的泛化能力，使其辨識距離大大受限。</p>
+<h2 id="標註圖像-label">標註圖像 Label</h2>
+<h3 id="labelimg">Labelimg</h3>
+<p>Github : https://github.com/tzutalin/labelImg</p>
+<p>這是目前在物件偵測任務上，最廣為人知的 Label tool，如果你搜尋 YOLO 相關實作文章，也大多會遇到作者史工具來進行人工標註。</p>
+<p>使用方法非常簡單，將 Labelimg 整個專案 clone 至本地後，在 Labelimg 位址下執行 <code>labelimg.py</code> 即可執行 Labelimg 進行標註。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python labelimg.py</span><br></pre></td></tr></table></figure>
+<p>在進行標註前，建議先至專案內<code>data</code> 資料夾內 <code>predefined_classes.txt</code> 檔案進行 Classes 的修改。</p>
+<p>修改完成後我們即可開始進行標註</p>
+<p><img src="https://i.imgur.com/lDzRaTW.jpg" /></p>
+<p>每製作完一張圖像的 Label 存檔後，即會在圖片的資料夾中生成一個與圖片檔案名稱一樣的文字檔，裡面就是對此圖像的標註</p>
+<p><img src="https://i.imgur.com/TIvojzx.png" /></p>
+<p>輸出文字檔內格式如下 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Label x_center y_center width height </span><br></pre></td></tr></table></figure>
+<p>Label 是 從 0 開始的 Label index，而後面四個數字都是已經 Normalization 過後的數字，這非常重要，因為不同的標註工具產出的格式會非常不一樣，除此之外，不同的 YOLO implementation 所需要的格式也會不同，這都是必須注意的部分。</p>
+<h3 id="darklabel">DarkLabel</h3>
+<p>https://darkpgmr.tistory.com/16</p>
+<p>從上面的 Labelimg 可以看出來，如果我們有非常大量的未標註資料，利用 Labelimg 會非常花時間，再者，許多時候我們收集資料，會利用連續照片或是利用影片連續擷取影像，這樣的方法可以在短時間內取得非常大量的資料 ( 我們所利用的資料集便是利用這樣的方式來取得資料 )，這樣的狀況下， DarkLabel 便會使標註效率大大提升。</p>
+<p>DarkLabel 之所以可以達到 Label 的高效率，最重要的是因為它具有物件追蹤的功能，且可以選擇非常多樣化的輸出格式。</p>
+<p>以下是官方 Demo 影片 :</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/vbydG78Al8s" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>DarkLabel 免安裝直接解壓縮後開啟即可，但僅限於 Windows 系統可用，選擇圖片檔案位置及格式後，就可以立刻進行邊界框的 Label，每一張圖片 Label 完成後不用按儲存，可以儲蓄 label 多張照片後在儲存一次即可。( 不要挑戰從頭 label 到尾才要按儲存，如果中間閃退還是會讓人崩潰 )</p>
+<p><img src="https://i.imgur.com/WOlwkaf.jpg" /></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">frame : 圖像 index</span><br><span class="line">iname : 圖像檔案名稱</span><br><span class="line">label : label index</span><br><span class="line">cx,cy,w,h : 中心點 x 座標，中心點 y 座標，寬度，高度</span><br><span class="line">x1,y1,x2,y2 : 左上角 x 座標，左上角 y 座標，右下角 x 座標，右下角 y 座標</span><br></pre></td></tr></table></figure>
+<p>如果是連續動作的圖片，基本上第一張圖片 Label 好以後就可以一直按下一張 ( 我習慣按方向鍵的右鍵 )，這樣在同一個 Label 但是多張連續圖像的狀況下可以迅速進行標註。我只要花大概一到兩天的時間就可以標註幾萬張的圖片。</p>
+<p>DarkLabel 跟 Labelimg 不同的點在於，它是將所有資料的 Label 資料存在一個檔案中，如果遇到必須要一張圖像一個 Label 檔的 Model 就必須要做後處理，但這不會是什麼大問題，寫個 Code 自動化處理即可。</p>
+<p>DarkLabel 還有一個優點在於，假如我們已經 Label 完所有的資料，但遇到格式不同的需求時，不須重新標註資料，打開 DarkLabel 載入原本的 Label 資料及格式，在底下儲存的地方選取自己要的新格式後儲存，即可將幾萬筆資料儲存成新的格式。</p>
+<h2 id="訓練-training">訓練 Training</h2>
+<p>在利用 yolo 對自己的資料進行訓練前，必須要先做設定檔 (cfg file) 的調整，優於類別數量的不同，會導致 Model 內部的結構性差異。</p>
+<p>以 YOLOv3-tiny 來說，預設通常是 COCO Datasets 的 <span class="math inline">\(80\)</span> 個類別，而其中 filters 的預設數量會是 <span class="math inline">\((4+1+80)\times 3=255\)</span>，以本專案來說，我們只會定義 <span class="math inline">\(7\)</span> 種 classes，因此在設定檔中必須更改 classes 以及 filters 的數量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">classes = 80   -&gt;  classes = 80</span><br><span class="line">filters = 255  -&gt;  filters = 36</span><br></pre></td></tr></table></figure>
+<p>本次訓練在 Windows 作業系統下使用 NVDIA GTX 1060 6G 獨立顯卡進行訓練，一個 epoch 大約訓練 1個小時左右，僅訓練約 70 epochs 。</p>
+<h2 id="real-time-inference">Real-Time inference</h2>
+<p>我利用僅訓練 70 epochs 所儲存的權重進行 Real-time inference，一樣使用 GPU，可以達到 30 FPS ，inference time 每幀大約 0.009 ms。</p>
+<p>Lenovo Legion Y530 with NVDIA GTX 1060 6G :</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/d0x4QLk7FuQ" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>效果似乎不算太差，但由於前面提到資料及分布的問題，導致手的位置太靠鏡頭則會偵測不出來，這是未來在收集資料時必須考量到的部分。</p>
+<h2 id="後續工作-todos">後續工作 TODOs</h2>
+<ul>
+<li>能否將 Model 及權重轉換成 TensoFlow Lite 格式，這樣可以在移動設備上進行手勢辨識。</li>
+<li>如果使用 MobileNet SSD 能否有類似的 Performance ? Inference Time 表現何者較好 ?</li>
+</ul>
+<p>目前在移動設備上進行手勢辨識的一些專案及論文中，大多使用 MobileNet SSD 來進行，這其實蠻令人好奇，YOLO-tiny 也不算是很龐大的網路結構，辨識的能力也不算太差，不知移植到移動設備上是否 Performance 會掉很多 ? 這是未來想要來進行看看的工作。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/" title="Gesture Recognition using YOLO v3 tiny">https://allen108108.github.io/blog/2020/01/18/Gesture Recognition using YOLO v3 tiny/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/01/11/%5B%E8%AB%96%E6%96%87%5D%20%E9%80%9F%E8%AE%80%E8%AB%96%E6%96%87%20Accurate%20Hand%20Keypoint%20Localization%20on%20Mobile%20Devices/" rel="prev" title="[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices">
+                  <i class="fa fa-chevron-left"></i> [論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/02/05/%5B%E8%AB%96%E6%96%87%5D%20YOLO9000%20_%20Better,%20Faster,%20Stronger/" rel="next" title="[論文] YOLO9000 : Better, Faster, Stronger">
+                  [論文] YOLO9000 : Better, Faster, Stronger <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

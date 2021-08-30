@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第八講 : Noise and Error 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林軒田機器學習基石筆記 - 第八講">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%85%AB%E8%AC%9B/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第八講 : Noise and Error 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/E8UWUKz.png">
+<meta property="og:image" content="https://i.imgur.com/sDEPmEt.png">
+<meta property="og:image" content="https://i.imgur.com/23iE3dy.png">
+<meta property="og:image" content="https://i.imgur.com/5i1iZLN.png">
+<meta property="og:image" content="https://i.imgur.com/rag8yGN.png">
+<meta property="og:image" content="https://i.imgur.com/6IBdTib.png">
+<meta property="article:published_time" content="2019-10-01T12:13:23.000Z">
+<meta property="article:modified_time" content="2021-08-30T14:14:33.015Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/E8UWUKz.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%85%AB%E8%AC%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%85%AB%E8%AC%9B/","path":"2019/10/01/林軒田機器學習基石筆記 - 第八講/","title":"林軒田機器學習基石筆記 - 第八講"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>林軒田機器學習基石筆記 - 第八講 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#noise"><span class="nav-number">1.</span> <span class="nav-text">Noise</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#error"><span class="nav-number">2.</span> <span class="nav-text">Error</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#weight-classification"><span class="nav-number">3.</span> <span class="nav-text">Weight Classification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">4.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%85%AB%E8%AC%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          林軒田機器學習基石筆記 - 第八講
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-01 20:13:23" itemprop="dateCreated datePublished" datetime="2019-10-01T20:13:23+08:00">2019-10-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 22:14:33" itemprop="dateModified" datetime="2021-08-30T22:14:33+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9E%97%E8%BB%92%E7%94%B0-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3/" itemprop="url" rel="index"><span itemprop="name">林軒田 機器學習基石</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%85%AB%E8%AC%9B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/01/林軒田機器學習基石筆記 - 第八講/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文為一系列課程之筆記，建議從" <a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文討論內容請參考: 機器學習基石第八講 : Noise and Error</strong></p></li>
+<li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
+</ul>
+</blockquote>
+<hr />
+<span id="more"></span>
+<h2 id="noise">Noise</h2>
+<p>在「<a target="_blank" rel="noopener" href="https://hackmd.io/s/S1U_sR-O4">機器學習基石筆記-2</a>」中有一段我是這麼寫的 :</p>
+<blockquote>
+<p>我們手中有的 dataset 的取得以及分布、雜訊的生成、Model對未來資料的擬合精確度…等也都跟機率有關，所以在機器學習的研究進程中會將機率引入相對來說算是合情而且合理的。有了機率的概念，這表示不會百分之百精準，這時error的概念也會隨之而生。</p>
+</blockquote>
+<p>這樣的概念便在林軒田課程的第八講中有延伸性的討論。</p>
+<p>在前面幾講中，對於機率分布，我們僅討論到 <span class="math inline">\(\mathbb{X}\)</span> 應該會來自於某個 <span class="math inline">\(distribution\ \mathbb{P}\)</span>，記做 <span class="math inline">\(\mathbb{X}\overset{i.i.d}{\sim}\mathbb{P}(\mathbb{X})\)</span>，有了機率分布，也便有了 <span class="math inline">\(Noise\)</span>。</p>
+<p><img src="https://i.imgur.com/E8UWUKz.png" /></p>
+<p>但 <span class="math inline">\(Noise\)</span> 是無所不在的<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>，它也會出現在 <span class="math inline">\(y\)</span>，也就是說，我們也可以把 <span class="math inline">\(y\)</span> 視為是 <span class="math inline">\(f\)</span> 作用在 <span class="math inline">\(\mathbb{X}\overset{i.i.d}{\sim}\mathbb{P}(\mathbb{X})\)</span>之下的產物，記做 <span class="math inline">\(y\overset{i.i.d}{\sim}\mathbb{P}(y\mid \mathbb{X})\)</span> ( <span class="math inline">\(\mathbb{P}(y\mid \mathbb{X})\)</span> 我們可以解讀成，在 <span class="math inline">\(\mathbb{X}\)</span> 條件下，<span class="math inline">\(y\)</span> 發生的機率分布 )</p>
+<hr />
+<p>上面的概念還是很難理解嗎 ?</p>
+<p>我們用幾個面向來試圖解釋這樣的隨機性 : 1. <strong>我們可以將隨機性視為每一顆球顏色狀態會一直不斷的改變 :</strong> 如下圖所示，在Bin中的球顏色會一直變動，直至我們抽出來的那一瞬間才會確定顏色狀態。</p>
+<pre><code>![](https://i.imgur.com/jCTkKnl.png)</code></pre>
+<ol start="2" type="1">
+<li><strong>我們也可以將隨機性視為翻轉結果的機率 :</strong> 舉例來說，某樣本 <span class="math inline">\(\mathbb{X}\)</span> 在理想狀態中 label 為 +1 ( 意即<span class="math inline">\(f(\mathbb{X})=y=+1\)</span> )，但因為 <span class="math inline">\(noise\)</span> 存在，這樣的隨機性會有一定的機率使 <span class="math inline">\(\mathbb{X}\)</span> 的 label 被翻轉 ( <span class="math inline">\(f(\mathbb{X})\neq y=-1\)</span> ) <img src="https://i.imgur.com/sDEPmEt.png" /> 在這樣的解釋下，我們也可以將真實的狀態 ( <span class="math inline">\(f(\mathbb{X})=1\)</span> )視為是這樣隨機性下的特例。</li>
+</ol>
+<hr />
+<p>當我們可以瞭解這樣的隨機性必須考慮在Machine Learning當中，我們想要知道的事情是 : <strong>我們前面的所有討論是否仍然成立 ? 也就是說，在有 Noise 的情況下VC Bound是否仍然存在 ?</strong></p>
+<p>其實如果將上圖 <span class="math inline">\(flipping\ noise\ level\)</span> 的概念加入 <span class="math inline">\(E_{in}(h)\)</span> 與 <span class="math inline">\(E_{out}(h)\)</span> 之中，經由<a target="_blank" rel="noopener" href="https://hackmd.io/s/S1U_sR-O4">機器學習基石筆記-2</a>的證明之中，應該也是可以找到一個 finite upper bound。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<h2 id="error">Error</h2>
+<p>終於來到機器學習演算法中，最後一個元素，也是最重要的元素 -- Error 既然所有的資料均充滿了隨機性，那麼量測 error 便是一個很重要的工作，這項工作不僅可以讓我們可以評估 <span class="math inline">\(g\)</span> 與 <span class="math inline">\(f\)</span> 的近似程度，對於簡單如 PLA 或困難如 Deep Learning 來說都非常重要，因為它可以做為每一次迭代調整的依據。</p>
+<p>對某一個 hypothesis <span class="math inline">\(g\)</span>，任一資料 <span class="math inline">\(\mathbb{X}\)</span>， 我們常見的 Error Measure 有 :</p>
+<ul>
+<li><strong>0/1 error :</strong> <span class="math inline">\(err([\![ \ g(\mathbb{X})\neq f(\mathbb{X})\ ]\!])=err(\tilde{y}-y)=\begin{cases}1 &amp; \mbox{if}\ g(\mathbb{X})\neq f(\mathbb{X})\\0&amp;\mbox{if}\ g(\mathbb{X})=f(\mathbb{X})\end{cases}\)</span></li>
+<li><strong>Squere error :</strong> <span class="math inline">\(err(\tilde{y}-y)=(\tilde{y}-y)^2\)</span></li>
+<li><strong>Absolute error :</strong> <span class="math inline">\(err(\tilde{y}-y)=\mid\tilde{y}-y\mid\)</span></li>
+</ul>
+<p>我們也可以藉此定義出 in-sample error <span class="math display">\[E_{in}(g)=\frac{1}{N}\sum\limits_{n=1}^{N}err(\tilde{y},y_n)\]</span> 以及 out-of-smaple error <span class="math display">\[E_{out}(g)=\mathbb{E}(err(\tilde{y},y_n))\ where\ \mathbb{E}\ is\ Expected\ value\]</span></p>
+<p>以下給出一個例子 : <img src="https://i.imgur.com/23iE3dy.png" /></p>
+<p>當我們使用不同的 error measure ，勢必會找出不同的 error 值，也因此，也會影響到我們最後形塑出來的 <span class="math inline">\(f\)</span> 會有所不同。</p>
+<h2 id="weight-classification">Weight Classification</h2>
+<p><img src="https://i.imgur.com/5i1iZLN.png" /> <img src="https://i.imgur.com/rag8yGN.png" /></p>
+<p>我們從上述例子可以發現，當分類錯誤的情況發生時，隨著不同事件，應該會有不同成本上的 COST ，因次，我們的分類器必須也將這些 " weight " 考慮進去。說是簡單，但是在真正實務上，我們根本無法將這些 cost比例 ( weight )很精準的量化出來，那當然我們會無法把真正理想中的 error 計算出來。</p>
+<p>所以我們有幾個方向可以考慮 : 1. 我們可能可以利用 0/1 error 或 square error，將分類錯誤的點視為 noise ，讓演算法找出使 noise最小的 model。但這樣的方式在 0/1 error上會是一個 NP-Hard 問題。</p>
+<ol start="2" type="1">
+<li>或者我們乾脆找出比較容易讓演算法好運作的解，close-form solution ( analystic ) 或是 convex object solution ( like Gradient Descent )。</li>
+</ol>
+<p>不管是上述哪一種，都並非是真正的 error ，在日後課程我們會記做 <span class="math inline">\(\hat {err}\)</span></p>
+<p>若我們拿上圖 CIA 例子來看，從 VC Theory 的角度，就是希望讓 <span class="math inline">\(E^\mathbb{W}_{in}(h)=\frac{1}{N}\sum\limits_{n=1}^{N}\begin{Bmatrix} 1, &amp; y_n\neq+1 \\1000, &amp; y_n=-1\end{Bmatrix}\cdot[\![y_n\neq h(\mathbb{X})]\!]\)</span> 盡量最小化</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> PLA ? 資料不一定是 Linear Separable。 <span class="math inline">\(\Longrightarrow\)</span> Pocket ? 可經由迭代不停找出更好的 <span class="math inline">\(\mathbb{W}\)</span> 作為 <span class="math inline">\(\hat{\mathbb{W}}\)</span> ? <span class="math inline">\(\Longrightarrow\)</span> Pocket Algorithm 在一般 0/1 error 中的確可以確定能找到 <span class="math inline">\(\min E_{in}\)</span>，但在 weight error 中也能有這樣的保證嗎?</p>
+<p><img src="https://i.imgur.com/6IBdTib.png" /></p>
+<p>我們可以將每一個權重視為資料的複製次數，然後再來做 0/1 error 的 Pocket Algorithm。</p>
+<p><strong>PS : 在實務上我們並不會真的複製這麼多份數，如此太耗費計算成本，因此我們會將這樣的概念延伸成為相應資料被抽中檢查的機率</strong></p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>就機率論的角度而言，或許根本不存在這種 determinate 的狀態，所有的事件都帶有隨機性。所以在機率論中 0% 機率不代表絕對不會發生，100% 也不代表絕對會發生。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>這是一個比較直觀的想法，但目前尚未看到比較嚴謹的數學證明，待找到後再行補上。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%85%AB%E8%AC%9B/" title="林軒田機器學習基石筆記 - 第八講">https://allen108108.github.io/blog/2019/10/01/林軒田機器學習基石筆記 - 第八講/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%83%E8%AC%9B/" rel="prev" title="林軒田機器學習基石筆記 - 第七講">
+                  <i class="fa fa-chevron-left"></i> 林軒田機器學習基石筆記 - 第七講
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/03/Chapter%202%20%E2%80%93%20Algorithm%20analysis/" rel="next" title="Chapter 2 -- Algorithm analysis">
+                  Chapter 2 -- Algorithm analysis <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

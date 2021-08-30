@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="Reinforcement Learning  Reinforcement Learning 整個概念大概就如上圖 : 環境狀態 (State of Environment) 經由 機器觀察 (Observation of Machine) 後會做出一些行為 (Action) 來改變環境狀態。而改變後的環境狀態除了依舊會經由機器觀察促使 Machine 做出一些行為外，同時也會對 Machi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reinforcement Learning">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/11/Reinforcement%20Learning/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="Reinforcement Learning  Reinforcement Learning 整個概念大概就如上圖 : 環境狀態 (State of Environment) 經由 機器觀察 (Observation of Machine) 後會做出一些行為 (Action) 來改變環境狀態。而改變後的環境狀態除了依舊會經由機器觀察促使 Machine 做出一些行為外，同時也會對 Machi">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/Y5bpDMV.png">
+<meta property="og:image" content="https://i.imgur.com/JuN3Hjw.png">
+<meta property="og:image" content="https://i.imgur.com/0s3ko4y.png">
+<meta property="og:image" content="https://i.imgur.com/8HEQR7E.png">
+<meta property="og:image" content="https://i.imgur.com/fRBgiOt.jpg">
+<meta property="og:image" content="https://i.imgur.com/sRBCQ3V.png">
+<meta property="og:image" content="https://i.imgur.com/e2n4gsh.png">
+<meta property="og:image" content="https://i.imgur.com/G6QqjeX.jpg">
+<meta property="article:published_time" content="2019-10-11T02:40:20.000Z">
+<meta property="article:modified_time" content="2019-12-04T04:07:14.445Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/Y5bpDMV.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/11/Reinforcement%20Learning/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/11/Reinforcement%20Learning/","path":"2019/10/11/Reinforcement Learning/","title":"Reinforcement Learning"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Reinforcement Learning | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#reinforcement-learning"><span class="nav-number">1.</span> <span class="nav-text">Reinforcement Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#applications-of-reinforcement-learning"><span class="nav-number">2.</span> <span class="nav-text">Applications of Reinforcement Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#difficulties-of-reinforcement-learning"><span class="nav-number">3.</span> <span class="nav-text">Difficulties of Reinforcement Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#reward-delay"><span class="nav-number">3.1.</span> <span class="nav-text">1. Reward Delay</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exploration"><span class="nav-number">3.2.</span> <span class="nav-text">2. Exploration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#methods-of-reinforcement-learning"><span class="nav-number">4.</span> <span class="nav-text">Methods of Reinforcement Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#policy-based-approach"><span class="nav-number">4.1.</span> <span class="nav-text">Policy-Based Approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#define-an-actor"><span class="nav-number">4.2.</span> <span class="nav-text">Define an Actor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#define-the-goodness-of-the-actor"><span class="nav-number">4.3.</span> <span class="nav-text">Define the goodness of the Actor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#find-a-best-actor"><span class="nav-number">4.4.</span> <span class="nav-text">Find a best Actor</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/11/Reinforcement%20Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Reinforcement Learning
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-11 10:40:20" itemprop="dateCreated datePublished" datetime="2019-10-11T10:40:20+08:00">2019-10-11</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-12-04 12:07:14" itemprop="dateModified" datetime="2019-12-04T12:07:14+08:00">2019-12-04</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/11/Reinforcement%20Learning/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/11/Reinforcement Learning/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="reinforcement-learning">Reinforcement Learning</h2>
+<p><img width=500 src="https://i.imgur.com/Y5bpDMV.png" ></p>
+<p>Reinforcement Learning 整個概念大概就如上圖 :</p>
+<p>環境狀態 (State of Environment) 經由 機器觀察 (Observation of Machine) 後會做出一些行為 (Action) 來改變環境狀態。而改變後的環境狀態除了依舊會經由機器觀察促使 Machine 做出一些行為外，同時也會對 Machine 給予其獎賞 (Reward)，因此，Reinforcement Learning 就是經由這些正負獎賞使 Machine 可以去學習如何採取 Action，讓 Reward 最大化。</p>
+<span id="more"></span>
+<h2 id="applications-of-reinforcement-learning">Applications of Reinforcement Learning</h2>
+<p>AlphaGo 其實是一個具有多種學習演算法的機器，其內部含有Superviced Learning 與 Reinforcement Learning 在其中。</p>
+<p>從 Reinforcement Learning 的角度來看，經由不斷跟對手下棋的過程中，會得到一些獎賞 (吃掉別人的子、自己的子被別人吃掉)，經由這些過程來學習如何下圍棋。</p>
+<p><img src="https://i.imgur.com/JuN3Hjw.png" /></p>
+<p>但在這樣的過程中，真正困難的點在於，絕大多數的過程都是沒有 Reward 的。如何在這樣沒有 Reward 的過程中學習怎麼將子落在正確位置則是很大的挑戰。</p>
+<p>從 Superviced Learning 的部分來看，可以給許多棋譜，讓機器可以學習在什麼樣的狀況下落怎麼樣的子，這樣的方式可以在沒有 Reward 的情形下，機器也可以落子在正確的位置上。</p>
+<p>綜觀以上，我們可以說 Superviced Learning 是 Learning by Teacher，而 Reinforcement Learning 是 Learning by Experience。</p>
+<p>相同的，Reinforcement Learning 也可應用在 Chatbot 聊天機器人上，藉由聊天過程從對方的回饋取得 Reward 來調整對話。甚至我們可以利用兩個聊天機器人互相進行對話來學習。</p>
+<p>最近幾年來，許多人將 Reinforcement Learning 應用在 Vedio Game 上，以下我們用 1978年的一款街機遊戲 《太空侵略者》（日語：スペースインベーダー／英語：Space Invaders）來概略說明 Reinforcement Learning 在遊戲上的應用。</p>
+<p><img width=500 src="https://i.imgur.com/0s3ko4y.png" ></p>
+<p>這款遊戲藉由擊殺外星人而獲得分數 (Reward)，玩家可使用的操作 (Action)則是簡單的左右移動以及開火射擊，三種動作。遊戲過程中外星人也會對我們進行攻擊，而當外星人完全被消滅或是我們被外星人摧毀則遊戲結束。</p>
+<p>這一整過程我們可以視為是一連串的互動所串連後的結果 :</p>
+<p>觀察到 State <span class="math inline">\(s_1\)</span>，機器獲得 Reward <span class="math inline">\(r_1\)</span>，並且做出 Action <span class="math inline">\(a_1\)</span> <span class="math inline">\(\longrightarrow\)</span> State 變為 <span class="math inline">\(s_2\)</span>，機器獲得 Reward <span class="math inline">\(r_2\)</span>，並且做出 Action <span class="math inline">\(a_2\)</span> <span class="math inline">\(\longrightarrow\)</span> State 變為 <span class="math inline">\(s_3\)</span>，機器獲得 Reward <span class="math inline">\(r_3\)</span>，並且做出 Action <span class="math inline">\(a_3\)</span> <span class="math inline">\(\longrightarrow\cdots\cdots\)</span> <span class="math inline">\(\longrightarrow\)</span> 經過 T 次迭代後接收到最後一次 <span class="math inline">\(r_T\)</span> 後遊戲結束。</p>
+<p>整個過程稱為一個 Episode，而機器便是要學習到如何在這個 Episode 中獲得最高的 Reward。</p>
+<p>雖然說這樣的過程我們是以遊戲為舉例，但這樣的過程也就是所有 Reinforcement Learning 的過程。</p>
+<h2 id="difficulties-of-reinforcement-learning">Difficulties of Reinforcement Learning</h2>
+<h3 id="reward-delay">1. Reward Delay</h3>
+<p>Reinforcement Learning 中，Reward 的獲得通常是會有延遲的。 舉前面的 Space Invaders 來說，Reward 的獲得必須要擊殺外星人才能獲得，因此要獲得 Reward 的直接方式就是不停開火。但有玩遊戲的人一定會知道，雖然左右移動並不會馬上得到 Reward，但這樣的動作卻可能會在幾個 Action 之後有助於 Reward 的獲得。</p>
+<p>下棋亦是如此，有時候必須藉由犧牲掉自己的子來試圖取勝。</p>
+<h3 id="exploration">2. Exploration</h3>
+<p>從上面的敘述我們也可以知道，Reinforcement Learning 的過程中，每一個 Action 都會影響到後面幾步的結果。因此機器本身必須要懂得探索，必須要嘗試不同的Action，才能知道這樣的動作會有什麼影響。</p>
+<h2 id="methods-of-reinforcement-learning">Methods of Reinforcement Learning</h2>
+<p><img src="https://i.imgur.com/8HEQR7E.png" /></p>
+<p>在本次課程中，李宏毅主要講解的是 Model-Free Approach 裡面 Policy-Based 的部分。</p>
+<h3 id="policy-based-approach">Policy-Based Approach</h3>
+<ul>
+<li><h3 id="define-an-actor">Define an Actor</h3></li>
+</ul>
+<p>Policy-Based Approach 基本上就是將整個 NN 視為一個 Actor，而這一個 NN 的輸入是 State of Environment ( 可能是一組向量或是一個矩陣 )，而輸出的是對應於這個 State 的每一個 Action 之機率分布。</p>
+<p><img src="https://i.imgur.com/fRBgiOt.jpg" /></p>
+<p>一般來說，在採取 Action 時會直接採取機率較高的那個行為，但在 Policy-Based Approach 我們會假設 Action 是隨機的，也就是說，Actor 會依照這樣的機率分布隨機採取不同的 Action，因此，輸入相同的 State ，Actor 會採取的 Action 並不見得會相同。</p>
+<p>最傳統的方式通常會使用一個 Table 來做檢索，當什麼 State 進來，Actor 就從 table 裡面找出對應的 Action。但我們如果利用 NN 來取代 Table，一來可以處理 image 這種 table 無法處理的畫素資料，二來是沒見過的 State 於 table 中檢索不到，便無法有 Action 輸出，但 NN 可以有舉一反三的能力，即使沒遇過的 State 也能有適當的反應出來，泛化性較高。</p>
+<ul>
+<li><h3 id="define-the-goodness-of-the-actor">Define the goodness of the Actor</h3></li>
+</ul>
+<p>一般我們要衡量一個 model 的優劣，就是定義一個 Loss function 來計算預測值與真實值的差距。然而在 Reinforcement Learning 中，我們定義 model 優劣的方式則是計算 Reward 大小。</p>
+<p>假如我們給定一組參數 <span class="math inline">\(\theta\)</span>，則可決定一個 Actor <span class="math inline">\(\pi_{\theta} : \pi_{\theta}(s_k)=a_k\)</span>，而 <span class="math inline">\(a_k\)</span> 會提供一個 Reward <span class="math inline">\(r_k\)</span>，並且改變 State 成為 <span class="math inline">\(s_{k+1}\)</span>。經過一整個 Episode 之後的 Total Reward 應為</p>
+<p><span class="math display">\[
+R_{\theta}=\sum\limits_{t=1}^Tr_t
+\]</span></p>
+<p>但我們要關心的並非 Total Reward，原因在於上面我們曾經說到的，Actor 會隨機採取不同的 Action，同樣的場景可能會有不同的 Action，也會有不同的 Total Reward。所以我們要關注的應該是 <span class="math inline">\(R_{\theta}\)</span> 的期望值 <span class="math inline">\(\overline{R_{\theta}}\)</span>。</p>
+<p>如果我們將整個 Episode 歷程 ( trajectory ) 以下列來表示</p>
+<p><span class="math display">\[
+\tau=\left\{s_1,a_1,r_1,s_2,a_2,r_2,\cdots\cdots s_T,a_T,r_T\right\}
+\]</span></p>
+<p>那麼在這 Actor 形成這一個歷程的條件機率為 :</p>
+<p><span class="math display">\[
+P(\tau\mid\theta)=P(s_1)P(a_1\mid s_1,\theta)P(r_1,s_2\mid s_1,a_1)\cdot P(a_2\mid s_2,\theta)P(r_2,s_3\mid s_2,a_2)\cdots\\
+=P(s_1)\prod\limits_{t=1}^{T}P(a_t\mid s_t,\theta)P(r_t,s_{t+1}\mid s_t,a_t)
+\]</span></p>
+<p>由上式我們可以計算出 <span class="math inline">\(\overline{R_{\theta}}\)</span></p>
+<p><span class="math display">\[
+\because R(\tau)=\sum\limits_{t=1}^{T}r_t\\
+\therefore \overline{R_{\theta}}=\sum\limits_{\tau} P(\tau\mid\theta)R(\tau)
+\]</span></p>
+<p>然而要窮舉所有的 <span class="math inline">\(\tau\)</span> 通常是不太可行的，以 Video Game 為例，<span class="math inline">\(\tau\)</span> 是一個連續空間，要窮舉無窮多種可能根本不可能。因此我們可以進行 N 次 Episode，產生 N 個歷程，這就像是在 <span class="math inline">\(P(\tau\mid \theta)\)</span> 這樣的分布內 經過 N 次抽樣產生 <span class="math inline">\(\left\{\tau^1,\tau^2,\cdots,\tau^N\right\}\)</span></p>
+<p><span class="math display">\[
+\overline{R_{\theta}}=\sum\limits_{\tau} P(\tau\mid\theta)R(\tau)\approx\displaystyle{\frac{1}{N}\sum\limits_{n=1}^{N}R(\tau^n)}
+\]</span></p>
+<ul>
+<li><h3 id="find-a-best-actor">Find a best Actor</h3></li>
+</ul>
+<p>既然我們已經可以對 Reward 進行估算，那麼最好的 Actor 勢必能讓 Reward 最大化</p>
+<p><span class="math display">\[
+\theta^*=arg\max_{\theta}\overline{R_{\theta}}
+\]</span></p>
+<p>一樣地，我們可以用 BP 來進行優化</p>
+<p><span class="math display">\[
+\theta^{t+1}\longleftarrow \theta^t+\eta\nabla \overline{R_{\theta^t}}
+\]</span></p>
+<p>其中</p>
+<p><span class="math display">\[
+\nabla\overline{R_{\theta}}=\sum\limits_{\tau} \nabla P(\tau\mid\theta)R(\tau)\\
+=\sum\limits_{\tau}R(\tau)P(\tau\mid\theta)\cdot\displaystyle{\frac{\nabla P(\tau\mid\theta)}{P(\tau\mid\theta)}}\\
+=\sum\limits_{\tau}R(\tau)P(\tau\mid\theta)\cdot\nabla\log P(\tau\mid\theta)\\
+\approx\displaystyle{\frac{1}{N}\sum\limits_{n=1}^{N}R(\tau^n)}\nabla\log P(\tau^n\mid\theta)\\
+=\displaystyle{\frac{1}{N}\sum\limits_{n=1}^{N}R(\tau^n)}\sum\limits_{t=1}^{T_N}\nabla\log P(a^n_t\mid s^n_t,\theta)\\
+\Big(\because \log P(\tau^n\mid\theta)=\log P(s_1)+\sum\limits_{t=1}^{T}\log P(a_t\mid s_t,\theta)+\log P(r_t,s_{t+1}\mid s_t,a_t)\Big)\\
+=\displaystyle{\frac{1}{N}\sum\limits_{n=1}^{N}\sum\limits_{t=1}^{T_n}R(\tau^n)\nabla\log P(a_t^n\mid s_t^n,\theta)}\cdots\cdots(1)
+\]</span></p>
+<p>推導到這邊有幾個地方需要注意 :</p>
+<p><strong>1. <span class="math inline">\(R(\tau)\)</span> 的正負，有什麼影響 ?</strong></p>
+<p><span class="math inline">\(R(\tau)&gt;0\Longrightarrow\)</span> 機器會調整 <span class="math inline">\(\theta\)</span> 來試圖增加機率 <span class="math inline">\(P(a_t^n\mid s_t^n)\)</span> <span class="math inline">\(R(\tau)&lt;0\Longrightarrow\)</span> 機器會調整 <span class="math inline">\(\theta\)</span> 來試圖減少機率 <span class="math inline">\(P(a_t^n\mid s_t^n)\)</span></p>
+<p><strong>2. <span class="math inline">\(R(\tau)\)</span> 會造成什麼影響 ? 可以怎麼調整 ?</strong></p>
+<p>在 Space Invaders 中，<span class="math inline">\(R(\tau)\)</span> 絕對不會出現負值，最少就是 0 分，但這樣其實會造成一些問題如下</p>
+<p>在理想狀況下 ( <span class="math inline">\(窮舉所有的\tau\)</span> )</p>
+<p><img src="https://i.imgur.com/sRBCQ3V.png" /></p>
+<p>因為 <span class="math inline">\(R(\tau)&gt;0\)</span>，所以每一種情況 (不管機率高低) 的 <span class="math inline">\(P(a_t^n\mid s_t^n)\)</span> 都會被機器適當地增強，意即 <span class="math inline">\(R(\tau)\)</span> (綠色部分) 大的情況 <span class="math inline">\(P(a_t^n\mid s_t^n)\)</span> 就會上升的較小，反之。因此被機器調整過後，<span class="math inline">\(R(\tau)\)</span> 大的情況相對來說機率就是降低的，有一種 normalization 的概念。</p>
+<p>然而，我們說過窮舉所有的 <span class="math inline">\(\tau\)</span> 是不可能的，如果我們從 <span class="math inline">\(\tau\)</span> space 中進行抽樣，便會有可能有某些情況沒有被抽樣到的。</p>
+<p><img src="https://i.imgur.com/e2n4gsh.png" /></p>
+<p>在這樣的情況下，可能會出現一個大的 <span class="math inline">\(R(\tau)\)</span> 但沒有被抽樣到的情況，經過 normalization 之後相當於機率被降低，這樣在 gradient 更新上是會出現問題的。</p>
+<p>要解決這樣的問題所採取的方法是給定 <span class="math inline">\(R(\tau)\)</span> 一個 Baseline (也就是一個 Bias )，藉由這個 b 值來使 <span class="math inline">\(R(\tau)\)</span> 有正有負。</p>
+<p><span class="math display">\[
+\overline{R_{\theta}}=\displaystyle{\frac{1}{N}\sum\limits_{n=1}^{N}\sum\limits_{t=1}^{T_n}\big(R(\tau^n)-b\big)\nabla\log P(a_t^n\mid s_t^n,\theta)}
+\]</span></p>
+<p><strong>3. 為何在特定的 State 下輸出的 Action 之機率，乘上的並非當下獲得的 Reward，而是整個歷程下的 Total Reward?</strong></p>
+<p>這個部份其實還算蠻直覺的，如果我們將 (1) 式中的 <span class="math inline">\(R(\tau^n)\)</span> 改為 <span class="math inline">\(r_t^n\)</span> ，以 Space Invaders 來說，最後 Actor 只會一直開火，因為只有開火才會使 <span class="math inline">\(r_t^n\)</span> 增加。</p>
+<p><strong>4. 取 log 的原因 ?</strong></p>
+<p>取 log 的好處最明顯的是在上述推導過程中，可以把連乘項轉為連加項，降低演算法的複雜度。但真正最重要的不僅於此。</p>
+<p><span class="math display">\[
+\nabla\log P(a_t^n\mid s_t^n,\theta)\cdot
+R(\tau)=\displaystyle{\frac{\nabla P(a_t^n\mid s_t^n,\theta)}{P(a_t^n\mid s_t^n,\theta)}}\cdot R(\tau)
+\]</span></p>
+<p>從上式來看，如果我們不取 log 單純只看 <span class="math inline">\(\nabla P\)</span> ，那麼機器在進行權重更新時，一般來說會往機率高的部分進行更新。但是，我們希望權重更新應該是往 <span class="math inline">\(R(\tau)\)</span> 大的部分來進行更新。</p>
+<p><img src="https://i.imgur.com/G6QqjeX.jpg" /></p>
+<p>以上圖為例，進行抽樣時，假設我們抽樣到比較高機率 <span class="math inline">\(R(\tau)=1\)</span>，而極小機率會出現較高的 <span class="math inline">\(R(\tau)=2\)</span>，那麼進行權重更新時，我們可以發現權重會往 <span class="math inline">\(R(\tau)\)</span> 小但機率高的方向移動，這並不符合我們想要的結果，我們期望的是 <span class="math inline">\(R(\tau)\)</span> 盡可能的大。</p>
+<p>因此在這邊除以機率值，在某種程度上來說就是一種 normalization，讓權重更新的重點放在 <span class="math inline">\(R(\tau)\)</span> 上。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/11/Reinforcement%20Learning/" title="Reinforcement Learning">https://allen108108.github.io/blog/2019/10/11/Reinforcement Learning/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/11/Transfer%20Learning%20%E9%81%B7%E7%A7%BB%E5%AD%B8%E7%BF%92/" rel="prev" title="Transfer Learning 遷移學習">
+                  <i class="fa fa-chevron-left"></i> Transfer Learning 遷移學習
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/11/Chapter%203%20%E2%80%93%20Graph%20(%202%20)/" rel="next" title="Chapter 3 -- Graph ( 2 )">
+                  Chapter 3 -- Graph ( 2 ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

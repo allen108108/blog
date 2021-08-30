@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="化繁為簡 在 &quot; Semi-supervised Learning &quot; 一文中曾經提到過化繁為簡的概念，簡單來說就是從我們手邊的資料去找出背後的規則、最精要的部分。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unsupervised Learning (1) -- Principle Component Analysis ( PCA )">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(1)%20--%20Principle%20Component%20Analysis%20(%20PCA%20)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="化繁為簡 在 &quot; Semi-supervised Learning &quot; 一文中曾經提到過化繁為簡的概念，簡單來說就是從我們手邊的資料去找出背後的規則、最精要的部分。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/4LVhZdz.png">
+<meta property="og:image" content="https://i.imgur.com/mBUx0Ja.png">
+<meta property="og:image" content="https://i.imgur.com/wFvzbbQ.png">
+<meta property="og:image" content="https://i.imgur.com/z0mHNSn.png">
+<meta property="og:image" content="https://i.imgur.com/Obv52sn.png">
+<meta property="og:image" content="https://i.imgur.com/i5jt7QR.png">
+<meta property="og:image" content="https://i.imgur.com/kcQ0DNi.png%20=500x">
+<meta property="og:image" content="https://i.imgur.com/Z0LN3SJ.png">
+<meta property="og:image" content="https://i.imgur.com/zhJXhTD.png">
+<meta property="og:image" content="https://i.imgur.com/lZUQHJx.png">
+<meta property="og:image" content="https://i.imgur.com/lS5LdOg.png">
+<meta property="og:image" content="https://i.imgur.com/dBKe71w.png">
+<meta property="og:image" content="https://i.imgur.com/onZEuxo.png">
+<meta property="og:image" content="https://i.imgur.com/QlHekOn.png">
+<meta property="og:image" content="https://i.imgur.com/TbeLiAT.png">
+<meta property="og:image" content="https://i.imgur.com/w5obDbK.png">
+<meta property="og:image" content="https://i.imgur.com/moVk5oQ.png">
+<meta property="og:image" content="https://i.imgur.com/K8qQK0T.png">
+<meta property="og:image" content="https://i.imgur.com/iynowoB.png">
+<meta property="og:image" content="https://i.imgur.com/NFgfxDp.png">
+<meta property="og:image" content="https://i.imgur.com/eXm4CfW.png">
+<meta property="article:published_time" content="2019-10-07T16:35:10.000Z">
+<meta property="article:modified_time" content="2019-10-22T08:00:16.311Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/4LVhZdz.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(1)%20--%20Principle%20Component%20Analysis%20(%20PCA%20)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(1)%20--%20Principle%20Component%20Analysis%20(%20PCA%20)/","path":"2019/10/08/Unsupervised Learning (1) -- Principle Component Analysis ( PCA )/","title":"Unsupervised Learning (1) -- Principle Component Analysis ( PCA )"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Unsupervised Learning (1) -- Principle Component Analysis ( PCA ) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%96%E7%B9%81%E7%82%BA%E7%B0%A1"><span class="nav-number">1.</span> <span class="nav-text">化繁為簡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#algorithm-1-clustering-k-means"><span class="nav-number">2.</span> <span class="nav-text">Algorithm 1 (Clustering) : K-means</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#algorithm-2-clustering-hierarchical-agglomerative-clustering-hac"><span class="nav-number">3.</span> <span class="nav-text">Algorithm 2 (Clustering) : Hierarchical Agglomerative Clustering ( HAC )</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#algorithm-3-distributed-representation-principle-component-analysis"><span class="nav-number">4.</span> <span class="nav-text">Algorithm 3 (Distributed Representation) : Principle Component Analysis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%9E%E6%9C%80%E5%A4%A7-variance-%E8%A7%92%E5%BA%A6%E4%BE%86%E7%9C%8B-pca"><span class="nav-number">5.</span> <span class="nav-text">從最大 Variance 角度來看 PCA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#reduce-to-1-dimension"><span class="nav-number">5.1.</span> <span class="nav-text">Reduce to 1-dimension</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reduce-to-k-dimension"><span class="nav-number">5.2.</span> <span class="nav-text">Reduce to K-dimension</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%9E-sinular-value-decompposition-svd%E5%A5%87%E7%95%B0%E5%80%BC%E5%88%86%E8%A7%A3-%E8%A7%92%E5%BA%A6%E4%BE%86%E7%9C%8Bpca"><span class="nav-number">6.</span> <span class="nav-text">從 Sinular Value Decompposition ( SVD，奇異值分解 ) 角度來看PCA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%9E-neural-network-%E4%BE%86%E7%9C%8B-pca"><span class="nav-number">7.</span> <span class="nav-text">從 Neural Network 來看 PCA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#weakness-of-pca"><span class="nav-number">8.</span> <span class="nav-text">Weakness of PCA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-many-principle-components"><span class="nav-number">9.</span> <span class="nav-text">How many Principle Components ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#matrix-facorization"><span class="nav-number">10.</span> <span class="nav-text">Matrix Facorization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">11.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(1)%20--%20Principle%20Component%20Analysis%20(%20PCA%20)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unsupervised Learning (1) -- Principle Component Analysis ( PCA )
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-08 00:35:10" itemprop="dateCreated datePublished" datetime="2019-10-08T00:35:10+08:00">2019-10-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 16:00:16" itemprop="dateModified" datetime="2019-10-22T16:00:16+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/Unsupervised%20Learning%20(1)%20--%20Principle%20Component%20Analysis%20(%20PCA%20)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/Unsupervised Learning (1) -- Principle Component Analysis ( PCA )/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="化繁為簡">化繁為簡</h2>
+<p>在 " <a target="_blank" rel="noopener" href="http://bit.ly/2MoSVHB">Semi-supervised Learning</a> " 一文中曾經提到過化繁為簡的概念，簡單來說就是從我們手邊的資料去找出背後的規則、最精要的部分。</p>
+<span id="more"></span>
+<p><img width=500 src="https://i.imgur.com/4LVhZdz.png" ></p>
+<p>我們要問的是，是不是能從複雜、高維度的資料中，找到低維度的決定性因素可以決定這些高維度的表現 ?</p>
+<p><img width=500 src="https://i.imgur.com/mBUx0Ja.png" > <img width=500 src="https://i.imgur.com/wFvzbbQ.png" ></p>
+<p>上圖上，從這3-D流形中我們是否可找出2-D的規則 ? 上圖下，在 MNIST 中，資料都是<span class="math inline">\(28\times 28\)</span> 的灰階圖。但我們知道，在 <span class="math inline">\(28\times 28\)</span> 的灰階圖中絕大多數的圖都會是亂碼圖，真正能形成數字的比例是極少的。是否代表我們可以縮減其維度呢 ?</p>
+<h2 id="algorithm-1-clustering-k-means">Algorithm 1 (Clustering) : K-means</h2>
+<p><img width=500 src="https://i.imgur.com/z0mHNSn.png" ></p>
+<p>Step 1 : 決定我們要將資料分為 K 類 <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Step 2 : 在資料中隨機任選 K 筆做為 cluster center</p>
+<p>Step 3 : 對所有資料點，計算他們與 cluster center 的距離，依照距離遠近進行分類</p>
+<p>Step 4 : 針對已經分好的類別進行 cluster center 的重新分配</p>
+<p>重複 Step 3 -- 4 直至收斂。</p>
+<h2 id="algorithm-2-clustering-hierarchical-agglomerative-clustering-hac">Algorithm 2 (Clustering) : Hierarchical Agglomerative Clustering ( HAC )</h2>
+<p><img width=500 src="https://i.imgur.com/Obv52sn.png" ></p>
+<p>Step 1 : 將所有資料視為個別的cluster，再由底部倆倆合併，開始往上建立成一棵樹結構</p>
+<p>Step 2 : 決定一個 threshold ，看要從什麼部分切開，就可以決定他們會被分做幾類。</p>
+<h2 id="algorithm-3-distributed-representation-principle-component-analysis">Algorithm 3 (Distributed Representation) : Principle Component Analysis</h2>
+<ul>
+<li>Clustering : 一筆資料必須隸屬於一個 cluster</li>
+<li>Distributed Representation : 給出這筆資料隸屬於各分類的機率</li>
+</ul>
+<p>Distributed Representation 有兩個主要的方法 :</p>
+<ol type="1">
+<li><p>Feature Selection : 當資料會集中在某些特徵上時，我們便可以將所有維度降到只剩下這些資料集中的特徵上面。</p></li>
+<li><p>Principle Component analysis : 基本的概念是將資料 ( <span class="math inline">\(X\)</span> ) 在原本的空間中，利用線性變換 ( <span class="math inline">\(W\)</span> ) 將資料變換到另外一個坐標系。在原本的空間 ( <span class="math inline">\(Z\)</span> ) 中，資料或許並不是這麼容易找出方式可以降維，因此我們利用線性變換創造出一組維度較小的空間，然後將資料轉換至其中，藉此達到降維的目的。但這裡要注意的是，經過變換後的維度，各自代表什麼意思必須經過分析後才有可能知道。</p></li>
+</ol>
+<h2 id="從最大-variance-角度來看-pca">從最大 Variance 角度來看 PCA</h2>
+<h3 id="reduce-to-1-dimension">Reduce to 1-dimension</h3>
+<p><img width=500 src="https://i.imgur.com/i5jt7QR.png" ></p>
+<p>如果我們只考慮降到一維，直覺得我們可以知道要選擇的方向應該是 variance 最大的方向 <span class="math inline">\(w^1\)</span> (為求計算方便我們假設這是單位向量)</p>
+<p><span class="math display">\[
+Z=WX\Longrightarrow z_1=w^1X
+\]</span></p>
+<p>由於我們降到只有一維，所以 <span class="math inline">\(z_1\)</span> 為<span class="math inline">\(1\times n\)</span> 的矩陣， <span class="math inline">\(w^1\)</span> 是 <span class="math inline">\(1\times d\)</span> 的矩陣 ( <span class="math inline">\(d\)</span> 為 <span class="math inline">\(X\)</span> 的維度，<span class="math inline">\(n\)</span> 為 <span class="math inline">\(X\)</span> 的行(資料)數 )。</p>
+<p>其實我們也可以把問題轉化成 : 找出使 <span class="math inline">\(Var(z_1)\)</span> 有最大值，且 <span class="math inline">\(\|w\|_2=1\)</span> 的 <span class="math inline">\(w\)</span></p>
+<p><span class="math display">\[
+w^1=arg\max_{\|w\|=1}Var(z_1)=arg\max_{\|w\|=1}\displaystyle{\frac{1}{N}}\sum\limits_{z_1}(z_1-\bar{z_1})^2
+\]</span></p>
+<h3 id="reduce-to-k-dimension">Reduce to K-dimension</h3>
+<p>延續上面的作法找出 <span class="math inline">\(w^1\)</span> 後，我們可以找出 <span class="math inline">\(w^2\)</span>，但是會多一個條件 : <span class="math inline">\(w^1\cdot w^2=0\)</span> ( 因為我們要找出的是新空間的基底，必須互相垂直 )</p>
+<p><span class="math display">\[
+w^2=arg\max_{\|w\|=1\\ w^1\cdot w=0}Var(z_2)=arg\max_{\|w\|=1\\ w^1\cdot w=0}\displaystyle{\frac{1}{N}}\sum\limits_{z_2}(z_2-\bar{z_2})^2
+\]</span> <span class="math display">\[
+w^3=arg\max_{\|w\|=1\\ w^1\cdot w=0\\w^2\cdot w=0}Var(z_3)=arg\max_{\|w\|=1\\ w^1\cdot w=0\\w^2\cdot w=0}\displaystyle{\frac{1}{N}}\sum\limits_{z_3}(z_3-\bar{z_3})^2
+\]</span> <span class="math display">\[
+\vdots\\\Downarrow
+\]</span> <span class="math display">\[
+W=\begin{bmatrix}(w^1)^T\\(w^2)^T\\\vdots\end{bmatrix}
+\]</span></p>
+<p>知道了方向，我們就要去試著把這些 <span class="math inline">\(\left\{w^i\right\}_{i=1}^{K}\)</span> 給找出來。</p>
+<p>經過一些證明<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>可以得到以下結論 : 1. <span class="math inline">\(w^i\ is\ the\ eigenvector\ of\ S=Cov(x)\)</span><span class="math inline">\(\ correspond\ to\ the\ i-th\ largest\ eiganvalue\)</span> " <span class="math inline">\(w^i\)</span> 是 <span class="math inline">\(S=Cov(x)\)</span> 中第 <span class="math inline">\(i\)</span> 大特徵值對應的特徵向量 "</p>
+<ol start="2" type="1">
+<li><span class="math inline">\(Cov(Z)\overset{let}{=}D\ is\ a\ Diagonal\ Matrix\)</span> " <span class="math inline">\(Cov(Z)\)</span> 是一個對角矩陣"</li>
+</ol>
+<h2 id="從-sinular-value-decompposition-svd奇異值分解-角度來看pca">從 Sinular Value Decompposition ( SVD，奇異值分解 ) 角度來看PCA</h2>
+<p>了解了整個演算法是如何做空間轉換之後，我們其實可以從另外一個角度來理解 PCA</p>
+<p><img src="https://i.imgur.com/kcQ0DNi.png%20=500x" /></p>
+<p>任何 objetct ，都可以被解釋成由很多個部分線性組合而成</p>
+<p><span class="math display">\[
+x\approx c_1u^1+c_2u^2+\cdots+c_Ku^K+\bar{x}\\
+x-\bar{x}\approx c_1u^1+c_2u^2+\cdots+c_Ku^K 
+\]</span> <span class="math display">\[
+x^1-\bar{x}\approx c_1^1u^1+c_2^1u^2+\cdots\\
+x^2-\bar{x}\approx c_1^2u^1+c_2^2u^2+\cdots\\
+\vdots
+\]</span></p>
+<p>如果我們將 <span class="math inline">\(x-\bar{x}\)</span> 各分量以行向量的方式組成一個 <span class="math inline">\(M\times N\)</span> 矩陣 <span class="math inline">\(A\)</span>，那我們可以對矩陣 <span class="math inline">\(A^TA\)</span> 進行 SVD</p>
+<p><span class="math display">\[
+A^TA=U\Sigma V^T\overset{(let\ \Sigma V^T=C)}{=}UC
+\]</span></p>
+<p>從這個角度我們可以證明這一組 <span class="math inline">\(UC\)</span> 與 <span class="math inline">\(A\)</span> 之間有 minimize Error，而 <span class="math inline">\(U\)</span> 之行向量即為 <span class="math inline">\(\left\{u^1,u^2,\cdots,u^K\right\}\)</span>，而所有的 <span class="math inline">\(c_i^j\)</span> 則構成了矩陣 <span class="math inline">\(C\)</span></p>
+<p><img src="https://i.imgur.com/Z0LN3SJ.png" /></p>
+<h2 id="從-neural-network-來看-pca">從 Neural Network 來看 PCA</h2>
+<p>這邊我們對參數做一點改變 ，一來是利用 Neural Network 得出來的結果並不必然會與 PCA 的結果相當，因此換個參數比較不會混淆。其次是利用我們在 NN 上面常用的參數比較容易對 NN 有概念上的連結。</p>
+<p><span class="math display">\[
+x\approx c_1u^1+c_2u^2+\cdots+c_Ku^K+\bar{x}\\
+x-\bar{x}\approx c_1u^1+c_2u^2+\cdots+c_Ku^K\overset{let}{=}\hat{x}
+\]</span></p>
+<p>且令 <span class="math inline">\(u^i=w^i\)</span> ，則我們可以把上式改寫成 <span class="math inline">\(\hat{x}=\sum\limits_{k=1}^{K}c_kw^k\)</span> 而我們的目的就是希望它與 <span class="math inline">\(x-\bar{x}\)</span> 之間的 error 越來越小。因此我們可以利用 NN 進行 Gradient Descent 來縮小 error。</p>
+<p><img src="https://i.imgur.com/zhJXhTD.png" /></p>
+<h2 id="weakness-of-pca">Weakness of PCA</h2>
+<ul>
+<li>PCA 依照 Variance 來進行資料的投影，因此很可能將原本不同類別的資料 merge 在一起，從低維度的空間中來看，這些不同類別的資料將會混再一起無法分別。</li>
+<li>PCA 是 Linear algorithm，無法針對 non-Linear problem 進行很好的處理</li>
+</ul>
+<h2 id="how-many-principle-components">How many Principle Components ?</h2>
+<p>這跟 NN 要多少 Layers 、多少 neurons ，K-means 要取什麼 K 值一樣，都是一個 Open Question。</p>
+<p>現今實務上常用的方式是計算特徵值的占比來決定我們要用多少的 Principle Component。</p>
+<p><img src="https://i.imgur.com/lZUQHJx.png" /></p>
+<p>我們知道，每一個 Principle Component 都是對應著一個特徵值的特徵向量，我們可以將每一個特徵值排列出來計算他們的比例。從上圖來看，我們可以依照各自的比例決定我們要的 Principle Component 個數可以取 4。</p>
+<p>我們可以用ㄧ些實例來看看 Principle Component Analysis 的運作情況</p>
+<p><img width=500 src="https://i.imgur.com/lS5LdOg.png" > <img width=500 src="https://i.imgur.com/dBKe71w.png" ></p>
+<p>我們從這兩個實例會發現一些令人困惑的地方 : 為什麼 Principle Components 並不是一個一個的局部組成 ? 看起來仍是一個全局圖像 ?!</p>
+<p>其實我們從 Principle Component Analysis 的演算過程可以發現這並不那麼令人意外</p>
+<p><img src="https://i.imgur.com/onZEuxo.png" /></p>
+<p>以上圖為例，參數 <span class="math inline">\(a_1,a_2,\cdots\)</span> 並不限定正實數，也有可能是負數。如果為負數，那麼各 components 也有可能有相減狀況出現，這個 「9」 也可能是 「8」 再減去一個下半圓而產生的，因此，在沒有條件限制的狀況下，這樣子的 Principle Components 的確是可以理解的。</p>
+<p><img width=500 src="https://i.imgur.com/QlHekOn.png" > <img width=500 src="https://i.imgur.com/TbeLiAT.png" ></p>
+<p>上圖我們針對參數加了非負的條件進去 (Non-Negative Matrix Factorization , NMF)，果然就有點 components 的樣子了呢 !</p>
+<h2 id="matrix-facorization">Matrix Facorization</h2>
+<p>有了上面 SVD 的概念，我們可以知道任何矩陣必然可以拆成兩個矩陣相乘，這樣的分解方式，我們可以從中了解到什麼呢 ?</p>
+<p><img src="https://i.imgur.com/w5obDbK.png" /></p>
+<p>這是一個宅男收藏各動漫角色公仔的統計表，我們把這表格視為一個矩陣的話，可以將這矩陣拆成兩個矩陣的乘積</p>
+<p><img src="https://i.imgur.com/moVk5oQ.png" /></p>
+<p>這裡有趣的地方是，第一個矩陣的列向量與第二個矩陣的行向量相乘便可以得到「宅男 A」 收藏「人物 1」的公仔個數。換一個角度來看，我們可以想成「宅男 A」 與「人物 1」的潛在特徵 ( <span class="math inline">\(r^A\)</span> 與 <span class="math inline">\(r^1\)</span> ) 經過內積後可以得到收藏個數。</p>
+<p>再來舉一個例子</p>
+<p><img src="https://i.imgur.com/K8qQK0T.png" /></p>
+<p>林軒田在機器學習技法第十五講中提到的例子，許多的使用者對於每一部電影的評分統計，我們也可以視為一個矩陣，那當然也可以進行矩陣分解。</p>
+<p><span class="math display">\[
+R\approx V^TW
+\]</span></p>
+<p>一樣的，我們也可以將每一個評分視為每一個使用者與每一部電影的潛在特徵( 喜劇類 ? 動作片 ? 百視達 ?.....有阿湯哥 ? )內積後的結果。</p>
+<p>問題來了，我們分解後的這些所謂的潛在特徵，其實是不能被解釋的。</p>
+<p><img src="https://i.imgur.com/iynowoB.png" /></p>
+<p>當然，我們也可以為矩陣分解設置 threshold 與 regularization</p>
+<p><img src="https://i.imgur.com/NFgfxDp.png" /></p>
+<p>矩陣分解的方式在許多的分析上面都會用到，也都有很多的變形用法，在資料分析的領域裡面這是一個非常重要的分析方式。</p>
+<p><img src="https://i.imgur.com/eXm4CfW.png" /></p>
+<h2 id="註釋">註釋</h2>
+<p>We want to find <span class="math inline">\(w^1=arg\max\limits_{\|w\|=1}(w)^TCov(X)w\)</span> Let <span class="math inline">\(g_1(w)=(w)^TSw-\alpha\Big((w)^Tw-1\Big)\)</span> <span class="math inline">\(\Big(By\ Lagrange\ Multiplier\ Method\Big)\)</span> <span class="math inline">\(\Longrightarrow\nabla g_1(w)\overset{let}{=}0\)</span> <span class="math inline">\(\Longrightarrow Sw-\alpha w=0\)</span> <span class="math inline">\(\Longrightarrow Sw=\alpha w\)</span> <span class="math inline">\(\Longrightarrow (w)^TSw=\alpha (w)^Tw=\alpha\)</span> <span class="math inline">\(\therefore\)</span> choose thw largest <span class="math inline">\(\alpha\)</span> we can obtain the largest <span class="math inline">\((w)^TSw\)</span> <span class="math inline">\(\Longrightarrow w^1=\)</span> the eiganvector correspond to the largest eiganvalue We want to find <span class="math inline">\(w^2=arg\max\limits_{\|w\|=1\\ w^1\cdot w=0}(w)^TCov(X)w\)</span> <span class="math inline">\(\therefore\)</span> we can create a function <span class="math inline">\(g_2(w)=(w)^TSw-\alpha\Big((w)^Tw-1\Big)-\beta\Big((w)^Tw^1\Big)\)</span> <span class="math inline">\(\Longrightarrow\nabla g_2(w)\overset{let}{=}0\)</span> <span class="math inline">\(\Longrightarrow Sw-\alpha w-\beta w^1=0\)</span> <span class="math inline">\(\Longrightarrow (w^1)^TSw-\alpha (w^1)^Tw-\beta (w^1)^Tw^1=0\)</span> <span class="math inline">\(\therefore\beta=0\)</span> <span class="math inline">\(\Longrightarrow Sw=\alpha w\)</span> <span class="math inline">\(\Longrightarrow w^2=\)</span> the eiganvector correspond to the largest eiganvalue and <span class="math inline">\(w^2\neq w^1\)</span> <span class="math inline">\(\therefore w^2=\)</span> the eiganvector correspond to the 2-nd largest eiganvalue Similarly,we can proof that <span class="math inline">\(w^i\)</span> is the eigenvector of <span class="math inline">\(S=Cov(X)\)</span> correspond to the i-th largest eiganvalue</p>
+<ol start="2" type="1">
+<li><span class="math inline">\(Cov(Z)=\displaystyle{\frac{1}{N}}\sum\limits_{z}(z-\bar{z})(z-\bar{z})^T=WSW^T\)</span> ( where <span class="math inline">\(S=Cov(X)\)</span> ) <span class="math inline">\(=WS[w^1\cdots w^K]=W[Sw^1\cdots Sw^K]=W[\lambda_1w^1\cdots \lambda_Kw^K]\)</span> <span class="math inline">\([\lambda_1Ww^1\cdots \lambda_KWw^K]=[\lambda_1e_1\cdots \lambda_Ke^K]=\)</span>Diagonal Matrix</li>
+</ol>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>如何決定 K 值?雖然說這是一個 Open Question，但也是一個 Data Driven 的問題。我們還是可以從資料的觀察中看看是否有自然的分類 ? 或是從我們要研究的問題中來決定如何取 K 值。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>證明如下 : (1) <span class="math inline">\(\because Var(z_1)=\displaystyle{\frac{1}{N}}\sum\limits_{z_1}(z_1-\bar{z_1})^2\)</span> <span class="math inline">\(=\displaystyle{\frac{1}{N}}\sum\limits_{x}(w\cdot x-w\cdot \bar{x})^2\)</span> <span class="math inline">\(=\displaystyle{\frac{1}{N}}\sum\limits_{x}(w\cdot (x- \bar{x}))^2\)</span> <span class="math inline">\(=\displaystyle{\frac{1}{N}}\sum\limits_{x}(w)^T(x- \bar{x})(x- \bar{x})^Tw\)</span> <span class="math inline">\(\Big(\because (a\cdot b)^2=(a^Tb)^2=a^Tba^Tb\ \overset{(a^Tb=scalar)}{=}\ a^Tb(a^Tb)^T=a^Tbb^Ta\Big)\)</span> <span class="math inline">\(=(w)^T=\displaystyle{\frac{1}{N}}\sum\limits_{x}(x-\bar{x})(x-\bar{x})^Tw\)</span> <span class="math inline">\(=(w)^TCov(X)w\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(1)%20--%20Principle%20Component%20Analysis%20(%20PCA%20)/" title="Unsupervised Learning (1) -- Principle Component Analysis ( PCA )">https://allen108108.github.io/blog/2019/10/08/Unsupervised Learning (1) -- Principle Component Analysis ( PCA )/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%85%AD%E8%AC%9B/" rel="prev" title="林軒田機器學習基石筆記 - 第十六講">
+                  <i class="fa fa-chevron-left"></i> 林軒田機器學習基石筆記 - 第十六講
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Unsupervised%20Learning%20(2)%20--%20AutoEncoder/" rel="next" title="Unsupervised Learning (2) -- AutoEncoder">
+                  Unsupervised Learning (2) -- AutoEncoder <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

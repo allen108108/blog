@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第十六講 : Three Learning Principles 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林軒田機器學習基石筆記 - 第十六講">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%85%AD%E8%AC%9B/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第十六講 : Three Learning Principles 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/XpAyQzN.png">
+<meta property="article:published_time" content="2019-10-07T16:16:36.000Z">
+<meta property="article:modified_time" content="2019-10-22T07:58:01.815Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/XpAyQzN.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%85%AD%E8%AC%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%85%AD%E8%AC%9B/","path":"2019/10/08/林軒田機器學習基石筆記 - 第十六講/","title":"林軒田機器學習基石筆記 - 第十六講"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>林軒田機器學習基石筆記 - 第十六講 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#three-principles"><span class="nav-number">1.</span> <span class="nav-text">Three principles</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#occams-razor"><span class="nav-number">1.1.</span> <span class="nav-text">Occam&#39;s Razor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#simple-bias"><span class="nav-number">1.2.</span> <span class="nav-text">Simple Bias</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#data-snooping"><span class="nav-number">1.3.</span> <span class="nav-text">Data Snooping</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-power-of-three-----summary-of-machine-learning"><span class="nav-number">2.</span> <span class="nav-text">The power of THREE --- Summary of Machine Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%8B%E7%9B%B8%E9%97%9C%E9%A0%98%E5%9F%9F-----data-miningartificial-intelligence-and-statistics"><span class="nav-number">2.1.</span> <span class="nav-text">3個相關領域 --- Data mining、Artificial Intelligence and Statistics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%8B%E7%90%86%E8%AB%96%E4%B8%8A%E7%9A%84%E4%BF%9D%E8%AD%89-----hoeffdingmulti-bin-hoeffding-and-vc-bound"><span class="nav-number">2.2.</span> <span class="nav-text">3個理論上的保證 --- Hoeffding、Multi-Bin Hoeffding and VC Bound</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%AE-linear-model-----plapocketlinaer-regression-and-logistic-regression"><span class="nav-number">2.3.</span> <span class="nav-text">3種 Linear Model --- PLA&#x2F;Pocket、Linaer regression and Logistic regression</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%AE%E9%87%8D%E8%A6%81%E5%B7%A5%E5%85%B7-----feature-transformregularization-and-validation"><span class="nav-number">2.4.</span> <span class="nav-text">3種重要工具 --- Feature transform、Regularization and Validation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%8B-ml-%E5%8E%9F%E5%89%87-----occams-razor-simple-bias-and-data-snooping"><span class="nav-number">2.5.</span> <span class="nav-text">3個 ML 原則 --- Occam&#39;s Razor 、 Simple Bias and Data Snooping</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%85%AD%E8%AC%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          林軒田機器學習基石筆記 - 第十六講
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-08 00:16:36" itemprop="dateCreated datePublished" datetime="2019-10-08T00:16:36+08:00">2019-10-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 15:58:01" itemprop="dateModified" datetime="2019-10-22T15:58:01+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9E%97%E8%BB%92%E7%94%B0-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3/" itemprop="url" rel="index"><span itemprop="name">林軒田 機器學習基石</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%85%AD%E8%AC%9B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/林軒田機器學習基石筆記 - 第十六講/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文為一系列課程之筆記，建議從" <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryxzB7LwN">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文討論內容請參考: 機器學習基石第十六講 : Three Learning Principles</strong></p></li>
+<li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
+</ul>
+<hr />
+</blockquote>
+<span id="more"></span>
+<h2 id="three-principles">Three principles</h2>
+<h3 id="occams-razor">Occam's Razor</h3>
+<p><em>若針對某一個問題有多種model可以預測，則選擇越簡單的越好</em></p>
+<ul>
+<li>用簡單的 model 才能有其顯著性。複雜的 model 能適用各種狀況，顯著性相對低，且容易發生 overfitting 的問題。</li>
+</ul>
+<p><img src="https://i.imgur.com/XpAyQzN.png" /></p>
+<p>Simple Model : Simple Hypothesis <span class="math inline">\(h\)</span> / Simple Model <span class="math inline">\(\mathbb{H}\)</span> <span class="math inline">\(h\)</span> 其實會被 <span class="math inline">\(\mathbb{H}\)</span> 侷限住 <span class="math inline">\(\Longrightarrow\)</span> small <span class="math inline">\(\Omega(\mathbb{H})\rightarrow\)</span> small <span class="math inline">\(\Omega(h)\)</span></p>
+<p>而 Simple <span class="math inline">\(\mathbb{H}\)</span> 會有較小的 <span class="math inline">\(m_{\mathbb{H}}(N)\)</span></p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 從 <span class="math inline">\(\displaystyle{\frac{m_{\mathbb{H}}(N)}{2^N}}\)</span> 來看，資料能夠被分類的機率小</p>
+<p><span class="math inline">\(\Longrightarrow\)</span> 表示若此 model 可以有不錯的表現，那麼此 model 的顯著性高。</p>
+<p>[ 結論 ] 1. 建立 model 時，從簡單的 linear model 先嘗試 2. 時時刻刻問自己，建立出來的 model 夠不夠簡單</p>
+<h3 id="simple-bias">Simple Bias</h3>
+<p><em>確保 data 的機率分布與 test data 的機率分布要相同</em></p>
+<ul>
+<li>VC theory 成立的前提 : data 從 <span class="math inline">\(\mathbb{P}(\mathbb{X},y)\)</span> 生成，而 test data 也應由此分布進行抽樣</li>
+<li>在實務中，要有完全相同分布其實並不容易，但我們必須盡可能的使其相似 <span class="math inline">\(\Longrightarrow\)</span> 若 test data 是來自 data <span class="math inline">\(\mathbb{D}\)</span> 之後，那我們在進行 training 時必須將 data <span class="math inline">\(\mathbb{D}\)</span> 的後半部進行加強 ( maybe 加強權重 )，而 validation 時也應取 <span class="math inline">\(\mathbb{D}\)</span> 後半部作為 validation data。</li>
+</ul>
+<h3 id="data-snooping">Data Snooping</h3>
+<ul>
+<li><p>Data snooping 的狀況在先前課程中便有提到過 : 以視覺判斷最好的 <span class="math inline">\(d_{vc}\)</span> 便是一個 data snooping 狀況 。 (詳見 : " <a target="_blank" rel="noopener" href="https://hackmd.io/@allen108108/HJ5k4fOs4">林軒田機器學習基石筆記 - 第十二講</a> "")</p></li>
+<li><p>VC theory 的保證也必須確認 <span class="math inline">\(\phi\)</span> 的轉換必須在無 data snooping 下決定</p></li>
+<li><p>若必須做 data scaling，若將 training data 與 test data 一起處理也會有可能發生 data snooping</p></li>
+<li><p>在論文、研究中常常奠基於前人的基礎也會有 data snooping 的疑慮</p></li>
+<li><p>比較極端避免 data snooping 的方法 : 將 test data 完全隔離，直到最後才拿出來使用，驗證模型則是使用 validation data 來重複使用選擇 model，且使用上需要謹慎。</p></li>
+<li><p>在做任何有關 model 的決定時，避免由資料來做判斷</p></li>
+<li><p>時時刻刻要對研究結果、論文抱持懷疑，且必須思考整個過程資料究竟被「汙染」了多少。</p></li>
+</ul>
+<h2 id="the-power-of-three-----summary-of-machine-learning">The power of THREE --- Summary of Machine Learning</h2>
+<h3 id="個相關領域-----data-miningartificial-intelligence-and-statistics">3個相關領域 --- Data mining、Artificial Intelligence and Statistics</h3>
+<ul>
+<li><strong>Data Mining</strong> : 使用大量資料試圖找出有趣的特性 (ML 與 DM 在現實難以區分)</li>
+<li><strong>Artificial Intelligence</strong> : 用具智慧的行為去做一些事情 (ML 是實現 AI 的一種方法)</li>
+<li><strong>Satistics</strong> : 從資料去推論ㄧ些未知的事物 (Statistics 有許多對於 ML 有用的工具)</li>
+</ul>
+<h3 id="個理論上的保證-----hoeffdingmulti-bin-hoeffding-and-vc-bound">3個理論上的保證 --- Hoeffding、Multi-Bin Hoeffding and VC Bound</h3>
+<ul>
+<li><strong>Hoeffding</strong> : <span class="math inline">\(\boldsymbol{P}[\\![BAD]\\!]\leq2e^{-2\epsilon^2N}\)</span> , for one hypothesis <font color="#dd0000">( 對於 test 的保證) </font></li>
+<li><strong>Multi-Bin Hoeffding</strong> : <span class="math inline">\(\boldsymbol{P}[\\![BAD]\\!]\leq2Me^{-2\epsilon^2N}\)</span> , for M hypotheses <font color="#dd0000">( 對於 validation 的保證 )</font></li>
+<li><strong>VC Bound</strong> : <span class="math inline">\(\boldsymbol{P}[\\![BAD]\\!]\leq4m_{\mathbb{H}}(2N)e^{-\frac{1}{8}\epsilon^2N}\)</span> , for all <span class="math inline">\(\mathbb{H}\)</span> <font color="#dd0000">( 對於 training 的保證 )</font></li>
+</ul>
+<h3 id="種-linear-model-----plapocketlinaer-regression-and-logistic-regression">3種 Linear Model --- PLA/Pocket、Linaer regression and Logistic regression</h3>
+<ul>
+<li><strong>PLA/Pocket</strong> : 0/1 error，用特殊方式進行 minimize</li>
+<li><strong>Linear Regression</strong> : Square error，用解析解 ( 公式解 ) 方式 minimize</li>
+<li><strong>Logistic Regression</strong> : CE error，用迭代方式 minimize</li>
+</ul>
+<h3 id="種重要工具-----feature-transformregularization-and-validation">3種重要工具 --- Feature transform、Regularization and Validation</h3>
+<ul>
+<li><strong>Feature transform</strong> : <span class="math inline">\(E_{in}(\mathbb{W})\longrightarrow E_{in}(\tilde{\mathbb{W}})\)</span> , <span class="math inline">\(d_{vc}(\mathbb{H})\longrightarrow d_{vc}(\mathbb{H}_{\phi})\)</span> , <span class="math inline">\(E_{in}\downarrow\)</span> then <span class="math inline">\(d_{vc}\uparrow\)</span></li>
+<li><strong>Regularization</strong> : <span class="math inline">\(E_{in}(\mathbb{W})\longrightarrow E_{in}(\mathbb{W}_{REG})\)</span> , <span class="math inline">\(d_{vc}(\mathbb{H})\longrightarrow d_{EFF}(\mathbb{H},\mathcal{A})\)</span> , <span class="math inline">\(E_{in}\uparrow\)</span> then <span class="math inline">\(d_{EFF}\downarrow\)</span></li>
+<li><strong>Validation</strong> : <span class="math inline">\(E_{in}(h)\longrightarrow E_{val}(h)\)</span> , <span class="math inline">\(\mathbb{H}\longrightarrow\left\{g_1^-,g_2^-,\cdots,g_M^-\right\}\)</span></li>
+</ul>
+<h3 id="個-ml-原則-----occams-razor-simple-bias-and-data-snooping">3個 ML 原則 --- Occam's Razor 、 Simple Bias and Data Snooping</h3>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%85%AD%E8%AC%9B/" title="林軒田機器學習基石筆記 - 第十六講">https://allen108108.github.io/blog/2019/10/08/林軒田機器學習基石筆記 - 第十六講/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%AC%9B%E3%80%81%E7%AC%AC%E5%8D%81%E4%BA%94%E8%AC%9B/" rel="prev" title="林軒田機器學習基石筆記 - 第十四講、第十五講">
+                  <i class="fa fa-chevron-left"></i> 林軒田機器學習基石筆記 - 第十四講、第十五講
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Unsupervised%20Learning%20(1)%20--%20Principle%20Component%20Analysis%20(%20PCA%20)/" rel="next" title="Unsupervised Learning (1) -- Principle Component Analysis ( PCA )">
+                  Unsupervised Learning (1) -- Principle Component Analysis ( PCA ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="當我們要進行某一個任務時，或許可能會遇到一個問題 : 「與這個任務直接相關的資料並不多，但與任務不直接相關的資料卻不少」 ( 當然，這是一個比較冠冕堂皇的理由，大多時候我們想問的是，我們能不能從別人已經完成的任務中，借鑒對方的經驗來讓我們的任務能夠更有效率地完成 )">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transfer Learning 遷移學習">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/11/Transfer%20Learning%20%E9%81%B7%E7%A7%BB%E5%AD%B8%E7%BF%92/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="當我們要進行某一個任務時，或許可能會遇到一個問題 : 「與這個任務直接相關的資料並不多，但與任務不直接相關的資料卻不少」 ( 當然，這是一個比較冠冕堂皇的理由，大多時候我們想問的是，我們能不能從別人已經完成的任務中，借鑒對方的經驗來讓我們的任務能夠更有效率地完成 )">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/HMkuJoZ.png">
+<meta property="og:image" content="https://i.imgur.com/0o1uDDK.png">
+<meta property="og:image" content="https://i.imgur.com/rXEBZAM.png">
+<meta property="og:image" content="https://i.imgur.com/tbylCrx.png">
+<meta property="og:image" content="https://i.imgur.com/xmsHK1E.png">
+<meta property="og:image" content="https://i.imgur.com/VjrrnfS.png">
+<meta property="og:image" content="https://i.imgur.com/FqG2tRE.png">
+<meta property="og:image" content="https://i.imgur.com/WCDIbC2.jpg">
+<meta property="og:image" content="https://i.imgur.com/QldNwsO.png">
+<meta property="og:image" content="https://i.imgur.com/tYZgw0l.png">
+<meta property="og:image" content="https://i.imgur.com/okylctH.png">
+<meta property="og:image" content="https://i.imgur.com/urhkDjk.png">
+<meta property="og:image" content="https://i.imgur.com/MDvRQsc.png">
+<meta property="og:image" content="https://i.imgur.com/02dhSS4.png">
+<meta property="og:image" content="https://i.imgur.com/yPLgZYw.png%20=450x">
+<meta property="og:image" content="https://i.imgur.com/XITVQ9J.png">
+<meta property="og:image" content="https://i.imgur.com/pmEQmpT.png%20=400x">
+<meta property="og:image" content="https://i.imgur.com/ayI27Qu.png">
+<meta property="og:image" content="https://i.imgur.com/W4gtVbK.png">
+<meta property="og:image" content="https://i.imgur.com/T6xbz1s.png">
+<meta property="og:image" content="https://i.imgur.com/O41Uklr.png">
+<meta property="og:image" content="https://i.imgur.com/1bf71uY.jpg">
+<meta property="og:image" content="https://i.imgur.com/VPuNO7l.gif">
+<meta property="og:image" content="https://i.imgur.com/D4DneTX.jpg">
+<meta property="article:published_time" content="2019-10-11T02:39:20.000Z">
+<meta property="article:modified_time" content="2019-10-22T08:01:07.515Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/HMkuJoZ.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/11/Transfer%20Learning%20%E9%81%B7%E7%A7%BB%E5%AD%B8%E7%BF%92/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/11/Transfer%20Learning%20%E9%81%B7%E7%A7%BB%E5%AD%B8%E7%BF%92/","path":"2019/10/11/Transfer Learning 遷移學習/","title":"Transfer Learning 遷移學習"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Transfer Learning 遷移學習 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#labelled-sourse-data-labelled-target-data"><span class="nav-number">1.</span> <span class="nav-text">Labelled Sourse Data , Labelled Target Data</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fine-tuning"><span class="nav-number">1.1.</span> <span class="nav-text">Fine-Tuning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#multitask-learning"><span class="nav-number">1.2.</span> <span class="nav-text">Multitask Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#progressive-neural-network"><span class="nav-number">1.3.</span> <span class="nav-text">Progressive Neural Network</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#labelled-sourse-data-unlabelled-target-data"><span class="nav-number">2.</span> <span class="nav-text">Labelled Sourse Data , Unlabelled Target Data</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#domain-adversarial-training"><span class="nav-number">2.1.</span> <span class="nav-text">Domain Adversarial Training</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zero-shot-learning"><span class="nav-number">2.2.</span> <span class="nav-text">Zero-Shot Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#attribute-embedding"><span class="nav-number">2.3.</span> <span class="nav-text">Attribute Embedding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#attribute-embedding-word-embedding"><span class="nav-number">2.4.</span> <span class="nav-text">Attribute Embedding + Word Embedding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#convex-combination-of-semantic-embedding-conse"><span class="nav-number">2.5.</span> <span class="nav-text">Convex Combination of Semantic Embedding ( ConSE )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zero-shot-translation"><span class="nav-number">2.6.</span> <span class="nav-text">Zero-Shot Translation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unabelled-sourse-data-unlabelled-target-data"><span class="nav-number">3.</span> <span class="nav-text">Unabelled Sourse Data , (Un)Labelled Target Data</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#self-taught-learning"><span class="nav-number">3.1.</span> <span class="nav-text">Self-Taught Learning</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">4.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/11/Transfer%20Learning%20%E9%81%B7%E7%A7%BB%E5%AD%B8%E7%BF%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Transfer Learning 遷移學習
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-11 10:39:20" itemprop="dateCreated datePublished" datetime="2019-10-11T10:39:20+08:00">2019-10-11</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 16:01:07" itemprop="dateModified" datetime="2019-10-22T16:01:07+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/11/Transfer%20Learning%20%E9%81%B7%E7%A7%BB%E5%AD%B8%E7%BF%92/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/11/Transfer Learning 遷移學習/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>當我們要進行某一個任務時，或許可能會遇到一個問題 : 「與這個任務直接相關的資料並不多，但與任務不直接相關的資料卻不少」</p>
+<p>( 當然，這是一個比較冠冕堂皇的理由，大多時候我們想問的是，我們能不能從別人已經完成的任務中，借鑒對方的經驗來讓我們的任務能夠更有效率地完成 )</p>
+<span id="more"></span>
+<p><img width=500 src="https://i.imgur.com/HMkuJoZ.png" ></p>
+<p>我們能不能從 Youtube 的中英文語音資料來進行台語的語音辨識 ? 或者從動物的影像辨識模型來進行醫療影響的判讀 ? ....等等。</p>
+<p>以下我們以李宏毅老師所整理的架構來一一針對不同的狀況所使用的遷移學習方法做介紹</p>
+<p><img src="https://i.imgur.com/0o1uDDK.png" /></p>
+<p>這裡有幾個名詞解釋與前提必須要先提醒 :</p>
+<ul>
+<li>Source Data : 與我們要進行的任務不直接相關的資料</li>
+<li>Target Data : 與我們要進行的任務直接相關的資料</li>
+<li>這邊我們會有一個前提是 Target Data 數量遠小於 Source Data</li>
+</ul>
+<h2 id="labelled-sourse-data-labelled-target-data">Labelled Sourse Data , Labelled Target Data</h2>
+<h3 id="fine-tuning">Fine-Tuning</h3>
+<p>一個很直覺的想法是，既然我們有比較多的 Source Data ，那我們就直接利用它先 Train 一個 Source Model 出來，利用 Source Model 作為初始值，拿 Target Data 針對我們的任務 Train 一個 Target Model 出來。</p>
+<p><img src="https://i.imgur.com/rXEBZAM.png" /></p>
+<p>但因為 Target Data 數量過少，很容易造成 Target Model 會有 Overfitting 的狀況，因此，我們可以做一些 Constraint。( 讓 Target Model 的輸出必須要與 Source Model 的輸出接近，或是要求兩個 Model 的參數要相近.... )</p>
+<p>還有另外一種方式，稱為 " Layer Transfer " 。</p>
+<p>保留 Source Model 裡面的其中幾層固定放到 Target Model 中，剩下的層在 Target Model 中進行訓練調整。</p>
+<p><img src="https://i.imgur.com/tbylCrx.png" /></p>
+<p>因為 Target Data 數量並不多，這樣的方法減少許多訓練參數，可以有效避免 Overfitting。( 當然，如果我們手邊有夠多的 Target Data，仍然可以 Fine-Tune 全部的 Layers )</p>
+<p>怎麼選擇 Source Model 要放到 Target Model 的 Layer ?</p>
+<p><img width=500 src="https://i.imgur.com/xmsHK1E.png" ></p>
+<p>從實務上來看，在語音的任務中，固定後面幾層的效果會比較好，原因是因為每一個人說話的語調或許不同，但最後組合出來的語音特徵則是不變的。相同的道理，在圖像任務中，固定前面幾層的效果則會比較好，因為初期的特抽取較為低階，可通用於不同的 Object 之上，但後期組合出來的高階特徵就不見得適用於所有的 Object 上了。</p>
+<p>這樣的狀況在 Bengio 2014 年的論文 " <em>How transferable are features in deep neural networks?</em> " 中有清楚的實測結果。</p>
+<p><img src="https://i.imgur.com/VjrrnfS.png" /></p>
+<p>在這篇論文中，將 ImageNet 共1000個類別的圖片隨機分成兩組 A 與 B ， 各包含了 500個類別與大約一半數量 ( 60萬張 ) 圖片。然後各自訓練一個 8 層的 CNN Model --- Base A 與 Base B。</p>
+<ul>
+<li>BnB : Base B 前 n 層 Layer 固定，重新於 Dataset B 訓練後面的 Layer</li>
+<li>AnB : Base A 前 n 層 Layer 固定，重新於 Dataset B 訓練後面的 Layer</li>
+</ul>
+<ol type="1">
+<li><strong>白色圓點</strong> : 代表 Base B 的表現，Accuracy 大約 0.625 。</li>
+<li><strong>深藍色圓點</strong> : BnB 的表現，B1B 或 B2B 其實對於整個 Model 並沒有太多的影響，但有趣的是 B3B -- B6B 卻有著明顯的性能下降狀況。作者稱之為 " <strong>fragile co-adapted features</strong> "，此狀況顯示了 3--6 層之間有強烈的依賴性，層與層之間在特徵萃取上面是會互相影響的，所以當我們將這一整組相依的 Layers 固定一部分再訓練其他部分，便會破壞它們的相依關係，訓練出來的模型便會整個壞掉。而 B7B 後模型性能又再度恢復，因為參數調整的部分已經剩一兩層而已，因此與 Base B 的差異便不會太多。</li>
+<li><strong>淺藍色圓點</strong> : BnB 中將固定的 Layers 參數進行微調，可以有效的改善 BnB 的狀況。</li>
+<li><strong>紅色方點</strong> : 可以看見前面 1-3 層，對於整個模型來說並沒有太大差別，再次應證了圖像辨識的過程中，初期特徵萃取的通用性。但畢竟是以 Base A 對於 Dataset B 做遷移學習，因此越後面模型崩壞的狀況會越明顯，這是可以預見的。</li>
+<li><strong>粉紅色方點</strong> : 這是一個真正的遷移學習，利用 Base A 進行 fine tune 後的性能可以大大增加。</li>
+</ol>
+<p>上面的 Dataset A 與 Dataset B 是隨機進行分組，或許可能因為兩個 dataset 間有相似類別導致上面的實驗結果可以這麼好 ? 因此 Bengio 也做了另外一組實驗，將 Dataset A (非自然類別) 與 Dataset B (自然類別) 做有差異的分組。</p>
+<p><img src="https://i.imgur.com/FqG2tRE.png" /></p>
+<p>我們可以看見，不管怎麼樣子的分組，前面幾層的遷移是有絕對的效果的 ( 紅、橘點 )。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<h3 id="multitask-learning">Multitask Learning</h3>
+<p>除了上述的方法外，我們也可以從另外一個角度來看。</p>
+<p><img width=500 src="https://i.imgur.com/WCDIbC2.jpg" ></p>
+<p>將 Source Data 與 Target Data 合起來，作為一個大的 Task，模型可以同時對 Source Data 與 Target Data 做不同的輸出。</p>
+<p>在語音任務上，這樣的方式的確可以獲得模型性能上的增強。</p>
+<p><img width=500 src="https://i.imgur.com/QldNwsO.png" ></p>
+<h3 id="progressive-neural-network">Progressive Neural Network</h3>
+<p>當然也有人提出很多變體，像是 Progressive Neural Network，但這些變體並不見得很好用，或是很有幫助，但可以提供另外一種思維。</p>
+<p><img width=500 src="https://i.imgur.com/tYZgw0l.png" ></p>
+<p>Progressive Neural Network 主要的概念是這樣，當我們有 許多不同的 Tasks，我們可以將這些 Tasks Model 的各層 Layers 接在我們最終想要處理的 Target Model Layer 之後。</p>
+<p>這樣的好處是，這樣的模型性能最差就是單純 Train Target Model 的結果 ( 可以把其他 Tasks 的 Layers 參數調成 0 就會變成 Target Model )，但卻可能可以保留住其他 Task Model 的 information。</p>
+<h2 id="labelled-sourse-data-unlabelled-target-data">Labelled Sourse Data , Unlabelled Target Data</h2>
+<h3 id="domain-adversarial-training">Domain Adversarial Training</h3>
+<p><img width=500 src="https://i.imgur.com/okylctH.png" ></p>
+<p>Labelled Sourse Data , Unabelled Target Data 似乎很像我們的 Training Data 與 Testing Data 的關係，但這邊其實會有一個前提是，Target Data 與 Sourse Data 其實還是有某些機器不見得可以判別的差異。</p>
+<p>譬如 : MNIST 與 MNIST-M 的差異</p>
+<p><img src="https://i.imgur.com/urhkDjk.png" /></p>
+<p>首先，我們先將 Source Data 與 Target Data 理解為不同的空間 ( Domain ) 中的資料點。由於 Source Data 已經有標籤完成，也就是說在 Source Domain 上已經有一個分類器可以將其分類。但在 Target Domain 上我們無法找出這樣的分類器。</p>
+<p>而我們希望做的事情就是將兩個不同 Domain 的資料點 map 到另外一個空間，在這個新的空間中，讓 Source Data 與 Target Data 的分布盡量接近，而且Source Data 在新空間中仍然可以被分類。這樣我們就可以利用 Source Data 協助 Target Data 進行分類。</p>
+<p><img width=500 src="https://i.imgur.com/MDvRQsc.png" > (圖片 (1) 來源 : <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/51499968">[ EYD与机器学习 ] 迁移学习：DANN域对抗迁移网络</a> )</p>
+<p>在這樣的概念下就衍生出了 Domain Adversarial Training of Neural Network ( GANN )。</p>
+<p><img src="https://i.imgur.com/02dhSS4.png" /></p>
+<p>DANN 主要分成三個部分 :</p>
+<ol type="1">
+<li><strong>Feature Extractor</strong> : 前面幾層的特徵萃取我們可以視為圖(1) 的 <span class="math inline">\(\phi\)</span> ，作為一個空間轉換，將 Source Data 與 Target Data map 到一個新的特徵空間中。</li>
+<li><strong>Domain Classifier</strong> : Domain Classifier 用來確認特徵空間中的點是來自 Source Domain 還是 Target Domain。</li>
+<li><strong>Label Predictor</strong> : Label Predictor 則是對特徵空間中的點進行分類。(也就是根據特徵萃取後的特徵來決定要怎麼分類資料)</li>
+</ol>
+<p>所以整個 DANN 在做的事情就是，資料進入 Feature Extractor 後，先要將來自 Source Domain 及 Target Domain 的資料分布讓其盡量相似。但是這個 <span class="math inline">\(\phi\)</span> 實際上是什麼我們並不知道，因此要利用 Domain Classifier 做 GD 來訓練出 <span class="math inline">\(\phi\)</span>。</p>
+<p>但 Domain Classifier 本來是希望能將 Domain 分得越開越好，因此必須在 Domain Classifier 與 Feature Extractor 之間加一個梯度反轉層 ( Gradient reversal layer ) 便可以達到相反的效果。</p>
+<p>那麼兩者進到特徵空間後呈現相同的分布之後，我們必須還要確定 Source Data 經過特徵萃取後的轉換還能夠被進行分類，此時便要用到 Label Predictor 。</p>
+<p>綜觀上面三個部分，我們就可以訓練出一套模型，既可以將 Source Data 準確的分類，又可以藉由這樣的分類器來對 Target Data 進行分類。</p>
+<h3 id="zero-shot-learning">Zero-Shot Learning</h3>
+<p>假如 Source 與 Target 的任務是不同的情況呢 ?</p>
+<p><img src="https://i.imgur.com/yPLgZYw.png%20=450x" /></p>
+<p><img src="https://i.imgur.com/XITVQ9J.png" /></p>
+<ul>
+<li><h3 id="attribute-embedding">Attribute Embedding</h3></li>
+</ul>
+<p>一種方式是，我們可以針對每一個分類，製作一個 Attribute Table，然後再將資料與 Attribute 通通 map 到 Attribute Space 中。這樣我們可以針對沒見過的資料進行 Attribute 的相似性比對來進行分類。</p>
+<p><img src="https://i.imgur.com/pmEQmpT.png%20=400x" /> <img src="https://i.imgur.com/ayI27Qu.png" /></p>
+<ul>
+<li><h3 id="attribute-embedding-word-embedding">Attribute Embedding + Word Embedding</h3></li>
+</ul>
+<p>但現實狀況是，我們根本不太可能會有 Attribute Tabel 這樣的 Database。此時我們可以運用文字上可能會帶有的意義來進行 Word Embedding。</p>
+<p><img src="https://i.imgur.com/W4gtVbK.png" /></p>
+<p>那問題來了 ，我們要怎麼在 Attribute Space 中進行相似性比對 ? 什麼是 「相似性」?</p>
+<p>如果我們將簡單其定義為</p>
+<p><span class="math display">\[
+f^*,g^*=arg\min_{f,g}\sum\limits_{n}\|f(x^n)-g(y^n)\|^2
+\]</span></p>
+<p>這樣在訓練過程中，整個 NN 會直接把所有點 map 到同一點，這樣通通都很接近，但這並不是我們要的結果，必須對這式子加入一些 Constraint。</p>
+<p><span class="math display">\[
+f^*,g^*=arg\min_{f,g}\sum\limits_{n}\max(0,k-f(x^n)\cdot g(y^n)+\max_{m\neq n}f(x^n)\cdot g(y^m))
+\]</span></p>
+<p><span class="math inline">\(k\)</span> 我們可以視為一個門檻值，從上面的式子來看，Loss=0 的狀況會是</p>
+<p><span class="math display">\[
+k-f(x^n)\cdot g(y^n)+\max_{m\neq n}f(x^n)\cdot g(y^m)&lt; 0\\
+f(x^n)\cdot g(y^n)-\max_{m\neq n}f(x^n)\cdot g(y^m) &gt; k
+\]</span></p>
+<p>簡單解釋就是我們希望這個 model 可以呈現的狀況是將 <span class="math inline">\(x^n\)</span> 與 <span class="math inline">\(y^n\)</span> map到 Attribute Space 中，而且 <span class="math inline">\(x^n\)</span> 與 <span class="math inline">\(y^n\)</span>(正確類別) 的相似度必須大過 <span class="math inline">\(y^m\)</span>(錯誤類別)， 相似度差異至少 <span class="math inline">\(k\)</span>。</p>
+<p>這樣的條件便可以使模型不會將所有資料都 map 到 Attribute Space 的同一點，使的模型有更好的鑑別度。</p>
+<ul>
+<li><h3 id="convex-combination-of-semantic-embedding-conse">Convex Combination of Semantic Embedding ( ConSE )</h3></li>
+</ul>
+<p>這也是另外一個 Zero-Shot Learning 的方法，但它比較簡單。</p>
+<p>這個方法出現在 2013年 的論文 " <em>Zero-Shot Learning by Convex Combination of Semantic Embeddings</em> " 中，概念其實就是 " <span class="math inline">\(CNN+Word2Vec\)</span> "。</p>
+<p>如果我們有一個現成的 ( off-the-shelf ) CNN 以及一組現成的 Word Vector，那我們就可以做出一個完全不用訓練的 Zero-Shot Learning :</p>
+<p><img width=500 src="https://i.imgur.com/T6xbz1s.png" ></p>
+<p>我們可以將一個未知的 object 輸入我們手上有的 CNN Model，那麼輸出就會給出各分類的機率值。</p>
+<p>將這些機率作為各個分類的向量進行線性組合的係數，我們便可以找到這個待測 object 的 Word Vector。</p>
+<p><img width=500 src="https://i.imgur.com/O41Uklr.png" ></p>
+<p>隨後在從我們手邊有的 Word Vector Set 中找出一個與此待測物向量最接近的 Word Vector 即可給出這個待測物的名稱。</p>
+<p><img src="https://i.imgur.com/1bf71uY.jpg" /></p>
+<p>這樣的結果其實表現得還不算太差。加上不用訓練可以省下許多的訓練成本。</p>
+<h3 id="zero-shot-translation">Zero-Shot Translation</h3>
+<p>這是李宏毅老師在這部分最後提出來的 Zero-Shot 的例子，這是一個蠻新的論文，出自 2016年 " <em>Google’s Multilingual Neural Machine Translation System: Enabling Zero Shot Translation</em> "的論文中。</p>
+<p><img src="https://i.imgur.com/VPuNO7l.gif" /></p>
+<p>作者們訓練一個 GNMT 模型可以進行 日英、韓英 的互譯 ( 藍色實線 )，接著他們想問的是 :「這樣的模型能不能針對沒有見過的語言來做翻譯 ?」</p>
+<p>驚人的結果是，這答案是肯定的。</p>
+<p>這個模型可以直接產生合理的日韓翻譯，即使這個模型從來沒有處理過這樣的問題。這樣的過程， Google 稱之為 " Zero-Shot Translation "，而這也是第一個將遷移學習應用在機器翻譯 (Machine Translation) 的例子。</p>
+<p><img src="https://i.imgur.com/D4DneTX.jpg" /></p>
+<p>這樣的結果，證實了機器學習到的是一種語言的抽象形式，使相同語意的語句能以不同語言但相似的方式來呈現 --- 稱之為 interlingua 。</p>
+<p>上圖是針對日英、韓英互譯使用 t-SNE 進行 Semantic Embedding 的結果 : * 圖 ( a ) 顯示整個 Semantic Space 的鳥瞰圖，其中同樣語意的會以相同顏色來表示。我們可以發現同樣語意的幾乎都會呈現 Cluster 的狀況。 * 圖 ( b ) 則是抽出其中一個語意的 Cluster 出來檢視。 * 圖 ( c ) 中，我們將這裡面不同語言的部分也以不同顏色來表示。我們也可以發現不同語言在這個大的 Cluster 中也會呈現不同的小 Cluster。</p>
+<h2 id="unabelled-sourse-data-unlabelled-target-data">Unabelled Sourse Data , (Un)Labelled Target Data</h2>
+<p>這裡的狀況跟 Semi-Superviced Learning 很像，差別在於，Semi-Superviced Learning 的假設會是在 Label Data 與 Unlabel Data 之間是相關的，然而在這邊我們討論的前提通常是 Source Data 與 Target Data 之間的相關性不高。</p>
+<h3 id="self-taught-learning">Self-Taught Learning</h3>
+<p>Self-Taught Learning 的概念是，我可以先用 Source Data 先訓練出一套 Feature Extractor，在利用這個 Feature Extractor 對 Target Data 來抽特徵。</p>
+<p>而論文內做了很多實測發現這樣的方法確實也可以得到不錯的結果。</p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>綠色部分是參考 Jarrett 於 2009年提出的論文 " <em>What is the Best Multi-Stage Architecture for Object Recognition?</em> " 提出來的論點，如果隨機決定 CNN Kernel 的個數是否能增強模型性能 ? 此論文中於 Caltech-101 上確實有性能上的增加，但在 Bengio 的論文中卻沒有辦法有相同的性能增加，猜測是與 dataset 的大小有關。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/11/Transfer%20Learning%20%E9%81%B7%E7%A7%BB%E5%AD%B8%E7%BF%92/" title="Transfer Learning 遷移學習">https://allen108108.github.io/blog/2019/10/11/Transfer Learning 遷移學習/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Anaconda%20%E7%92%B0%E5%A2%83%E5%AE%89%E8%A3%9D%20(%20Win%2010%20)/" rel="prev" title="Anaconda 環境安裝 ( Win 10 )">
+                  <i class="fa fa-chevron-left"></i> Anaconda 環境安裝 ( Win 10 )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/11/Reinforcement%20Learning/" rel="next" title="Reinforcement Learning">
+                  Reinforcement Learning <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

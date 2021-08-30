@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文討論內容請參考: Machine Learning (2017) 第十二講 : Semi-supervised 本篇所有圖片部分由筆者製作， Machine Learning (2017) 課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Semi-supervised Learning">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/07/Semi-supervised%20Learning/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文討論內容請參考: Machine Learning (2017) 第十二講 : Semi-supervised 本篇所有圖片部分由筆者製作， Machine Learning (2017) 課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/8d3GgWD.png">
+<meta property="og:image" content="https://i.imgur.com/2AInKRi.png">
+<meta property="og:image" content="https://i.imgur.com/x2P9nWs.png%20=500x">
+<meta property="og:image" content="https://i.imgur.com/UBzwvIL.png">
+<meta property="og:image" content="https://i.imgur.com/hos5ud0.png%20=500x">
+<meta property="og:image" content="https://i.imgur.com/466qa2g.png">
+<meta property="og:image" content="https://i.imgur.com/YwEaB3I.png%20=450x">
+<meta property="og:image" content="https://i.imgur.com/4AHWn2h.png%20=450x">
+<meta property="og:image" content="https://i.imgur.com/xo8QwjH.png%20=300x">
+<meta property="og:image" content="https://i.imgur.com/dm1t4z4.png%20=400x">
+<meta property="og:image" content="https://i.imgur.com/Jidug86.png%20=500x">
+<meta property="article:published_time" content="2019-10-07T07:54:56.000Z">
+<meta property="article:modified_time" content="2019-10-22T08:00:09.015Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/8d3GgWD.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/07/Semi-supervised%20Learning/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/07/Semi-supervised%20Learning/","path":"2019/10/07/Semi-supervised Learning/","title":"Semi-supervised Learning"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Semi-supervised Learning | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#approach-1-generative-model"><span class="nav-number">1.</span> <span class="nav-text">Approach 1 : Generative Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%E6%9C%AA%E6%A8%99%E7%B1%A4%E8%B3%87%E6%96%99%E9%80%B2%E8%A1%8C%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B%E6%8E%A8%E4%BC%B0"><span class="nav-number">1.1.</span> <span class="nav-text">如何利用未標籤資料進行生成模型推估 ?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#approach-2-self-training"><span class="nav-number">2.</span> <span class="nav-text">Approach 2 : Self-training</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#approach-3-graph-approach"><span class="nav-number">3.</span> <span class="nav-text">Approach 3 : Graph Approach</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#approach-4-better-representation"><span class="nav-number">4.</span> <span class="nav-text">Approach 4 : Better Representation</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/07/Semi-supervised%20Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Semi-supervised Learning
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-07 15:54:56" itemprop="dateCreated datePublished" datetime="2019-10-07T15:54:56+08:00">2019-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 16:00:09" itemprop="dateModified" datetime="2019-10-22T16:00:09+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/07/Semi-supervised%20Learning/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/07/Semi-supervised Learning/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文討論內容請參考: Machine Learning (2017) 第十二講 : Semi-supervised</strong></p></li>
+<li><p><strong>本篇所有圖片部分由筆者製作， Machine Learning (2017) 課程內容講義</strong></p></li>
+</ul>
+</blockquote>
+<span id="more"></span>
+<p>剛開始學習機器學習中，我們大多看到的是 Supervised learning : <span class="math inline">\(\left\{(x_r,y_r)\right\}_{r=1}^R\)</span>，每一個 <span class="math inline">\(x_r\)</span>，都有一個 Label <span class="math inline">\(y_r\)</span>，而 Semi-Superviced Learning 便是只有一部分資料有標籤，而另外一部分的資料是沒有標籤的，實務上沒有標籤的資料遠多於已經標籤的資料 : <span class="math inline">\(\left\{(x_r,y_r)\right\}_{r=1}^R\)</span> and <span class="math inline">\(\left\{x_u\right\}_{u=R}^{R+U}\)</span>， <span class="math inline">\(U\gg R\)</span>。</p>
+<p>Semi-Superviced Learning 在實務上是非常常見的，收集資料這件事情並不是什麼難事，我們可以輕鬆就收集到足夠多的資料，然而要為這些資料進行標記卻是非常困難的，所以 Semi-Superviced Learning 在此時便能發揮其功能。</p>
+<p>Semi-Superviced Learning 又可分為兩種 :</p>
+<p><strong>1. Transductive learning : 未標記的資料亦為測試資料</strong> <strong>2. Inductive learning : 未標記的資料不做為測試資料</strong></p>
+<p>一般來說，Transductive learning 的效果會比 Inductive learning 還要好。</p>
+<h2 id="approach-1-generative-model">Approach 1 : Generative Model</h2>
+<p>我們知道，Generative Model (GM) 與 Discriminative Model (DM) 不同的地方在於 GM 會訓練出訓練資料 <span class="math inline">\(\left\{x_r\right\}_{r=1}^{R}\)</span> 對於每一個不同 class <span class="math inline">\(C_1,C_2,\cdots\)</span> 的機率分布模型。</p>
+<p>亦即 GM 學習到的會是 <span class="math inline">\(\boldsymbol{P}(C_1),\boldsymbol{P}(C_2)\cdots \mu_1,\mu_2,\cdots,and\ \Sigma\)</span>， 而DM 學習到的會是 <span class="math inline">\(\boldsymbol{P}(C_1\mid x),\boldsymbol{P}(C_2\mid x)\cdots\)</span></p>
+<p>在 Supervised Learning 上，我們便可以直接利用這樣的分布來決定分類</p>
+<p><img src="https://i.imgur.com/8d3GgWD.png" /></p>
+<p>但在 Semi-Supervised Learning 上我們必須利用未標籤的資料來輔助才能得到比較好的分類模型</p>
+<p><img src="https://i.imgur.com/2AInKRi.png" /></p>
+<h3 id="如何利用未標籤資料進行生成模型推估">如何利用未標籤資料進行生成模型推估 ?</h3>
+<p>我們使用迭代的方式進行模型的推估，也就是說利用一筆一筆的未標籤資料來調整模型</p>
+<p><img src="https://i.imgur.com/x2P9nWs.png%20=500x" /></p>
+<p>理論上這樣的模型最後會收斂，但 Initialization 的設定會影響最後結果。</p>
+<p>這樣的演算法的理論其實用到的概念很簡單 :</p>
+<p><strong><em>我們先對有標記的資料計算出各自的 Maximum likelihood，再利用未標籤的資料來最大化 Maximum likelihood</em></strong></p>
+<p><img src="https://i.imgur.com/UBzwvIL.png" /></p>
+<h2 id="approach-2-self-training">Approach 2 : Self-training</h2>
+<p>Self-training 首先利用已標籤的資料進行訓練，再使用訓練出來的 model 對未標籤資料進行標記。然後我們再取一部分的未標籤資料加到 training data 中重新訓練一個 model，進行上述的迭代訓練來取得一個好的 model。</p>
+<p><img src="https://i.imgur.com/hos5ud0.png%20=500x" /></p>
+<p>這是一個很直覺的方式，但這個方法要能夠取得一個夠好的 model 必須奠基在<font color="#dd0000"><strong>「各類別之間有明確的分野」</strong></font>，也就是說，每一個分類之間不存在模糊的地帶，有一個明顯的 gap。</p>
+<p>而且，從 Self-training 的步驟來看，有幾個狀況並不適用 Self-training :</p>
+<ol type="1">
+<li>Regression 問題</li>
+<li>Soft label 的 Neural Network</li>
+</ol>
+<p>這兩個不適用於 Self-training 的理由都一樣，就是我們無法在這樣的演算法中迭代得到更好的 model。當 label 是實數，我們將加了 label 的未標籤資料放進 training data 中並不會改變 <span class="math inline">\(f^*\)</span>。</p>
+<p>Soft-label 要進行 gradient descent 也會造成梯度不會改變的問題。</p>
+<p><img src="https://i.imgur.com/466qa2g.png" /> ****</p>
+<p>要解決 Neural Network 的問題，可以使用 Entropy-based reluarization 來處理。</p>
+<p>因為 Neural Network 輸出會是機率分布，我們可以加入 entropy 的 constrain 來規範，這直覺上來說是合理的，因為我們本來就希望資料本身要夠集中才有參考價值。</p>
+<p><img src="https://i.imgur.com/YwEaB3I.png%20=450x" /></p>
+<p>這個演算法其實也延伸出了 Semi-Supervised SVM 。</p>
+<p>一般 Supervised SVM 的概念就是最大化 margin 且最小化 error 的分類方式，而 Semi-Supervised SVM 窮舉出所有未標籤資料的可能 label ，針對每一種可能性進行 SVM ，找出最小 error 狀況。</p>
+<p><img src="https://i.imgur.com/4AHWn2h.png%20=450x" /></p>
+<p>而論文 <em>Transductive Inference for Text Classication using Support Vector Machines</em> 提出了近似的估計方式解決當未標籤資料過多，無法窮舉所有情況的解決方式。</p>
+<h2 id="approach-3-graph-approach">Approach 3 : Graph Approach</h2>
+<p>為了瞭解圖論在這邊的應用，我們先給出一些定義 :</p>
+<p>首先，我們將所有的資料 <span class="math inline">\(x_1,x_2,\cdots,x_R,\cdots,x_{R+U}\)</span> 視為空間中的點 * <span class="math inline">\(Similarity\ of\ x_i,x_j=s(x_i,x_j)=e^{-\gamma\|x_i-x_j\|^2}\)</span> ( Gaussian Radial Basis Function ) * <span class="math inline">\(Add\ edge\ with\ K-Nearest Neighbor\)</span> ( <span class="math inline">\(or\ e-Nearest Neighbor\)</span> ) * <span class="math inline">\(Edge\ weight\ of\ x_i,x_j \propto s(x_i,x_j)\)</span> * <span class="math inline">\(Smothness\ of\ the\ labels\ on\ the\ graph=S=\displaystyle{\frac{1}{2}}\sum\limits_{i,j}w_{i,j}(y_i-y_j)^2\)</span> ( <span class="math inline">\(Smaller\ S\ means\ Smother\)</span> ) * <span class="math inline">\(\boldsymbol{Y}=\begin{bmatrix}\cdots y_i\cdots y_j\cdots\end{bmatrix}_{1\times (R+U)}^T\)</span> * <span class="math inline">\(\boldsymbol{W}=\begin{bmatrix}w_{i,j}\end{bmatrix}_{(R+U)\times (R+U)}\)</span> * <span class="math inline">\(\boldsymbol{D}\ is\ a\ diagonal\ matrix\ d_{i,i}=\sum\limits_{k=1}^{R+U} w_{i,k}\)</span> * <span class="math inline">\(Laplacian\ matrix=\boldsymbol{L}=\boldsymbol{D}-\boldsymbol{W}\)</span></p>
+<p><img src="https://i.imgur.com/xo8QwjH.png%20=300x" /></p>
+<p>從上面的定義我們可以推得 : <span class="math inline">\(S=\boldsymbol{Y}^T\boldsymbol{L}\boldsymbol{Y}\)</span></p>
+<p>我們清楚了圖論的一些概念後，從圖論的方式來進行 Semi-Supervised Learning 跟 Self-training 奠基的假設完全不同。Graph Approach 必須基於一個 Smoothness 假設上才能確保這樣的方式可以做出一個夠好的 model。</p>
+<p>那什麼是 Smoothness 假設呢 ?</p>
+<p>簡單來說，<span class="math inline">\(x_1,x_2\)</span> 如果在一個稠密的區域裡面夠接近，那麼他們的 label 必然會相同。 ( 換句話說，<span class="math inline">\(x_1,x_2\)</span> 可藉由一個高密度的路徑相互連接 )</p>
+<p><img src="https://i.imgur.com/dm1t4z4.png%20=400x" /></p>
+<p>最後我們可以利用上面的概念，重新將資料間的關係做一個定義，丟到 neural network 中進行訓練，而待訓練的當然就是 edge weight。</p>
+<p>然而我們一樣為了避免 overfitting 的問題，還有整個 graph 上對 smoothness 的要求，我們在 Loss function 上仍會加上一個 regularizer <span class="math inline">\(=S\)</span>。</p>
+<p><img src="https://i.imgur.com/Jidug86.png%20=500x" /></p>
+<h2 id="approach-4-better-representation">Approach 4 : Better Representation</h2>
+<p>( 待 Unsupervised Learning 進行詳細說明 )</p>
+<p>簡而言之就是我們觀察到的現象通常都比較複雜，試圖去找出潛在因素，則可以讓訓練變得比較簡單。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/07/Semi-supervised%20Learning/" title="Semi-supervised Learning">https://allen108108.github.io/blog/2019/10/07/Semi-supervised Learning/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%5B%E8%AB%96%E6%96%87%5D%20Going%20Deeper%20with%20Convolutions/" rel="prev" title="[論文] Going Deeper with Convolutions">
+                  <i class="fa fa-chevron-left"></i> [論文] Going Deeper with Convolutions
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%AC%9B/" rel="next" title="林軒田機器學習基石筆記 - 第十二講">
+                  林軒田機器學習基石筆記 - 第十二講 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

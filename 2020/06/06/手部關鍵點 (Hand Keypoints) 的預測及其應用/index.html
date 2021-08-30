@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="前言 手部關鍵點的預測，在整個深度學習以及電腦視覺領域中並不算是一個非常受歡迎、研究廣泛的領域，但是在許多虛擬操作上，預測手部關鍵點這件事情便顯得至關重要。要怎麼利用手勢來做操作 ? 或許我們可以利用現有的 Object Detection 技術來針對手勢定義相對應的操作，這樣的方式既直覺也有相對來說成熟的模型可以使用。有興趣的可以閱讀筆者之前的文章 &quot; Gesture Recognition">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手部關鍵點 (Hand Keypoints) 的預測及其應用">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/06/06/%E6%89%8B%E9%83%A8%E9%97%9C%E9%8D%B5%E9%BB%9E%20(Hand%20Keypoints)%20%E7%9A%84%E9%A0%90%E6%B8%AC%E5%8F%8A%E5%85%B6%E6%87%89%E7%94%A8/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="前言 手部關鍵點的預測，在整個深度學習以及電腦視覺領域中並不算是一個非常受歡迎、研究廣泛的領域，但是在許多虛擬操作上，預測手部關鍵點這件事情便顯得至關重要。要怎麼利用手勢來做操作 ? 或許我們可以利用現有的 Object Detection 技術來針對手勢定義相對應的操作，這樣的方式既直覺也有相對來說成熟的模型可以使用。有興趣的可以閱讀筆者之前的文章 &quot; Gesture Recognition">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/jOv86Wr.jpg">
+<meta property="og:image" content="https://i.imgur.com/XvTv9CU.png">
+<meta property="og:image" content="https://i.imgur.com/SxB50Lz.png">
+<meta property="og:image" content="https://i.imgur.com/Ap3Oo8Y.png">
+<meta property="og:image" content="https://i.imgur.com/wkncp3Y.png">
+<meta property="og:image" content="https://i.imgur.com/tLCOw9A.png">
+<meta property="og:image" content="https://i.imgur.com/ocoPQXh.jpg">
+<meta property="og:image" content="https://i.imgur.com/la4l2d0.jpg">
+<meta property="og:image" content="https://i.imgur.com/OUbhPM3.jpg">
+<meta property="og:image" content="https://i.imgur.com/PMtT6WL.gif">
+<meta property="og:image" content="https://i.imgur.com/9Rsfytl.png">
+<meta property="og:image" content="https://i.imgur.com/DyG8v49.gif">
+<meta property="article:published_time" content="2020-06-06T02:46:39.000Z">
+<meta property="article:modified_time" content="2020-06-06T02:47:44.429Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/jOv86Wr.jpg">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/06/06/%E6%89%8B%E9%83%A8%E9%97%9C%E9%8D%B5%E9%BB%9E%20(Hand%20Keypoints)%20%E7%9A%84%E9%A0%90%E6%B8%AC%E5%8F%8A%E5%85%B6%E6%87%89%E7%94%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/06/06/%E6%89%8B%E9%83%A8%E9%97%9C%E9%8D%B5%E9%BB%9E%20(Hand%20Keypoints)%20%E7%9A%84%E9%A0%90%E6%B8%AC%E5%8F%8A%E5%85%B6%E6%87%89%E7%94%A8/","path":"2020/06/06/手部關鍵點 (Hand Keypoints) 的預測及其應用/","title":"手部關鍵點 (Hand Keypoints) 的預測及其應用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>手部關鍵點 (Hand Keypoints) 的預測及其應用 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">2.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#anchor-based"><span class="nav-number">2.1.</span> <span class="nav-text">Anchor Based</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#anchor-free"><span class="nav-number">2.2.</span> <span class="nav-text">Anchor Free</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#datasets"><span class="nav-number">3.</span> <span class="nav-text">Datasets</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#model-structure"><span class="nav-number">4.</span> <span class="nav-text">Model Structure</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#training-and-inference"><span class="nav-number">5.</span> <span class="nav-text">Training and Inference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#result"><span class="nav-number">6.</span> <span class="nav-text">Result</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#application"><span class="nav-number">7.</span> <span class="nav-text">Application</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8B%A2%E8%BE%A8%E8%AD%98"><span class="nav-number">7.1.</span> <span class="nav-text">1. 手勢辨識</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8B%95%E6%85%8B%E6%89%8B%E5%8B%A2"><span class="nav-number">7.2.</span> <span class="nav-text">2. 動態手勢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8B%A2%E6%93%8D%E4%BD%9C"><span class="nav-number">7.3.</span> <span class="nav-text">3. 手勢操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#extended-question-dataset-quality"><span class="nav-number">8.</span> <span class="nav-text">Extended Question : Dataset Quality ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">9.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/06/06/%E6%89%8B%E9%83%A8%E9%97%9C%E9%8D%B5%E9%BB%9E%20(Hand%20Keypoints)%20%E7%9A%84%E9%A0%90%E6%B8%AC%E5%8F%8A%E5%85%B6%E6%87%89%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          手部關鍵點 (Hand Keypoints) 的預測及其應用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-06-06 10:46:39 / 修改時間：10:47:44" itemprop="dateCreated datePublished" datetime="2020-06-06T10:46:39+08:00">2020-06-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%B0%88%E6%A1%88-Project/" itemprop="url" rel="index"><span itemprop="name">專案 Project</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/06/06/%E6%89%8B%E9%83%A8%E9%97%9C%E9%8D%B5%E9%BB%9E%20(Hand%20Keypoints)%20%E7%9A%84%E9%A0%90%E6%B8%AC%E5%8F%8A%E5%85%B6%E6%87%89%E7%94%A8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/06/06/手部關鍵點 (Hand Keypoints) 的預測及其應用/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="前言">前言</h2>
+<p>手部關鍵點的預測，在整個深度學習以及電腦視覺領域中並不算是一個非常受歡迎、研究廣泛的領域，但是在許多虛擬操作上，預測手部關鍵點這件事情便顯得至關重要。要怎麼利用手勢來做操作 ? 或許我們可以利用現有的 Object Detection 技術來針對手勢定義相對應的操作，這樣的方式既直覺也有相對來說成熟的模型可以使用。有興趣的可以閱讀筆者之前的文章 " <em><a href="https://allen108108.github.io/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/">Gesture Recognition using YOLO v3 tiny</a></em> "。</p>
+<span id="more"></span>
+<p><img src="https://i.imgur.com/jOv86Wr.jpg" /></p>
+<p>這樣的方法有著極大的問題，不管今天要增加新的手勢或想改用動態手勢來進行操作，都必須重新進行訓練，更甚至得設計新的網路架構才能達到我們想要的功能，這對於實際在應用上有著非常大的限制，因為每做一次更動都得消耗大量的時間及人力成本。</p>
+<p>然而，如果我們可以訓練出一個模型準確且即時的預測出手部關鍵點的位置，那麼我們便可以利用這樣的結果來定義動、靜態手勢，儲存在設定檔中，日後要增加或更改手勢也僅需要更改設定檔即可，可以省去非常多的成本也有利於後續的應用。</p>
+<h2 id="method">Method</h2>
+<p>現在針對手部關鍵點的研究方向大多分為兩種，一種是類似 Object Detection 利用 Anchor Box 先進行手部位置的預測，之後再進行關鍵點的預測。另外一種則是 Anchor Free 的方法，對輸入圖像進行關鍵點的熱圖預測。</p>
+<h3 id="anchor-based">Anchor Based</h3>
+<p>Anchor base model 中比較著名的方法便是 Google 所開發的 Mediapipe ，在手部關鍵點辨識中，首先利用一個手掌偵測器 Blaze Palm 進行手掌的偵測，僅偵測手掌而非整個手部的原因在於，手掌之於手部動作來說是相對固定的，就連 anchor 上的設定都不需要太多種長寬的組合，僅需要正方形 Anchor 即可，這樣的設計對於整個系統來說是非常節省運算成本的一種作法。</p>
+<p><img src="https://i.imgur.com/XvTv9CU.png" /></p>
+<p>手掌偵測完後，再針對 Bounding Box 的長寬做某個倍數的放大來做為整個手部的 Bounding Box。</p>
+<p>至於最重要的手部關鍵點則是使用回歸的方式進行預測，也就是讓模型直接預測出 21 個點座標，42 個數字。</p>
+<p><img src="https://i.imgur.com/SxB50Lz.png" /></p>
+<h3 id="anchor-free">Anchor Free</h3>
+<p>之前筆者曾經寫過一篇論文速讀文章 " <em><a href="https://allen108108.github.io/blog/2020/01/11/%5B%E8%AB%96%E6%96%87%5D%20%E9%80%9F%E8%AE%80%E8%AB%96%E6%96%87%20Accurate%20Hand%20Keypoint%20Localization%20on%20Mobile%20Devices/">[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices</a></em> " ，這篇論文介紹的就是 Anchor Free 的關鍵點預測，Anchor Free based 的方法大多都是利用 CNN 加上回歸來對每一個關鍵點輸出 Heatmap。</p>
+<p><img src="https://i.imgur.com/Ap3Oo8Y.png" /></p>
+<p>這種方法在現今關鍵點的預測上應該可以算是主流的方式，著名的 OpenPose 辨是基於這樣的概念加上 Bootstraping 來預測身體及手腳等部位的關鍵點，在 Marcelo Ortega 的部落格文章 " <em><a target="_blank" rel="noopener" href="https://medium.com/@apofeniaco/training-a-hand-detector-like-the-openpose-one-in-tensorflow-45c5177d6679">Training a Hand Detector like the OpenPose one in Tensorflow</a></em> " 中也提到了類似的作法。</p>
+<p><img src="https://i.imgur.com/wkncp3Y.png" /></p>
+<h2 id="datasets">Datasets</h2>
+<p>筆者在此專案中，使用的是由德國佛萊堡大學 (University of Freiburg) 開發的 FreiHAND Dataset ( arxiv : https://arxiv.org/pdf/1909.04349.pdf )，這個資料集中利用下方的設備進行手部圖片的收集，其中包含了八個校準過後的 RGB 相機，而綠幕背景可以方便後續進行背景的替換。</p>
+<p><img src="https://i.imgur.com/tLCOw9A.png" /></p>
+<p>該資料集中包含了綠幕背景原始手部圖片共 32560 張，及利用這些原始圖片進行背景填補還有色調變化的延伸照片共 97680 張。</p>
+<p><img src="https://i.imgur.com/ocoPQXh.jpg" /></p>
+<p>有鑒於此資料集在收集上面的一些限制 ( 如 : 手部位置固定、色彩對比差異不大...等 )，因此筆者利用這個資料集做了一些資料增強 (Data Augmentation) ，將原本的資料平移、翻轉以及 HSV 上面做一些調整</p>
+<p><img src="https://i.imgur.com/la4l2d0.jpg" /></p>
+<p>以上資料進行比例上的分配後做為訓練資料進行訓練。</p>
+<h2 id="model-structure">Model Structure</h2>
+<p>筆者不對整張圖像先做 Hand Detector，希望利用整張圖像直接進行手部關鍵點的預測，如果我們可以在這樣的條件下準確的預測關鍵點，那我們就可以自行選擇加上或不加上另外一個模型偵測手部位置。</p>
+<p>在模型的架構上，使用 ResNet50 (<code>include top = False</code>) 作為模型骨幹，加上一層 <span class="math inline">\(1\times 1\)</span> 的卷積層，一方面用來融合各 channel 的資訊，另一方面則是降低維度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">base =ResNet50(weights=<span class="literal">None</span>, include_top=<span class="literal">False</span>, input_shape=input_shape)</span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(base)</span><br><span class="line">model.add(Conv2D(filters=<span class="number">64</span>, kernel_size=<span class="number">1</span>, activation=<span class="string">&#x27;relu&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<p>實際比較過後，加了這一層 <span class="math inline">\(1\times 1\)</span> 的卷積層 ，模型尺寸從原先的 600 MB 降至 270 MB ，而且推論的能力也提高不少。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model.<span class="built_in">compile</span>(loss=<span class="string">&#x27;mean_squared_error&#x27;</span>, optimizer=<span class="string">&#x27;adam&#x27;</span>, metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p>由於整個關鍵點的預測是利用回歸方式來進行，所以模型會輸出 42 個數字，即 21 個點的座標，然後直接與標註的 21 點座標進行 MSE 作為損失函數。</p>
+<p>這樣的模型結構是否是最佳的結構，筆者仍在嘗試各種可能的結構，但這樣的簡單結構就可以有每種程度上的準確度存在。</p>
+<h2 id="training-and-inference">Training and Inference</h2>
+<p>訓練過程中，筆者並沒有使用到什麼 Regularizer 的技巧，原因在於這樣的一個任務中，訓練幾乎都是 underfitting 的，出現 overfitting 的狀況並不多，一來是因為手部關鍵點的任務相對於一些分類、或是臉部特徵點的預測都來的困難許多，再者，筆者目前使用的模型都還算是簡單的結構，對於這樣的任務來說都還不夠 robust，當然也就暫時不用使用 Regularizer 技巧來限制模型的能力了。</p>
+<p>在 Learning Rate 上面，筆者設計當 Validation Loss 沒有顯著下降時，LR 會自動減半，直至 <code>1e-7</code> 為止便不再下降，這樣的LR 動態設計可以使 LR 在不同的訓練狀況下適當作出調整。</p>
+<p>硬體方面，使用 GTX 2080 訓練約一天的時間，Training Loss 與 Validation Loss 均收斂在 <span class="math inline">\(9\)</span> 左右，而 Accuracy 則大約落在 <span class="math inline">\(0.73\)</span>。就姿態估計的模型來看，這樣的模型表現的確不是非常好，在未來的工作上仍需要持續修正模型架構來得到更好的表現。</p>
+<p>筆者利用 Webcam 進行 Real-Time Inference 可以得到下列的結果 :</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/Cju8uPcCHBs" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>在這樣的推論結果，筆者對於目前這個模型有幾個結論 :</p>
+<ol type="1">
+<li>Inference Time 不差，但由於模型太大，載入模型需花費相對長的時間。</li>
+<li>張手的預測結果不錯，但當手部有較多遮擋的姿態時，預測效果便會下降不少。</li>
+<li>手部的位置亦會影響推論結果，在目前的這個模型中，可以發現尤其當手部位於 Frame 的左側邊緣時，整個關鍵點的預測會出現問題，另外，手部於畫面占比太大或太小也會降低預測正確性。</li>
+<li>關鍵點的預測會因為背景環境而受到不少干擾，如果手部在較為簡單、顏色較為單純的背景下，預測結果也會相對來的好。</li>
+</ol>
+<h2 id="result">Result</h2>
+<p>從上面的結果，我們大概可以從兩個面向來討論 :『資料集』 與 『模型』。</p>
+<p>資料集的部分，我們使用的是公開的資料集，因此在真正的使用上會導致模型容易受到資料集本上的分布影響其推論能力，舉例來說 ， FreiHAND Dataset 的手部與整個畫面的占比幾乎是固定，因此在真正的推論中，太近或太遠都會使預測準確度下降，除此之外，FreiHAND 的解析度也是一個大問題，筆者認為，利用低解析度的資料集訓練出來的模型，在高解析度圖像上的推論準確程度會造成一定程度的下降。</p>
+<p>從模型的角度來看，先前本文有提到，手部關鍵點的預測本來困難度就非常高，因此目前就現有的 keras 預訓練模型，都有可能無法達到接近於 Mediapipe 的推論結果，因此在整個模型的結構上，該怎麼兼顧模型尺寸以及推論能力，這是需要花一些功夫去找出來的。</p>
+<h2 id="application">Application</h2>
+<p>假如，我們可以準確地找出手部關鍵點的位置可以做哪些事情呢 ? 在這個段落，筆者嘗試在 Mediapipe 的模型基礎上做出三種不同的應用給大家參考 :</p>
+<h3 id="手勢辨識">1. 手勢辨識</h3>
+<p>下圖是筆者模擬 Mediapipe 部落格文章中提到的，利用關節角度來進行手勢的定義。當然方式有很多種，筆者也嘗試用關鍵點的相對位置來進行手勢定義，也是可行的唷 !</p>
+<p><img src="https://i.imgur.com/OUbhPM3.jpg" /></p>
+<h3 id="動態手勢">2. 動態手勢</h3>
+<p>除了靜態的手勢外，關鍵點也可以用來進行動態手勢的辨識，以往動態手勢的模型通常都會使用帶有 LSTM 的 CNN Based 模型下去做訓練，跟靜態手勢一樣，如果我們要定義新的手勢，整個模型就必須重新訓練一次。</p>
+<p><img src="https://i.imgur.com/PMtT6WL.gif" /></p>
+<h3 id="手勢操作">3. 手勢操作</h3>
+<p>現在科技的進步，我們多少都會幻想自己能跟鋼鐵人 Tony Stark 一樣來進行虛擬的手勢操作，事實上，經由 AR 或 VR 眼鏡我們已經可以做到類似的動作，當然，我也就可以利用手部關鍵點來控制滑鼠的鼠標以及進行滑鼠左鍵的操作 ( 點擊、拖曳...等動作 )</p>
+<p><img src="https://i.imgur.com/9Rsfytl.png" /></p>
+<p>筆者將掌心定義成為鼠標位置，而利用食姆指的捏合模擬滑鼠左鍵的動作，當食姆指碰在一起的時候，左上角的 <code>State</code> 便會顯示 <code>Press</code> 的字樣，表示現在的動作就等同於按下滑鼠左鍵，而同時會將掌心的座標記錄成 <code>Start point</code> 起點，當鼠標移動到期望的地方，放開食姆指，便會顯示 <code>End point</code> 的座標，這也可以知道這段過程中鼠標移動的距離為何，當然也可以記錄成拖曳的軌跡。</p>
+<p><img src="https://i.imgur.com/DyG8v49.gif" /></p>
+<h2 id="extended-question-dataset-quality">Extended Question : Dataset Quality ?</h2>
+<p>從前面的討論，或是過去專案設計的經驗，模型對於資料集的依賴程度相當高，當我們在量化評估模型網路結構時，很多時候不自覺的會建立在資料集本身沒有問題的前提下進行。但是，當我們現在要進行的是一個特別的專案，必須使用到 customize 的資料集時，我們可以怎麼衡量這個資料集的 Quality ? 如果我們必須要自己收集資料，怎麼樣可以確定這個資料的分布接近於我們的需求 ?</p>
+<p>換另外一個面向來討論這個問題，如果當我們訓練出來的模型其推論能力不如預期，我要如何確定，問題是出在資料集還是模型本身 ?</p>
+<p>這個問題筆者詢問過相關的同好，也似乎沒有一個肯定的答案，或許，許多自行設計的專案中，表現不佳的根本問題就是出在資料而不是模型本身 ?</p>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://ai.googleblog.com/2019/08/on-device-real-time-hand-tracking-with.html">On-Device, Real-Time Hand Tracking with MediaPipe.</a></li>
+<li><a href="https://allen108108.github.io/blog/2020/01/11/%5B%E8%AB%96%E6%96%87%5D%20%E9%80%9F%E8%AE%80%E8%AB%96%E6%96%87%20Accurate%20Hand%20Keypoint%20Localization%20on%20Mobile%20Devices/">[論文] 速讀論文 Accurate Hand Keypoint Localization on Mobile Devices</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@apofeniaco/training-a-hand-detector-like-the-openpose-one-in-tensorflow-45c5177d6679">Training a Hand Detector like the OpenPose one in Tensorflow</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/susantabiswas/facial-keypoint-regression">susantabiswas/facial-keypoint-regression</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/06/06/%E6%89%8B%E9%83%A8%E9%97%9C%E9%8D%B5%E9%BB%9E%20(Hand%20Keypoints)%20%E7%9A%84%E9%A0%90%E6%B8%AC%E5%8F%8A%E5%85%B6%E6%87%89%E7%94%A8/" title="手部關鍵點 (Hand Keypoints) 的預測及其應用">https://allen108108.github.io/blog/2020/06/06/手部關鍵點 (Hand Keypoints) 的預測及其應用/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/06/01/%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%20_%20Why%20Backpropagation%20_/" rel="prev" title="為什麼需要反向傳播 ? Why Backpropagation ?">
+                  <i class="fa fa-chevron-left"></i> 為什麼需要反向傳播 ? Why Backpropagation ?
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/06/25/2020%20Presidential%20Hackathon%201st.%20Workshop%20(2020.06.19)/" rel="next" title="2020 Presidential Hackathon 1st. Workshop (2020.06.19)">
+                  2020 Presidential Hackathon 1st. Workshop (2020.06.19) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

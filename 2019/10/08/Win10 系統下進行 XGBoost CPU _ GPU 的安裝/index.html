@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="XGboost 一直是 Kaggle 個項目中前段班最愛用的演算法之一，之前就一直想要安裝，但總聽聞 XGboost 在 Windows 系統下安裝十分麻煩，在尚未要用到之前，我也就一直擺著沒有去安裝，直到最近開始接觸，便想著該來鼓起勇氣安裝 XGboost 了....">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Win10 系統下進行 XGBoost CPU &#x2F; GPU 的安裝">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/Win10%20%E7%B3%BB%E7%B5%B1%E4%B8%8B%E9%80%B2%E8%A1%8C%20XGBoost%20CPU%20_%20GPU%20%E7%9A%84%E5%AE%89%E8%A3%9D/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="XGboost 一直是 Kaggle 個項目中前段班最愛用的演算法之一，之前就一直想要安裝，但總聽聞 XGboost 在 Windows 系統下安裝十分麻煩，在尚未要用到之前，我也就一直擺著沒有去安裝，直到最近開始接觸，便想著該來鼓起勇氣安裝 XGboost 了....">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/U3mWycH.png">
+<meta property="og:image" content="https://i.imgur.com/FtSsSXS.jpg">
+<meta property="og:image" content="https://i.imgur.com/JMgm5Zs.jpg">
+<meta property="og:image" content="https://i.imgur.com/rJsRGN2.jpg">
+<meta property="og:image" content="https://i.imgur.com/lgVg7Ls.png">
+<meta property="og:image" content="https://i.imgur.com/YMIyz8j.png">
+<meta property="article:published_time" content="2019-10-07T18:24:23.000Z">
+<meta property="article:modified_time" content="2019-10-07T18:25:07.760Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/U3mWycH.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/Win10%20%E7%B3%BB%E7%B5%B1%E4%B8%8B%E9%80%B2%E8%A1%8C%20XGBoost%20CPU%20_%20GPU%20%E7%9A%84%E5%AE%89%E8%A3%9D/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/Win10%20%E7%B3%BB%E7%B5%B1%E4%B8%8B%E9%80%B2%E8%A1%8C%20XGBoost%20CPU%20_%20GPU%20%E7%9A%84%E5%AE%89%E8%A3%9D/","path":"2019/10/08/Win10 系統下進行 XGBoost CPU _ GPU 的安裝/","title":"Win10 系統下進行 XGBoost CPU / GPU 的安裝"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Win10 系統下進行 XGBoost CPU / GPU 的安裝 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#xgboost-cpu-%E7%89%88%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">XGBoost CPU 版本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#step-1-%E4%B8%8B%E8%BC%89-xgboost-%E5%A5%97%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">STEP 1 : 下載 XGboost 套件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-2-%E4%BB%A5%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%93%A1%E8%BA%AB%E5%88%86%E9%87%8D%E6%96%B0%E5%9F%B7%E8%A1%8C-anaconda-prompt%E4%B8%A6%E9%80%B2%E8%A1%8C%E5%AE%89%E8%A3%9D"><span class="nav-number">1.2.</span> <span class="nav-text">STEP 2 : 以系統管理員身分重新執行 Anaconda Prompt，並進行安裝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-3-%E5%AE%89%E8%A3%9D%E5%AE%8C%E6%88%90%E5%BE%8C%E9%80%B2%E8%A1%8C%E7%B0%A1%E5%96%AE%E6%B8%AC%E8%A9%A6"><span class="nav-number">1.3.</span> <span class="nav-text">STEP 3 : 安裝完成後進行簡單測試</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xgboost-gpu-%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">XGBoost GPU 版本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#step-1-%E4%B8%8B%E8%BC%89xgboost%E5%8E%9F%E5%A7%8B%E7%A2%BC"><span class="nav-number">2.1.</span> <span class="nav-text">STEP 1 :下載xgboost原始碼</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-2-%E5%B0%87%E5%B7%B2%E7%B7%A8%E8%AD%AF%E5%A5%BD%E7%9A%84-xgboost.dll-%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BC%89%E5%BE%8C%E6%94%BE%E5%85%A5%E6%BA%90%E7%A2%BC%E4%B8%AD"><span class="nav-number">2.2.</span> <span class="nav-text">STEP 2 : 將已編譯好的 xgboost.dll 文件下載後放入源碼中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-3-%E5%9F%B7%E8%A1%8C%E5%AE%89%E8%A3%9D"><span class="nav-number">2.3.</span> <span class="nav-text">STEP 3 : 執行安裝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-4-%E9%80%B2%E8%A1%8C-xgboost-gpu-%E7%9A%84%E6%B8%AC%E8%A9%A6"><span class="nav-number">2.4.</span> <span class="nav-text">STEP 4 : 進行 XGBoost GPU 的測試</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/Win10%20%E7%B3%BB%E7%B5%B1%E4%B8%8B%E9%80%B2%E8%A1%8C%20XGBoost%20CPU%20_%20GPU%20%E7%9A%84%E5%AE%89%E8%A3%9D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Win10 系統下進行 XGBoost CPU / GPU 的安裝
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-10-08 02:24:23 / 修改時間：02:25:07" itemprop="dateCreated datePublished" datetime="2019-10-08T02:24:23+08:00">2019-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%BB%9F%E9%AB%94-Software/" itemprop="url" rel="index"><span itemprop="name">軟體 Software</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/Win10%20%E7%B3%BB%E7%B5%B1%E4%B8%8B%E9%80%B2%E8%A1%8C%20XGBoost%20CPU%20_%20GPU%20%E7%9A%84%E5%AE%89%E8%A3%9D/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/Win10 系統下進行 XGBoost CPU _ GPU 的安裝/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>XGboost 一直是 Kaggle 個項目中前段班最愛用的演算法之一，之前就一直想要安裝，但總聽聞 XGboost 在 Windows 系統下安裝十分麻煩，在尚未要用到之前，我也就一直擺著沒有去安裝，直到最近開始接觸，便想著該來鼓起勇氣安裝 XGboost 了....</p>
+<span id="more"></span>
+<h2 id="xgboost-cpu-版本">XGBoost CPU 版本</h2>
+<p>原本思考要重新設置一個環境來安裝，避免與 tensorflow 之類的造成衝突 (我也不知道會不會?)，但礙於還是希望能在同一個環境下進行操作，未來在演算法的挑選上面也比較不會這麼麻煩，於是便還是決定在 tensorflow GPU 的環境下安裝，所幸安裝過程十分順利，目前看起來也都沒有造成任何內部衝突的狀況發生，以下便開始介紹我的安裝流程 。</p>
+<h3 id="step-1-下載-xgboost-套件">STEP 1 : 下載 XGboost 套件</h3>
+<p>XGboost 套件似乎沒有包在 Anaconda 內，因此我們無法直接從 Anaconda Prompt 下指令 <code>pip install xgboost</code> 直接安裝，必須從第三方下載套件再進行安裝。</p>
+<p>我所使用的套件是從 <a target="_blank" rel="noopener" href="https://www.lfd.uci.edu/~gohlke/pythonlibs/#xgboost">美國加州大學(UCI) Laboratory for Fluorescence Dynamics</a> 中下載的，其中還是有許多版本必須選擇，我們可以到 Anaconda Prompt 執行 python 先進行版本確認</p>
+<p><img src="https://i.imgur.com/U3mWycH.png" /></p>
+<p>確認好版本後點選即可下載</p>
+<h3 id="step-2-以系統管理員身分重新執行-anaconda-prompt並進行安裝">STEP 2 : 以系統管理員身分重新執行 Anaconda Prompt，並進行安裝</h3>
+<p>在安裝時可能會因為權限問題而導致安裝失敗，因此我們必須要利用系統管理員的身分來重新執行 Anaconda Prompt 來進行安裝。</p>
+<p><img src="https://i.imgur.com/FtSsSXS.jpg" /></p>
+<p>執行後我們必須在與剛剛下載的檔案同樣路徑下進行安裝，因此執行 Anaconda Prompt 後利用 <code>cd 下載檔案所在路徑</code> 指令 ( 本例將檔案下載至 C:資料夾中 )</p>
+<p><img src="https://i.imgur.com/JMgm5Zs.jpg" /></p>
+<p>轉換完成即可進行安裝 <code>pip install xgboost-0.90-cp36-cp36m-win_amd64.whl</code></p>
+<p><font color="#dd0000"><strong>[ Remark ] 必須要有副檔名，否則安裝會出現錯誤</strong></font></p>
+<h3 id="step-3-安裝完成後進行簡單測試">STEP 3 : 安裝完成後進行簡單測試</h3>
+<p>安裝完畢後，執行 python ，<code>import xgboost</code> 確認會不會出現錯誤</p>
+<p><img src="https://i.imgur.com/rJsRGN2.jpg" /></p>
+<p>若成功 import 便可算安裝成功。</p>
+<p>由於我是在 tensorflow 環境下進行安裝，因此我也有多測試看看 tensorflow、keras 能否順利運作。</p>
+<hr />
+<h2 id="xgboost-gpu-版本">XGBoost GPU 版本</h2>
+<p>照著上面的流程裝完以後自得意滿，後來發現裝的是 CPU 版本，便開始著手研究 GPU 版本的安裝，怎知，這才是真正魔鬼地獄的開始......</p>
+<p>花了將近一整天的時間研究各種安裝方式，終於把所有問題處理好，以下提供安裝流程及所遇到的狀況排除方式給需要的讀者參考</p>
+<h3 id="step-1-下載xgboost原始碼">STEP 1 :下載xgboost原始碼</h3>
+<p>首先要從 https://github.com/dmlc/xgboost 將整個原始碼下載下來解壓縮</p>
+<p><img src="https://i.imgur.com/lgVg7Ls.png" /> (圖片取自 : https://www.itread01.com/content/1543742352.html)</p>
+<p>[ Remark ]</p>
+<p>當我照著上述教程進行原始碼下載，到後面的安裝會出現錯誤，錯誤的原因似乎是指出有檔案找不到 ??</p>
+<p><img src="https://i.imgur.com/YMIyz8j.png" /></p>
+<p>的確，按照上面教程的方式，整個 dmlc-core 的資料夾內的資料全部都沒有下載下來，我只好將 dmlc-core 整包單獨下載下來在解壓縮到源碼文件裡面的 dmlc-core 資料夾內。</p>
+<h3 id="step-2-將已編譯好的-xgboost.dll-文件下載後放入源碼中">STEP 2 : 將已編譯好的 xgboost.dll 文件下載後放入源碼中</h3>
+<p>一般來說，正常的安裝是需要自行編譯的，但網路上總有大神們能幫我們把這些前置作業處理好。我們只需從 http://ssl.picnet.com.au/xgboost/ 選擇 GPU enabled 裡的 xgboost.dll 下載下來放入源碼文件 xgboost-package路徑下。</p>
+<h3 id="step-3-執行安裝">STEP 3 : 執行安裝</h3>
+<p>執行 Anaconda Prompt，並將路徑設在 xgboost-package 下，執行 <code>python setup.py install</code> 進行安裝</p>
+<h3 id="step-4-進行-xgboost-gpu-的測試">STEP 4 : 進行 XGBoost GPU 的測試</h3>
+<p>Xgboost GPU 不像 TensorFlow GPU 一樣可以很清楚的看的出來現在是不是由 GPU 在進行運算，一般建議的方式是利用源碼文件中的 <code>benchmark.py</code> 檔案進行測試。( 在xgboost目錄下執行 <code>python benchmark_tree.py --tree_method gpu_hist</code> )</p>
+<p>基本上就是，只要可以執行 <code>gpu_hist</code> 這樣的參數設計，就表示已經可以使用 XGBoost GPU 了。</p>
+<p>[ Remark ]</p>
+<p>然而這樣簡單的步驟還是出現了問題，在我們下載的源碼中，並沒有 <code>benchmark.py</code> 這個檔案，取而代之的是 <code>benchmark_linear.py</code> 及 <code>benchmark_tree.py</code> ，記得請使用後者進行測試。</p>
+<p>另外我也找到另外一個測試的 code</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_boston</span><br><span class="line"></span><br><span class="line">boston = load_boston()</span><br><span class="line"></span><br><span class="line"><span class="comment"># XGBoost API example</span></span><br><span class="line">params = &#123;<span class="string">&#x27;tree_method&#x27;</span>: <span class="string">&#x27;gpu_hist&#x27;</span>, <span class="string">&#x27;max_depth&#x27;</span>: <span class="number">3</span>, <span class="string">&#x27;learning_rate&#x27;</span>: <span class="number">0.1</span>&#125;</span><br><span class="line">dtrain = xgb.DMatrix(boston.data, boston.target)</span><br><span class="line">xgb.train(params, dtrain, evals=[(dtrain, <span class="string">&quot;train&quot;</span>)])</span><br><span class="line"></span><br><span class="line"><span class="comment"># sklearn API example</span></span><br><span class="line">gbm = xgb.XGBRegressor(silent=<span class="literal">False</span>, n_estimators=<span class="number">10</span>, tree_method=<span class="string">&#x27;gpu_hist&#x27;</span>)</span><br><span class="line">gbm.fit(boston.data, boston.target, eval_set=[(boston.data, boston.target)])</span><br></pre></td></tr></table></figure>
+<p>若可以執行也應該可以確定 XGBoost GPU 運作是沒有問題的。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/Win10%20%E7%B3%BB%E7%B5%B1%E4%B8%8B%E9%80%B2%E8%A1%8C%20XGBoost%20CPU%20_%20GPU%20%E7%9A%84%E5%AE%89%E8%A3%9D/" title="Win10 系統下進行 XGBoost CPU &#x2F; GPU 的安裝">https://allen108108.github.io/blog/2019/10/08/Win10 系統下進行 XGBoost CPU _ GPU 的安裝/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/%E6%9B%B4%E6%94%B9%20jupyter%20notebook%E8%B5%B7%E5%A7%8B%E8%B7%AF%E5%BE%91/" rel="prev" title="更改 jupyter notebook起始路徑">
+                  <i class="fa fa-chevron-left"></i> 更改 jupyter notebook起始路徑
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Anaconda%20%E7%92%B0%E5%A2%83%E5%AE%89%E8%A3%9D%20(%20Win%2010%20)/" rel="next" title="Anaconda 環境安裝 ( Win 10 )">
+                  Anaconda 環境安裝 ( Win 10 ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

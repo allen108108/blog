@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="前言 上一篇文章 &quot; Android 初探 (一) ： Android 初探 (一) ： 從 Hello World ! 認識 Android 專案開發 &quot; 簡單介紹了一個 Android 專案的主要架構以及如何在模擬器上 run 出整個結果，這一篇會著重在一個 Android app是怎麼運作的，以及可以怎麼簡單設計使用者介面。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/03/02/Android%20%E5%88%9D%E6%8E%A2%20(%E4%BA%8C)%20%EF%BC%9A%20%E5%BE%9E%20Hi,%20Android%20!%20%E4%BE%86%E8%AA%8D%E8%AD%98%20Activity%20%E8%88%87%20UI/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="前言 上一篇文章 &quot; Android 初探 (一) ： Android 初探 (一) ： 從 Hello World ! 認識 Android 專案開發 &quot; 簡單介紹了一個 Android 專案的主要架構以及如何在模擬器上 run 出整個結果，這一篇會著重在一個 Android app是怎麼運作的，以及可以怎麼簡單設計使用者介面。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/kFA6Ybj.png">
+<meta property="og:image" content="https://i.imgur.com/3iAgWFW.png">
+<meta property="og:image" content="https://i.imgur.com/G9udy32.png">
+<meta property="og:image" content="https://i.imgur.com/ONwhkTZ.png">
+<meta property="og:image" content="https://i.imgur.com/hw3WrV2.png">
+<meta property="og:image" content="https://i.imgur.com/diwgXEG.png">
+<meta property="og:image" content="https://i.imgur.com/RlthrqR.png">
+<meta property="og:image" content="https://i.imgur.com/qLxsVk6.png">
+<meta property="og:image" content="https://i.imgur.com/kheJjIg.png">
+<meta property="og:image" content="https://i.imgur.com/j0kkrQe.gif">
+<meta property="og:image" content="https://i.imgur.com/6mRX0XB.png">
+<meta property="og:image" content="https://i.imgur.com/7rFWhVT.png">
+<meta property="og:image" content="https://i.imgur.com/Gt764WQ.png">
+<meta property="og:image" content="https://i.imgur.com/JogDUW9.png">
+<meta property="og:image" content="https://i.imgur.com/rBJqMEq.png">
+<meta property="og:image" content="https://i.imgur.com/9ZZVLmV.jpg">
+<meta property="og:image" content="https://i.imgur.com/Xphzd2T.png">
+<meta property="og:image" content="https://i.imgur.com/1XH0PBj.jpg">
+<meta property="og:image" content="https://i.imgur.com/rHt0iU3.png">
+<meta property="article:published_time" content="2020-03-02T07:35:14.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:21:42.967Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/kFA6Ybj.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/03/02/Android%20%E5%88%9D%E6%8E%A2%20(%E4%BA%8C)%20%EF%BC%9A%20%E5%BE%9E%20Hi,%20Android%20!%20%E4%BE%86%E8%AA%8D%E8%AD%98%20Activity%20%E8%88%87%20UI/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/03/02/Android%20%E5%88%9D%E6%8E%A2%20(%E4%BA%8C)%20%EF%BC%9A%20%E5%BE%9E%20Hi,%20Android%20!%20%E4%BE%86%E8%AA%8D%E8%AD%98%20Activity%20%E8%88%87%20UI/","path":"2020/03/02/Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI/","title":"Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#activity"><span class="nav-number">2.</span> <span class="nav-text">Activity</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#user-interface"><span class="nav-number">3.</span> <span class="nav-text">User Interface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#veiw-viewgroup"><span class="nav-number">4.</span> <span class="nav-text">Veiw &amp; ViewGroup</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%9E-hello-world-%E8%AE%8A%E6%88%90-hi-android"><span class="nav-number">5.</span> <span class="nav-text">從 Hello World 變成 Hi Android</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%85%83%E4%BB%B6%E4%B8%A6%E8%A8%AD%E5%AE%9A%E5%9B%BA%E5%AE%9A%E9%96%93%E8%B7%9D"><span class="nav-number">5.1.</span> <span class="nav-text">添加元件並設定固定間距</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%9C%E9%96%89%E8%87%AA%E5%8B%95%E7%B4%84%E6%9D%9F-autoconnect%E8%A8%AD%E5%AE%9A%E9%A0%90%E8%A8%AD%E9%96%93%E8%B7%9D"><span class="nav-number">5.1.1.</span> <span class="nav-text">關閉自動約束 (Autoconnect)，設定預設間距</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E7%BE%A9%E5%AD%97%E4%B8%B2"><span class="nav-number">5.1.2.</span> <span class="nav-text">定義字串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8-chain-%E9%80%B2%E8%A1%8C%E9%85%8D%E7%BD%AE"><span class="nav-number">5.1.3.</span> <span class="nav-text">利用 chain 進行配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#activity-%E8%A8%AD%E5%AE%9A"><span class="nav-number">5.2.</span> <span class="nav-text">Activity 設定</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#main-activity-%E5%AE%9A%E7%BE%A9%E6%93%8D%E4%BD%9C"><span class="nav-number">5.2.1.</span> <span class="nav-text">Main Activity 定義操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%96%8B%E5%95%9F%E6%96%B0-activity"><span class="nav-number">5.2.2.</span> <span class="nav-text">開啟新 Activity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%B0%E7%9A%84%E8%A6%96%E7%AA%97"><span class="nav-number">5.2.3.</span> <span class="nav-text">配置新的視窗</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#new-activity-%E5%AE%9A%E7%BE%A9%E6%93%8D%E4%BD%9C"><span class="nav-number">5.2.4.</span> <span class="nav-text">New Activity 定義操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A8%AD%E5%AE%9A%E5%B0%8E%E5%90%91"><span class="nav-number">5.3.</span> <span class="nav-text">設定導向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hi-android"><span class="nav-number">5.4.</span> <span class="nav-text">Hi, Android</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">6.</span> <span class="nav-text">後記</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">7.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">8.</span> <span class="nav-text">系列文章</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/03/02/Android%20%E5%88%9D%E6%8E%A2%20(%E4%BA%8C)%20%EF%BC%9A%20%E5%BE%9E%20Hi,%20Android%20!%20%E4%BE%86%E8%AA%8D%E8%AD%98%20Activity%20%E8%88%87%20UI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2020-03-02 15:35:14" itemprop="dateCreated datePublished" datetime="2020-03-02T15:35:14+08:00">2020-03-02</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-09-06 10:21:42" itemprop="dateModified" datetime="2020-09-06T10:21:42+08:00">2020-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%B3%BB%E7%B5%B1%E7%9B%B8%E9%97%9C-OS/" itemprop="url" rel="index"><span itemprop="name">系統相關 OS</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%B3%BB%E7%B5%B1%E7%9B%B8%E9%97%9C-OS/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/03/02/Android%20%E5%88%9D%E6%8E%A2%20(%E4%BA%8C)%20%EF%BC%9A%20%E5%BE%9E%20Hi,%20Android%20!%20%E4%BE%86%E8%AA%8D%E8%AD%98%20Activity%20%E8%88%87%20UI/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/02/Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="前言">前言</h2>
+<p>上一篇文章 " <a target="_blank" rel="noopener" href="https://bit.ly/3bouPaB">Android 初探 (一) ： Android 初探 (一) ： 從 Hello World ! 認識 Android 專案開發</a> " 簡單介紹了一個 Android 專案的主要架構以及如何在模擬器上 run 出整個結果，這一篇會著重在一個 Android app是怎麼運作的，以及可以怎麼簡單設計使用者介面。</p>
+<span id="more"></span>
+<p>這兩篇文章主要都是以 <a target="_blank" rel="noopener" href="https://developer.android.com/docs">Android Developers Documentation</a> 為主，另外補充一些資料進來，如果已有紮實的基礎，或許可以直接跟著 Android Developers Documentation 進行也是不錯的方向。</p>
+<h2 id="activity">Activity</h2>
+<p>Android apps 基本上可以說是由各種可被獨立調用的不同部件所組合而成，其中一種與使用者最直接相關的就是 <code>Activity</code>。</p>
+<p>我們可以將 <code>Activity</code> 視為電腦中「視窗」( window ) 的概念，一般來說，當你按下 Android app 圖示時會跳出一個 <code>main activity</code> 作為主畫面，在這個 <code>main activity</code> 視窗中，我們可以藉由一些操作連結到其他的 <code>Activity</code>，每一個 <code>Activity</code> 都會有一個新的「視窗」顯示在使用者螢幕上。又因為每一個 <code>Activity</code> 都是獨立的，因此我們可以跨 app 執行 <code>Activity</code>。</p>
+<p>舉例來說，當我們點開一個 Email app，出現的第一個畫面即為<code>main activity</code>，然後我們可以進行特定的操作，每一個操作 (寫信、寄信、...) 都是 <code>Ａctivity</code>，而寫、寄信也可以從別的 app 中連結過來。</p>
+<h2 id="user-interface">User Interface</h2>
+<p>使用者介面 (UI, Use Interface) 顧名思義就是使用者在使用這個 app 時可以見到的所有東西都是 UI 的範疇，其中包括了可以跟 app 互動的方式。延續上個部分將 <code>Activity</code> 是為視窗的概念，那麼 UI 則是每一個視窗內的整體配置 (layout)。</p>
+<p>在 Android Studio 裡面，我們可以在 <code>layout</code> 資料夾中每一個 <code>Activity</code> xml 檔案中進行配置。</p>
+<h2 id="veiw-viewgroup">Veiw &amp; ViewGroup</h2>
+<p>剛才提到將 <code>Activity</code> 視為「視窗」，但是必須要了解，視窗本身是不會對使用者顯示任何訊息的，真正顯示在「視窗」上面的是現在即將提到的 <code>View</code> ，而在 Android 中，UI 是建立在 <code>View</code> 與 <code>ViewGroup</code> 之上。</p>
+<p><img src="https://i.imgur.com/kFA6Ybj.png" /></p>
+<p><code>View</code> 是所有 UI 的組件的基礎，不管是畫面上看到的文字部分 (<code>TextView</code>)、按鈕(<code>Button</code>)、可以輸入文字的部分 (<code>EditView</code>)、．．．等等都是在 <code>View</code> 底下實現，一個<code>View</code>就會佔據渲染並處理畫面中的某一個區域所發生的事件。<code>ViewGroup</code> 也是歸類在 <code>View</code> 底下，其作用在容納並管理下一層的 <code>View</code>。</p>
+<p>總的來說，<code>Activity</code>、<code>View</code>與 windows的關係可以這樣解釋 ： 不可視的<code>Activity</code> 必須經由 windows 來對可視的 <code>View</code> 做管理，而<code>View</code> 需要利用 windows 來展示於 <code>Activity</code> 上。</p>
+<h2 id="從-hello-world-變成-hi-android">從 Hello World 變成 Hi Android</h2>
+<p>簡單了解 Android UI 的運作後，我們可以實際應用在專案上。</p>
+<p><code>app &gt; res &gt; layout &gt; activity_main.xml</code> 存放的就是前面提到的 <code>main activity</code>，現在裡面應該只有 "Hello World!" 的字樣。</p>
+<p>在 <code>activity_main.xml</code> 中我們選擇 <code>design</code> 後，我們可以從 Android Studio 看到以下的區塊</p>
+<p><img src="https://i.imgur.com/3iAgWFW.png" /></p>
+<p><code>Palette</code> 存放了我們可以配置在畫面中的所有元組件，<code>Component Tree</code> 顯示了整個畫面中元件的階層結構，中間的 <code>Design Editor</code> 呈現了元件配置的視覺效果，最右邊的 <code>Attributes</code> 可以調整每一個元件的細節特性。</p>
+<h3 id="添加元件並設定固定間距">添加元件並設定固定間距</h3>
+<p>先將原本開啟新專案時「附贈」給我們的 Hello World 從 <code>Component Tree</code> 刪除，在這個步驟，我們目標是加入一個可以輸入文字的 <code>EditText</code> 以及可以送出文字的 <code>Bottun</code>，且間距固定為 16dp。</p>
+<h4 id="關閉自動約束-autoconnect設定預設間距">關閉自動約束 (Autoconnect)，設定預設間距</h4>
+<p>在 <code>Design Editor</code> 上方有一個馬蹄鐵形狀的圖示，如果有一條斜線表示已經開啟自動約束，自動約束的意義在於，當我們將元件放置在版面中，系統就會自動加上約束。不過在這裡我們希望可以自行手動設置約束，因此先將其關閉 ( 沒有斜線的馬蹄鐵圖示 )。</p>
+<p>再來將馬蹄鐵圖示旁邊的 <code>Default Margin</code> 設定為 16dp。</p>
+<p>我們將 <code>Palette &gt; Text &gt; Plain Text</code> 拖曳至 <code>Design Editor</code></p>
+<p><img width=500 src="https://i.imgur.com/G9udy32.png" ></p>
+<p>我們可以看見每一個頂點上會有一個方形的 handler 可以調整其大小，然後每一條邊上也有一個圓形的錨點是用來進行約束的。</p>
+<p>我們將上面及左邊的錨點各自往上面及左邊的 layout 邊緣拉過去即會產生約束。 這個約束也就是我們剛才設定的 default margin 16dp。</p>
+<p><img width=500 src="https://i.imgur.com/ONwhkTZ.png" ></p>
+<p>利用相同的方法我們可以拖曳一個 <code>Button</code> 到輸入框的右邊，並且讓 <code>Button</code> 右側與 <code>EditText</code> 左側形成約束，間距一樣是 16dp。此外，在 <code>Button</code> 按下滑鼠右鍵選擇 <code>Show Baseline</code> 即會出現 Baseline Bar，拖曳此 Baseline Bar 到輸入框就可以讓兩筐進行 Baseline 水平對齊。</p>
+<p><img src="https://i.imgur.com/hw3WrV2.png" /></p>
+<h4 id="定義字串">定義字串</h4>
+<p>在 Android 專案中，將每個元件所使用的字串通通定義在 <code>app &gt; res &gt; values &gt; strings.xml</code> 中，這樣的好處是未來如果要進行 app 字串的更改，只要更改從這裡就可以進行統一更改，不用耗時去尋找應該更改的地方。</p>
+<p>在上述檔案中右上方在上述檔案中右上方按下 <code>Open editor</code></p>
+<p><img src="https://i.imgur.com/diwgXEG.png" /></p>
+<p>在按下左上方的『＋』號即可進行字串的新增</p>
+<p><img src="https://i.imgur.com/RlthrqR.png" /></p>
+<p>首先輸入 <code>Key</code> 為 <code>edit_name</code>，而 <code>default value</code> (會顯示在視窗上) 為 <code>Enter a name ~</code>，按下 OK 後即新增一個新的字串資料</p>
+<p><img width=500 src="https://i.imgur.com/qLxsVk6.png" ></p>
+<p>利用同樣方法新增一個 <code>Key</code> 為 <code>button_send</code>，而 <code>default value</code> 為 <code>Send</code> 的字串資料。新增完成之後，我們就可以在剛剛設置的 layout 上面進行這些字串的配置。</p>
+<p>選取 <code>EditText</code> 後，至右側的 <code>Attributes &gt; text</code> 刪除其值 "Name"，再至 <code>Attributes &gt; hint</code> 按下右側長條選擇我們剛剛新增的字串 <code>edit_name</code></p>
+<p><img width=500 src="https://i.imgur.com/kheJjIg.png" ></p>
+<p>同樣的方式我們可以選擇 <code>Button</code> 的 <code>Attributes &gt; text</code> 之值為剛剛新增的 <code>button_send</code> 字串。</p>
+<h4 id="利用-chain-進行配置">利用 chain 進行配置</h4>
+<p><code>chain</code> 的功用在於將多個 <code>view</code> 進行剩餘空間的平均分配</p>
+<p><img src="https://i.imgur.com/j0kkrQe.gif" /></p>
+<p>在建造 <code>chain</code> 時並不會影響原來的約束，所以由上圖可以看到原本左右的約束仍在。我們利用相同的 <code>horizontal chain</code> 來對 <code>EditText</code> 與 <code>Button</code> 最水平方向的分配。</p>
+<p><img src="https://i.imgur.com/6mRX0XB.png" /></p>
+<p>我們再經由 <code>Attributes &gt; Layout</code> 面板來紅框處調整為 <code>Match Constraints</code> 強制將 <code>EditText</code> 左側約束均維持在 16dp。</p>
+<p><code>Button</code> 右側也加上 16dp 的約束，有趣的地方是，如果將紅框處一樣設定為 <code>Match Constraints</code> 那麼 <code>EditText</code> 與 <code>Button</code> 的寬度會變得一樣寬。( 這樣的版面配置實在不是太好看，因此設定在 <code>Wrap Content</code> 即可 )</p>
+<p><img width=500 src="https://i.imgur.com/7rFWhVT.png" ></p>
+<p>而這也表示整個文字框寬度會變寬。</p>
+<p><img src="https://i.imgur.com/Gt764WQ.png" /></p>
+<h3 id="activity-設定">Activity 設定</h3>
+<h4 id="main-activity-定義操作">Main Activity 定義操作</h4>
+<p>我們上面的種種動作，都僅只是在對整個畫面作配置，然而這樣並不能讓整個 app 作動，要完成這樣的工作，就必須要做 Activity 的設置。</p>
+<p>首先，我們先針對 <code>main activity</code> 來做設定，至 <code>app &gt; java &gt; com.example.myfirstapp &gt; MainActivity</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="comment">//加入 EXTRA_MESSAGE constant//</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String EXTRA_MESSAGE = <span class="string">&quot;com.example.myfirstandroidapp.MESSAGE&quot;</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//定義當我們按下 Button 鍵後的行為//</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMessage</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//意圖 (intent) 連結 main activity (this) 與另一個新的 activity (DisplayMessageActivity.class)//</span></span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent(<span class="keyword">this</span>, DisplayMessageActivity.class);</span><br><span class="line">        <span class="comment">//定義 editText 是什麼//</span></span><br><span class="line">        EditText editText = findViewById(R.id.editText);</span><br><span class="line">        <span class="comment">//從 editText 抓出我們輸入的訊息並定義其為 message//</span></span><br><span class="line">        String message = editText.getText().toString();</span><br><span class="line">        <span class="comment">//將 message 加入 intent 之中//</span></span><br><span class="line">        intent.putExtra(EXTRA_MESSAGE, message);</span><br><span class="line">        startActivity(intent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>當你加入這些程式碼之後，會有一些地方出現紅字報錯</p>
+<p><img src="https://i.imgur.com/JogDUW9.png" /></p>
+<p>絕大多數都是使用到了未知的符號，這時候可以使用 <code>Alt+Enter</code> 來對這些部分進行 <code>import</code>，算是蠻方便的做法。</p>
+<p><img src="https://i.imgur.com/rBJqMEq.png" /></p>
+<p>不過，<code>DisplayMessageActivity</code> 的 error 比較不一樣，我們使用 <code>Alt+Enter</code> 時並不會出現 <code>import class</code> 的選項，最主要的原因是因為我們還沒有一個對應的 <code>Activity</code> ，這個將是接下來要完成的工作。</p>
+<p>當我們定義了<code>Button</code>鍵按下以後的行為後，我們要回到 <code>activity_main.xml</code> ，從 <code>Attribute &gt; onClick</code> 選擇 <code>sendMessage</code>，便可將這個行為加到 <code>Button</code> 中</p>
+<h4 id="開啟新-activity">開啟新 Activity</h4>
+<p>左側的專案面板上，於 <code>app</code> 資料夾上按滑鼠右鍵，選擇 <code>New &gt; Activity &gt; Empty Activity</code> 來新增新的 <code>Activity</code></p>
+<p><img src="https://i.imgur.com/9ZZVLmV.jpg" /></p>
+<p>之後將新的 <code>Activity</code> 命名為 <code>DisplayMessageActivity</code>，其餘均使用預設設定。</p>
+<p>新增 <code>DisplayMessageActivity</code> 後整個專案有三個部份會有更動</p>
+<ol type="1">
+<li><code>manifests &gt; AndroidManifest.xml</code> 裡面會有新的 <code>activity</code> 元素</li>
+<li><code>java &gt; com.example.myfirstandroidapp</code> 內會新增一個 <code>DisplayMessageActivity.xml</code> 檔</li>
+<li><code>res &gt; layout</code> 內會新增一個 <code>activity_display_message.xml</code> 檔</li>
+</ol>
+<p><img src="https://i.imgur.com/Xphzd2T.png" /></p>
+<h4 id="配置新的視窗">配置新的視窗</h4>
+<p>前面我們針對 <code>main activity</code> 進行視窗的配置了，現在要進行 <code>DisplayMessageActivity</code> 的視窗配置。</p>
+<p><code>app &gt; res &gt; layout &gt; activity_display_message.xml</code> 底下，先選擇 <code>Enable Autoconnection to Parent</code> (有斜線的馬蹄鐵圖示)，這樣可以確保系統可以自動約束。</p>
+<p>然後從 <code>Palette</code> 面板中拖曳 <code>TextView</code> 到 <code>Design Editor</code> 中，由於我們開啟了自動約束，因此這個新增的 <code>View</code> 會自行約束，讓它水平置中。</p>
+<p>但要注意的是，上方還是要利用錨點來進行 margin 16dp 的約束。</p>
+<p><img src="https://i.imgur.com/1XH0PBj.jpg" /></p>
+<h4 id="new-activity-定義操作">New Activity 定義操作</h4>
+<p>至 <code>java &gt; com.example.myfirstandroidapp &gt; DisplayMessageActivity.xml</code> 中加入以下的程式碼</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.activity_display_message);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//接收到新的 intent 後取出收到的 message //</span></span><br><span class="line">    Intent intent = getIntent();</span><br><span class="line">    String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">//將收到的 message 放到 View 中//</span></span><br><span class="line">    TextView textView = findViewById(R.id.textView);</span><br><span class="line">    textView.setText(<span class="string">&quot;Hi, &quot;</span> + message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>遇到紅色報錯仍然使用 <code>Alt+Enter</code> 進行除錯。</p>
+<h3 id="設定導向">設定導向</h3>
+<p>在 Android app 使用中，當我們進行一個動作，開啟一個新的視窗後，必須要讓使用者有能夠回到上一頁的導向方式，因此我們要針對各個 <code>Activity</code> 進行設定，要讓系統之道上一頁應該回到哪一個頁面、哪一個 <code>Activity</code></p>
+<p>至 <code>manifests &gt; AndroidManifest.xml</code> 中，新增的 <code>&lt;activity&gt;</code> 標籤進行修改</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;activity android:name=<span class="string">&quot;.DisplayMessageActivity&quot;</span></span><br><span class="line">          android:parentActivityName=<span class="string">&quot;.MainActivity&quot;</span>&gt;</span><br><span class="line">    &lt;!-- The meta-data tag is required <span class="keyword">if</span> you support API level <span class="number">15</span> and lower --&gt;</span><br><span class="line">    &lt;meta-data</span><br><span class="line">        android:name=<span class="string">&quot;android.support.PARENT_ACTIVITY&quot;</span></span><br><span class="line">        android:value=<span class="string">&quot;.MainActivity&quot;</span> /&gt;</span><br><span class="line">&lt;/activity&gt;</span><br></pre></td></tr></table></figure>
+<p>這樣就可以將頁面導回至 <code>main activity</code> ，我們也完成了最後一個步驟了。</p>
+<h3 id="hi-android">Hi, Android</h3>
+<p><img src="https://i.imgur.com/rHt0iU3.png" /></p>
+<h2 id="後記">後記</h2>
+<p>這一個部份如果沒有基礎如我，其實會看得很吃力，不過多看幾次、多嘗試幾次後，其實整個運作過程會越來越清晰。</p>
+<p>每一個使用者看到的視窗，都有一個 xml 檔在 <code>layout</code> 資料夾中，專責畫面的配置以及動作的連結，另外會有一個 xml 檔在 <code>com.example.&lt;project_name&gt;</code> 資料夾中負責定義每一個動作的細節。</p>
+<p>了解這樣的架構後，回過頭來看上面的種種步驟就會顯得簡單明瞭不少。</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/docs">Android Developers Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://biaomingzhong.github.io/2017/constraintlayout-basics-chains-2/">[译] ConstraintLayout基础系列之Chains链</a></li>
+</ol>
+<h2 id="系列文章">系列文章</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://bit.ly/3bouPaB">Android 初探 (一) ： Android 初探 (一) ： 從 Hello World ! 認識 Android 專案開發</a></li>
+<li><a target="_blank" rel="noopener" href="https://bit.ly/2vOoFlb">Android 初探 (二) ： 從 Hi, Android ! 了解 Activity 與 UI</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/03/02/Android%20%E5%88%9D%E6%8E%A2%20(%E4%BA%8C)%20%EF%BC%9A%20%E5%BE%9E%20Hi,%20Android%20!%20%E4%BE%86%E8%AA%8D%E8%AD%98%20Activity%20%E8%88%87%20UI/" title="Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI">https://allen108108.github.io/blog/2020/03/02/Android 初探 (二) ： 從 Hi, Android ! 來認識 Activity 與 UI/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/03/02/Android%20%E5%88%9D%E6%8E%A2%20(%E4%B8%80)%20%EF%BC%9A%20%E5%BE%9E%20Hello%20%20World%20!%20%E8%AA%8D%E8%AD%98%20Android%20%E5%B0%88%E6%A1%88%E9%96%8B%E7%99%BC/" rel="prev" title="Android 初探 (一) ： 從 Hello  World ! 認識 Android 專案開發">
+                  <i class="fa fa-chevron-left"></i> Android 初探 (一) ： 從 Hello  World ! 認識 Android 專案開發
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/03/02/%5B%E8%AB%96%E6%96%87%5D%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/" rel="next" title="[論文] Simultaneous Localisation and Mapping (SLAM) : Part I The Essential Algorithm">
+                  [論文] Simultaneous Localisation and Mapping (SLAM) : Part I The Essential Algorithm <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

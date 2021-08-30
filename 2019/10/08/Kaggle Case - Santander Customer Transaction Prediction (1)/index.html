@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="在這一個 Kaggle Challenge中，Santander提供了20萬筆的Train Data以及20萬筆的Test Data，希望Kagglers可以建構出一個模型來預測他們客戶是否能夠跟Santander進行交易。 在這邊，我選擇以Gabriel Preda的Kernel來進行第一次的Kaggle Case研讀，也藉此了解一般在進行EDA以及Feature Engineering時可能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kaggle Case - Santander Customer Transaction Prediction (1)">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(1)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="在這一個 Kaggle Challenge中，Santander提供了20萬筆的Train Data以及20萬筆的Test Data，希望Kagglers可以建構出一個模型來預測他們客戶是否能夠跟Santander進行交易。 在這邊，我選擇以Gabriel Preda的Kernel來進行第一次的Kaggle Case研讀，也藉此了解一般在進行EDA以及Feature Engineering時可能">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/zkwUouv.png">
+<meta property="og:image" content="https://i.imgur.com/FyHhV8E.png">
+<meta property="og:image" content="https://i.imgur.com/acnLzJE.png">
+<meta property="og:image" content="https://i.imgur.com/mrThAya.png">
+<meta property="og:image" content="https://i.imgur.com/kpSqOi9.png">
+<meta property="og:image" content="https://i.imgur.com/Q5vr23v.png">
+<meta property="og:image" content="https://i.imgur.com/XPORwqT.png">
+<meta property="og:image" content="https://i.imgur.com/yfaIE8z.png">
+<meta property="og:image" content="https://i.imgur.com/f4booTk.png">
+<meta property="og:image" content="https://i.imgur.com/yiEXtdI.png">
+<meta property="article:published_time" content="2019-10-07T18:06:34.000Z">
+<meta property="article:modified_time" content="2019-10-07T18:07:15.225Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/zkwUouv.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(1)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(1)/","path":"2019/10/08/Kaggle Case - Santander Customer Transaction Prediction (1)/","title":"Kaggle Case - Santander Customer Transaction Prediction (1)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kaggle Case - Santander Customer Transaction Prediction (1) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#prepare-the-data-analysis"><span class="nav-number">1.</span> <span class="nav-text">Prepare the data analysis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#data-exploration"><span class="nav-number">2.</span> <span class="nav-text">Data exploration</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#check-the-data"><span class="nav-number">2.1.</span> <span class="nav-text">Check the data</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#to-be-continue...."><span class="nav-number">3.</span> <span class="nav-text">To be Continue....</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(1)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kaggle Case - Santander Customer Transaction Prediction (1)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-10-08 02:06:34 / 修改時間：02:07:15" itemprop="dateCreated datePublished" datetime="2019-10-08T02:06:34+08:00">2019-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%A1%88%E4%BE%8B%E8%A8%8E%E8%AB%96-Case-Study/" itemprop="url" rel="index"><span itemprop="name">案例討論 Case Study</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(1)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/Kaggle Case - Santander Customer Transaction Prediction (1)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在這一個 Kaggle Challenge中，Santander提供了20萬筆的Train Data以及20萬筆的Test Data，希望Kagglers可以建構出一個模型來預測他們客戶是否能夠跟Santander進行交易。</p>
+<p>在這邊，我選擇以Gabriel Preda的<a target="_blank" rel="noopener" href="https://github.com/allen108108/Kaggle/blob/master/Santander_Customer_Transaction_Prediction/Santander%20EDA%20and%20Prediction.ipynb">Kernel</a>來進行第一次的Kaggle Case研讀，也藉此了解一般在進行EDA以及Feature Engineering時可能會遇到的方法及解決的方式。</p>
+<span id="more"></span>
+<p>在這邊他大概以幾個大方向來依序做處理: 1. Prepare the data analysis 2. Data exploration * Check the data * Density plots of features * Distribution of mean and std * Distribution of min and max * Distribution of skew and kurtosis * Features correlations * Duplicate values 3. Feature engineering 4. Model</p>
+<hr />
+<h3 id="prepare-the-data-analysis">Prepare the data analysis</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gc</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> lightgbm <span class="keyword">as</span> lgb</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm_notebook</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_auc_score, roc_curve</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> StratifiedKFold</span><br><span class="line">warnings.filterwarnings(<span class="string">&#x27;ignore&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>從這邊我們大概可以看到在後面的Code裡面大概會用到那些模組、工具 ( 不過 Gabriel Preda的這一連串匯入中，有些本次似乎用不到。 )</p>
+<p>會用 <strong>os</strong> 模組做一些系統操作 ( EX: 讀取檔案...)、<strong>numpy</strong>及<strong>pandas</strong>則是數據處理的好幫手、<strong>seaborn</strong>及<strong>matplotlib</strong>處理視覺化、<strong>roc_auc_score</strong>用來評估、<strong>StratifiedKFold</strong>用來驗證，最後此次用的 Model 則是 <strong>lightgbm</strong></p>
+<p>而這一整份的模組或許也可以當作我們的一份必備清單，日後是否有需要增減再做調整。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%%time</span><br><span class="line">train_df = pd.read_csv(<span class="string">&quot;train.csv&quot;</span>)</span><br><span class="line">test_df = pd.read_csv(<span class="string">&quot;test.csv&quot;</span>)</span><br></pre></td></tr></table></figure> 這裡，我將kaggle提供的檔案跟這個ipynb檔放在一起，所以在讀取的時候就很簡單，直接讀取就可以。若不同資料夾存放則可使用os模組進行讀取 <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<h3 id="data-exploration">Data exploration</h3>
+<h4 id="check-the-data">Check the data</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">train_df.shape, test_df.shape</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/zkwUouv.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">train_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/FyHhV8E.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">test_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/acnLzJE.png" /></p>
+<p>以上這三個算是很基本的資料檢視過程，觀察筆數、看看Train &amp; Test 的各個欄位。也可以在此時簡單的看看資料數據是否有很嚴重的缺失值。</p>
+<p>從這個例子來看，我們可以瞭解幾件事情 : * Train data : 有20萬列，即為資料筆數 有202行，包含了ID_Code、target、以及200行的未知欄位資料 * Test data : 有20萬列，即為資料筆數 有201行，包含了ID_Code、以及200行的未知欄位資料</p>
+<p>Train &amp; Test資料差在 target，這的確可以理解，我們要利用訓練資料訓練出一套模型，再來對測試資料進行測試，看看準確度到多少，這便是我們要做的事情，而 Test 資料的 target 只有 Kaggle 才有，當我們最終答案上傳，他們會立刻進行比對，可以即時的告知我們結果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">missing_data</span>(<span class="params">data</span>):</span></span><br><span class="line">    total = data.isnull().<span class="built_in">sum</span>() </span><br><span class="line">    <span class="comment">#Pandas通常使用.isnull()來找缺失值，.sum()則是計算缺失的數量</span></span><br><span class="line">    percent = (data.isnull().<span class="built_in">sum</span>()/data.isnull().count()*<span class="number">100</span>)</span><br><span class="line">    tt = pd.concat([total, percent], axis=<span class="number">1</span>, keys=[<span class="string">&#x27;Total&#x27;</span>, <span class="string">&#x27;Percent&#x27;</span>])  </span><br><span class="line">    <span class="comment"># pd.concat(objs合併的東西,axis合併的方向,keys索引)</span></span><br><span class="line">    types = []</span><br><span class="line">    <span class="keyword">for</span> col <span class="keyword">in</span> data.columns:</span><br><span class="line">        dtype = <span class="built_in">str</span>(data[col].dtype)</span><br><span class="line">        types.append(dtype)</span><br><span class="line">    tt[<span class="string">&#x27;Types&#x27;</span>] = types</span><br><span class="line">    <span class="keyword">return</span>(np.transpose(tt))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">missing_data(train_df)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/mrThAya.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">missing_data(test_df)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/kpSqOi9.png" /></p>
+<p>檢查缺失值在整個資料處理的過程中，往往會是一個非常重要的步驟，缺失值數量過多，則跑出來的模型的擬合狀況會非常差，在這個Case裡面，很幸運地並沒有任何的缺失值在其中。 <em>(這蠻可惜的，畢竟如何填補、修改、刪除缺失值也是需要很多的技巧，只能等之後的Case再來學習了)</em></p>
+<blockquote>
+<p>Gabriel Preda的這個缺失值計算函數 (後面很多自訂函數亦然) 我認為是一個可以共通的方式，可以記下來以便未來處理不同Case可以使用</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">%%time</span><br><span class="line">train_df.describe()</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/Q5vr23v.png" /> <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">%time</span><br><span class="line">test_df.describe()</span><br></pre></td></tr></table></figure> <img src="https://i.imgur.com/XPORwqT.png" /></p>
+<p><code>DataFrame.describe()</code> 是一個非常好用的工具之一，可以一次將整個表格的統計量呈現出來，而這些統計量可以很清楚的呈現這些資料的分布及特性。</p>
+<p>在這邊我們可以知道幾個狀況 : * 無論 Training 還是 Test data，標準差都不小 * Training 及 Test data 的極值、均值、四分位數、標準差都很接近 * 各欄位平均值差異極大</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_feature_scatter</span>(<span class="params">df1, df2, features</span>):</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    sns.set_style(<span class="string">&#x27;whitegrid&#x27;</span>)</span><br><span class="line">    plt.figure()</span><br><span class="line">    fig, ax = plt.subplots(<span class="number">4</span>,<span class="number">4</span>,figsize=(<span class="number">14</span>,<span class="number">14</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> feature <span class="keyword">in</span> features:</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        plt.subplot(<span class="number">4</span>,<span class="number">4</span>,i)</span><br><span class="line">        plt.scatter(df1[feature], df2[feature], marker=<span class="string">&#x27;+&#x27;</span>)</span><br><span class="line">        plt.xlabel(feature, fontsize=<span class="number">9</span>)</span><br><span class="line">    plt.show();</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">features = [<span class="string">&#x27;var_0&#x27;</span>, <span class="string">&#x27;var_1&#x27;</span>,<span class="string">&#x27;var_2&#x27;</span>,<span class="string">&#x27;var_3&#x27;</span>, <span class="string">&#x27;var_4&#x27;</span>, <span class="string">&#x27;var_5&#x27;</span>, <span class="string">&#x27;var_6&#x27;</span>, <span class="string">&#x27;var_7&#x27;</span>, </span><br><span class="line">           <span class="string">&#x27;var_8&#x27;</span>, <span class="string">&#x27;var_9&#x27;</span>, <span class="string">&#x27;var_10&#x27;</span>,<span class="string">&#x27;var_11&#x27;</span>,<span class="string">&#x27;var_12&#x27;</span>, <span class="string">&#x27;var_13&#x27;</span>, <span class="string">&#x27;var_14&#x27;</span>, <span class="string">&#x27;var_15&#x27;</span>, </span><br><span class="line">           ]</span><br><span class="line">plot_feature_scatter(train_df[::<span class="number">20</span>],test_df[::<span class="number">20</span>], features)</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/yfaIE8z.png" /></p>
+<p>這裡的部分，主要是把剛剛觀察的現象做一個視覺化的處理來確認我們的「觀察」是有根據的。從這裏的圖片看來，不管哪一個欄位，在兩個部分的資料的分布都算集中。</p>
+<p>( 意即 : 在這40萬筆資料中，每一筆的資料的各個欄位/特徵大概都在某些範圍內不會有太大的異常值 )</p>
+<blockquote>
+<p>有兩個問題大家可以思考一下 : 1. 圖片中每一個點代表的意思是什麼?<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 2. 假如出現完全零散不集中、或是呈現特殊集中方式代表的意義是什麼 ?</p>
+</blockquote>
+<pre><code><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">features = [<span class="string">&#x27;var_0&#x27;</span>, <span class="string">&#x27;var_1&#x27;</span>,<span class="string">&#x27;var_2&#x27;</span>,<span class="string">&#x27;var_3&#x27;</span>, <span class="string">&#x27;var_4&#x27;</span>, <span class="string">&#x27;var_5&#x27;</span>, <span class="string">&#x27;var_6&#x27;</span>, </span><br><span class="line">           <span class="string">&#x27;var_7&#x27;</span>, <span class="string">&#x27;var_8&#x27;</span>, <span class="string">&#x27;var_9&#x27;</span>, <span class="string">&#x27;var_10&#x27;</span>,<span class="string">&#x27;var_11&#x27;</span>,<span class="string">&#x27;var_12&#x27;</span>, <span class="string">&#x27;var_13&#x27;</span>, <span class="string">&#x27;var_14&#x27;</span>, <span class="string">&#x27;var_15&#x27;</span>, </span><br><span class="line">           ]</span><br><span class="line">plot_feature_scatter(train_df[<span class="number">0</span>:<span class="number">1</span>],test_df[<span class="number">0</span>:<span class="number">1</span>], features)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+我們就只取一個點來看看會是什麼
+![](https://i.imgur.com/Wmyfy8P.png)
+你看出來了嗎 ? 
+圖中的每一個點，代表的就是Training Data跟Test Data相對應index資料的特徵值。
+拿第一個子圖來說，那一點代表的就是 
+index=0 時 Training Data var_0=8.9255 (X軸) ； 
+index=0 時 Test Data var_0= 11.0656 (Y軸)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.countplot(train_df[<span class="string">&#x27;target&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/f4booTk.png" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;There are &#123;&#125;% target values with 1&quot;</span>.<span class="built_in">format</span>(<span class="number">100</span> * train_df[<span class="string">&quot;target&quot;</span>].value_counts()[<span class="number">1</span>]/train_df.shape[<span class="number">0</span>]))</span><br><span class="line"></span><br><span class="line"><span class="comment">#train_df[&quot;target&quot;].value_counts()[1] return &quot;1&quot; 有多少個</span></span><br><span class="line"><span class="comment">#train_df.shape[0] return 列數</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/yiEXtdI.png" /></p>
+<p>遇到了一個大難題，這是一個 unbalence 的情況。 之所以會困難是因為，如果我們訓練出一個模型，只會把所有資料無差別分類成 target 0 (Dummy classifier)，這樣的準確率也會接近90%，這會影響我們評估這個模型的好壞。(++這也是為什麼在最前面我們發現他選擇使用roc_auc_score, roc_curve來做為評估模型的指標++)</p>
+<p>嗯，很順利的現在進行了1/3.....</p>
+<h3 id="to-be-continue....">To be Continue....</h3>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>存放於不同資料夾的檔案讀取 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dpath=os.path.abspath(<span class="string">&quot;待讀取資料的絕對路徑(不含檔案本身)&quot;</span>) <span class="comment">#資料夾位置</span></span><br><span class="line">fpath=os.path.join(dpath,<span class="string">&quot;檔名(含副檔名)&quot;</span>)                <span class="comment">#檔案位置</span></span><br><span class="line">a_train=pd.read_csv(fpath)                               <span class="comment">#讀檔</span></span><br></pre></td></tr></table></figure><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>這個問題我其實思考了一陣子，我們稍微更改一下code你就能知道這代表什麼了:<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(1)/" title="Kaggle Case - Santander Customer Transaction Prediction (1)">https://allen108108.github.io/blog/2019/10/08/Kaggle Case - Santander Customer Transaction Prediction (1)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/%5B%E6%96%87%E7%AB%A0%5D%20Building%20a%20Content%20Based%20Recommender%20System%20for%20Hotels%20in%20Seattle/" rel="prev" title="[文章] Building a Content Based Recommender System for Hotels in Seattle">
+                  <i class="fa fa-chevron-left"></i> [文章] Building a Content Based Recommender System for Hotels in Seattle
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Kaggle%20Case%20-%20Santander%20Customer%20Transaction%20Prediction%20(2)/" rel="next" title="Kaggle Case - Santander Customer Transaction Prediction (2)">
+                  Kaggle Case - Santander Customer Transaction Prediction (2) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

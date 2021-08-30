@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="概要 Abstrct 深層殘差網路不管在預測準確度以及收斂速度上都有著非常好的表現。在這篇論文中，作者們從前向及反向的信息傳播分析中，提出了將 shortcut connection 以及相加後的 activation 均使用恆等映射 (identity mapping) ，信息能夠藉由前後向傳播在 block 間進行傳遞。這篇論文中，利用一系列的「消融實驗」( ablation experim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[論文] Identity Mappings in Deep Residual Networks">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/11/14/[%E8%AB%96%E6%96%87]%20Identity%20Mappings%20in%20Deep%20Residual%20Networks/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="概要 Abstrct 深層殘差網路不管在預測準確度以及收斂速度上都有著非常好的表現。在這篇論文中，作者們從前向及反向的信息傳播分析中，提出了將 shortcut connection 以及相加後的 activation 均使用恆等映射 (identity mapping) ，信息能夠藉由前後向傳播在 block 間進行傳遞。這篇論文中，利用一系列的「消融實驗」( ablation experim">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/bjcq2D4.png">
+<meta property="og:image" content="https://i.imgur.com/BnB9s1Q.png">
+<meta property="og:image" content="https://i.imgur.com/4TC59Vw.png">
+<meta property="og:image" content="https://i.imgur.com/MJDlCqV.png">
+<meta property="og:image" content="https://i.imgur.com/jhWVp93.png">
+<meta property="og:image" content="https://i.imgur.com/wxH5VAP.png">
+<meta property="og:image" content="https://i.imgur.com/wCDltJq.png">
+<meta property="article:published_time" content="2019-11-13T17:00:00.000Z">
+<meta property="article:modified_time" content="2020-07-28T00:54:09.466Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/bjcq2D4.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/11/14/[%E8%AB%96%E6%96%87]%20Identity%20Mappings%20in%20Deep%20Residual%20Networks/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/11/14/[%E8%AB%96%E6%96%87]%20Identity%20Mappings%20in%20Deep%20Residual%20Networks/","path":"2019/11/14/[論文] Identity Mappings in Deep Residual Networks/","title":"[論文] Identity Mappings in Deep Residual Networks"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[論文] Identity Mappings in Deep Residual Networks | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%A6%81-abstrct"><span class="nav-number">1.</span> <span class="nav-text">概要 Abstrct</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B0%A1%E4%BB%8B-introduction"><span class="nav-number">2.</span> <span class="nav-text">簡介 Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%B1%A4%E6%AE%98%E5%B7%AE%E7%B6%B2%E8%B7%AF%E5%88%86%E6%9E%90-analysis-of-deep-residual-networks"><span class="nav-number">3.</span> <span class="nav-text">深層殘差網路分析 Analysis of Deep Residual Networks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#discussions"><span class="nav-number">3.1.</span> <span class="nav-text">Discussions</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AB%96-identity-skip-connections-%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">論 Identity Skip Connections 的重要性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8-skip-connections-%E4%B8%8A%E7%9A%84%E5%AF%A6%E9%A9%97"><span class="nav-number">4.1.</span> <span class="nav-text">在 Skip Connections 上的實驗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A8%8E%E8%AB%96"><span class="nav-number">4.2.</span> <span class="nav-text">討論</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AB%96-activation-function-%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">論 Activation Function 的使用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8-activation-%E4%B8%8A%E7%9A%84%E5%AF%A6%E9%A9%97"><span class="nav-number">5.1.</span> <span class="nav-text">在 Activation 上的實驗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">5.2.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ease-of-optimization"><span class="nav-number">5.2.1.</span> <span class="nav-text">Ease of optimization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reducing-overfitting"><span class="nav-number">5.2.2.</span> <span class="nav-text">Reducing overfitting</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%90%E8%AB%96-result"><span class="nav-number">6.</span> <span class="nav-text">結論 Result</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%90%E8%AB%96-conclusions"><span class="nav-number">7.</span> <span class="nav-text">結論 Conclusions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">8.</span> <span class="nav-text">後記</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">9.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/11/14/[%E8%AB%96%E6%96%87]%20Identity%20Mappings%20in%20Deep%20Residual%20Networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [論文] Identity Mappings in Deep Residual Networks
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-11-14 01:00:00" itemprop="dateCreated datePublished" datetime="2019-11-14T01:00:00+08:00">2019-11-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-07-28 08:54:09" itemprop="dateModified" datetime="2020-07-28T08:54:09+08:00">2020-07-28</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-Convolutional-Neural-Network/" itemprop="url" rel="index"><span itemprop="name">卷積神經網路 Convolutional Neural Network</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/11/14/%5B%E8%AB%96%E6%96%87%5D%20Identity%20Mappings%20in%20Deep%20Residual%20Networks/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/14/[論文] Identity Mappings in Deep Residual Networks/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="概要-abstrct">概要 Abstrct</h2>
+<p>深層殘差網路不管在預測準確度以及收斂速度上都有著非常好的表現。在這篇論文中，作者們從前向及反向的信息傳播分析中，提出了將 shortcut connection 以及相加後的 activation 均使用恆等映射 (identity mapping) ，信息能夠藉由前後向傳播在 block 間進行傳遞。這篇論文中，利用一系列的「消融實驗」( ablation experiments )<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>來確定這些恆等映射的重要性。</p>
+<span id="more"></span>
+<p>這樣的結論激勵了研究團隊提出了一個嶄新的 Residual unit，讓訓練變得更加簡單也能增強模型的泛化能力。研究團隊利用這種結構，在各個資料集的預測結果均有成長，而且在 1001 層的 ResNet 上也能得到很好的結果。( code : https://github.com/KaimingHe/resnet-1k-layers )</p>
+<h2 id="簡介-introduction">簡介 Introduction</h2>
+<p>在 ResNet 論文中，每一個殘差單元 (residual unit) 我們可以用下面的式子來表示 :</p>
+<p><span class="math display">\[
+\mathrm{y}_l=h(\mathrm{x}_l)+\mathcal{F}(\mathrm{x}_l,\mathcal{W}_l)\\
+\mathrm{x}_{l+1}=f(\mathrm{y}_l)=ReLU(\mathrm{y}_l)
+\]</span></p>
+<p><span class="math inline">\(\mathrm{x}_l\)</span> 與 <span class="math inline">\(\mathrm{x}_{l+1}\)</span> 是第 <span class="math inline">\(l\)</span> 個殘差單元的輸入及輸出，<span class="math inline">\(\mathcal{F}\)</span> 是殘差函數 (residual function) ，<span class="math inline">\(f\)</span> 是 activation function，在論文中用的是 ReLU ，而 <span class="math inline">\(h\)</span> 則是恆等映射。</p>
+<p>100多層的 ResNet 在各項資料集中都能有極佳的表現，最主要的想法就是學習一個對應於恆等映射 <span class="math inline">\(h\)</span> 的函數 <span class="math inline">\(\mathcal{F}\)</span> 。而這樣的 <span class="math inline">\(h\)</span> 在整個 model structure 中就是藉由 Shortcut connction 來達成。</p>
+<p>在此篇論文中，作者們藉由創造一個可以計算整個網路結構 ( 不是只有殘差單元 ) 信息傳導的直接路徑來分析深層殘差網路，藉由整個推導作者發現若讓 <span class="math inline">\(h\)</span> 與 <span class="math inline">\(f\)</span> 同為恆等映射，則信息無論在前向或反向傳播中均可以在殘差單元間直接傳遞。從論文裡的各項實驗數據可以證明當模型越接近上面兩個條件時會更易於訓練。</p>
+<p>為了更了解 Skip/Shortcut Connection 的運作，研究團隊分析並比較多種 <span class="math inline">\(h(\mathrm{x}_l)\)</span> 的型態，發現上一篇論文使用的 <span class="math inline">\(h(\mathrm{x}_l)=\mathrm{x}_l\)</span> 可以獲得最低的 error 以及最快的收斂速度。在 skip connection 上的任何操作 ( 縮放、門控、<span class="math inline">\(1\times 1\)</span> 卷積 ) 都會造成較高的 training loss 及 error。這些實驗結果都表明了，一條越 " 乾淨 " 的信息路徑，能使訓練變得更加容易。</p>
+<p><img src="https://i.imgur.com/bjcq2D4.png" /></p>
+<p>PS: 上圖跟上一篇論文的殘差塊 ( residual block ) 呈現方式相反。在這篇論文中，灰色箭頭的部分指是 shortcut connection，旁邊分支出來的才是原本的信息路徑。</p>
+<p>另一個部分，想要建造一個 <span class="math inline">\(f(\mathrm{y}_l)=\mathrm{y}_l\)</span> 這樣的恆等映射，作者在原本的信息路徑上的 activation function ( <span class="math inline">\(ReLU\)</span> 與 <span class="math inline">\(BN\)</span> ) 從傳統的「後激活」( Post-Actvation ) 轉換成「預激活」( Pre-Activation )。這種新型態的殘差塊 (上圖右(b)) 用在 1001 層的 ReaNet 上面在 CIFAR-10/100 上訓練，整個模型訓練變得更加容易，而且泛化程度更佳。而原本在 200層 ResNet 上會出現的 overfit 現象也可以藉由這種新的殘差塊獲得改善。</p>
+<p>這種種結果都顯示，作為深度學習的關鍵，模型的「深度」仍然有很大的拓展空間。</p>
+<h2 id="深層殘差網路分析-analysis-of-deep-residual-networks">深層殘差網路分析 Analysis of Deep Residual Networks</h2>
+<p>在前一篇論文中，ResNet 是藉由堆疊相同形狀的殘差塊而形成的模組化結構。在本篇論文中，作者將原本的殘差塊改稱為殘差單元 ( Residual Units )。原始論文中的殘差單元是經由下列計算進行</p>
+<p><span class="math display">\[
+\mathrm{y}_l=h(\mathrm{x}_l)+\mathcal{F}(\mathrm{x}_l,\mathcal{W}_l)\\
+\mathrm{x}_{l+1}=f(\mathrm{y}_l)
+\]</span></p>
+<p><span class="math inline">\(\mathrm{x}_l\)</span> 指的是第 <span class="math inline">\(l\)</span> 個殘差單元的輸入特徵向量， <span class="math inline">\(\mathcal{W}_l=\{\mathrm{W}_{l,k}|_{1\leq k\leq K} \}\)</span> 代表了第 <span class="math inline">\(l\)</span> 個殘差單元的權重 (包含偏差 bias)，而 <span class="math inline">\(K\)</span> 則是單一殘差單元內的層數。<span class="math inline">\(\mathcal{F}\)</span> 是一個殘差函數，<span class="math inline">\(f\)</span> 則是在元素級加法 ( element-wise addition ) 後的操作，在原始論文上 <span class="math inline">\(f=ReLU\)</span>，而 <span class="math inline">\(h\)</span> 則是一個恆等映射 <span class="math inline">\(h(\mathrm{x}_l)=\mathrm{x}_l\)</span>。</p>
+<p>若 <span class="math inline">\(f\)</span> 亦為恆等映射，則 <span class="math display">\[
+\mathrm{x}_{l+1}=f(\mathrm{y}_l)=\mathrm{y}_l=h(\mathrm{x}_l)+\mathcal{F}\mathrm{x}_l,\mathcal{W}_l)=\mathrm{x}_l+\mathcal{F}(\mathrm{x}_l,\mathcal{W}_l)
+\]</span></p>
+<p>又， <span class="math inline">\(\mathrm{x}_{l+2}=\mathrm{x}_{l+1}+\mathcal{F}(\mathrm{x}_{l+1},\mathcal{W}_{l+1})=\mathrm{x}_l+\mathcal{F}(\mathrm{x}_l,\mathcal{W}_l)+\mathcal{F}(\mathrm{x}_{l+1},\mathcal{W}_{l+1})\)</span>，所以我們可以知道，對任意的 <span class="math inline">\(L\geq l\)</span> 而言</p>
+<p><span class="math display">\[
+\mathrm{x}_{L}=\mathrm{x}_l+\sum\limits_{i=l}^{L-1}\mathcal{F}(\mathrm{x}_i,\mathcal{W}_i)
+\]</span></p>
+<p>上式有幾個很不錯的特性 :</p>
+<ol type="1">
+<li>一個特徵向量 <span class="math inline">\(\mathrm{x}_L\)</span> 可以由較淺層的特徵向量 <span class="math inline">\(\mathrm{x}_l\)</span> 加上一個殘差函數 <span class="math inline">\(\sum_{i=l}^{L-1}\mathcal{F}\)</span> 來取代，模型在單位 <span class="math inline">\(L\)</span> 到單位 <span class="math inline">\(l\)</span> 間是處於一個殘差的形式。</li>
+<li>若 <span class="math inline">\(l=0\)</span>，則第 <span class="math inline">\(L\)</span> 殘差塊的輸入可以表示為 <span class="math inline">\(\mathrm{x}_{L}=\mathrm{x}_0+\sum\limits_{i=0}^{L-1}\mathcal{F}(\mathrm{x}_i,\mathcal{W}_i)\)</span>，也就是說可以視為 <span class="math inline">\(\mathrm{x}_0\)</span> 加上第 <span class="math inline">\(L\)</span> 單位前的所有殘差函數的輸出。這與普通網路 (plain network) 不同，普通網路第 <span class="math inline">\(L\)</span> 層的輸入特徵 <span class="math inline">\(\mathrm{x}_L\)</span> 是一連串的矩陣向量積 <span class="math inline">\(\prod_{i=0}^{L}W_i\mathrm{x}_0\)</span>。</li>
+</ol>
+<p>除了這些特性外，上式還有很好的反向傳播性質。假設 Loss function 為 <span class="math inline">\(\varepsilon\)</span>，從微積分鏈鎖律 (chain rule) 可以推得反向傳播</p>
+<p><span class="math display">\[
+\frac{\partial\varepsilon}{\partial\mathrm{x}_l}=\frac{\partial\varepsilon}{\partial\mathrm{x}_L}\frac{\partial\mathrm{x}_L}{\partial\mathrm{x}_l}=\frac{\partial\varepsilon}{\partial\mathrm{x}_L}\Big(1+\frac{\partial}{\partial\mathrm{x}_l}\sum\limits_{i=l}^{L-1}\mathcal{F}(\mathrm{x}_i,\mathcal{W}_i)\Big)
+\]</span></p>
+<p>這樣的推導指出梯度 <span class="math inline">\(\frac{\partial\varepsilon}{\partial\mathrm{x}_l}\)</span> 可以被分解成兩項 : <span class="math inline">\(\frac{\partial\varepsilon}{\partial\mathrm{x}_L}\)</span> 與 <span class="math inline">\(\frac{\partial\varepsilon}{\partial\mathrm{x}_L}\frac{\partial}{\partial\mathrm{x}_l}\sum_{i=l}^{L-1}\mathcal{F}(\mathrm{x}_i,\mathcal{W}_i)\)</span>。前者指的是直接的信息傳導，而不需考量其他的權重層。而後者則是經由權重層進行信息傳導。加上 <span class="math inline">\(\frac{\partial\varepsilon}{\partial\mathrm{x}_L}\)</span> 這項可以確保信息能傳回任意淺層 <span class="math inline">\(l\)</span>。此外，這式也保證了不管梯度有多小， <span class="math inline">\(\frac{\partial\varepsilon}{\partial\mathrm{x}_l}\)</span> 不會發生梯度消失的狀況，因為 <span class="math inline">\(\frac{\partial}{\partial\mathrm{x}_l}\sum_{i=l}^{L-1}\mathcal{F}(\mathrm{x}_i,\mathcal{W}_i)\)</span> 不會恆為 <span class="math inline">\(-1\)</span>。</p>
+<h3 id="discussions">Discussions</h3>
+<p>上面的種種推導確定了信號不論前後向均可以在任兩層中間隨意傳播。而這些推導結果的前提就是 <span class="math inline">\(h\)</span> 與 <span class="math inline">\(f\)</span> 均為恆等映射。</p>
+<p>上面說的這些「直接」傳導的信息流就是最上面圖片中的灰色箭頭。而要滿足 <span class="math inline">\(h\)</span> 與 <span class="math inline">\(f\)</span> 均為恆等映射就是指這些灰色箭頭的部分都必須不含任何操作，意即，這些灰色箭頭部分都要是「乾淨」的。接下來論文會針對這兩個條件個別進行分析。</p>
+<h2 id="論-identity-skip-connections-的重要性">論 Identity Skip Connections 的重要性</h2>
+<p>讓我們考慮一個狀況 <span class="math inline">\(h(\mathrm{x}_l)=\lambda_l\mathrm{x}_l\)</span> 破壞恆等映射的 shortcut connections )</p>
+<p><span class="math display">\[
+\mathrm{x}_{l+1}=\lambda_l\mathrm{x}_l+\mathcal{F}(\mathrm{x}_l,\mathcal{W}_l)
+\]</span></p>
+<p>在這裡，<span class="math inline">\(\lambda_l\)</span> 我們稱作調節純量 ( modulating scalar )，且為了簡化討論，我們仍然假設 <span class="math inline">\(f\)</span> 是恆等映射。因此，我們可以將 <span class="math inline">\(\mathrm{x}_L\)</span> 的式子做改寫 :</p>
+<p><span class="math display">\[
+\mathrm{x}_L=\big(\prod\limits_{i=l}^{L-1}\lambda_i\big)\mathrm{x}_l+\sum\limits_{i=l}^{L-1}\big(\prod\limits_{j=i+1}^{L-1}\lambda_j\big)\mathcal{F}\big(\mathrm{x}_i, \mathcal{W}_i\big)\\
+=\big(\prod\limits_{i=l}^{L-1}\lambda_i\big)\mathrm{x}_l+\sum\limits_{i=l}^{L-1}\hat{\mathcal{F}}\big(\mathrm{x}_i, \mathcal{W}_i\big)
+\]</span></p>
+<p>這裡用 <span class="math inline">\(\hat{\mathcal{F}}\)</span> 來表示吸收了 <span class="math inline">\(\prod\limits_{j=i+1}^{L-1}\lambda_j\)</span> 這些純量的 residual function <span class="math inline">\(\mathcal{F}\)</span>。我們也可以簡單地改反向傳播式 :</p>
+<p><span class="math display">\[
+\frac{\partial\varepsilon}{\partial\mathrm{x}_l}=\frac{\partial\varepsilon}{\partial\mathrm{x}_L}\frac{\partial\mathrm{x}_L}{\partial\mathrm{x}_l}=\frac{\partial\varepsilon}{\partial\mathrm{x}_L}\Big(\big(\prod\limits_{i=l}^{L-1}\lambda_i\big)+\frac{\partial}{\partial\mathrm{x}_l}\sum\limits_{i=l}^{L-1}\hat{\mathcal{F}}(\mathrm{x}_i,\mathcal{W}_i)\Big)
+\]</span></p>
+<p>針對一個極為深層 (<span class="math inline">\(L\)</span> 非常大) 的網路結構，若 <span class="math inline">\(\lambda_i&gt;1, \forall\ i\)</span> 則這些 <span class="math inline">\(\lambda_i\)</span> 的連乘積將會非常大; 若 <span class="math inline">\(\lambda_i&lt;1, \forall\ i\)</span>，則這些 <span class="math inline">\(\lambda_i\)</span> 的連乘積將會非常小甚至是消失。這會造成反向傳播的過程中訊號強制要從權重層傳遞，使得優化過程變得非常困難。</p>
+<p>根據上面的分析，我們可以瞭解到，在前一篇論文中為什麼會用恆等映射作為 shortcut connections，而不是使用 <span class="math inline">\(h(\mathrm{x}_l)=\lambda_l\mathrm{x}_l\)</span>。</p>
+<p>如果，skip connections <span class="math inline">\(h(\mathrm{x}_l)\)</span> 的型態變得更加複雜 ( 加了門控或是 <span class="math inline">\(1\times 1\)</span> 卷積 )，則反向傳播式中的第一項將會被改寫成 <span class="math inline">\(\prod_{i=l}^{L-1}h_i&#39;\)</span>，其中 <span class="math inline">\(h&#39;\)</span> 是 <span class="math inline">\(h\)</span> 的導函數。 這些連乘積可能也會阻礙信息的傳播以及訓練過程，如同此論文的實驗所示。</p>
+<h3 id="在-skip-connections-上的實驗">在 Skip Connections 上的實驗</h3>
+<p>( 實驗過程部分我只簡單介紹，如果有興趣的可以詳見論文 )</p>
+<p>此部分實驗有幾個重點 : * 主要使用 110層 ResNet (ResNet-110) 在 CIFAR-10上做的實驗 * <span class="math inline">\(f\)</span> 使用的是 <span class="math inline">\(ReLU\)</span> * 為了避免隨機性影響結果，每一個實驗都會重複五次取 accuracy 中位數。</p>
+<p><img src="https://i.imgur.com/BnB9s1Q.png" /></p>
+<p>研究團隊利用上述五種不同結構的 Skip connections 來看看是否會對結果造成影響 : * Constant scaling 針對所有 shortcut connection 都乘上 <span class="math inline">\(0.5\)</span> 倍。而且針對 <span class="math inline">\(f\)</span> 有/無乘上 <span class="math inline">\(0.5\)</span> 倍均進行分析。 * Exclusive gating 由 Highway Network 衍生出來的門控系統，透過 <span class="math inline">\(1\times 1\)</span> 卷積來產生 <span class="math inline">\(g(\mathrm{x})=\sigma(W_g\mathrm{x}+b_g)\)</span>。利用 <span class="math inline">\(\mathcal{F}\cdot g\)</span> 以及 <span class="math inline">\(h\cdot (1-g)\)</span> 來個別調節權重層及 Skip 連結的信息傳遞。 * Shortcut-only gating <span class="math inline">\(\mathcal{F}\)</span> 不進行信息調節，僅 Skip 連結進行信息傳遞的調節。 * <span class="math inline">\(1\times 1\)</span> convolutional shortcut 利用 <span class="math inline">\(1\times 1\)</span> 卷積來取代恆等映射。 * Dropout shortcut 在 Skip 連結上使用了 0.5 dropout。</p>
+<p>這些不同的構造所得出的實驗結果如下</p>
+<p><img src="https://i.imgur.com/4TC59Vw.png" /></p>
+<h3 id="討論">討論</h3>
+<p>結論如同最前面說過的，在 Skip Connection 上進行任何操作都會阻礙訊息的傳遞，使優化過程變得極為困難。</p>
+<p>在這裡比較值得注意的部分是 <span class="math inline">\(1\times 1\)</span> convolutional shortcut。在這樣的捷徑設計中，確實引入了較多的參數，理應有更強的表述能力。而我們仔細看一下上述五種結構，其中 Shortcut-only gating 以及 <span class="math inline">\(1\times 1\)</span> convolutional shortcut 這兩種的解空間應該都是包含恆等映射的解空間，但從實驗中看來，這兩者的訓練誤差卻仍然比恆等映射的誤差還要來的高。這也告訴我們，模型退化的問題跟表述能力並沒有關係，主因還是在優化過程困難。</p>
+<h2 id="論-activation-function-的使用方式">論 Activation Function 的使用方式</h2>
+<p>上面的所有分析上，我們都是建立在 <span class="math inline">\(f\)</span> 是兩個路徑相加後接一個恆等映射的前提下進行。然而上一個部分的實驗我們仍然是使用 <span class="math inline">\(f=ReLU\)</span>。因此我們可以說，前面推導的公式就是實驗的估計。接下來的部分就是討論 <span class="math inline">\(f\)</span> 的影響。</p>
+<p>作者想要利用 activation function ( <span class="math inline">\(ReLU\)</span> 與 <span class="math inline">\(BN\)</span> ) 的重新排列來使 <span class="math inline">\(f\)</span> 也是一個恆等映射。</p>
+<p><img src="https://i.imgur.com/MJDlCqV.png" /></p>
+<ul>
+<li>上圖( a ) : 這是上一篇論文的結構。<span class="math inline">\(BN\)</span> 接在權重層後，而除了最後一個 <span class="math inline">\(ReLU\)</span> 是接在連接加法之後，其餘所有的 <span class="math inline">\(ReLU\)</span> 都接在 <span class="math inline">\(BN\)</span> 之後。</li>
+<li>上圖( b-e ) : 則是此論文研究的重點，將在以下作介紹。</li>
+</ul>
+<h3 id="在-activation-上的實驗">在 Activation 上的實驗</h3>
+<p>( 實驗過程部分我只簡單介紹，如果有興趣的可以詳見論文 )</p>
+<p>這部分的實驗重點如下 : * 作者們使用的是 110層 ResNet (ResNet-110) 以及 164層 Bottleneck 結構 (ResNet-164) 於 CIFAR-10 上做實驗。</p>
+<p>Bottleneck 的殘差單元包含了一個 <span class="math inline">\(1\times 1\)</span> 卷積用來降維，<span class="math inline">\(3\times 3\)</span> 及<span class="math inline">\(1\times 1\)</span> 卷積來復原維度，這樣的複雜度幾乎等同於兩個<span class="math inline">\(3\times 3\)</span> 卷積層所構成的殘差單元。</p>
+<ul>
+<li>BN after addition 上圖( b ) 在將 <span class="math inline">\(f\)</span> 轉換成恆等映射之前，我們先反其道而行，將 <span class="math inline">\(BN\)</span> 放置在連結加法之後，這樣 <span class="math inline">\(f\)</span> 就包含了 <span class="math inline">\(ReLU\)</span> 與 <span class="math inline">\(BN\)</span>。利用這樣的結構進行實驗，結果會比 Baseline 還差。研究團隊認為 <span class="math inline">\(BN\)</span> 改變了經由 Skip connections 的信息並阻礙了信息的傳遞。這些從一開始訓練就發生訓練損失下降困難的狀況可以看的出來。</li>
+</ul>
+<p><img width=500 src="https://i.imgur.com/jhWVp93.png" ></p>
+<ul>
+<li><p>ReLU before addition 上圖( c ) 要使 <span class="math inline">\(f\)</span> 成為恆等映射的一個天真的作法是將 <span class="math inline">\(ReLU\)</span> 放在連接加法之前。然而這卻使原本對應域在 <span class="math inline">\([-\infty,+\infty]\)</span> 的 <span class="math inline">\(\mathcal{F}\)</span> 變成一個非負函數。這樣的結果會導致整個信息傳導會變成單調遞增，影響了表徵的能力。想要控制 <span class="math inline">\(\mathcal{F}\)</span> 的對應域在 <span class="math inline">\([-\infty,+\infty]\)</span>，就必須由下面兩種方式來呈現。</p></li>
+<li><p>Post-activation or pre-activation ? 在原始的結構設計上， activation function 會直接影響到下一個殘差塊的兩條路徑 ( 權重層路徑與捷徑 ) : <span class="math inline">\(\mathrm{x}_{l+1}=f(\mathrm{y}_l)\)</span>。研究團隊試圖研究一個非對稱結構使 activation function <span class="math inline">\(\hat{f}\)</span> 在任何的 <span class="math inline">\(l\)</span> 殘差單元只對權重層路徑有影響 : <span class="math inline">\(\mathrm{x}_{l+1}=\mathrm{x}_l+\mathcal{F}(\hat{f}(\mathrm{x}_l),\mathcal{W}_l)\)</span> 。這樣的設計等價於我們用了一個「預激活」(Pre-activation) <span class="math inline">\(\hat{f}\)</span> 於下一個殘差單元。 <img width=1000 src="https://i.imgur.com/wxH5VAP.png" > 「預激活」(Pre-activation) 與「後激活」 (Post-activation) 的差別在於元素級加法所導致。對一個一般的 <span class="math inline">\(N\)</span> 層神經網路來說，其中 <span class="math inline">\(N-1\)</span> 個 activation function ( <span class="math inline">\(BN\)</span> 與 <span class="math inline">\(ReLU\)</span> ) 是「預激活」或是「後激活」其實並沒有太多的差別。但對於有分支的結構來說，activation 的位置就大有關係。 在此論文中，作者們使用了兩種設計來實驗 : (1) 僅使用 <span class="math inline">\(ReLU\)</span> 作為預激活，以及 (2) 使用 <span class="math inline">\(ReLU\)</span> 與 <span class="math inline">\(BN\)</span> 一起作為預激活項。結果發現前者單獨使用 <span class="math inline">\(ReLU\)</span> 無法享受 <span class="math inline">\(BN\)</span> 帶來的好處，導致結果與原始結構差不多。但後者卻呈現了極佳的表現。 <img width=1000 src="https://i.imgur.com/wCDltJq.png" ></p></li>
+</ul>
+<h3 id="分析">分析</h3>
+<p>作者們發現，預激活的影響是雙重的 : 1. Ease of optimization 由於 <span class="math inline">\(f\)</span> 是恆等映射，使得訓練變得更佳容易。 2. Reducing overfitting 使用 <span class="math inline">\(BN\)</span> 作為預激活相當於是對模型的正則化<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
+<h4 id="ease-of-optimization">Ease of optimization</h4>
+<p>這樣的影響在訓練 1001 層的 ResNet 更加明顯。當我們使用原始模型設計時，在一開始訓練初期，訓練誤差降低的速度會非常慢。對於 <span class="math inline">\(f=ReLU\)</span> 來說，訊號為負值時會被影響，而且當殘差單元數量很多時，這樣的影響會變得非常明顯，前向或反向傳播式就無法進行很好的估計。</p>
+<p>換一個角度來說，若 <span class="math inline">\(f\)</span> 為恆等映射，則訊號可以直接在任一兩個殘差單元間傳遞，即使在 1001 層 ResNet　中訓練誤差可以快速降低。</p>
+<p>但作者們也發現，如果　ResNet 並不深，<span class="math inline">\(f=ReLU\)</span> 所造成的影響就不會太嚴重。雖然在訓練初期仍然有一點點影響，但隨即的可以被調整回來。藉由對模型的回應進行監控，作者們觀察到，經過一段時間的訓練後，權重會被調整使 <span class="math inline">\(\mathrm{y}_l\)</span> 恆正。而且 <span class="math inline">\(f\)</span> 不會進行截斷。( 因為 <span class="math inline">\(ReLU\)</span>，因此 <span class="math inline">\(\mathrm{x}_l\)</span> 非負。若要使 <span class="math inline">\(\mathrm{y}_l\)</span> 小於0，則 <span class="math inline">\(\mathcal{F}\)</span> 必須要是極負值時才會成立。 )</p>
+<p>然而，當層數增加到 1000 時，這樣的截斷效果會變得極為頻繁。</p>
+<h4 id="reducing-overfitting">Reducing overfitting</h4>
+<p>另外一個預激活造成的影響就是 regularization。預激活版本的模型雖在 training loss 收斂在較高的地方，但卻可以使 test loss 更低。這樣的現象幾乎在各種架構上均觀察的到。造成這種現象的主因想必就是 <span class="math inline">\(BN\)</span> 的正則化影響。</p>
+<p>在原始的殘差單元中，雖然 <span class="math inline">\(BN\)</span> 標準化了訊號，但立刻被加到 shortcut 上面。然而這樣合併後的訊號並沒有被標準化，又被作為下一個殘差單元的輸入。但是預激活的架構可以確保每一個權重層的輸入都是被 <span class="math inline">\(BN\)</span> 標準化過的。</p>
+<h2 id="結論-result">結論 Result</h2>
+<p>( 這部分大概是就上述實驗進行結果闡述，有興趣的就看一下原論文吧~~ )</p>
+<h2 id="結論-conclusions">結論 Conclusions</h2>
+<p>本論文針對深層殘差網路中關於捷徑連結機制做形式化探討。作者們的推導顯示恆等映射的 shortcut connections 以及元素及加法後的 activaiton 對於訊息傳導的平滑性來說是絕對必要的。</p>
+<p>一系列的消融實驗支持了我們的推導結果，並且我們可以使 1001層的 ResNet 訓練更加容易且可以得到更好的表現。</p>
+<h2 id="後記">後記</h2>
+<p>前一篇論文 " <em>Deep Residual Learning for Image Recognition</em> " 可謂經典必讀論文，然而其中許多的細節並沒有在當下有很好的解釋及說明。想要更理解 ResNet 的整個運作過程及原理，本篇論文不可不讀。藉由各種消融實驗可以說明為什麼 ResNet 架構可以有這麼好的表現。</p>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>ablation experiments 其實就是藉由控制變量來尋找對結果最有直接影響的變因。當一個結果可能由許多因素所導致，那我們藉由一連串實驗，將這些變因進行刪除、替換等方式，來觀察結果的變化，進而找出最關鍵的變因。香菇討論可以參閱 " <em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/263837982/answer/273653126">深度学习里的ablation experiment？</a></em> " 及 " <em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/291655038">消融实验是什么？</a></em> "<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>Batch Normalization 的意義是限制每一層的輸出都要同分布，以符合神經網路的假設，然而這樣的限制在某種層面來說就是一種正則化。相關詳細討論可以參閱 " <em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/288370837">关于batchnormalization和正则化的一些问题？</a></em> "<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/11/14/[%E8%AB%96%E6%96%87]%20Identity%20Mappings%20in%20Deep%20Residual%20Networks/" title="[論文] Identity Mappings in Deep Residual Networks">https://allen108108.github.io/blog/2019/11/14/[論文] Identity Mappings in Deep Residual Networks/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/11/Generative%20Adversarial%20Network%20(6)%20%E2%80%94%20WGAN,%20EBGAN/" rel="prev" title="Generative Adversarial Network (6) --- WGAN, EBGAN">
+                  <i class="fa fa-chevron-left"></i> Generative Adversarial Network (6) --- WGAN, EBGAN
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/11/15/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%203%20)/" rel="next" title="Chapter 4 -- Greedy algorithms ( 3 )">
+                  Chapter 4 -- Greedy algorithms ( 3 ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

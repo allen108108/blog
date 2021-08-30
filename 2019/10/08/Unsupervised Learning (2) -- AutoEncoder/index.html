@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="Auto-Encoder Auto-Encoder 也是 Dimension Reduction 的一種應用，當我們資料位處高維度，我們會希望可以將其縮到低維度的空間，當然也希望可以將其還原到原本的維度空間中。而這中間則利用一個 Neural Network Encoder &#x2F; Decoder 來進行轉換。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unsupervised Learning (2) -- AutoEncoder">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(2)%20--%20AutoEncoder/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="Auto-Encoder Auto-Encoder 也是 Dimension Reduction 的一種應用，當我們資料位處高維度，我們會希望可以將其縮到低維度的空間，當然也希望可以將其還原到原本的維度空間中。而這中間則利用一個 Neural Network Encoder &#x2F; Decoder 來進行轉換。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/mNDt7Of.png%20=400x">
+<meta property="og:image" content="https://i.imgur.com/YlvhSgI.png">
+<meta property="og:image" content="https://i.imgur.com/2mVam3c.png">
+<meta property="og:image" content="https://i.imgur.com/ECKfgx1.png">
+<meta property="og:image" content="https://i.imgur.com/ygojQXm.png">
+<meta property="og:image" content="https://i.imgur.com/1tPYLb1.png%20=250x">
+<meta property="og:image" content="https://i.imgur.com/BdxZbWm.png%20=250x">
+<meta property="og:image" content="https://i.imgur.com/hgYiWko.jpg">
+<meta property="og:image" content="https://i.imgur.com/JXZ051Z.png">
+<meta property="og:image" content="https://i.imgur.com/5mm4WZg.png">
+<meta property="og:image" content="https://i.imgur.com/6CuKVq8.png%20=300x">
+<meta property="og:image" content="https://i.imgur.com/sqQCeq8.jpg">
+<meta property="og:image" content="https://i.imgur.com/RJRsomN.jpg">
+<meta property="og:image" content="https://i.imgur.com/aGaysLs.png">
+<meta property="article:published_time" content="2019-10-07T16:36:33.000Z">
+<meta property="article:modified_time" content="2019-10-22T08:00:22.345Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/mNDt7Of.png%20=400x">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(2)%20--%20AutoEncoder/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(2)%20--%20AutoEncoder/","path":"2019/10/08/Unsupervised Learning (2) -- AutoEncoder/","title":"Unsupervised Learning (2) -- AutoEncoder"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Unsupervised Learning (2) -- AutoEncoder | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#auto-encoder"><span class="nav-number">1.</span> <span class="nav-text">Auto-Encoder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#deep-auto-encoder"><span class="nav-number">2.</span> <span class="nav-text">Deep Auto-Encoder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#denoising-auto-encoder"><span class="nav-number">3.</span> <span class="nav-text">Denoising Auto-Encoder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#auto-encoder-application"><span class="nav-number">4.</span> <span class="nav-text">Auto-Encoder Application</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#text-retrieval"><span class="nav-number">4.1.</span> <span class="nav-text">Text Retrieval</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#similar-image-search"><span class="nav-number">4.2.</span> <span class="nav-text">Similar Image Search</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#auto-encoder-for-cnn"><span class="nav-number">4.3.</span> <span class="nav-text">Auto-Encoder for CNN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#max-pooling-subsampling----unpooling-upsampling"><span class="nav-number">4.3.1.</span> <span class="nav-text">Max Pooling (subsampling) -- Unpooling (upsampling)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deconvolution"><span class="nav-number">4.3.2.</span> <span class="nav-text">Deconvolution</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pre-training"><span class="nav-number">4.4.</span> <span class="nav-text">Pre-training</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#decoder-part-....."><span class="nav-number">4.5.</span> <span class="nav-text">Decoder Part .....</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(2)%20--%20AutoEncoder/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unsupervised Learning (2) -- AutoEncoder
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-08 00:36:33" itemprop="dateCreated datePublished" datetime="2019-10-08T00:36:33+08:00">2019-10-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-22 16:00:22" itemprop="dateModified" datetime="2019-10-22T16:00:22+08:00">2019-10-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/08/Unsupervised%20Learning%20(2)%20--%20AutoEncoder/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/08/Unsupervised Learning (2) -- AutoEncoder/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="auto-encoder">Auto-Encoder</h2>
+<p>Auto-Encoder 也是 Dimension Reduction 的一種應用，當我們資料位處高維度，我們會希望可以將其縮到低維度的空間，當然也希望可以將其還原到原本的維度空間中。而這中間則利用一個 Neural Network Encoder / Decoder 來進行轉換。</p>
+<span id="more"></span>
+<p><img src="https://i.imgur.com/mNDt7Of.png%20=400x" /></p>
+<p>既然是 NN 結構，那我們就乾脆把 Encoder/Decoder 串在一起，利用 Backpropagation 一起訓練。</p>
+<p><img src="https://i.imgur.com/YlvhSgI.png" /></p>
+<p>理想的狀態，我們會希望 Encoder 的 weight matrix 與 Decoder 的 weight matrix 互為轉置，但實務上我們基本上不用給這樣子的條件，反正就丟進去一起訓練就好。</p>
+<p>了解這樣的架構之後，我們可以知道 Auto-Encoder 有幾個特點 : * Auto-Encoder 其實就是在學習出一個近似 identity 的 function，亦即 <span class="math inline">\(g(x)=\hat{x}\approx x\)</span> * 輸入的神經元個數 = 輸出的神經元個數 * 最中間的這一層，有人稱之為 " Coding layer " 則帶有輸入資料的重要資訊在其中，我們稱之為 information preserving。</p>
+<h2 id="deep-auto-encoder">Deep Auto-Encoder</h2>
+<p>當然，我們也可以將整個 Auto-Encoder 的結構增加更多 Layer 進去，便成為我們所稱的 Deep Autp-Encoder</p>
+<p><img src="https://i.imgur.com/2mVam3c.png" /></p>
+<p>有些資料會說 Deep Auto-Encoder 結構必須要是對稱的，但李宏毅老師在這邊有特別強調，結構並不一定要對稱。</p>
+<p>Deep Auto-Encoder 事實上是一個非常強的模型，decoding 後可以非常接近輸入資料</p>
+<p><img width=500 src="https://i.imgur.com/ECKfgx1.png" ></p>
+<h2 id="denoising-auto-encoder">Denoising Auto-Encoder</h2>
+<p><img width=500 src="https://i.imgur.com/ygojQXm.png" ></p>
+<p>Denoising Auto-Encoder 就是將原本的資料加了一些 Noise 進去，在丟到 Auto-Encoder 內進行訓練。這邊稍微要注意的是，雖然輸入是有雜訊的資料，但我們輸出要近似的對象應該要以原始資料為主。</p>
+<p><span class="math display">\[
+g(x&#39;)=\hat{x}\approx x\ ,\ where\ x&#39;=x+Noise
+\]</span></p>
+<p>利用 Denoising Auto-Encoder 便可以做出一個可以處理 Noise 的 Model 了。</p>
+<h2 id="auto-encoder-application">Auto-Encoder Application</h2>
+<h3 id="text-retrieval">Text Retrieval</h3>
+<p>在 Natural Language Processing (NLP) 中，處理文本很常會用到的方式就是 Bag of Word (其運作方式就類似 One-Hot Encoding)，利用這樣的方式將 Document 向量化後便可以去跟我們的 Query　進行　Similarity 的比較。</p>
+<p><img src="https://i.imgur.com/1tPYLb1.png%20=250x" /> <img src="https://i.imgur.com/BdxZbWm.png%20=250x" /></p>
+<p>通常一個 Document 的維度都會非常高，因此我們可以利用 Auto-Encoder 來降維。我們再前面有提到說 Auto-Encoder 有 information preserving 的特色，那麼我們理應可以直接利用 Document 以及 Query 降維後的 code 進行比較。</p>
+<h3 id="similar-image-search">Similar Image Search</h3>
+<p>相同的，我們也可以利用 information preserving 的特性進行相似圖檢索。</p>
+<p><img src="https://i.imgur.com/hgYiWko.jpg" /></p>
+<p>假如我們今天單純利用像素的歐式距離來計算相似度，就會得到上圖上方的那些結果。很明顯的，這些結果並不是我們想要的。</p>
+<p>如果我們今天換成利用 code 來進行相似度檢索，雖然說都沒檢出 Michael 的照片，但是檢索出來的圖片就會合理許多。</p>
+<h3 id="auto-encoder-for-cnn">Auto-Encoder for CNN</h3>
+<p><img width=500 src="https://i.imgur.com/JXZ051Z.png" ></p>
+<p>我們當然也可以將 Auto-Encoder 應用在 CNN 上，但問題就在於，怎麼做 Decode ? 我們分別從 Pooling 跟 Convolution 兩個部分分開來討論 Decode 的方式。</p>
+<h4 id="max-pooling-subsampling----unpooling-upsampling">Max Pooling (subsampling) -- Unpooling (upsampling)</h4>
+<p>現在 CNN 比較常用的是 Max Pooling，因此我們這裡就討論 Max Pooling 的狀況 ( 其實 Aveerage Pooling 的方式並不會有什麼差別 )。</p>
+<p><img src="https://i.imgur.com/5mm4WZg.png" /></p>
+<p>在 Pooling 的過程中，我們只要記得取 Maximun 的位置，在 Unpooling 時，將上一層的值分別補回 Pooling 取值的位置即可 ( 其他位置補 0 )。</p>
+<p><img src="https://i.imgur.com/6CuKVq8.png%20=300x" /></p>
+<p>這樣的方式，可以確保能夠最大限度的還原 information</p>
+<h4 id="deconvolution">Deconvolution</h4>
+<p>" Deconvolution " 這樣的名詞其實很有問題，就字面上來看，它應該是一個「逆卷積」的運算，然而我們在這一個部分用的其實也是一種 upsampling，而運算仍然是一般的卷積。( 因此，現在有許多人使用 Transpose Convolution 這樣的稱呼來取代 Deconv )</p>
+<p><img src="https://i.imgur.com/sqQCeq8.jpg" /></p>
+<p>我們從 Neural Network 的角度來看 ( 而非以滑窗的概念來看 )，在 Deconv 階段，直覺的我們會希望在這個階段的 Neurons 可以藉由當初 Conv 的連結，連結到下一層的　Neurons，而重疊的部分也是順理成章的相加即可。(上圖中)</p>
+<p>然而，其實可以發現到，Deconv 的運算也就只是 Padding 後再做一次 Convolution 而已，它跟 Convolution 的差異只是在於權重的順序相反。</p>
+<p>也因為從 NN 角度來理解這樣 Deconv 的概念，我們可以很清楚地了解權重的改變，這樣也不難理解 " Transpose Convolution " 為什麼比 " Deconvolution " 更適合代表這樣的操作了。</p>
+<h3 id="pre-training">Pre-training</h3>
+<p>我們一樣要再來強調一次 Auto-Encoder 的重點 " information preserving "。</p>
+<p>在 Neural Network 中，我們要從頭訓練一個 model，有時候必須要耗費很大的時間、計算成本，很多時候我們會盡量去找一組比較好的初始值，讓整個訓練可以比較快速完成。</p>
+<p>而 Auto-Encoder 便是可以幫助我們順利完成這樣工作的工具之一。</p>
+<p>因為 Auto-Encoder " information preserving " 的特性，因此我們如果可以保留作為初始值，讓每一層都能 preserve information ，這樣的網路應該不算太差，那我們在後續的訓練就不用浪費太多時間，而這樣的方式我們稱之為 " Pre-Training "</p>
+<p><img src="https://i.imgur.com/RJRsomN.jpg" /></p>
+<h3 id="decoder-part-.....">Decoder Part .....</h3>
+<p>前面所有的應用，我們都是使用 Encoder 部分，但後半部的 Decoder 也是有一些有趣的特性可以來應用。拿 MNIST 的例子來看，Decoder 的部分就可以生成出各種數字。</p>
+<p><img src="https://i.imgur.com/aGaysLs.png" /></p>
+<p>上圖右，為上圖左紅框每隔一定距離的資料點生成出來的圖形。因為 Decoder、Encoder 都是串在一起做訓練，所以 Decoder 部分也會有 information preserving 的特性，利用這樣的性質，想當然爾我們可以將 code 生成接近 input 的圖像。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(2)%20--%20AutoEncoder/" title="Unsupervised Learning (2) -- AutoEncoder">https://allen108108.github.io/blog/2019/10/08/Unsupervised Learning (2) -- AutoEncoder/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Unsupervised%20Learning%20(1)%20--%20Principle%20Component%20Analysis%20(%20PCA%20)/" rel="prev" title="Unsupervised Learning (1) -- Principle Component Analysis ( PCA )">
+                  <i class="fa fa-chevron-left"></i> Unsupervised Learning (1) -- Principle Component Analysis ( PCA )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/08/Unsupervised%20Learning%20(3)%20--%20Word%20Embedding/" rel="next" title="Unsupervised Learning (3) -- Word Embedding">
+                  Unsupervised Learning (3) -- Word Embedding <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

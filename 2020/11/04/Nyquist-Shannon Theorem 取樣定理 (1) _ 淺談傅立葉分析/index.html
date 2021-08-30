@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="在工程數學中，通常牽扯到兩種變換模式，一個是拉普拉斯變換 ( Laplace Transform )，另一個就是本篇主要的對象 -- 傅立葉變換 ( Fourier Transform )。 我們都知道，在量子領域中，粒子均有波粒二項性，因此，在物理世界中，討論「波」、「波動」這件事情變得十分重要，例如 : 聲波、光波...等。不只是物理，在訊號處理的領域中，訊號也往往以「波」的方式呈現，例如在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nyquist-Shannon Theorem 取樣定理 (1) : 淺談傅立葉分析">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/11/04/Nyquist-Shannon%20Theorem%20%E5%8F%96%E6%A8%A3%E5%AE%9A%E7%90%86%20(1)%20_%20%E6%B7%BA%E8%AB%87%E5%82%85%E7%AB%8B%E8%91%89%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="在工程數學中，通常牽扯到兩種變換模式，一個是拉普拉斯變換 ( Laplace Transform )，另一個就是本篇主要的對象 -- 傅立葉變換 ( Fourier Transform )。 我們都知道，在量子領域中，粒子均有波粒二項性，因此，在物理世界中，討論「波」、「波動」這件事情變得十分重要，例如 : 聲波、光波...等。不只是物理，在訊號處理的領域中，訊號也往往以「波」的方式呈現，例如在">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/hTpy1pK.png">
+<meta property="og:image" content="https://i.imgur.com/b24lApz.gif">
+<meta property="og:image" content="https://i.imgur.com/OO2NHxS.jpg">
+<meta property="article:published_time" content="2020-11-03T22:23:48.000Z">
+<meta property="article:modified_time" content="2021-08-30T07:44:45.567Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/hTpy1pK.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/11/04/Nyquist-Shannon%20Theorem%20%E5%8F%96%E6%A8%A3%E5%AE%9A%E7%90%86%20(1)%20_%20%E6%B7%BA%E8%AB%87%E5%82%85%E7%AB%8B%E8%91%89%E5%88%86%E6%9E%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/11/04/Nyquist-Shannon%20Theorem%20%E5%8F%96%E6%A8%A3%E5%AE%9A%E7%90%86%20(1)%20_%20%E6%B7%BA%E8%AB%87%E5%82%85%E7%AB%8B%E8%91%89%E5%88%86%E6%9E%90/","path":"2020/11/04/Nyquist-Shannon Theorem 取樣定理 (1) _ 淺談傅立葉分析/","title":"Nyquist-Shannon Theorem 取樣定理 (1) : 淺談傅立葉分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Nyquist-Shannon Theorem 取樣定理 (1) : 淺談傅立葉分析 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%82%85%E7%AB%8B%E8%91%89%E7%B4%9A%E6%95%B8-fourier-series"><span class="nav-number">1.</span> <span class="nav-text">傅立葉級數 Fourier Series</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%82%85%E7%AB%8B%E8%91%89%E8%AE%8A%E6%8F%9B-fourier-transform"><span class="nav-number">2.</span> <span class="nav-text">傅立葉變換 Fourier Transform</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%90%E6%8B%89%E5%85%AC%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">歐拉公式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%82%85%E7%AB%8B%E8%91%89%E8%AE%8A%E6%8F%9B"><span class="nav-number">2.2.</span> <span class="nav-text">傅立葉變換</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%B1%E6%9C%9F%E7%82%BA-2pi"><span class="nav-number">2.2.1.</span> <span class="nav-text">週期為 \(2\pi\)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%B1%E6%9C%9F%E7%82%BA-4pi"><span class="nav-number">2.2.2.</span> <span class="nav-text">週期為 \(4\pi\)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%82%85%E7%AB%8B%E8%91%89%E8%AE%8A%E6%8F%9B%E7%9A%84%E7%89%A9%E7%90%86%E6%84%8F%E7%BE%A9"><span class="nav-number">3.</span> <span class="nav-text">傅立葉變換的物理意義</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%B5%90"><span class="nav-number">4.</span> <span class="nav-text">小結</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E8%A7%A3"><span class="nav-number">6.</span> <span class="nav-text">註解</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/11/04/Nyquist-Shannon%20Theorem%20%E5%8F%96%E6%A8%A3%E5%AE%9A%E7%90%86%20(1)%20_%20%E6%B7%BA%E8%AB%87%E5%82%85%E7%AB%8B%E8%91%89%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nyquist-Shannon Theorem 取樣定理 (1) : 淺談傅立葉分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2020-11-04 06:23:48" itemprop="dateCreated datePublished" datetime="2020-11-04T06:23:48+08:00">2020-11-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 15:44:45" itemprop="dateModified" datetime="2021-08-30T15:44:45+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B8%E5%AD%B8%E7%AD%86%E8%A8%98-Mathematics-Note/" itemprop="url" rel="index"><span itemprop="name">數學筆記 Mathematics Note</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/11/04/Nyquist-Shannon%20Theorem%20%E5%8F%96%E6%A8%A3%E5%AE%9A%E7%90%86%20(1)%20_%20%E6%B7%BA%E8%AB%87%E5%82%85%E7%AB%8B%E8%91%89%E5%88%86%E6%9E%90/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/11/04/Nyquist-Shannon Theorem 取樣定理 (1) _ 淺談傅立葉分析/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在工程數學中，通常牽扯到兩種變換模式，一個是拉普拉斯變換 ( Laplace Transform )，另一個就是本篇主要的對象 -- 傅立葉變換 ( Fourier Transform )。</p>
+<p>我們都知道，在量子領域中，粒子均有波粒二項性，因此，在物理世界中，討論「波」、「波動」這件事情變得十分重要，例如 : 聲波、光波...等。不只是物理，在訊號處理的領域中，訊號也往往以「波」的方式呈現，例如在生物醫學中的訊號 : 腦波、心電圖...等等。</p>
+<span id="more"></span>
+<p>這種種的 「波」，如果是以簡單、週期性的方式呈現，要進行分析或許還容易些，但是真實世界中的訊號呈現往往複雜甚至不具週期性，我們要對這樣的訊號進行處理簡直是難上加難 - 至少在傅立葉變換出現以前是如此。</p>
+<p><img src="https://i.imgur.com/hTpy1pK.png" /> ( 圖 (一) -- 圖片來源 : <a target="_blank" rel="noopener" href="https://micro.rohm.com/tw/deviceplus/how-tos/arduino-guide/arduino-dsp-intro-to-digital-signal-processing-using-matlab-part-1/">使用MATLAB進行數位訊號處理簡介</a> )</p>
+<p>一個化合物，如果我們可以知曉其組成成分，那麼或許可以了解其特性，訊號亦是如此。傅立葉變換提供了一個數學工具，讓我們可以確保所有的「波」均可以分解成 不同頻率的 <span class="math inline">\(\sin\)</span> 及 <span class="math inline">\(\cos\)</span> 函數，進而藉由各個組成週期函數的相位及頻率了解原訊號的特性。</p>
+<h2 id="傅立葉級數-fourier-series">傅立葉級數 Fourier Series</h2>
+<p>如果今天我們原訊號本身為一個週期性函數 <span class="math inline">\(f(t)\)</span>，週期為 <span class="math inline">\(2T\)</span>，則滿足</p>
+<p><span class="math display">\[\begin{align}
+f(t)=f(t+2T) \nonumber \\
+\end{align}\]</span></p>
+<p>傅立葉認為， 若 <span class="math inline">\(f:\mathbb{R}\rightarrow\mathbb{C}\)</span> 滿足上述條件的 <span class="math inline">\(f(t)\)</span> 且在長度為 <span class="math inline">\(2T\)</span> 的區間可積，均可以利用三角級數來進行表徵<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>，意即</p>
+<p><span class="math display">\[
+f(t)=\frac{a_0}{2}+\sum_{n=1}^{\infty}a_n\cos(nt)+b_n\sin(nt)
+\]</span></p>
+<p>其中 <span class="math inline">\(a_n\)</span>, <span class="math inline">\(b_n\)</span> 我們稱之為傅立葉係數</p>
+<p><span class="math display">\[
+a_n=\displaystyle{\frac{1}{T}\int_{2T}f(t)\cos (nt)dt},\mbox{   }\forall n\in\mathbb{N}\cap\{0\}\\
+b_n=\displaystyle{\frac{1}{T}\int_{2T}f(t)\sin(nt)dt},\mbox{   }\forall n\in\mathbb{N}\\
+\]</span></p>
+<p>這樣的級數我便是我們所稱的傅立葉級數 (Fourier Series)。證明過程需要有高等微積分作為先備知識，如果有興趣的讀者可以參考筆者所附的參考資料 [10][11][12]。</p>
+<p>傅立葉級數給了一個強而有力的論證，讓所有的週期函數，均可以用不同頻率的 <span class="math inline">\(\sin\)</span> 以及 <span class="math inline">\(\cos\)</span> 加權疊加而形成。也就是說，我們可以將一個看似複雜的週期性函數進行分解，利用這些已知的週期三角函數來分析原函數的各項性質，這是多麼有趣的現象 !</p>
+<h2 id="傅立葉變換-fourier-transform">傅立葉變換 Fourier Transform</h2>
+<p>在介紹傅立葉變換 (Fourier Transform) 以前，有必要先來介紹一下神奇的歐拉公式，這也是傅立葉變換或是前面介紹的傅立葉級數中的一個核心概念。</p>
+<h3 id="歐拉公式">歐拉公式</h3>
+<p>歐拉公式之所以重要，最主要的貢獻是它將自然對數、三角函數以及複數這三個看似不相關的數學概念利用一個公式串接在一起 :</p>
+<p><span class="math display">\[
+e^{i\theta}=\cos\theta+i\sin\theta,\mbox{  }\forall\theta\in\mathbb{R}
+\]</span></p>
+<p>歐拉公式的證明只需要有高中數學為背景即可證明，詳細的證明筆者亦不贅述。</p>
+<h3 id="傅立葉變換">傅立葉變換</h3>
+<h4 id="週期為-2pi">週期為 <span class="math inline">\(2\pi\)</span></h4>
+<p>前面提到了周期函數均可以利用傅立葉級數來進行分解，但在真實世界中，許多的訊號都是非週期性的，那麼是不是也可以有類似完美的方法對訊號進行分解呢 ?</p>
+<p>當然可以 (否則就沒有接下來的文章內容了) ! 有別於傅立葉級數，針對非週期性函數，我們稱其為(連續)傅立葉變換 (Fourier Transform)。</p>
+<p>首先我們先考慮函數 <span class="math inline">\(f:\mathbb{R}\rightarrow\mathbb{C}\)</span> 為區間可積之週期函數，且其週期為 <span class="math inline">\(2\pi\)</span>，那麼我們可以利用歐拉公式來對傅立葉級數進行調整。從歐拉公式我們可以推得</p>
+<p><span class="math display">\[
+\cos(nt)=\frac{(e^{int}+e^{-int})}{2}\\
+\sin(nt)=\frac{(e^{int}-e^{-int})}{2i}
+\]</span></p>
+<p>將其帶入傅立葉級數後</p>
+<p><span class="math display">\[
+f(t)=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)dt+\sum_{n=1}^{\infty}\big[\cos(nt)\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\cos(nt)dt+\sin(nt)\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\sin(nt)dt\big]\\
+=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)dt+\sum_{n=1}^{\infty}\big[\frac{(e^{int}+e^{-int})}{2}\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)(\frac{(e^{int}+e^{-int})}{2})dt+\frac{(e^{int}-e^{-int})}{2i}\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)(\frac{(e^{int}-e^{-int})}{2i})dt\big]\\
+=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)dt+\frac{1}{4\pi}\sum_{n=1}^{\infty}\big[(e^{int}+e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}+e^{-int})dt-(e^{int}-e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}-e^{-int})dt\big]\\
+=\frac{1}{2\pi}\Big[\int_{-\pi}^{\pi}f(t)dt+\frac{1}{2}\sum_{n=1}^{\infty}\big[(e^{int}+e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}+e^{-int})dt-(e^{int}-e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}-e^{-int})dt\big]\Big]\\
+=\frac{1}{2\pi}\Big[\int_{-\pi}^{\pi}f(t)dt+\frac{1}{2}\sum_{n=1}^{\infty}\big[e^{-int}\int_{-\pi}^{\pi}f(t)e^{int}dt+e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]\Big]\cdots\cdots(1)\\
+\]</span></p>
+<p>而由於其對稱性，我們可以得知</p>
+<p><span class="math display">\[
+f(t)=\frac{1}{2\pi}\Big[\int_{-\pi}^{\pi}f(t)dt+\frac{1}{2}\sum_{n=-\infty}^{-1}\big[e^{-int}\int_{\pi}^{\pi}f(t)e^{int}dt+e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]\Big]\cdots\cdots(2)\\
+\]</span></p>
+<p>且當 <span class="math inline">\(n=0\)</span> 時，</p>
+<p><span class="math display">\[
+e^{-int}\int_{\pi}^{\pi}f(t)e^{int}dt+e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt=2\int_{-\pi}^{\pi}f(t)dt\cdots\cdots(3)
+\]</span></p>
+<p>將 <span class="math inline">\((1)(2)(3)\)</span> 式相加後</p>
+<p><span class="math display">\[
+2f(t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}\big[e^{-int}\int_{\pi}^{\pi}f(t)e^{int}dt+e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]\\
+=\frac{1}{2\pi}\cdot2\cdot\sum_{n=-\infty}^{\infty}\big[e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]\\
+\]</span></p>
+<p>因此可以改寫傅立葉級數為下列型態</p>
+<p><span class="math display">\[
+f(t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}f_n(t)e^{int}\\
+\mbox{where }f_n(t)=\int_{-\pi}^{\pi}f(t)(e^{-int})dt\cdots\cdots(4)
+\]</span></p>
+<h4 id="週期為-4pi">週期為 <span class="math inline">\(4\pi\)</span></h4>
+<p>現在我們考慮一個狀況，假設 <span class="math inline">\(f(t)\)</span> 為一個區間可積且週期為 <span class="math inline">\(4\pi\)</span> 的週期函數， 那麼上述的傅立葉級數便無法使用。不過我們可以知道 <span class="math inline">\(f(2t)\)</span> 的週期就是 <span class="math inline">\(2\pi\)</span> ，因此</p>
+<p><span class="math display">\[
+g(t)\overset{let}{=}f(2t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}e^{int}\int_{-\pi}^{\pi}g(t)e^{-int}dt\\
+\Longrightarrow f(2t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}e^{int}\int_{-\pi}^{\pi}f(2t)e^{-int}dt\\
+\Longrightarrow f(t)=\frac{1}{2\pi}\Big(\frac{1}{2}\sum_{n=-\infty}^{\infty}e^{\frac{int}{2}}\int_{-2\pi}^{2\pi}f(t)e^{\frac{-int}{2}}dt\Big)\\
+\]</span></p>
+<p>同理可證，任何一個週期為 <span class="math inline">\(2k\pi\)</span> 的週期函數 <span class="math inline">\(f(x)\)</span> 均可以下列方式表示</p>
+<p><span class="math display">\[
+f(x)= \frac{1}{2\pi}\Big(\frac{1}{k}\sum_{n=-\infty}^{\infty}e^{\frac{int}{k}}\int_{-k\pi}^{k\pi}f(x)e^{\frac{-int}{k}}dx\Big)\cdots\cdots(5)
+\]</span></p>
+<p>在數學中可以證明 :</p>
+<p><span class="math display">\[
+\mbox{If } \int_{-\pi}^{\pi}|f(x)|dx \mbox{ exists, then }\exists \hat{f} \mbox{ s.t. } \hat{f}(\frac{n}{k})=\int_{-k\pi}^{k\pi}f(x)e^{\frac{-int}{k}}dx
+\]</span></p>
+<p>則 (5) 式可以改寫成</p>
+<p><span class="math display">\[
+f(x)= \frac{1}{2\pi}\Big(\frac{1}{k}\sum_{n=-\infty}^{\infty}f(\frac{n}{k})e^{\frac{int}{k}}\Big)
+\]</span></p>
+<p>換個角度來說，如果今天一個無週期的函數，我們將其視為週期無窮大，則便可得其傅立葉變換為</p>
+<p><span class="math display">\[
+f(x)= \frac{1}{2\pi}\Big(\lim_{k\rightarrow\infty}\big[\frac{1}{k}\sum_{n=-\infty}^{\infty}f(\frac{n}{k})e^{\frac{int}{k}}\big]\Big)
+\]</span></p>
+<p>中括號內是我們高中到大學初等微積分所學的黎曼和，因此只要 <span class="math inline">\(f\)</span> 為區間可積分，則</p>
+<p><span class="math display">\[
+f(x)= \frac{1}{2\pi}\Big(\lim_{k\rightarrow\infty}\big[\frac{1}{k}\sum_{n=-\infty}^{\infty}f(\frac{n}{k})e^{\frac{int}{k}}\big]\Big)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\hat{f}(w)e^{iwt}dw
+\]</span></p>
+<p>這便是我們最常說非週期函數的(連續)傅立葉變換型態，將非週期函數 <span class="math inline">\(f\)</span> 以無限多個實數頻率的週期函數 <span class="math inline">\(\hat{f}\)</span> 來進行表徵。</p>
+<h2 id="傅立葉變換的物理意義">傅立葉變換的物理意義</h2>
+<p>現在我們已經知道了整個傅立葉變換的原理，那我們就要來看看在實際生活中傅立葉變換的意義在哪裡。</p>
+<p><img src="https://i.imgur.com/b24lApz.gif" /> ( 圖片來源 : <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-tw/%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2">傅立葉變換 wiki</a> )</p>
+<p>上圖是傅立葉變換的維基百科中的一張 Gif 動畫圖，如果我們將紅色的 <span class="math inline">\(f\)</span> 視為聲波，經由傅立葉變換後我們可以視為是多個藍色的 <span class="math inline">\(\hat{f}\)</span> 組合，原本聲波是一個時(空)域的函數，經由傅立葉變換後我們可得其頻域。</p>
+<p>簡單來說，傅立葉變換就是一個由時空域變換到頻域的工具。</p>
+<p>在物理意義上來說，通常時空域的訊號繁雜且難以處理，我們利用傅立葉變換將其轉換成頻域，在頻域中，藉由不同頻率的週期函數進行處理、加工，最後藉由傅立葉變換為可逆的特性，還原成時空域上的訊號。</p>
+<p>除此之外，時空域上的訊號傳換成頻域後，幾乎都會發現到絕大多數的頻率在頻域上都接近 0，也就是說，大部分的資訊量都集中在某些頻率中。藉由傅立葉變換，我們可以找出訊息量較高的頻率來做分析即可，其餘的頻率均可忽略不計。</p>
+<p>以一個非週期性的 2 維圖像來說，其傅立葉變換後會發現訊號幾乎都集中在某一個部分，藉此我們就可以針對這些頻率進行圖像上的分析</p>
+<p><img src="https://i.imgur.com/OO2NHxS.jpg" /> (圖像來源 : CMU 2017 Fall Computational Photography Course 15-463)</p>
+<h2 id="小結">小結</h2>
+<p>傅立葉級數/變換筆者一直都想找機會弄清楚，這次剛好藉由 Nyquist-Shannon Theorem 把之前的思緒整理一下。傅立葉變換，是 Nyquist-Shannon Theorem 的核心概念，我們將在下一篇來了解一下去樣定理究竟在說些什麼。</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li>Morris Kline . (1972) . <em>Mathematical thought : from ancient to modern times, Vol.3</em>. Oxford University Press, USA.</li>
+<li>Tom M.Apostol. (1981). <em>Mathematical Analysis (2nd ed.)</em>. Addison Wesley.</li>
+<li>單維彰 (1998)。傅立葉級數。<em>數學傳播，22-1</em>，81-92。</li>
+<li>單維彰 (1998)。傅立葉變換。<em>數學傳播，24-2</em>，22-30。</li>
+<li>蔡志強 (1999)。積分發展的一頁滄桑。<em>數學傳播，23-3</em>，3-20。</li>
+<li><a target="_blank" rel="noopener" href="https://blog.yeshuanova.com/2019/04/fft_intro/">從傅立葉級數到快速傅立葉轉換</a>。</li>
+<li><a target="_blank" rel="noopener" href="http://www.jezzamon.com/fourier/index.html">An Interactive Introduction to Fourier Transforms.</a>.Website.</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-tw/%E5%82%85%E9%87%8C%E5%8F%B6%E7%BA%A7%E6%95%B0">傅立葉級數</a>, wikipedia.</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-tw/%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2">傅立葉變換</a>, wikipedia.</li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=JYylDOlezv8&amp;list=PLil-R4o6jmGhUqtKbZf0LIFKd-xN__g_M&amp;index=15">分析一：【函數的Fourier級數1】連續函數的均勻逼近1：Cesàro求和與Fejér定理(以三角級數均勻逼近連續週期函數)</a>.Youtube.</li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=tIx0PlABlHA&amp;list=PLil-R4o6jmGhUqtKbZf0LIFKd-xN__g_M&amp;index=16">分析一：【函數的Fourier級數2】分析一：【函數的Fourier級數2】連續函數的均勻逼近2：標準三角函數族在週期為2π的連續函數空間中滿足Parseval條件；Weierstrass逼近定理</a>.Youtube.</li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=6PbZlnNJYyE&amp;list=PLil-R4o6jmGhUqtKbZf0LIFKd-xN__g_M&amp;index=17">分析一：【函數的Fourier級數3】Fourier級數收斂定理</a>.Youtube.</li>
+</ol>
+<h2 id="註解">註解</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>傅立葉將傅立葉級數的概念發表於西元 1822 年 《熱的解析理論》( Théorie analytique de la chaleur )之中，書中利用傅立葉級數來解決熱傳播的相關問題。然而傅立葉級數的發表過程其實非常坎坷， 1811 年傅立葉向巴黎科學院提交關於熱傳導的論文，被當時的數學家 Lagrange, Laplace 及 Legendre 所拒絕，因此傅立葉後來將所有研究發表於自己的 《熱的解析理論》 一書中，直到兩年後，傅立葉成為巴黎科學院的秘書後，才得以經 1811 年的論文發表在巴黎科學院的《研究報告》 ( Memoires ) 中。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/11/04/Nyquist-Shannon%20Theorem%20%E5%8F%96%E6%A8%A3%E5%AE%9A%E7%90%86%20(1)%20_%20%E6%B7%BA%E8%AB%87%E5%82%85%E7%AB%8B%E8%91%89%E5%88%86%E6%9E%90/" title="Nyquist-Shannon Theorem 取樣定理 (1) : 淺談傅立葉分析">https://allen108108.github.io/blog/2020/11/04/Nyquist-Shannon Theorem 取樣定理 (1) _ 淺談傅立葉分析/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/09/14/%E3%80%90PHP%E3%80%91%20Array%20%E8%88%87%20HTML/" rel="prev" title="【PHP】 Array 與 HTML">
+                  <i class="fa fa-chevron-left"></i> 【PHP】 Array 與 HTML
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2021/08/30/Line%20Bot%20%E5%9C%A8%E7%BE%A4%E7%B5%84%E4%B8%AD%E7%9A%84%E5%96%9A%E9%86%92_%E4%BC%91%E7%9C%A0%E6%A9%9F%E5%88%B6%20(Django%20Database%20%E4%B9%8B%E6%87%89%E7%94%A8)/" rel="next" title="Line Bot 在群組中的喚醒/休眠機制 (Django Database 之應用) ">
+                  Line Bot 在群組中的喚醒/休眠機制 (Django Database 之應用)  <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

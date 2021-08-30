@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="系列文章  Jetson Nano 初體驗 (一) -- WaveShare JetBot Jetson Nano 初體驗 (二) -- Jetson Nano Jetson Nano 初體驗 (三) -- Deep Learning Model">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jetson Nano 初體驗 (二) -- Jetson Nano">
+<meta property="og:url" content="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%BA%8C)%20%E2%80%93%20Jetson%20Nano/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="系列文章  Jetson Nano 初體驗 (一) -- WaveShare JetBot Jetson Nano 初體驗 (二) -- Jetson Nano Jetson Nano 初體驗 (三) -- Deep Learning Model">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/8uiDXDn.png">
+<meta property="og:image" content="https://i.imgur.com/xeg5otO.jpg">
+<meta property="og:image" content="https://i.imgur.com/ZYlfxMq.png">
+<meta property="og:image" content="https://i.imgur.com/9CVOhs7.jpg">
+<meta property="article:published_time" content="2020-04-06T00:41:35.000Z">
+<meta property="article:modified_time" content="2020-04-16T10:56:49.098Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/8uiDXDn.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%BA%8C)%20%E2%80%93%20Jetson%20Nano/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%BA%8C)%20%E2%80%93%20Jetson%20Nano/","path":"2020/04/06/Jetson Nano 初體驗 (二) – Jetson Nano/","title":"Jetson Nano 初體驗 (二) -- Jetson Nano"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Jetson Nano 初體驗 (二) -- Jetson Nano | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">系列文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%92%B0%E5%A2%83%E5%8F%8A%E7%A1%AC%E9%AB%94%E5%AE%89%E8%A3%9D"><span class="nav-number">3.</span> <span class="nav-text">環境及硬體安裝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%A0%E7%AB%AF%E9%80%A3%E7%B7%9A"><span class="nav-number">4.</span> <span class="nav-text">遠端連線</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#jetson-nano-%E7%AB%AF"><span class="nav-number">4.1.</span> <span class="nav-text">Jetson Nano 端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#desktop-%E7%AB%AF"><span class="nav-number">4.2.</span> <span class="nav-text">Desktop 端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BB%9F%E9%AB%94%E5%AE%89%E8%A3%9D"><span class="nav-number">5.</span> <span class="nav-text">軟體安裝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8"><span class="nav-number">5.1.</span> <span class="nav-text">環境變數</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A8%AD%E5%AE%9A-swap-%E4%BA%A4%E6%8F%9B%E7%A3%81%E5%8D%80"><span class="nav-number">5.2.</span> <span class="nav-text">設定 swap 交換磁區</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D%E5%BF%85%E8%A6%81%E5%A5%97%E4%BB%B6"><span class="nav-number">5.3.</span> <span class="nav-text">安裝必要套件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#opencv"><span class="nav-number">5.4.</span> <span class="nav-text">OpenCV</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80"><span class="nav-number">5.4.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C"><span class="nav-number">5.4.2.</span> <span class="nav-text">方法二</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dlib"><span class="nav-number">5.5.</span> <span class="nav-text">Dlib</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jetson-stats"><span class="nav-number">5.6.</span> <span class="nav-text">Jetson Stats</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%9C%E7%A4%99%E6%8E%92%E9%99%A4"><span class="nav-number">6.</span> <span class="nav-text">障礙排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%8F%A1%E9%A0%AD%E7%B4%AB%E9%82%8A"><span class="nav-number">6.1.</span> <span class="nav-text">鏡頭紫邊</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jetbot-oled-%E7%84%A1%E6%B3%95%E9%81%8B%E8%A1%8C"><span class="nav-number">6.2.</span> <span class="nav-text">JetBot Oled 無法運行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#opencv-%E7%84%A1%E6%B3%95%E7%8D%B2%E5%BE%97%E7%95%AB%E9%9D%A2"><span class="nav-number">6.3.</span> <span class="nav-text">opencv 無法獲得畫面</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">7.</span> <span class="nav-text">後記</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">8.</span> <span class="nav-text">參考資料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%BA%8C)%20%E2%80%93%20Jetson%20Nano/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Jetson Nano 初體驗 (二) -- Jetson Nano
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2020-04-06 08:41:35" itemprop="dateCreated datePublished" datetime="2020-04-06T08:41:35+08:00">2020-04-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-04-16 18:56:49" itemprop="dateModified" datetime="2020-04-16T18:56:49+08:00">2020-04-16</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%89%B5%E5%AE%A2-Maker/" itemprop="url" rel="index"><span itemprop="name">創客 Maker</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%BA%8C)%20%E2%80%93%20Jetson%20Nano/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/06/Jetson Nano 初體驗 (二) – Jetson Nano/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="系列文章">系列文章</h2>
+<ul>
+<li><a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%B8%80%29%20%E2%80%93%20WaveShare%20JetBot/"><em>Jetson Nano 初體驗 (一) -- WaveShare JetBot</em></a></li>
+<li><a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%BA%8C%29%20%E2%80%93%20Jetson%20Nano/"><em>Jetson Nano 初體驗 (二) -- Jetson Nano</em></a></li>
+<li><a href="https://allen108108.github.io/blog/2020/04/16/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%B8%89%29%20%E2%80%93%20Deep%20Learning%20Model/"><em>Jetson Nano 初體驗 (三) -- Deep Learning Model</em></a></li>
+</ul>
+<span id="more"></span>
+<h2 id="前言">前言</h2>
+<p>前一篇文章 " <a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%B8%80%29%20%E2%80%93%20WaveShare%20JetBot/"><em>Jetson Nano 初體驗 (一) -- WaveShare JetBot</em></a> " 提到怎麼組合並建構一個 JetBot ，但不見得每一個人在利用 Jetson Nano 開發都必須要利用到 JetBot，單單一片 Jetson Nano 開發板就可以部屬深度學習的模型 : 人臉辨識、物件追蹤、分類模型...等等，都不需要兩個輪子趴趴走，因此，僅使用 Jetson Nano 怎麼開發專案，也是必須要去學習且了解的方向。</p>
+<p>和 JetBot 在整個建構環境上的不同之處在於</p>
+<ul>
+<li>不需要繁瑣且謹慎的硬體安裝過程，但</li>
+<li>軟體安裝上面耗時又費工</li>
+</ul>
+<p>軟體上面的安裝，可以依據使用者開發的內容來決定依賴項的安裝，麻煩，但也顯示了純粹用 Jetson Nano 進行開發的彈性會相對來說大。</p>
+<h2 id="環境及硬體安裝">環境及硬體安裝</h2>
+<p>和 JetBot 一樣，我們必須將 Jetson Nano 的<a target="_blank" rel="noopener" href="https://developer.nvidia.com/jetson-nano-sd-card-image">官方環境</a>燒進 Micro SD 卡中，這個環境裏面有 CUDA, CuDNN, OpenCV .... 等預先安裝好的套件及依賴，筆者建議，要拿來燒寫系統的 Micro SD 卡至少要 64 G，最好選用 128 G。</p>
+<p>硬體部分，筆者在前一篇有提到，使用的是 Noctua NF-A4 風扇，鏡頭也沿用 JetBot 的 CSI 鏡頭，環境安裝過程以及風扇運作詳情請見<a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20%28%E4%B8%80%29%20%E2%80%93%20WaveShare%20JetBot/">前一篇文章</a>。</p>
+<p>上述工作安裝完成後，連接電腦螢幕及鍵鼠設備開機進行一些 Ubuntu 的基本設定，設定其實都很簡單，不過為了遠端連線方便，請記得將登入方式設定為開機自動登入。</p>
+<h2 id="遠端連線">遠端連線</h2>
+<p>JetBot 環境中可以直接遠端連線，但若單純使用 Jetson Nano ，遠端連線就必須要自行設置，在這裡我們使用 VNC Viewer 來進行遠端連線的工具，在還未進行遠端連線之前，仍然需要先連接電腦螢幕及鍵鼠設備以利操作。</p>
+<h3 id="jetson-nano-端">Jetson Nano 端</h3>
+<p>首先，在 Jetson Nano 的部份我們要先進行一些安裝及設置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 安裝 vino 遠端連線</span><br><span class="line">$ sudo apt-get install vino</span><br><span class="line"></span><br><span class="line"># 安裝 dconf-editor 修改桌面設定</span><br><span class="line">$ sudo apt-get install dconf-editor</span><br><span class="line"></span><br><span class="line"># 安裝 nano 編輯器</span><br><span class="line">$ sudo apt-get install nano -y</span><br><span class="line"></span><br><span class="line">$ dconf-editor </span><br><span class="line"># 在 /org/gnome/desktop/remote-access 內將 require-encryption 加密需求設為關閉</span><br><span class="line"></span><br><span class="line"># 使用 nano 編輯器修改 Gnome 桌面設定 </span><br><span class="line">$ sudo nano /usr/share/glib-2.0/schemas/org.gnome.Vino.gschema.xml</span><br></pre></td></tr></table></figure>
+<p>進入 nano 編輯器後，向下滑到最後，在 <code>&lt;/schema&gt;</code> 前加入 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;key name=&#x27;enabled&#x27; type=&#x27;b&#x27;&gt;</span><br><span class="line">  &lt;summary&gt;Enable remote access to the desktop&lt;/summary&gt;</span><br><span class="line">  &lt;description&gt;</span><br><span class="line">    If true, allows remote access to the desktop via the RFB</span><br><span class="line">    protocol. Users on remote machines may then connect to the</span><br><span class="line">    desktop using a VNC viewer.</span><br><span class="line">  &lt;/description&gt;</span><br><span class="line">  &lt;default&gt;false&lt;/default&gt;</span><br><span class="line">&lt;/key&gt;</span><br></pre></td></tr></table></figure>
+<p>完成後，按下 <code>Ctrl+ x</code> 離開， 離開前會確認是否存檔，按下 <code>y</code> 後，按下 <code>Enter</code> 確認檔名離開即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 編譯 Gnome Schema</span><br><span class="line">$ sudo glib-compile-schemas /usr/share/glib-2.0/schemas</span><br></pre></td></tr></table></figure>
+<p>進入 Startup Application 設定將 Vino 設定為啟動程式</p>
+<p><img src="https://i.imgur.com/8uiDXDn.png" /></p>
+<p>選擇 <code>Add</code> 後， <code>Name</code> 與 <code>Comment</code> 可以自設，<code>Command</code> 部分輸入 <code>/usr/lib/vino/vino-server</code>，按下 <code>Add</code> 儲存設定。</p>
+<p><img src="https://i.imgur.com/xeg5otO.jpg" /></p>
+<p>隨後，進入設定內的共享桌面中 :</p>
+<ul>
+<li>選取 <code>Allow other users to view your desktop</code></li>
+<li>選取 <code>Allow other users to control your desktop</code></li>
+<li>取消 <code>You must confirm each access to this machine</code></li>
+<li>選取 <code>Require the user to enter this password</code> 以設定共享密碼</li>
+</ul>
+<p>最後在終端機輸入 <code>sudo reboot</code> 重新開機後即完成 Jetson Nano 端的所有設定。</p>
+<h3 id="desktop-端">Desktop 端</h3>
+<p>電腦端相對簡單，下載並安裝 <a target="_blank" rel="noopener" href="https://www.realvnc.com/en/connect/download/viewer/">VNC Viewer</a> 後，開啟應用程式，在網址列輸入 Jetson Nano 的連線 IP 位置即可進行遠端桌面操作。</p>
+<p>開啟後，會發現解析度非常低，我們可以利用遠端在 Jetson Nano 的終端機輸入 <code>sudo xrandr --fb 1920x1080</code> 來設定遠端桌面的解析度。</p>
+<h2 id="軟體安裝">軟體安裝</h2>
+<p>正如前面所說，雖然系統已經預載了一些套件，但大多數的工具都必須重新下載並安裝，因此要有心理準備，整個安裝時間會非常耗時</p>
+<h3 id="環境變數">環境變數</h3>
+<p>首先我們要先進行環境變數的設定，雖然預載了 CUDA 以及 CuDNN，但仍未設置環境變數，所以我們處理這個部分。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo nano ~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>至最後面加入以下內容： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export CUDA_HOME=/usr/local/cuda-10.0</span><br><span class="line">export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64:$LD_LIBRARY_PATH</span><br><span class="line">export PATH=/usr/local/cuda-10.0/bin:$PATH</span><br></pre></td></tr></table></figure> 完成後，使其生效： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure> 最後我們可以輸入 <code>nvcc -V</code> 進行測試。</p>
+<h3 id="設定-swap-交換磁區">設定 swap 交換磁區</h3>
+<p>Jetson Nano 的記憶體僅有 4G，因此我們必須設定 swap 來避免 Jetson Nano 因為記憶體過載而出現問題，在這邊我們 swap 僅設定 4G，但建議最好設定 8G。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ sudo fallocate -l 4G /swapfile</span><br><span class="line"></span><br><span class="line">$ sudo chmod 600 /swapfile</span><br><span class="line"></span><br><span class="line">$ ls -lh /swapfile</span><br><span class="line"></span><br><span class="line">$ sudo mkswap /swapfile</span><br><span class="line"></span><br><span class="line">$ sudo swapon /swapfile</span><br><span class="line"></span><br><span class="line">$ sudo swapon –show</span><br><span class="line"></span><br><span class="line">$ sudo cp /etc/fstab /etc/fstab.bak</span><br><span class="line"></span><br><span class="line">$ echo &#x27;/swapfile none swap sw 0 0&#x27; | sudo tee -a /etc/fstab</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="安裝必要套件">安裝必要套件</h3>
+<p>許多的套件或工具，最後下載下來後都還需要作編譯、建構環境等後續工作，因此我們要先對這些編譯、建構工具等，先進行安裝，以利後續的安裝作業。</p>
+<p>這個部份還會有順序的問題，建議依照下面的順序進行安裝。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get update</span><br><span class="line"></span><br><span class="line">$ sudo apt-get upgrade</span><br><span class="line"></span><br><span class="line">$ sudo apt-get install git cmake</span><br><span class="line"></span><br><span class="line">$ sudo apt-get install libfreetype6-dev pkg-config -y</span><br><span class="line"></span><br><span class="line">$ sudo apt-get install zlib1g-dev zip libjpeg8-dev libhdf5-dev -y</span><br><span class="line"></span><br><span class="line">$ sudo apt-get install libssl-dev libffi-dev python3-dev -y</span><br><span class="line"></span><br><span class="line">$ sudo apt-get install libhdf5-serial-dev hdf5-tools</span><br><span class="line"></span><br><span class="line">$ sudo apt-get install libblas-dev liblapack-dev</span><br><span class="line"></span><br><span class="line">$ sudo apt-get install libatlas-base-dev gfortran</span><br><span class="line"></span><br><span class="line">$ sudo apt-get install build-essential libgtk-3-dev libboost-all-dev -y</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>安裝 <code>pip</code> 套件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ wget https://bootstrap.pypa.io/get-pip.py</span><br><span class="line"></span><br><span class="line">$ sudo apt install python3-testresources</span><br><span class="line"></span><br><span class="line">$ sudo python3 get-pip.py</span><br><span class="line"></span><br><span class="line">$ rm get-pip.py</span><br></pre></td></tr></table></figure>
+<p>安裝虛擬環境工具，這邊筆者使用 <code>mkvirtualenv</code> 來建構虛擬環境，相較於 <code>virtualenv</code>，可以將虛擬環境集中管理，也便於專案的管理分配，此外，要進入虛擬環境也可以使用 <code>workon</code> 指令快速進入環境。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo pip install virtualenv virtualenvwrapper</span><br><span class="line"></span><br><span class="line">$ nano ~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>在 nano 編輯器的最後加入下列文字</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># virtualenv and virtualenvwrapper</span><br><span class="line">export WORKON_HOME=$HOME/.virtualenvs</span><br><span class="line">export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3</span><br><span class="line">source /usr/local/bin/virtualenvwrapper.sh</span><br></pre></td></tr></table></figure>
+<p>建立一個 <code>deep_learning</code> 虛擬環境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ source ~/.bashrc</span><br><span class="line"></span><br><span class="line">$ mkvirtualenv deep_learning -p python3</span><br><span class="line"></span><br><span class="line">$ workon deep_learning</span><br></pre></td></tr></table></figure>
+<p>接下來，就是安裝一些機器學習、深度學習的常用套件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ pip install numpy</span><br><span class="line"></span><br><span class="line">$ pip install scipy</span><br><span class="line"></span><br><span class="line">$ pip install cython</span><br><span class="line"></span><br><span class="line">$ pip install matplotlib</span><br><span class="line"></span><br><span class="line">$ pip install scikit-build</span><br><span class="line"></span><br><span class="line">$ pip install imutils</span><br><span class="line"></span><br><span class="line">$ pip install pillow</span><br><span class="line"></span><br><span class="line">$ pip install pandas</span><br><span class="line"></span><br><span class="line">$ pip install jupyter notebook</span><br></pre></td></tr></table></figure>
+<p>下載 Keras 以及 TensorFlow，筆者認為在 TensorFlow 1.X 版本中， 1.12 版本仍然是比較穩定的版本，所以筆者在此是安裝 TensorFlow 1.12.0，但按照各種專案的不同，可能會需要不同版本的 TensorFlow，建議大家可以先至下列網址尋找自己需求的版本進行下載</p>
+<ul>
+<li>https://developer.download.nvidia.com/compute/redist/jp/v411/tensorflow-gpu/</li>
+<li>https://developer.download.nvidia.com/compute/redist/jp/v42/tensorflow-gpu/</li>
+<li>https://developer.download.nvidia.com/compute/redist/jp/v43/tensorflow-gpu/</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ pip install keras</span><br><span class="line"></span><br><span class="line">$ pip install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v411 tensorflow-gpu==1.12.0+nv19.1</span><br></pre></td></tr></table></figure>
+<h3 id="opencv">OpenCV</h3>
+<h4 id="方法一">方法一</h4>
+<p>其實 Jetson Nano 已經預載了 OpenCV，最簡單的方式便是將系統的 OpenCV 直接連結到虛擬環境中。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 先確定 Jetson Nano OpenCV 的預載位址</span><br><span class="line">$ sudo find / -name &quot;cv2*&quot;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://i.imgur.com/ZYlfxMq.png" /></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 進行虛擬環境 OpenCV 的連結</span><br><span class="line">$ cd ~/envs/AI/lib/python3.6/site-packages/</span><br><span class="line">$ ln -s /usr/lib/python3.6/dist-packages/cv2.cpython-36m-aarch64-linux-gnu.so</span><br></pre></td></tr></table></figure>
+<p>但筆者利用這樣的方法，發現 OpenCV 似乎沒有用到 CUDA 。</p>
+<h4 id="方法二">方法二</h4>
+<p>第二種方法，其實也就是重新編譯 OpenCV，網路上已經有許多高手將 Jetson Nano 的 OpenCV 編譯安裝都寫成腳本，直接執行就可以進行安裝。</p>
+<p>最有名的有 :</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.jetsonhacks.com/2019/11/22/opencv-4-cuda-on-jetson-nano/">JetsonHacks - OpenCV 4 + CUDA on Jetson Nano</a></li>
+<li><a target="_blank" rel="noopener" href="https://jkjung-avt.github.io/opencv-on-nano/">JK Jung's blog -Installing OpenCV 3.4.6 on Jetson Nano</a></li>
+</ul>
+<p>上列文章的方式都讓 OpenCV 的編譯變得簡單許多。</p>
+<h3 id="dlib">Dlib</h3>
+<p>在 Ubuntu 上對 Dlib 的安裝簡單也順利許多，而且可以順利使用到 GPU 進行處理，只要按照下列進行下載安裝即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir temp; cd temp</span><br><span class="line"></span><br><span class="line">$ git clone https://github.com/davisking/dlib.git</span><br><span class="line"></span><br><span class="line">$ cd dlib</span><br><span class="line"></span><br><span class="line">$ mkdir build; cd build</span><br><span class="line"></span><br><span class="line">$ cmake .. -DDLIB_USE_CUDA=1 -DUSE_AVX_INSTRUCTIONS=1</span><br><span class="line"></span><br><span class="line">$ cmake --build .</span><br><span class="line"></span><br><span class="line">$ cd ..</span><br><span class="line"></span><br><span class="line">$ python setup.py install</span><br><span class="line"></span><br><span class="line">$ sudo ldconfig</span><br></pre></td></tr></table></figure>
+<p>我們可以進入 python 來進行上面幾個套件的安裝確認</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> dlib</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(tf.test.is_gpu_available())</span><br><span class="line"><span class="built_in">print</span>(cv2.__version__)</span><br><span class="line"><span class="built_in">print</span>(dlib.DLIB_USE_CUDA)</span><br></pre></td></tr></table></figure>
+<h3 id="jetson-stats">Jetson Stats</h3>
+<p>最後，建議安裝 <a target="_blank" rel="noopener" href="https://github.com/rbonghi/jetson_stats">Jetson Stats</a>，這個套件可以藉由簡單的指令 <code>jtop</code> ，來達成整個環境的配置狀態、CPU / GPU 使用狀況、風扇運轉狀態、...等等。</p>
+<p>安裝也非常的簡單</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -H pip install -U jetson-stats</span><br></pre></td></tr></table></figure>
+<h2 id="障礙排除">障礙排除</h2>
+<p>在建構單純 Jetson Nano 環境的過程當中，其實出現一些狀況，並不是這麼順利，因此這一段主要將我遇到的問題作一個簡單的紀錄，以便於未來可以參閱</p>
+<h3 id="鏡頭紫邊">鏡頭紫邊</h3>
+<p>鏡頭紫邊的狀況仍然需要解決，在上一篇文章中已經提出解決方式，這裡也不再贅述。</p>
+<h3 id="jetbot-oled-無法運行">JetBot Oled 無法運行</h3>
+<p>雖然這裡我們是單純使用 Jetson Nano 進行環境安裝，但是我還是有 JetBot 套件，所以仍然希望可以使用到 JetBot 上面的 OLED 面板顯示，這也方便我進行 IP 位址的查詢進行遠端連線。</p>
+<p>沒有 JetBot 環境，該怎麼使用 OLED 呢 ? 首先要作的當然是將 6pin 排線連接 Jetson Nano 及 JetBot 擴展板 ( 相同的，請注意排線安裝位置 )。</p>
+<p>連接完成後按照下列步驟進行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git clone https://github.com/JetsonHacksNano/installPiOLED.git</span><br><span class="line"></span><br><span class="line">$ cd installPiOLED</span><br><span class="line"></span><br><span class="line">$ ./installPiOLED.sh</span><br><span class="line"></span><br><span class="line">$ ./createService.sh</span><br></pre></td></tr></table></figure>
+<p>最後一個步驟其實是將顯示 OLED 的工作加入 service 中，確保每一次開機都能開啟 OLED。</p>
+<p>按照上面的 Repo 設計，OLED 會顯示四行</p>
+<ul>
+<li>有線網路 IP</li>
+<li>GPU 使用計量條</li>
+<li>記憶體用量</li>
+<li>SD 卡用量</li>
+</ul>
+<p>然而筆者希望要有無線網路的 IP 位址，因此希望將顯示方式作調整，這裡我們使用 Nvidia JetBot 的 OLED 顯示方式來替代，因此先將 Nvidia 的 <a target="_blank" rel="noopener" href="https://github.com/NVIDIA-AI-IOT/jetbot/blob/master/jetbot/apps/stats.py">OLED script</a> 下載到 <code>/installPiOLED/pioled/</code> 內，為避免與原本資料夾中的 <code>stats.py</code> 重複，我們將此檔名更改為<code>oled.py</code>。</p>
+<p>由於我們前面已經建立了 service，因此我們從已建立的 service 中進行更改。已建立的 service 位址在 : <code>/etc/systemd/system/pioled_stats.service</code></p>
+<p>打開 <code>pioled_stats.service</code> 檔案將</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecStart=/bin/sh -c &quot;python3 -m pioled.stats&quot;</span><br></pre></td></tr></table></figure>
+<p>更改為 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecStart=/bin/sh -c &quot;python3 /home/&lt;user_name&gt;/installPiOLED/pioled/oled.py&quot;</span><br></pre></td></tr></table></figure></p>
+<p>重新開機後就可以發現 OLED 的顯示會跟 Nvidia 官方 JetBot OLED 的顯示相同。</p>
+<h3 id="opencv-無法獲得畫面">opencv 無法獲得畫面</h3>
+<p>這個問題是我嘗試很久的時間，卻一直無法解決的狀況。我們在 Desktop 中要利用 <code>cap = cv2.VideoCapture(0)</code> 取得鏡頭的畫面非常的易如反掌。</p>
+<p>然而，筆者在 Jetson Nano 卻一直無法順利進行，當我在 Jupyter Notebook 中試圖使用 <code>cap = cv2.VideoCapture(0)</code> 會一直出現錯誤</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ WARN:0] global /home/nvidia/host/build_opencv/nv_opencv/modules/videoio/src/cap_gstreamer.cpp (1757) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module v4l2src0 reported: Internal data stream error.</span><br><span class="line">[ WARN:0] global /home/nvidia/host/build_opencv/nv_opencv/modules/videoio/src/cap_gstreamer.cpp (886) open OpenCV | GStreamer warning: unable to start pipeline</span><br><span class="line">[ WARN:0] global /home/nvidia/host/build_opencv/nv_opencv/modules/videoio/src/cap_gstreamer.cpp (480) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created</span><br></pre></td></tr></table></figure>
+<p>然後有時候會得到綠色的畫面，總而言之就是無法由鏡頭得到畫面。</p>
+<p>原本認為是否鏡頭沒有被 Jetson Nano 偵測到，但從終端機輸入下列指令卻可以順利得到畫面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gst-launch-1.0 nvarguscamerasrc sensor_mode=0 ! &#x27;video/x-raw(memory:NVMM),width=3820, height=2464, framerate=21/1, format=NV12&#x27; ! nvvidconv flip-method=0 ! &#x27;video/x-raw,width=960, height=616&#x27; ! nvvidconv ! nvegltransform ! nveglglessink -e</span><br></pre></td></tr></table></figure>
+<p>也可以利用 <code>ls -l /dev/video*</code> 來確認系統的確有抓到相機</p>
+<p><img src="https://i.imgur.com/9CVOhs7.jpg" /></p>
+<p>查詢了許多 Script 或是論壇主題，通常都是建議 OpenCV 利用 Gstreamer 來取得畫面</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">gst_pipeline = (<span class="string">&quot;nvarguscamerasrc ! &quot;</span></span><br><span class="line">                <span class="string">&quot;video/x-raw(memory:NVMM), &quot;</span></span><br><span class="line">                <span class="string">&quot;width=3820, height=2464, &quot;</span></span><br><span class="line">                <span class="string">&quot;format=(string)NV12, framerate=21/1 ! &quot;</span></span><br><span class="line">                <span class="string">&quot;nvvidconv flip-method=0 ! &quot;</span></span><br><span class="line">                <span class="string">&quot;video/x-raw, width=1920, height=1080, format=(string)BGRx ! &quot;</span></span><br><span class="line">                <span class="string">&quot;videoconvert ! &quot;</span></span><br><span class="line">                <span class="string">&quot;video/x-raw, format=(string)BGR ! appsink&quot;</span></span><br><span class="line">                )</span><br><span class="line">                </span><br><span class="line">cap = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)                </span><br></pre></td></tr></table></figure>
+<p>這樣的方法的確可行，但為什麼無法使用舊方式的原因我仍然沒有找到，或許目前僅能暫時以這種方式來進行 OpenCV 專案的開發了。</p>
+<h2 id="後記">後記</h2>
+<p>Jetson Nano 的整體環境設置的確比 JetBot 來的複雜且耗時，不過不管是 Jetson Nano 還是 JetBot，動手實際上操作個幾次，也其實沒有想像中困難，待這些前置工作都完成後，就可以開始準備專案的實現及操作。</p>
+<p>這些套件、環境安裝完成後，其實也佔去接近 30G 的 SD 卡容量，這也是前面筆者提到最好使用 128G SD 卡的原因了，若有許多專案要進行管理，剩下 20-30 G 的容量也真的是不太足夠。</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="http://www.waveshare.net/study/article-881-1.html">Jetson Nano系列教程1：烧写系统镜像</a></li>
+<li><a target="_blank" rel="noopener" href="https://chtseng.wordpress.com/2019/05/01/nvida-jetson-nano-%E5%88%9D%E9%AB%94%E9%A9%97%EF%BC%9A%E5%AE%89%E8%A3%9D%E8%88%87%E6%B8%AC%E8%A9%A6/">NVida Jetson Nano 初體驗（一）安裝與測試</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.rs-online.com/designspark/jetson-nano-1-cn">[第一次用Jetson Nano 就上手]硬體介紹、開機步驟、遠端連線（繁體）</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.pyimagesearch.com/2019/05/06/getting-started-with-the-nvidia-jetson-nano/">Getting started with the NVIDIA Jetson Nano - pyimagesearch</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jetsonhacks.com/2019/11/22/opencv-4-cuda-on-jetson-nano/">OpenCV 4 + CUDA on Jetson Nano - JetsonHacks</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jetsonhacks.com/2019/04/02/jetson-nano-raspberry-pi-camera/">Jetson Nano + Raspberry Pi Camera - JetsonHacks</a></li>
+<li><a target="_blank" rel="noopener" href="https://jkjung-avt.github.io/opencv-on-nano/">Installing OpenCV 3.4.6 on Jetson Nano - JK Jung's blog</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/NVIDIA-AI-IOT/jetbot/issues/55">how to run a jetbot right after bootup? #55 - NVIDIA-AI-IOT/jetbot</a></li>
+<li><a target="_blank" rel="noopener" href="https://forums.developer.nvidia.com/t/gstreamer-error-when-accessing-onboard-camera/80446">GStreamer: Error when accessing onboard camera - NVIDIA Developer Forum</a></li>
+<li><a target="_blank" rel="noopener" href="https://forums.developer.nvidia.com/t/gstreamer-error-when-accessing-onboard-camera/80446">How to slove opencv green screen? - NVIDIA Developer Forum</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%BA%8C)%20%E2%80%93%20Jetson%20Nano/" title="Jetson Nano 初體驗 (二) -- Jetson Nano">https://allen108108.github.io/blog/2020/04/06/Jetson Nano 初體驗 (二) – Jetson Nano/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/04/06/Jetson%20Nano%20%E5%88%9D%E9%AB%94%E9%A9%97%20(%E4%B8%80)%20%E2%80%93%20WaveShare%20JetBot/" rel="prev" title="Jetson Nano 初體驗 (一) -- WaveShare JetBot">
+                  <i class="fa fa-chevron-left"></i> Jetson Nano 初體驗 (一) -- WaveShare JetBot
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/04/16/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E7%B3%BB%E7%B5%B1%20Face%20Recognition%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%20(%20OpenCV%20_%20Dlib%20)/" rel="next" title="人臉辨識系統 Face Recognition 開發紀錄  ( OpenCV / Dlib )">
+                  人臉辨識系統 Face Recognition 開發紀錄  ( OpenCV / Dlib ) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

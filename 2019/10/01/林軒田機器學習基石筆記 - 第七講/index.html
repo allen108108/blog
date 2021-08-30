@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第七講 : The VC Dimension 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林軒田機器學習基石筆記 - 第七講">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%83%E8%AC%9B/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第七講 : The VC Dimension 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/3ZZ099u.png">
+<meta property="og:image" content="https://i.imgur.com/CdqQidL.png">
+<meta property="article:published_time" content="2019-10-01T11:13:23.000Z">
+<meta property="article:modified_time" content="2021-08-30T14:14:22.831Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/3ZZ099u.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%83%E8%AC%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%83%E8%AC%9B/","path":"2019/10/01/林軒田機器學習基石筆記 - 第七講/","title":"林軒田機器學習基石筆記 - 第七講"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>林軒田機器學習基石筆記 - 第七講 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#about-mathbbh"><span class="nav-number">1.</span> <span class="nav-text">About \(\mathbb{H}\)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vc-dimension"><span class="nav-number">2.</span> <span class="nav-text">VC dimension</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">3.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%83%E8%AC%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          林軒田機器學習基石筆記 - 第七講
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-01 19:13:23" itemprop="dateCreated datePublished" datetime="2019-10-01T19:13:23+08:00">2019-10-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 22:14:22" itemprop="dateModified" datetime="2021-08-30T22:14:22+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9E%97%E8%BB%92%E7%94%B0-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3/" itemprop="url" rel="index"><span itemprop="name">林軒田 機器學習基石</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%83%E8%AC%9B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/01/林軒田機器學習基石筆記 - 第七講/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文為一系列課程之筆記，建議從" <a href="hhttps://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文討論內容請參考: 機器學習基石第七講 : The VC Dimension</strong></p></li>
+<li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
+</ul>
+</blockquote>
+<hr />
+<span id="more"></span>
+<p>我們先來看一下上一篇的結論 : 存在 <span class="math inline">\(Break\ point\)</span> ( 好的<span class="math inline">\(\mathbb{H}\)</span> ) 且 <span class="math inline">\(N\)</span> 夠大的情況下 ( 好的<span class="math inline">\(\mathbb{D}\)</span> )，即使 <span class="math inline">\(infinite\ \mathbb{H}\)</span>，演算法從<span class="math inline">\(E_{in}\)</span>很小的條件下挑出一個 <span class="math inline">\(g\)</span> ( 好的<span class="math inline">\(algorithm\)</span> )，都一定會有一個有限上界可以確保<span class="math inline">\(E_{in}\)</span>跟<span class="math inline">\(E_{out}\)</span>夠接近。</p>
+<h2 id="about-mathbbh">About <span class="math inline">\(\mathbb{H}\)</span></h2>
+<p>在我們往下討論這一講的內容前，我覺得我們必須花一點時間了解 <span class="math inline">\(\mathbb{H}\)</span>。 在<a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a>的時候，我們曾經有說，在探討 <span class="math inline">\(\mathbb{H}\)</span> 時，我們會把重點放在 <span class="math inline">\(\mathbb{W}\)</span>的討論上，但是我們會什麼要探討 <span class="math inline">\(\mathbb{H}\)</span> 呢? <span class="math inline">\(\mathbb{H}\)</span> 對於我們的學習有什麼意義?</p>
+<p><span class="math inline">\(\mathbb{H}\)</span> 是一個 hypothesis set，但是這些假設都是怎麼來的呢?</p>
+<p>從一個二元分類問題來看，我們曾經有說過，一個平面中，任何一條「直線」都是一個 hypothesis <span class="math inline">\(h\in\mathbb{H}\)</span>，所以 <span class="math inline">\(\mathbb{H}\)</span> 裡面就是裝著無限多條「直線」。因為我們預先假定了這個分類器是「直線」，所以 <span class="math inline">\(\mathbb{H}\)</span> 裡面不會有非線性的hypothesis在裡面。</p>
+<p>所以，在我們進行 Machine Learning 時，我們會決定我們要用什麼樣子的分類器，而這也決定了我們的 <span class="math inline">\(\mathbb{H}\)</span> 長什麼樣子，當然， <span class="math inline">\(\mathbb{W}\)</span> 也在這時候決定了。</p>
+<p><span class="math inline">\(Algorithm\ (model)\longleftrightarrow \mathbb{H}\longleftrightarrow \mathbb{W}\)</span></p>
+<p>所以這就是為什麼往後的課程都會討論 <span class="math inline">\(\mathbb{H}\)</span> ， 因為這樣的一個 hypothesis set 也足以代表了你的分類器。</p>
+<h2 id="vc-dimension">VC dimension</h2>
+<p>OK，了解了 <span class="math inline">\(\mathbb{H}\)</span> 所代表的意義後，我們需要有一個衡量這個 <span class="math inline">\(\mathbb{H}\)</span> 的方法，於是有了以下 VC dimension 的定義 :</p>
+<ul>
+<li>Vapnik-Chervonenkis Dimension <span class="math inline">\(d_{vc}(\mathbb{H})\ or\ VC(\mathbb{H}):\)</span> <span class="math inline">\(The\ largest\ value\ of\ N\  s.t.\ m_\mathbb{H}(N)=2^N\)</span> <span class="math inline">\(d_{vc}(\mathbb{H})=\)</span> 能被shatter的最大N值 <span class="math inline">\(=\ break point\ k-1\)</span></li>
+</ul>
+<p>根據這樣的定義我們可以知道以下幾個特性 :</p>
+<ul>
+<li><span class="math inline">\(N\leq d_{vc}\ \implies\ For\ some\ detaset\ \mathbb{D}\ with\ size\ N\ can\ be\ shatter\ by\ \mathbb{H}\)</span></li>
+<li><span class="math inline">\(N&gt;d_{vc}\implies\ \forall\ dataset\ \mathbb{D}\ with\ size\ N\ can&#39;t\ be\ shatter\ by\ \mathbb{H}\)</span></li>
+<li><span class="math inline">\(N\geq 2\ , d_{vc}\geq 2\implies\ m_{\mathbb{H}}(N)\leq 2^{d_{vc}}\)</span></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>資料空間 &amp;分類型態</th>
+<th>Break Point</th>
+<th><span class="math inline">\(m_\mathbb{H}(N)\)</span></th>
+<th>O(N)</th>
+<th><span class="math inline">\(d_{vc}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1-D Positive ray</td>
+<td>2</td>
+<td>N+1</td>
+<td><span class="math inline">\(O(N)\)</span></td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>1-D Positive interval</td>
+<td>3</td>
+<td><span class="math inline">\(\frac{1}{2}N^2+\frac{1}{2}N+1\)</span></td>
+<td><span class="math inline">\(O(N^2)\)</span></td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>Convex Set</td>
+<td><span class="math inline">\(\infty\)</span></td>
+<td><span class="math inline">\(2^N\)</span></td>
+<td>--</td>
+<td><span class="math inline">\(\infty\)</span></td>
+</tr>
+<tr class="even">
+<td>2-D Perceptron</td>
+<td>4</td>
+<td><span class="math inline">\(&lt;2^N\)</span> (in some cases)</td>
+<td><span class="math inline">\(O(N^3)\)</span></td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>休息一下， 我們整理一下至今的幾個概念 : <span class="math inline">\(m_{\mathbb{H}}(N)=\)</span> N筆資料可以被切出幾個 <span class="math inline">\(dichotomies\)</span> <span class="math inline">\(B(N,K)=\)</span> N筆資料，且break point=K 的情況下，最大的<span class="math inline">\(m_{\mathbb{H}}(N)\)</span> <span class="math inline">\(d_{vc}(\mathbb{H})=\ hypotesis\ \mathbb{H}\)</span> 可以shatter的最大N值</p>
+<p>前兩個概念，基本上是一個過渡概念，主要為了證明出 VC Bound ，真正的著眼點應該在<span class="math inline">\(d_{vc}(\mathbb{H})\)</span>，因為它可以確實對 <span class="math inline">\(\mathbb{H}\)</span>做出量化測量。 一個真正夠好的 <span class="math inline">\(hypothesis\ \mathbb{H}\)</span> <span class="math inline">\(\implies d_{vc}(\mathbb{H})\ is\ finite\implies K\ exists\implies VC\ Bound\ exists\implies E_{in}\approx E_{out}\)</span></p>
+<blockquote>
+<p>在這裡，VC Dimension與 Algorithm , Distribution 或是 target function都無關</p>
+</blockquote>
+<p>不管是直觀<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>或經由繁雜的證明<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>，我們都不難確認 <span class="math inline">\(d_{vc}(\mathbb{H})= d+1\)</span> ( <span class="math inline">\(d\)</span> 為資料 <span class="math inline">\(\mathbb{X}\)</span> 的維度 )</p>
+<p>總的來說， <span class="math inline">\(h\in \mathbb{H}\ ,\ h(\mathbb{X})=Sign(\sum\limits_{i=1}^{d}w_ix_i+w_0)\)</span> * <span class="math inline">\(h\)</span> 是由 <span class="math inline">\((w_1,w_2,w_3,...,w_d)\)</span> 所決定，我們可以將 <span class="math inline">\(d_{vc}(\mathbb{H})=d+1\)</span>視為自由度 * <span class="math inline">\(d_{vc}(\mathbb{H})\)</span> 即為 <span class="math inline">\(\mathbb{H}\)</span> 的能力指標 * <span class="math inline">\(\mid\mathbb{H}\mid=M\ is\ finite\implies\)</span> 可以利用 <span class="math inline">\(M\)</span> 來控制VC bound <span class="math inline">\(\mid\mathbb{H}\mid=M\ is\ infinite\implies\)</span> 可以利用 <span class="math inline">\((2N)^{d_{vc}}\)</span> 取代 <span class="math inline">\(M\)</span> 來控制 VC bound</p>
+<p><strong>[ Remark ] 讓我們來重新審視一下 VC Bound</strong></p>
+<p><span class="math inline">\(\mathbb{P}_{\mathbb{D}}[\\![\mid E_{in}(g)-E_{out}(g)\mid&gt;\epsilon]\\!]\leq 4(2N)^{d_{vc}}e^{-\frac{1}{8}\epsilon^2N}\)</span></p>
+<p><span class="math inline">\(\Longleftrightarrow\mathbb{P}_{\mathbb{D}}[\\![\mid E_{in}(g)-E_{out}(g)\mid\leq\epsilon]\\!]\geq 1-\delta\)</span> , where <span class="math inline">\(\delta=4(2N)^{d_{vc}}e^{-\frac{1}{8}\epsilon^2N}\)</span></p>
+<p>有很高的機率 ( <span class="math inline">\(\geq1-\delta\)</span> )，<span class="math inline">\(E_{in}\)</span> 與 <span class="math inline">\(E_{out}\)</span> 會很接近 ( <span class="math inline">\(\mid E_{in}(g)-E_{out}(g)\mid\leq\epsilon\)</span> )</p>
+<p><span class="math inline">\(\because\delta=4(2N)^{d_{vc}}e^{-\frac{1}{8}\epsilon^2N}\)</span> <span class="math inline">\(\therefore\epsilon=\sqrt{\frac{8}{N}\ln(\frac{4(2N)^{d_vc}}{\delta})}\)</span></p>
+<p><span class="math inline">\(\therefore\ \mid E_{in}(g)-E_{out}(g)\mid\leq\epsilon=\sqrt{\frac{8}{N}\ln(\frac{4(2N)^{d_vc}}{\delta})}\overset{defn}{=}\Omega(N,\mathbb{H},\delta)=penalty\ for\ model\)</span></p>
+<p><span class="math inline">\(\Longrightarrow \begin{matrix} \underbrace{ E_{in}(g)-\sqrt{\frac{8}{N}\ln(\frac{4(2N)^{d_vc}}{\delta})} } \\ We\ don&#39;t\ care\ this\ part\end{matrix}\leq E_{out}(g)\leq E_{in}(g)+\sqrt{\frac{8}{N}\ln(\frac{4(2N)^{d_vc}}{\delta})}\)</span></p>
+<p><span class="math inline">\(\overset{High\ Prob.}{\Longrightarrow}E_{out}(g)\leq E_{in}(g)+\sqrt{\frac{8}{N}\ln(\frac{4(2N)^{d_vc}}{\delta})}\)</span></p>
+<p><img src="https://i.imgur.com/3ZZ099u.png" /></p>
+<p>從上面推導出的不等式，配合 <span class="math inline">\(Error - d_{vc}\)</span> 圖來看，我們會發現最好的解出現在中間。</p>
+<h2 id="註釋">註釋</h2>
+<p><span class="math inline">\(\forall\ \mathbb{Y}=(y_0,y_1,...,y_d)\ where\ y_i\in\left\{+1,-1\right\}\)</span> <span class="math inline">\(\exists\ \mathbb{W}=(y_1-y_0,y_2-y_0,...,y_d-y_0)\)</span> <span class="math inline">\(s.t.\ h(\mathbb{X}_i)=Sign(\mathbb{W}^T \mathbb{X}_i + y_0)=Sign(y_i-y_0+y_0)=y_i\ ,\ \forall i=0,1,...,d\)</span> <span class="math inline">\(\implies\)</span>無論這個 <span class="math inline">\(\mathbb{D}\)</span> 怎麼分類 ( 意即不管 <span class="math inline">\(\mathbb{X}_i\)</span> 對應到怎樣的 <span class="math inline">\(y_i\)</span>)，我們都能找到一個 <span class="math inline">\(h\)</span> <span class="math inline">\(\implies\)</span> <span class="math inline">\(\mathbb{D}\)</span>可以被<span class="math inline">\(\mathbb{H}\)</span> shatter <span class="math inline">\(d_{vc}(\mathbb{H})\geq d+1\)</span></p>
+<p><span class="math inline">\(Claim:d_{vc}\leq d+1\implies\mathbb{D}\ with\ size-d+2\ cannot\ be\ shatter\)</span> <span class="math inline">\(Suppose\ to\ the\ contrary\ that\)</span> <span class="math inline">\(\exists \mathbb{D}=\left\{\mathbb{X}_0,\mathbb{X}_1,...,\mathbb{X}_d,\mathbb{X}_{d+1},\mathbb{X}_{d+2}\right\}\ can\ be\ shattered\)</span></p>
+<p><span class="math inline">\(\because\mathbb{D}\subseteq\mathbb{R}^d\)</span> <span class="math inline">\(\therefore \mathbb{X}_i=\sum\limits_{j\neq i}a_j\mathbb{X}_j\)</span> <span class="math inline">\(\implies\mathbb{W}^T \mathbb{X}_i=\sum\limits_{j\neq i}a_j\mathbb{W}^T\mathbb{X}_j\)</span></p>
+<p><span class="math inline">\(\because \mathbb{D}\ can\ be\ shattered\)</span> <span class="math inline">\(\therefore \forall\ \mathbb{Y}=\left\{y_1,...,y_{d+2}\right\}\subseteq\left\{+1,-1\right\}\)</span> (不管 <span class="math inline">\(\mathbb{X}_k\)</span> 怎麼被分類) <span class="math inline">\(\exists\ \mathbb{W}\ s.t.\ y_k=Sign(\mathbb{W}^T\mathbb{X}_k)\)</span> (我們都可以找到 <span class="math inline">\(\mathbb{W}\)</span> 來滿足)</p>
+<p>那我們指定一個特殊的分類 : <span class="math inline">\(\mathbb{X}_i=y_i=-1\)</span> 且 <span class="math inline">\(\mathbb{X}_j=y_j=Sign(a_j)\ ,\ \forall j\neq i\)</span> <span class="math inline">\(\implies \mathbb{W}^T\mathbb{X}&lt;0\ and\ (\mathbb{W}^T\mathbb{X}_j)\cdot(Sign(a_j))&gt;0\)</span> (兩者同號) <span class="math inline">\(\implies\mathbb{W}^T\mathbb{X}=\sum\limits _{j\neq i}a_j\mathbb{W}^T\mathbb{X}_j&gt;0\)</span> (Contradiction!)</p>
+<p><span class="math inline">\(\therefore\forall\mathbb{D}\ with\ size-d+2\ cannot\ be\ shattered\)</span> <span class="math inline">\(\implies d_{vc}(\mathbb{H})\leq d+1\)</span></p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>從 Linear Algebra 的角度來看，我們可以如下定義出「dimension」: <span class="math inline">\(V\ is\ a\ vector\ space\ ,dim(V)=the\ cardinal\ number\ of\ B\)</span> <span class="math inline">\(where\ B\ is\ a\ basis\ of\ V\ i.e.\ V=span(B)\ and\ B\ is\ a\ linear\ independent\ set.\)</span> 對比到我們的hypothesis set <span class="math inline">\(\mathbb{H}\)</span>，之前我們才說過，<span class="math inline">\(\mathbb{H}\)</span> 可以唯一由 <span class="math inline">\(\left\{w_0,w_1,...,w_d\right\}\)</span> 決定，且 <span class="math inline">\(w_i\)</span>之間互相獨立，如若我們把 VC dimension 看成是 <span class="math inline">\(\mathbb{H}\)</span> 這個空間的維度，那麼也可以把 <span class="math inline">\(\left\{w_0,w_1,...,w_d\right\}\)</span> 看成是他的一組基底，那麼 VC dimension很明顯的就是 <span class="math inline">\(d+1\)</span>。 <img src="https://i.imgur.com/CdqQidL.png" /> 其實意義上跟課程的這個圖是一樣的。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>試證明 <span class="math inline">\(VC\ dimension=d+1\)</span> &lt;p.f&gt; <span class="math inline">\(Claim:d_{vc}\geq d+1\)</span> <span class="math inline">\(Assume\ \mathbb{D}=\left\{\mathbb{X}_0,\mathbb{X}_1,...,\mathbb{X}_d\right\}\)</span> <span class="math inline">\(where\ \mathbb{X}_0=(0,0,...,0)\)</span> <span class="math inline">\(\mathbb{X}_1=(1,0,...,0)\)</span> <span class="math inline">\(\vdots\)</span> <span class="math inline">\(\mathbb{X}_d=(0,0,...,1)\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%83%E8%AC%9B/" title="林軒田機器學習基石筆記 - 第七講">https://allen108108.github.io/blog/2019/10/01/林軒田機器學習基石筆記 - 第七講/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%BA%94%E8%AC%9B%E3%80%81%E7%AC%AC%E5%85%AD%E8%AC%9B/" rel="prev" title="林軒田機器學習基石筆記 - 第五講、第六講">
+                  <i class="fa fa-chevron-left"></i> 林軒田機器學習基石筆記 - 第五講、第六講
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E5%85%AB%E8%AC%9B/" rel="next" title="林軒田機器學習基石筆記 - 第八講">
+                  林軒田機器學習基石筆記 - 第八講 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

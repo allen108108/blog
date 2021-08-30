@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="Representing Graph \(G&#x3D;(V,E)\) is a graph * \(\mid V\mid&#x3D;\) the number of nodes \(\overset{let}{&#x3D;} n\) \(\mid E\mid&#x3D;\) the number of edges \(\overset{let}{&#x3D;} m\) \(\Longrightarrow n-1\leq m\leq \disp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 3 -- Graph ( 2 )">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/11/Chapter%203%20%E2%80%93%20Graph%20(%202%20)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="Representing Graph \(G&#x3D;(V,E)\) is a graph * \(\mid V\mid&#x3D;\) the number of nodes \(\overset{let}{&#x3D;} n\) \(\mid E\mid&#x3D;\) the number of edges \(\overset{let}{&#x3D;} m\) \(\Longrightarrow n-1\leq m\leq \disp">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/qJR1Rm6.png">
+<meta property="og:image" content="https://i.imgur.com/5UcHSnc.jpg">
+<meta property="og:image" content="https://i.imgur.com/bNZmeNI.jpg">
+<meta property="article:published_time" content="2019-10-11T02:50:22.000Z">
+<meta property="article:modified_time" content="2019-11-02T04:00:54.124Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/qJR1Rm6.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/11/Chapter%203%20%E2%80%93%20Graph%20(%202%20)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/11/Chapter%203%20%E2%80%93%20Graph%20(%202%20)/","path":"2019/10/11/Chapter 3 – Graph ( 2 )/","title":"Chapter 3 -- Graph ( 2 )"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Chapter 3 -- Graph ( 2 ) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#representing-graph"><span class="nav-number">1.</span> <span class="nav-text">Representing Graph</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#adjacency-matrix"><span class="nav-number">1.1.</span> <span class="nav-text">Adjacency Matrix</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#adjacency-list"><span class="nav-number">1.2.</span> <span class="nav-text">Adjacency List</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#implementation"><span class="nav-number">2.</span> <span class="nav-text">Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#queue"><span class="nav-number">2.1.</span> <span class="nav-text">Queue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stack"><span class="nav-number">2.2.</span> <span class="nav-text">Stack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#implementing-bfs"><span class="nav-number">2.3.</span> <span class="nav-text">Implementing BFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#implementing-dfs"><span class="nav-number">2.4.</span> <span class="nav-text">Implementing DFS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#summary"><span class="nav-number">3.</span> <span class="nav-text">Summary</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#adjacency-matrix-vs.-adjacency-list-for-graph"><span class="nav-number">3.1.</span> <span class="nav-text">Adjacency matrix VS. Adjacency list for graph</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#graph-traversal"><span class="nav-number">3.2.</span> <span class="nav-text">Graph traversal</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/11/Chapter%203%20%E2%80%93%20Graph%20(%202%20)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Chapter 3 -- Graph ( 2 )
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-11 10:50:22" itemprop="dateCreated datePublished" datetime="2019-10-11T10:50:22+08:00">2019-10-11</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-11-02 12:00:54" itemprop="dateModified" datetime="2019-11-02T12:00:54+08:00">2019-11-02</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%B1%9F%E8%95%99%E5%A6%82-Algorithm/" itemprop="url" rel="index"><span itemprop="name">江蕙如 Algorithm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/11/Chapter%203%20%E2%80%93%20Graph%20(%202%20)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/11/Chapter 3 – Graph ( 2 )/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="representing-graph">Representing Graph</h2>
+<p><span class="math inline">\(G=(V,E)\)</span> is a graph * <span class="math inline">\(\mid V\mid=\)</span> the number of nodes <span class="math inline">\(\overset{let}{=} n\)</span> <span class="math inline">\(\mid E\mid=\)</span> the number of edges <span class="math inline">\(\overset{let}{=} m\)</span> <span class="math inline">\(\Longrightarrow n-1\leq m\leq \displaystyle{\binom{n}{r}} \leq n^2\)</span> <span class="math inline">\(\Longrightarrow\)</span> 我們會希望整個複雜度可以控制在 <span class="math inline">\(O(m+n)\)</span></p>
+<span id="more"></span>
+<h3 id="adjacency-matrix">Adjacency Matrix</h3>
+<p>The <span class="math inline">\(adjacency\ matrix\)</span> of <span class="math inline">\(G\)</span> 是一個 <span class="math inline">\(n\times n\)</span> 矩陣 <span class="math inline">\(A\)</span> <span class="math display">\[
+A=\begin{bmatrix}a_{11}a_{12}\cdots a_{1n}\\a_{21}a_{22}\cdots a_{2n}\\\vdots\\a_{n1}a_{n2}\cdots a_{nn}\end{bmatrix}
+\]</span> * <span class="math inline">\(a_{ij}=1\)</span> , if <span class="math inline">\((i,j)\in E\)</span> * <span class="math inline">\(a_{ij}=0\)</span> , if <span class="math inline">\((i,j)\not\in E\)</span> * If <span class="math inline">\(G\)</span> is undirected graph, then <span class="math inline">\(A\)</span> is symmetric. * The time complexity for checking if <span class="math inline">\((i,j)\in E=O(1)\)</span> ( 我們只要找第 <span class="math inline">\(i\)</span> 列第 <span class="math inline">\(j\)</span> 行即可知道是否存在 <span class="math inline">\((i,j)\)</span> ) * The time complexity for finding out all neighbors of <span class="math inline">\(i\in V=O(n)\)</span> ( 需要遍歷第 <span class="math inline">\(i\)</span> 行(列)，才能找出所有 neighbors ) * The space complexity <span class="math inline">\(=O(n^2)\)</span></p>
+<p>我們可以從這個矩陣中 0 的數量跟密集程度來看看這是 Sparse Graph 還是 Dense Graph，如果今天是一個 Sparse Graph，其矩陣也是 Sparse，那麼相當於我們必須利用許多的空間來儲存 0 這樣無意義的資料，由此我們可以知道， 使用 adjacency matrix 來表示 Sparse Graph 是不太適合的。</p>
+<h3 id="adjacency-list">Adjacency List</h3>
+<p><span class="math inline">\(Adjacency\ List\)</span> 中我們會先以一個 array 儲存每一個 vertex，之後再用 Linked List 來表示 vertex 與 vertex 之間的相鄰關係。</p>
+<p><span class="math display">\[
+Adj[i]=\{j\mid (i,j)\in E\}\\
+\mid Adj[i]\mid=degree(i)=deg(i)=the\ number\ of\ neighbors\ of\ i
+\]</span></p>
+<ul>
+<li>The time complexity for checking if <span class="math inline">\((i,j)\in E=O(n)\)</span> ( the worse case 就是要遍歷完整串 Linked List 才會確認兩者是否存在 edge )</li>
+<li>The space complexity <span class="math inline">\(=O(n+m)\)</span></li>
+<li>in-degree : 指的就是指向自己的 edge 數 out-degree : 指的就是指向別人的 edge 數</li>
+</ul>
+<p><img src="https://i.imgur.com/qJR1Rm6.png" /> ( Adjacency Mtrix v.s. Adjacency List，圖片來源 : <a target="_blank" rel="noopener" href="http://alrightchiu.github.io/SecondRound/graph-introjian-jie.html">Graph: Intro(簡介)</a> )</p>
+<h2 id="implementation">Implementation</h2>
+<p>在介紹 BFS 與 DFS 的 implementation 之前，我們要先了解所使用的資料結構 : Queue and Stack</p>
+<h3 id="queue">Queue</h3>
+<p>Queue 我們可以看作是一個水管，資料進出的型態是 「先進先出」 (First in, First out. FIFO)，而這樣的資料結構伴隨兩個 Pointer : front 以及 rear，這兩個指標分別指出目前資料的頭尾，其實也是指出接下來要輸出、輸入的資料位置。</p>
+<p><img width=500 src="https://i.imgur.com/5UcHSnc.jpg" ></p>
+<h3 id="stack">Stack</h3>
+<p>而 Stack 比較像是一個水瓶，資料型態則是 「後進先出」 (Last in, First out. LIFO)，值得注意的是，在 Stack 這樣的資料型態中，我們只需要一個 Pointer : Top ，用來指出最後進來的資料是誰，也相當於指出接下來要輸出的資料是哪一筆。</p>
+<p><img width=250 src="https://i.imgur.com/bNZmeNI.jpg" ></p>
+<p>不論是 Queue 還是 Stack，我們都可以利用 Linked List 來進行 implement。</p>
+<h3 id="implementing-bfs">Implementing BFS</h3>
+<p>在要進行 BFS 的 implementation 以前，我們得先決定 Garaph representation，在 BFS 裡面我們使用的是 Adjacency List 來表現一個 Graph，其原因是 Adjacency List 的儲存方式跟 BFS 的搜索方式是吻合的，如此一來可以有效降低 Complexity。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// T is a BFS tree rooted s</span><br><span class="line">// Layers count i</span><br><span class="line">// L[i] is Layer_list</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">BFS(s)</span><br><span class="line">1. init i=0, L[0]=&#123;s&#125;, T=&#123;&#125; and mark[s]=True, marked[others] are False</span><br><span class="line"># 設定各項初始值</span><br><span class="line">2. while L[i] is not empty then L[i+1]=&#123;&#125;</span><br><span class="line">       for each u in L[i] </span><br><span class="line">           for each (u,v) in E :</span><br><span class="line">               if marked[v] = false then</span><br><span class="line">                   marked[v] = true</span><br><span class="line">                   T = T + &#123;(u,v)&#125;</span><br><span class="line">                   L[i+1] = L[i+1] + &#123;v&#125;</span><br><span class="line">       i+=1</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>對於 <span class="math inline">\(L[i]\)</span> ，我們應該要用什麼資料結構來處理 ? 事實上，Queue / Stack 均可，這兩者差異在於資料處理的順序，但在 BFS 中，每個 Layer 內部的順序性並非那麼重要。( 但若我們今天只想要用一條 List 儲存所有的 Layer 那就必須使用 Queue，因為層與層之間的順序性必須被考慮進去。 )</p></li>
+<li><p>Time Complexity : <span class="math inline">\(O(m+n)\)</span> 在 BFS 的過程中，每一個 Vertex 都必須 check 每一個 neighbor，如果我們選用的是 Adjacency List ，便可把複雜度控制在 <span class="math inline">\(O(m+n)\)</span> 之中。</p></li>
+</ul>
+<p>但倘若我們選擇的是 Adjacency Matrix，則複雜度會趨近於 <span class="math inline">\(n^2\)</span> 。</p>
+<h3 id="implementing-dfs">Implementing DFS</h3>
+<p>之前我們給的 DFS 是一個 recursive code，也可以將其譯為一個 iterative 的版本。</p>
+<p>這裡我們使用的是 stack 的型態來處理 vertex set S。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// S is a stack of vertice its neighbors haven&#x27;t been marked entirely.</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DFS(s)</span><br><span class="line">1. init S=&#123;s&#125;</span><br><span class="line">2. while S is not empty then</span><br><span class="line">       remove a vertex u from S</span><br><span class="line">       if marked[u] = false then</span><br><span class="line">           marked[u] = true</span><br><span class="line">           for each (u,v) in E </span><br><span class="line">               S+=&#123;v&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>iterative code 使用的是 stack 形式做處理，而 recursive code 其實也是 stack，因為 recursive 本身就是一個 stack 形式。</li>
+<li>Time Complexity : <span class="math inline">\(O(m+n)\)</span> .... Adjacency List</li>
+</ul>
+<h2 id="summary">Summary</h2>
+<h3 id="adjacency-matrix-vs.-adjacency-list-for-graph">Adjacency matrix VS. Adjacency list for graph</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>Choice</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Find an edge</td>
+<td>Adjacency matrix</td>
+<td><span class="math inline">\(O(1)\)</span></td>
+</tr>
+<tr class="even">
+<td>Find degree</td>
+<td>Adjacency list</td>
+<td><span class="math inline">\(&lt;O(n)\)</span></td>
+</tr>
+<tr class="odd">
+<td>Traverse the graph</td>
+<td>Adjacency list</td>
+<td><span class="math inline">\(O(m+n)\)</span></td>
+</tr>
+<tr class="even">
+<td>Storage for sparse graph</td>
+<td>Adjacency list</td>
+<td><span class="math inline">\(&lt;O(n^2)\)</span></td>
+</tr>
+<tr class="odd">
+<td>Storage for dense graph</td>
+<td>Adjacency matrix</td>
+<td><span class="math inline">\(O(n^2)\)</span></td>
+</tr>
+<tr class="even">
+<td>Edge insertion/deletion</td>
+<td>Adjacency matrix</td>
+<td><span class="math inline">\(O(1)\)</span></td>
+</tr>
+<tr class="odd">
+<td>Most application</td>
+<td>Adjacency list</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3 id="graph-traversal">Graph traversal</h3>
+<ul>
+<li>Data structure of BFS : queue / stack</li>
+<li>Data structure of DFS : stack</li>
+<li>Implementation of BFS/DFS with Adjacency list : <span class="math inline">\(O(n+m)\)</span></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/11/Chapter%203%20%E2%80%93%20Graph%20(%202%20)/" title="Chapter 3 -- Graph ( 2 )">https://allen108108.github.io/blog/2019/10/11/Chapter 3 – Graph ( 2 )/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/11/Reinforcement%20Learning/" rel="prev" title="Reinforcement Learning">
+                  <i class="fa fa-chevron-left"></i> Reinforcement Learning
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/13/%E5%B0%87%20VS%20Code%20%E7%B5%82%E7%AB%AF%E6%A9%9F%E9%A0%90%E8%A8%AD%E6%88%90%E7%82%BA%20Anaconda%20Prompt/" rel="next" title="將 VS Code 終端機預設成為 Anaconda Prompt">
+                  將 VS Code 終端機預設成為 Anaconda Prompt <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

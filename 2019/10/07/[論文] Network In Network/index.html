@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="概述 一般的 Convolutional Neural Network ( CNN ) 模型包含了卷積層以及池化層。卷積層中藉由 filters ( kernels ) 對輸入層的每一個局部域做線性卷積運算後再通過非線性的 activation function 輸出 feature maps。而池化層利用 subsampling 在不影響特徵的前提下縮減參數數量，並且提高感受野 ( recep">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[論文] Network In Network">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/07/[%E8%AB%96%E6%96%87]%20Network%20In%20Network/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="概述 一般的 Convolutional Neural Network ( CNN ) 模型包含了卷積層以及池化層。卷積層中藉由 filters ( kernels ) 對輸入層的每一個局部域做線性卷積運算後再通過非線性的 activation function 輸出 feature maps。而池化層利用 subsampling 在不影響特徵的前提下縮減參數數量，並且提高感受野 ( recep">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/smNdXaV.png">
+<meta property="og:image" content="https://i.imgur.com/ivySLGK.png">
+<meta property="og:image" content="https://i.imgur.com/RPoQgTd.png">
+<meta property="og:image" content="https://i.imgur.com/9aYZff6.png">
+<meta property="article:published_time" content="2019-10-06T18:55:47.000Z">
+<meta property="article:modified_time" content="2020-07-28T00:54:09.465Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/smNdXaV.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/07/[%E8%AB%96%E6%96%87]%20Network%20In%20Network/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/07/[%E8%AB%96%E6%96%87]%20Network%20In%20Network/","path":"2019/10/07/[論文] Network In Network/","title":"[論文] Network In Network"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[論文] Network In Network | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-convolutional-neural-network"><span class="nav-number">2.</span> <span class="nav-text">卷積神經網路 Convolutional Neural Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#network-in-network"><span class="nav-number">3.</span> <span class="nav-text">Network in Network</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%B1%A4%E6%84%9F%E7%9F%A5%E5%99%A8%E5%8D%B7%E7%A9%8D%E5%B1%A4-mlp-convolutional-layers"><span class="nav-number">3.1.</span> <span class="nav-text">多層感知器卷積層 MLP Convolutional Layers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%B9%B3%E5%9D%87%E6%B1%A0%E5%8C%96-global-average-pooling"><span class="nav-number">3.2.</span> <span class="nav-text">全局平均池化 Global Average Pooling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#network-in-network-structure"><span class="nav-number">3.3.</span> <span class="nav-text">Network In Network Structure</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%A6%E9%A9%97%E7%B5%90%E6%9E%9C"><span class="nav-number">4.</span> <span class="nav-text">實驗結果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#visualization-of-nin"><span class="nav-number">4.1.</span> <span class="nav-text">Visualization of NIN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%90%E8%AB%96"><span class="nav-number">5.</span> <span class="nav-text">結論</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">6.</span> <span class="nav-text">後記</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">7.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">8.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/07/[%E8%AB%96%E6%96%87]%20Network%20In%20Network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [論文] Network In Network
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-07 02:55:47" itemprop="dateCreated datePublished" datetime="2019-10-07T02:55:47+08:00">2019-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2020-07-28 08:54:09" itemprop="dateModified" datetime="2020-07-28T08:54:09+08:00">2020-07-28</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-Convolutional-Neural-Network/" itemprop="url" rel="index"><span itemprop="name">卷積神經網路 Convolutional Neural Network</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/07/%5B%E8%AB%96%E6%96%87%5D%20Network%20In%20Network/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/07/[論文] Network In Network/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="概述">概述</h2>
+<p>一般的 Convolutional Neural Network ( CNN ) 模型包含了卷積層以及池化層。卷積層中藉由 filters ( kernels ) 對輸入層的每一個局部域做線性卷積運算後再通過非線性的 activation function 輸出 feature maps。而池化層利用 subsampling 在不影響特徵的前提下縮減參數數量，並且提高感受野 ( receptive field )。 <span id="more"></span></p>
+<p>然而作者認為 CNN 是一個廣義線性模型 ( Generalized Linear Model,GLM )，在 GLM 中萃取出來的特徵都是抽象化程度低的特徵。所謂的抽象化程度<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>意即某一個概念，在進行特徵轉換的過程當中，能夠保有多少的不變性。抽象化程度越高的特徵，在一連串轉換下便能保有更高的不變性，也越不受外界干擾而產生影響。這樣也表示 CNN 是以資料轉換到特徵空間中是線性可分的條件做為前提，但在現實狀況下，轉換後的資料通常都是以 非線性流形( nonlinear manifold )存在，因此作者希望將 CNN 中 GLM 的部分利用非線性結構來取代。</p>
+<p>Network in Network ( NIN ) 便是在這樣的概念發想中產生，利用 MLPConv Layer 來取代傳統 CNN 中的 Conv Layer。在 MLPConv Layer 中仍保留傳統 Conv Layer 中共享權重的特性對於輸入圖像進行滑窗運算。</p>
+<p><img src="https://i.imgur.com/smNdXaV.png" /></p>
+<p>而 NIN 便是由 MLPConv Layers 堆疊組合而成的模型。</p>
+<p>在傳統 CNN 中，最後會有一個 Fully Connected Layer 作為分類器，而在 NIN　捨棄了這樣的設計，選擇以 Global Average Pooling Layer 在最後一層 MLPConv Layer 輸出的 feature maps 映射到各個分類上，再通過 softmax 計算分類結果。</p>
+<p>若我們今天要做 C 個分類，便在最後一層 MLPConv Layer 輸出 C 個 Feature maps，而這些 Feature maps 會映射到 C 維向量的每一個維度上，最後再由 softmax 做分類。</p>
+<p><img src="https://i.imgur.com/ivySLGK.png" /></p>
+<p>Global Average Pooling Layer 解決了一直以來 FC Layer 猶如黑箱般解釋性低的狀況，Global Average Pooling Layer 為這樣的分類過程賦予意義。除此之外， FC Layer 的 overfitting 狀況也可以因此避免。</p>
+<h2 id="卷積神經網路-convolutional-neural-network">卷積神經網路 Convolutional Neural Network</h2>
+<p>當資料經過特徵轉換後是線性可分的，那麼傳統 CNN 的線性卷積運算應該足以對特徵進行足夠的抽象化萃取。</p>
+<p>然而，現實情況下，資料轉換到特徵空間中都是高度非線性函數，按理來說，只要我們的 filters 足夠多，仍足以對任意非線性函數進行近似逼近，但此舉亦會造成整個模型的參數量暴增，因此，若能在局部特徵萃取時便能做到近似非線性的逼近，便能避免使用大量 filters 來逼近。</p>
+<p>作者注意到 Maxout Network <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>利用可學習性的 maximum activation function 來降低 feature maps 的數量，並且這樣的方式可以逼近任意的凸函數，似乎可以改善傳統 CNN 無法有效非線性函數的缺點。</p>
+<p>雖然 Maxout Network 看起來很強大，但卻只能逼近「凸函數」，這樣的條件在一般狀況下並不一定會成立，因此作者在此論文中提出了 NIN 這樣的網路架構來解決 CNN 無法妥善處理的問題。</p>
+<h2 id="network-in-network">Network in Network</h2>
+<h3 id="多層感知器卷積層-mlp-convolutional-layers">多層感知器卷積層 MLP Convolutional Layers</h3>
+<p>由於我們對於隱含特徵並沒有任何先驗資訊，因此作者會希望利用函數來逼近進而藉此來進行特徵萃取。一般來說，用來逼近的方式有 MLP ( multilayer perceptron ) 與 RBF Network ( radio basis function network )。在論文中，作者使用 MLP 的主要原因有 : 1. MLP 與使用反向傳播 ( Backpropagation ) 的CNN可互相兼容 2. MLP 可以是很深層的網路結構，符合 feature re-use[^1] 的精神。</p>
+<p>從計算上來看， 傳統 CNN 中 Conv Layer 與 NIN 中 MLPConv Layer 的差別 : Conv Layer : ( <span class="math inline">\(x_{i,j}\)</span> 為輸入圖像中第 <span class="math inline">\(i\)</span>行<span class="math inline">\(j\)</span>列的像素,<span class="math inline">\(k\)</span> 為channel ) <span class="math display">\[
+f_{i,j,k}=\max(w_k^Tx_{i,j},0)\cdots\cdots(1)
+\]</span></p>
+<p>MLPConv Layer : ( <span class="math inline">\(n\)</span> 為 MLP 的層數 ) <span class="math display">\[
+f_{i,j,k_1}^1=\max({w_{k_1}^1}^Tx_{i,j}+b_{k_1},0)\\
+f_{i,j,k_2}^2=\max({w_{k_2}^2}^Tf_{i,j}^1+b_{k_2},0)\\
+\vdots\\
+f_{i,j,k_n}^n=\max({w_{k_n}^n}^Tf_{i,j}^{n-1}+b_{k_2},0)\cdots\cdots(2)
+\]</span></p>
+<p>從 MLPConv Layer 的計算過程來看，第一層是一般的卷積運算，之後每經過一層MLP運算，等於將上一層的各個 channels、feature maps 的資訊混合加權運算 ，這相當於在傳統的 CNN Conv Layer 中進行 Cascaded Cross Channel Parametric Pooling ( 級聯跨信道參數池化，我自己理解就是對不同 Channel 進行訊息交流的池化過程 )，經由一層又一層的 MLP layer，不同 channel 間的訊息可以一次又一次的交流，便可以實現複雜且可學習的 cross channel information 交流。</p>
+<p>值得注意的是，Cascaded Cross Channel Parametric Pooling 這樣的結構就等同於一個 <span class="math inline">\(1\times 1\)</span> convolution layer<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>。</p>
+<p>所以 NIN 中 MLPConv Layer 我們可以視為是一般傳統 CNN 卷積層後再接一個 <span class="math inline">\(1\times 1\)</span> 卷積層，也是將原本 CNN 網路變得更深的方式。</p>
+<p>我們也可以跟 Maxout Network 來做比較 :</p>
+<p><span class="math display">\[
+f_{i,j,k}=\max_{m}(w_k^Tx_{i,j})\cdots\cdots(3)
+\]</span></p>
+<ol start="3" type="1">
+<li>式其實就會形成一個分段函數，這樣的分段函數可以逼近任何一個凸函數，而MLPConv Layer 作為一個更通用的函數逼近器，在各方面都會比 Maxout 這種凸函數逼近器來的強大。</li>
+</ol>
+<h3 id="全局平均池化-global-average-pooling">全局平均池化 Global Average Pooling</h3>
+<p>傳統 CNN 中，將最後一個卷積層後的數值形成一個向量，然後作為輸入層餵進一個全連接層中，最後再以 softmax 進行分類。全連接層將卷積結構與傳統的神經網路連結起來，以卷積層作為特徵萃取，再進行分類。</p>
+<p>這樣的方法非常容易產生 overfitting，在 AlexNet 中利用了 Dropout 技術提高模型泛化能力，並防止 overfitting 的發生。</p>
+<p>在此論文中，作者提出了另外一種方式 --- 全局平均池化 ( Global Average Pooling ) --- 取代傳統的全連接層。</p>
+<p>Global Average Pooling 捨棄了傳統的全連接層，於最後一個卷積層中輸出數量等同於分類數目的 feature maps，再取每一個 feature maps 的平均值輸出成一個向量 ( 維度亦為分類數目 )，丟進 softmax 中進行分類。這樣的方式有幾個優點 :</p>
+<ol type="1">
+<li>增強了 feature map 與類別之間的關係</li>
+<li>Global Average Pooling 中沒有參數需要優化，可避免 overfitting</li>
+<li>Global Average Pooling 將空間資訊結合，對輸入特徵的空間轉換具有更好的強健性。</li>
+</ol>
+<p>作者在此段最後說明， Global Average Pooling 就是一個 regulaizer，強制將最後輸出的 feature maps 直接映射到分類機率<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>。</p>
+<h3 id="network-in-network-structure">Network In Network Structure</h3>
+<p>由上面敘述中可以清楚了解到 MLPConv Layer 以及 Global Average Pooling 的作用，而 NIN 的整體結構其實也就是底層由 MLPConv Layer 堆疊起來，頂層則是 Global Average Pooling Layer 以及 Objective Cost Layer 的一個網路結構。</p>
+<p><img src="https://i.imgur.com/RPoQgTd.png" /></p>
+<p>上圖顯示了一個具有三層 MLPConv Layers 的 NIN 結構，且每一個 MLPConv Layer 都還有三層 perceptron layer。</p>
+<p>但其實 NIN 本身是極具彈性的，我們可以在每一個 MLPConv Layer 後面再接一個 subsampling layer ，如同傳統 CNN 結構 ; 可以調整 MLPConv Layer 的數量 ; 當然也可以調整每一個 MLPConv Layer 內 perceptron layer 的數量。</p>
+<h2 id="實驗結果">實驗結果</h2>
+<p>( 此部分主要都為實驗結果的闡述，我只提出幾個論文內有趣的部分，其他的大家有興趣再自行閱讀吧 )</p>
+<h3 id="visualization-of-nin">Visualization of NIN</h3>
+<p><img src="https://i.imgur.com/9aYZff6.png" /></p>
+<p>前面討論 Global Average Pooling 時有說到，我們將最後一個 MLPConv Layer 直接輸出與目標數量相同的 feature maps，再將其映射到相對應的機率空間中。藉由這樣的方式，我們可以瞭解到最後一層 MLPConv Layer 的輸出應該要是可以反映出各分類的 feature maps。</p>
+<p>上圖便是對於這樣結論的應證。每一種類別的輸入，都會在對應到類別的 feature map 上面有最大的活化效果。如果我們加進了 Bounding Box 則可期望有更好的結果出現。</p>
+<h2 id="結論">結論</h2>
+<p>作者們提出了 NIN 這樣的結構來處理分類任務，使用 MLPConv Layer 以及 Global Average Pooling 來取代傳統 CNN 的 Conv Layer 及 Fully Connected Layer，有效的提取更抽象的特徵，也防止了 onerfitting 的發生，讓整個模型更具泛化性。而我們在最後一層 MLPConv Layer 的輸出也確實可以發現到，feature maps 確實的映射到相對應的類別中，更確認了 NIN 在目標檢測中具有一定的效果。</p>
+<h2 id="後記">後記</h2>
+<p>雖然說在這篇論文中，對於 <span class="math inline">\(1\times 1\)</span> 卷積層並沒有太大的著墨，但確實將這樣特別的卷積層概念帶給大家，在後面的 GoogLeNet 或是其他研究上都利用這樣的特殊卷積層有效地進行降維及跨 channel 訊息交流的功能。而往後的許多模型也沿用了 Global Average Pooling 的方式，進行最後的分類。這篇論文的確在整個圖像處理的進展中扮演著極重要的地位。</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/hjimce/article/details/50458190">深度学习（二十六）Network In Network学习笔记</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/JNingWei/article/details/79214520">深度学习: NIN (Network in Network) 网络</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@chih.sheng.huang821/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-convolutional-neural-network-cnn-1-1%E5%8D%B7%E7%A9%8D%E8%A8%88%E7%AE%97%E5%9C%A8%E5%81%9A%E4%BB%80%E9%BA%BC-7d7ebfe34b8">卷積神經網路(Convolutional neural network, CNN): 1×1卷積計算在做什麼</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.itread01.com/articles/1489258822.html">深度學習方法（十）：卷積神經網絡結構變化——Maxout Networks，Network In Network，Global Average Pooling</a></li>
+<li>Github -- <a target="_blank" rel="noopener" href="https://github.com/ms-sharma/Adversarial-Semisupervised-Semantic-Segmentation/issues/4">What does the confidence map mean?</a></li>
+</ol>
+<h2 id="註釋">註釋</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>在論文 " <em>Representation Learning: A Review and New Perspectives</em> " 中提到，「深度」是討論學習策略的一個重要面向，深度結構儘管訓練不易，但仍有著絕佳優勢 : (1) 促進了 feature re-use (2) 深層結構有助於萃取出更抽象的特徵。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>可參閱 "<a href="https://allen108108.github.io/blog/2019/10/05/Gradient%20Vanishing%20Problem%20---%20%E4%BB%A5%20ReLU%20_%20Maxout%20%E5%8F%96%E4%BB%A3%20Sigmoid%20actvation%20function/">Gradient Vanishing Problem --- 以 ReLU / Maxout 取代 Sigmoid actvation function</a>" 一文。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>可參考 "<a href="https://allen108108.github.io/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/">卷積神經網路 (Convolutional Neural , CNN)</a>"一文<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>此段原文 "<em>We can see global average pooling as a structural regularizer that explicitly enforces feature maps to be confidence maps of concepts (categories).</em> "，confidence maps 簡單一點來說，其實就是將輸出的 feature maps 映射到機率空間中。這樣的方式可以使得分類器不再是黑箱作業。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/07/[%E8%AB%96%E6%96%87]%20Network%20In%20Network/" title="[論文] Network In Network">https://allen108108.github.io/blog/2019/10/07/[論文] Network In Network/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/05/Chapter%203%20%E2%80%93%20Graph%20(%201%20)/" rel="prev" title="Chapter 3 -- Graph ( 1 )">
+                  <i class="fa fa-chevron-left"></i> Chapter 3 -- Graph ( 1 )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/Regularization%20%E6%96%B9%E6%B3%95%20_%20Weight%20Decay%20,%20Early%20Stopping%20and%20Dropout/" rel="next" title="Regularization 方法 : Weight Decay , Early Stopping and Dropout">
+                  Regularization 方法 : Weight Decay , Early Stopping and Dropout <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

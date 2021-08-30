@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="安裝前請先確認是否安裝Anaconda，若仍無安裝可參閱”Anaconda的安裝”">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tensorflow 2.0 - GPU的安裝及確認 ( Win 10 )">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/07/Tensorflow%202.0%20-%20GPU%E7%9A%84%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%A2%BA%E8%AA%8D%20(%20Win%2010%20)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="安裝前請先確認是否安裝Anaconda，若仍無安裝可參閱”Anaconda的安裝”">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2019-10-07T07:20:25.000Z">
+<meta property="article:modified_time" content="2019-10-07T18:13:56.684Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/07/Tensorflow%202.0%20-%20GPU%E7%9A%84%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%A2%BA%E8%AA%8D%20(%20Win%2010%20)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/07/Tensorflow%202.0%20-%20GPU%E7%9A%84%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%A2%BA%E8%AA%8D%20(%20Win%2010%20)/","path":"2019/10/07/Tensorflow 2.0 - GPU的安裝及確認 ( Win 10 )/","title":"Tensorflow 2.0 - GPU的安裝及確認 ( Win 10 )"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Tensorflow 2.0 - GPU的安裝及確認 ( Win 10 ) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#step-1.-%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%80%8B%E6%96%B0%E7%92%B0%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">Step 1. 建立一個新環境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-2.-%E5%AE%89%E8%A3%9D-tensorflow-2.0"><span class="nav-number">2.</span> <span class="nav-text">Step 2. 安裝 TensorFlow 2.0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-3.-%E5%AE%89%E8%A3%9D-cudnn-%E8%88%87-cuda"><span class="nav-number">3.</span> <span class="nav-text">Step 3. 安裝 cuDNN 與 CUDA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step-4.-%E6%B8%AC%E8%A9%A6"><span class="nav-number">4.</span> <span class="nav-text">Step 4. 測試</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/07/Tensorflow%202.0%20-%20GPU%E7%9A%84%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%A2%BA%E8%AA%8D%20(%20Win%2010%20)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Tensorflow 2.0 - GPU的安裝及確認 ( Win 10 )
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-07 15:20:25" itemprop="dateCreated datePublished" datetime="2019-10-07T15:20:25+08:00">2019-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-10-08 02:13:56" itemprop="dateModified" datetime="2019-10-08T02:13:56+08:00">2019-10-08</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%BB%9F%E9%AB%94-Software/" itemprop="url" rel="index"><span itemprop="name">軟體 Software</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/07/Tensorflow%202.0%20-%20GPU%E7%9A%84%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%A2%BA%E8%AA%8D%20(%20Win%2010%20)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/07/Tensorflow 2.0 - GPU的安裝及確認 ( Win 10 )/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>安裝前請先確認是否安裝Anaconda，若仍無安裝可參閱”<a target="_blank" rel="noopener" href="http://bit.ly/2ANwdnd">Anaconda的安裝</a>”</p>
+</blockquote>
+<hr />
+<span id="more"></span>
+<p>為了怕各種套件之間的衝突，或是安裝上面出現問題，建議在進行重大系統安裝的時候均建立新環境來進行安裝。</p>
+<h3 id="step-1.-建立一個新環境">Step 1. 建立一個新環境</h3>
+<p>我們首先在 Anaconda Prompt 建立一個名為 tf2.0 的新環境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda create -n your_env_name python=X.X anaconda</span><br></pre></td></tr></table></figure>
+<p>我們最終要安裝的是 TensorFlow 2.0，因此至少要是 python3 的版本，行末加上 "anaconda" 是在新環境安裝時會順便裝上這個環境本身的 Anaconda Prompt、Jupyter notebook 以及 Spyder，我自己習慣或多安裝這些，這樣就不用在每一次使用的時候還要切換環境，要用哪個環境就點哪個環境的工具即可。</p>
+<p>安裝過程會出現<code>Proceed ([y]/n)?</code>，請輸入 y 繼續安裝</p>
+<p>建立完成以後，接著還要啟動環境才算完成，啟動環境要輸入以下命令 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">activate tf2.0</span><br></pre></td></tr></table></figure></p>
+<p>啟動完成之後，在你所在路徑前方會出現 (tf2.0) 則表示你已經啟動這個環境，並且已在這環境底下了。</p>
+<h3 id="step-2.-安裝-tensorflow-2.0">Step 2. 安裝 TensorFlow 2.0</h3>
+<p>在 tf2.0 環境下輸入 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install tensorflow-gpu==2.0.0beta1</span><br></pre></td></tr></table></figure> 如果單純只要安裝 CPU 版本，就將上述命令中 <code>-gpu</code> 刪除即可，此外，目前的最新版本已來到 TensorFlow 2.0 RC，因此如果要安裝 RC 版本便改為輸入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install tensorflow-gpu==2.0.0-rc0 </span><br></pre></td></tr></table></figure>
+<p>RC 與 Beta 版本的不同在於，RC 版已經是正式發行版前的候選版本，在這段期間，已經不會像 Beta 版本不斷加入新功能，基本上 RC 版整個架構都已經固定，重點會擺在除錯上。</p>
+<h3 id="step-3.-安裝-cudnn-與-cuda">Step 3. 安裝 cuDNN 與 CUDA</h3>
+<p>這裡我們安裝 cuDNN 與 CUDA 與先前的方式不同，經測試過後是可以使用的</p>
+<p>在命令行輸入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">conda install cudnn=7.6.0</span><br><span class="line">conda install cudatoolkit=10.0.130</span><br></pre></td></tr></table></figure>
+<p>TensorFlow 2.0 目前支援的是 cuDNN 7.6、CUDA 10.0 版本，因此在安裝時必須指定版本進行安裝。</p>
+<p>這裡要注意的一點是必須先安裝 cudnn，由於 conda 會將關聯依賴做更新，因此當我們安裝 cudatoolkit 的同時也會將 cuDNN 7.6 內依賴的部分進行降級。</p>
+<h3 id="step-4.-測試">Step 4. 測試</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">import</span> keras </span><br></pre></td></tr></table></figure>
+<p>如果沒出現報錯，應該就表示已經成功安裝。 我們可以來看一下現在的版本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tf.__version__</span><br></pre></td></tr></table></figure>
+<p>然後確定一下是否有使用到 GPU</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tf.test.is_gpu_available()</span><br></pre></td></tr></table></figure>
+<p>若顯示 <code>True</code> 則表示 GPU 版本是沒有問題的。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/07/Tensorflow%202.0%20-%20GPU%E7%9A%84%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%A2%BA%E8%AA%8D%20(%20Win%2010%20)/" title="Tensorflow 2.0 - GPU的安裝及確認 ( Win 10 )">https://allen108108.github.io/blog/2019/10/07/Tensorflow 2.0 - GPU的安裝及確認 ( Win 10 )/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/Tensorflow-GPU%E7%9A%84%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%A2%BA%E8%AA%8D%20(%20Win%2010%20)/" rel="prev" title="Tensorflow-GPU的安裝及確認 ( Win 10 )">
+                  <i class="fa fa-chevron-left"></i> Tensorflow-GPU的安裝及確認 ( Win 10 )
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/07/%5B%E8%AB%96%E6%96%87%5D%20Going%20Deeper%20with%20Convolutions/" rel="next" title="[論文] Going Deeper with Convolutions">
+                  [論文] Going Deeper with Convolutions <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

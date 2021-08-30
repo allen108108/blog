@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="前言 現今的物體辨識技術基本上都是使用機器學習來進行。為了增強整個辨識的表現，我們必須收集更多的資料、使用更強大的模型以及更好的技巧來防止 overfittng 的發生。直至目前為止，我們所使用的 label Data 仍是相對較小的 data set ( 約莫幾萬張圖像的數量級 )，而現今的技術，這樣大小的資料在簡單的分類任務上已經可以做的非常好。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[論文] Imagenet Classification with Deep Convolutional Neural Networks">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Imagenet%20Classification%20with%20Deep%20Convolutional%20Neural%20Networks/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="前言 現今的物體辨識技術基本上都是使用機器學習來進行。為了增強整個辨識的表現，我們必須收集更多的資料、使用更強大的模型以及更好的技巧來防止 overfittng 的發生。直至目前為止，我們所使用的 label Data 仍是相對較小的 data set ( 約莫幾萬張圖像的數量級 )，而現今的技術，這樣大小的資料在簡單的分類任務上已經可以做的非常好。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/J3KrotA.png">
+<meta property="og:image" content="https://i.imgur.com/iej50IW.png">
+<meta property="og:image" content="https://i.imgur.com/tCkcLZj.png">
+<meta property="og:image" content="https://i.imgur.com/gyZMo89.png">
+<meta property="og:image" content="https://i.imgur.com/8CsSWFD.png">
+<meta property="article:published_time" content="2019-07-28T14:15:58.000Z">
+<meta property="article:modified_time" content="2021-08-30T14:16:07.313Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/J3KrotA.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Imagenet%20Classification%20with%20Deep%20Convolutional%20Neural%20Networks/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Imagenet%20Classification%20with%20Deep%20Convolutional%20Neural%20Networks/","path":"2019/07/28/[論文] Imagenet Classification with Deep Convolutional Neural Networks/","title":"[論文] Imagenet Classification with Deep Convolutional Neural Networks"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[論文] Imagenet Classification with Deep Convolutional Neural Networks | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#data-set"><span class="nav-number">2.</span> <span class="nav-text">Data Set</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%A7%8B"><span class="nav-number">3.</span> <span class="nav-text">架構</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#activation-function----relu"><span class="nav-number">3.1.</span> <span class="nav-text">Activation Function -- ReLU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#multiple-gpus-%E5%A4%9A-gpu-%E5%B9%B3%E8%A1%8C%E9%81%8B%E7%AE%97"><span class="nav-number">3.2.</span> <span class="nav-text">Multiple GPUs ( 多 GPU 平行運算 )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#local-response-normalization-%E5%B1%80%E9%83%A8%E9%9F%BF%E6%87%89%E6%AD%B8%E4%B8%80%E5%8C%96-%E8%BF%91%E9%84%B0%E6%AD%B8%E4%B8%80%E5%8C%96"><span class="nav-number">3.3.</span> <span class="nav-text">Local Response Normalization ( 局部響應歸一化 &#x2F; 近鄰歸一化 )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#overlapping-pooling-%E9%87%8D%E7%96%8A%E6%B1%A0%E5%8C%96"><span class="nav-number">3.4.</span> <span class="nav-text">Overlapping Pooling 重疊池化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E9%AB%94%E6%9E%B6%E6%A7%8B"><span class="nav-number">3.5.</span> <span class="nav-text">整體架構</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BC%B8%E5%85%A5"><span class="nav-number">3.5.1.</span> <span class="nav-text">輸入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%A4-%E5%8D%B7%E7%A9%8D%E6%B1%A0%E5%8C%96%E5%B1%A4lrn"><span class="nav-number">3.5.2.</span> <span class="nav-text">第一層 ( 卷積+池化層+LRN )</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%A4-%E5%8D%B7%E7%A9%8D%E6%B1%A0%E5%8C%96%E5%B1%A4lrn"><span class="nav-number">3.5.3.</span> <span class="nav-text">第二層 ( 卷積+池化層+LRN )</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%A4-%E5%8D%B7%E7%A9%8D%E5%B1%A4"><span class="nav-number">3.5.4.</span> <span class="nav-text">第三層 ( 卷積層 )</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E5%B1%A4-%E5%8D%B7%E7%A9%8D%E5%B1%A4"><span class="nav-number">3.5.5.</span> <span class="nav-text">第四層 ( 卷積層 )</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E5%B1%A4-%E5%8D%B7%E7%A9%8D%E5%B1%A4"><span class="nav-number">3.5.6.</span> <span class="nav-text">第五層 ( 卷積層 )</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E5%B1%A4-fc%E5%B1%A4"><span class="nav-number">3.5.7.</span> <span class="nav-text">第六層 ( FC層 )</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E5%B1%A4-fc%E5%B1%A4"><span class="nav-number">3.5.8.</span> <span class="nav-text">第七層 ( FC層 )</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E5%B1%A4-fc%E5%B1%A4"><span class="nav-number">3.5.9.</span> <span class="nav-text">第八層 ( FC層 )</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BC%B8%E5%87%BA-softmax"><span class="nav-number">3.5.10.</span> <span class="nav-text">輸出 ( Softmax )</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E-overfitting"><span class="nav-number">4.</span> <span class="nav-text">降低 Overfitting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#data-augmentation-%E8%B3%87%E6%96%99%E5%A2%9E%E5%BC%B7"><span class="nav-number">4.1.</span> <span class="nav-text">Data Augmentation 資料增強</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dropout"><span class="nav-number">4.2.</span> <span class="nav-text">Dropout</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#details-of-learning-%E5%AD%B8%E7%BF%92%E9%81%8E%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">Details of Learning 學習過程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%90%E6%9E%9C"><span class="nav-number">6.</span> <span class="nav-text">結果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A2%E8%A8%8E"><span class="nav-number">7.</span> <span class="nav-text">探討</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">8.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">9.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Imagenet%20Classification%20with%20Deep%20Convolutional%20Neural%20Networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [論文] Imagenet Classification with Deep Convolutional Neural Networks
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-07-28 22:15:58" itemprop="dateCreated datePublished" datetime="2019-07-28T22:15:58+08:00">2019-07-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2021-08-30 22:16:07" itemprop="dateModified" datetime="2021-08-30T22:16:07+08:00">2021-08-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF-Convolutional-Neural-Network/" itemprop="url" rel="index"><span itemprop="name">卷積神經網路 Convolutional Neural Network</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/07/28/%5B%E8%AB%96%E6%96%87%5D%20Imagenet%20Classification%20with%20Deep%20Convolutional%20Neural%20Networks/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/28/[論文] Imagenet Classification with Deep Convolutional Neural Networks/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="前言">前言</h2>
+<p>現今的物體辨識技術基本上都是使用機器學習來進行。為了增強整個辨識的表現，我們必須收集更多的資料、使用更強大的模型以及更好的技巧來防止 overfittng 的發生。直至目前為止，我們所使用的 label Data 仍是相對較小的 data set ( 約莫幾萬張圖像的數量級 )，而現今的技術，這樣大小的資料在簡單的分類任務上已經可以做的非常好。</p>
+<span id="more"></span>
+<p>然而，現實生活中的物體總有著極大的可變性，要進行更精準的辨識，我們就必須收集更多的資料。雖說先前大家就已經認知到小數據集會造成一些缺點，但真正要能夠有數以百萬計的 label data 也是直到最近才變的可能。像是 LabelMe (數十萬張 fully segmented 圖像) 或是 ImageNet ( 22000的類別，包含了1500萬張高解析度圖像 ) 都是大數量級的圖像資料集。</p>
+<p>為了處理這麼大數量的圖像資料，Convolution Neural Network ( CNN ) 可以藉由改變深度及廣度來控制模型的複雜度，並且 CNN 對於圖像的本質有著強而有力的假設 ( 穩定的統計概念以及局部圖像的相依性 )，因此相較於一般的 feedforward NN 來說有更少的參數及連接使得整個 model 更容易訓練且表現與不會比 feedforward NN 還要差。</p>
+<p>儘管 CNN 有著上述的優點，但要廣泛應用在高解析度的圖像上仍然需要很大的計算成本。所幸近年來 GPU 的發展搭配著高度優化的 2D 卷積技術才得以使 CNN 應用到這樣大型數據集上，且可避免嚴重的 overfittng。</p>
+<p>此篇論文具體的成果如下 : * 在 ILSVRC ( ImageNet Large-Scale Visual Recognition Challenge ) 上使用了截至目前為止最大的 NN 之一，且有著至今為止的最好成果。 * 使用高度優化的 GPU 並行運算來處理 2D 卷積運算並且訓練整個 CNN model。 * 此網路架構有著與以往不同的特性，使得整體性能提高並減少訓練時間 * 利用一些有效的技巧來避免掉 overfitting * 此網路架構一共有五層卷積層及三層全連接層，這樣的深度架構極為重要，刪除任何一層都會使整體性能變差。</p>
+<h2 id="data-set">Data Set</h2>
+<p>ImgeNet 上的圖像全部都由網路上收集而來，且利用 Amazon's Mechanical Turk crowd-soursing tool 進行人工標記。ImageNet 每年都會舉辦 ILSVRC ，利用 ImageNet 內的1000類別，每個類別約使用1000張圖像 ( 總計約120萬筆訓練資料，5萬筆驗證資料及15萬筆測試資料 ) 進行競賽。</p>
+<p>由於 ImageNet 包含各種解析度的圖像，而作者的 NN 要求輸入必須為固定尺寸。因此先將 ImageNet 圖像的短邊縮成 256，再從圖像中間取 <span class="math inline">\(256\times 256\)</span> 的部分作為輸入。除了對圖像 <span class="math inline">\(zero-mean\)</span> 處理外，並沒有進行其他的預處理，也就是說我們直接以原始 RGB 圖像 (的中心)進行 model training。</p>
+<h2 id="架構">架構</h2>
+<p><img src="https://i.imgur.com/J3KrotA.png" /></p>
+<p>上面我們曾經提到有一些特殊性質可以使訓練時間減少並且性能提高，以下作者依照重要性排列介紹 :</p>
+<h3 id="activation-function----relu">Activation Function -- ReLU</h3>
+<p>一般來說，標準的方式是在每一個 neuron 上利用 Sigmoid function 或是 tanh function 作為 activation function。當我們使用 Gradient Descent 進行權重優化時，很容易發生梯度消失的狀況，而且這種飽和非線性函數[^註1]的訓練時間會比 ReLU 這種非飽和非線性函數來的久。</p>
+<p><img src="https://i.imgur.com/iej50IW.png" /></p>
+<p>上圖是一個四層神經網路 Training error rate --- Epochs 的關係圖，其中虛線是使用 tanh 作為 activation function，而實線則是利用 ReLU 作為 activation function 的結果。</p>
+<p>由上圖來看，當我們要達到 0.25 training error rate 時，使用 ReLU 所需的 epochs 遠少於使用 tanh 所需要的 epochs。可見如果我們要用一個大的數據集來訓練一個 model，使用 ReLU 會來的比較好。</p>
+<h3 id="multiple-gpus-多-gpu-平行運算">Multiple GPUs ( 多 GPU 平行運算 )</h3>
+<p>作者使用兩顆 GPU ( GTX580 3G ) 進行並行運算。採用的方式是將所有的 Neurons 分為一半各放到兩個 GPU上做運算，除此之外還搭配一點小技巧 : GPU 之間的只在某幾層才會有進行通信 ( 第3、6、7、8層 )。這樣的配置其實是從 Cross-Validation 試驗出來的，經由 CV 的測試，我們終究可以調整出一套計算成本是我們可以負荷的通信模式。</p>
+<p>作者這套通信模式可以使 top-1 及 top-5 error rate 分別降低 1.7% , 1.2% ( 與 GPU 之間各自獨立運作，互不通信的情況相比 )。</p>
+<h3 id="local-response-normalization-局部響應歸一化-近鄰歸一化">Local Response Normalization ( 局部響應歸一化 / 近鄰歸一化 )</h3>
+<p>前面講到 ReLU 的特性，可以不用將輸入 normalization 來防止飽和，但作者在這裡還是引進了一種 normalization 方法，稱為 " Local Response Normalization "。</p>
+<p>引進這樣的方法主要是為了整個模型可以更貼近現實，利用生物學上的側抑制 ( Lateral inhibition) [^註2] 行為概念來實現 Neural Network 中神經元的局部抑制。</p>
+<p>在這篇論文中，作者給出了 LRN 的具體計算公式</p>
+<p><img src="https://i.imgur.com/tCkcLZj.png" /></p>
+<p>而其中的 <span class="math inline">\(k,n,\alpha\)</span> 與 <span class="math inline">\(\beta\)</span> 都是超參數，可以利用 Validation Set 來找出來。最後作者在某些特定的 Layer ( 第1、2層 ) 中設置 LRN。</p>
+<p><font color="#dd0000"><strong>[ 補充 ]</strong></font> 2015年 Karen Simonyan, Andrew Zisserman 的論文 " <em>Very Deep Convolutional Networks for Large-Scale Image Recognition</em> " 中針對 LRN 有著不同的看法 :</p>
+<p>" <em>We note that none of our networks (except for one) contain Local Response Normalisation (LRN) normalisation (Krizhevsky et al., 2012): as will be shown in Sect. 4, such normalisation does not improve the performance on the ILSVRC dataset, but leads to increased memory consumption and computation time.</em> "</p>
+<p>他們認為，加入 LRN 並沒有使整體表現更好，反而增加記憶體消耗與計算時間的延長。</p>
+<h3 id="overlapping-pooling-重疊池化">Overlapping Pooling 重疊池化</h3>
+<p>一般的 CNN 架構中，Pooling kernel 針對上一層 feature map 做滑窗池化的過程中，kernel 是不會重疊的 ( <span class="math inline">\(2\times 2\)</span> kernel，stride=2 )。但在此架構中，作者令 kernel 為 <span class="math inline">\(3\times 3\)</span>，stride=2。 這樣一來，在池化的過程中必然會有重疊的部分，而這樣的方式確實也降低不少 error rate，並且更能避免 overfitting 的發生。</p>
+<h3 id="整體架構">整體架構</h3>
+<p><img src="https://i.imgur.com/gyZMo89.png" /> (圖片來源 : <a target="_blank" rel="noopener" href="https://www.twblogs.net/a/5b7c1def2b71770a43d96a77">alexnet筆記（ImageNet Classification with Deep Convolutional Neural Networks）</a> )</p>
+<ul>
+<li><h4 id="輸入">輸入</h4>
+我們使用 <span class="math inline">\(224\times 224\times 3\)</span> 的圖像作為輸入的固定尺寸。</li>
+<li><h4 id="第一層-卷積池化層lrn">第一層 ( 卷積+池化層+LRN )</h4>
+此層使用96個 <span class="math inline">\(11\times 11\times 3\)</span> kernel 進行 stride=4 的卷積運算，隨後進行 LRN 及 Max Pooling ( <span class="math inline">\(3\times 3\)</span> kernel , stride=2 ) ，形成 <span class="math inline">\(27\times 27\times 48\)</span> ( per GPU ) 的feature maps。</li>
+<li><h4 id="第二層-卷積池化層lrn">第二層 ( 卷積+池化層+LRN )</h4>
+此層使用256個 <span class="math inline">\(5\times 5\times 48\)</span> kernel 進行 stride=1 , padding=2 的卷積運算， 隨後進行 LRN 及Max Pooling ( <span class="math inline">\(3\times 3\)</span> kernel , stride=2 )，形成 <span class="math inline">\(13\times 13\times 128\)</span> ( per GPU ) 的feature maps。</li>
+<li><h4 id="第三層-卷積層">第三層 ( 卷積層 )</h4>
+此層使用384個 <span class="math inline">\(3\times 3\times 128\)</span> kernel 進行 stride=1 , padding=1 的卷積運算，形成 <span class="math inline">\(13\times 13\times 192\)</span> ( per GPU ) 的feature maps。</li>
+<li><h4 id="第四層-卷積層">第四層 ( 卷積層 )</h4>
+同上層構造</li>
+<li><h4 id="第五層-卷積層">第五層 ( 卷積層 )</h4>
+此層使用256個 <span class="math inline">\(3\times 3\times 128\)</span> kernel 進行 stride=1 , padding=1 的卷積運算，隨後進行 LRN 及 Max Pooling ( <span class="math inline">\(3\times 3\)</span> kernel , stride=2 )，形成 <span class="math inline">\(6\times 6\times 128\)</span> ( per GPU ) 的feature maps。</li>
+<li><h4 id="第六層-fc層">第六層 ( FC層 )</h4>
+將輸入 flatten 成為一維向量對此層的 4096 neurons 進行全連接</li>
+<li><h4 id="第七層-fc層">第七層 ( FC層 )</h4>
+對此層的 4096 neurons 進行全連接</li>
+<li><h4 id="第八層-fc層">第八層 ( FC層 )</h4>
+對此層 1000 neurons 進行全連接</li>
+<li><h4 id="輸出-softmax">輸出 ( Softmax )</h4>
+將此1000個輸出值經過 Softmax 轉換為機率值作為最後輸出。</li>
+</ul>
+<p>每一層都會先經過 ReLU 轉換後 ( 再經由LRN、池化層 ) 才輸出，且其中第2、4、5層只與同一 GPU 上的單位做連結，而第3、6、7、8層則是進行 GPU 的通信</p>
+<h2 id="降低-overfitting">降低 Overfitting</h2>
+<p>上述的架構，會產生將近6000萬個參數，儘管最後只限定在1000分類上，這會附加一個 <span class="math inline">\(2^{10}=10\)</span> bit 的 Constrain，但仍無法避免 Overfitting 的發生。因此，作者在這裡面加了兩種克服 Overfitting 的方法 :</p>
+<h3 id="data-augmentation-資料增強">Data Augmentation 資料增強</h3>
+<p>在圖像辨識上，很常會用來減少 overfitting 的方法是使用 label-preserving transformations ( 亦即，圖像的 label 不變，但對原始圖像進行旋轉、縮放、翻轉...等方式製造出新的資料 )。在此篇論文中，作者使用了兩種資料增強的方式 :</p>
+<ol type="1">
+<li><p><strong>將圖像進行變換以及水平翻轉</strong> : 將原本的 <span class="math inline">\(256\times 256\)</span> 圖像，隨機提取 <span class="math inline">\(224\times 224\)</span> 區域作為新的訓練資料，利用這樣的方式，我們的訓練集會增加 2048 倍，且能大幅降低 overfitting 的狀況。針對測試集，我們會選取四角及中心的 5 個 <span class="math inline">\(224\times 224\)</span> 區域以及其翻轉共10個圖像進行預測，將 Softmax 輸出的 10個值進行平均。</p></li>
+<li><p><strong>改變 RGB Channel 的強度</strong> : 將原始圖片像素值 (RGB 三維向量) 先進行一次 Principle Component Analysis ( PCA , 主成分分析 )得到特徵向量及特徵值，根據這組特徵向量及特徵值計算出一組隨機值，加進原始像素值中。 <span class="math display">\[
+\begin{bmatrix}I_{xy}^R,I_{xy}^G,I_{xy}^B\end{bmatrix}+\begin{bmatrix}p_1,p_2,p_3\end{bmatrix}\begin{bmatrix}\alpha_1\lambda_1,\alpha_2\lambda_2,\alpha_3\lambda_3\end{bmatrix}^T
+\]</span> 這裡的 <span class="math inline">\(p_i\)</span> , <span class="math inline">\(\lambda_i\)</span> 分別為三維像素值的 <span class="math inline">\(3\times 3\)</span> Co-Variance Matrix ( 協方矩陣 ) 之特徵向量與特徵值，而 <span class="math inline">\(\alpha_i\)</span> 即為隨機值。這樣的方式其實表現了光照顏色及強度改變時的 label-preserving 現象。[^註3]</p></li>
+</ol>
+<h3 id="dropout">Dropout</h3>
+<p>將每種不同的模型預測進行結合，通常可以得到一個很強大的模型，但是每一個模型都需要花上許多訓練的時間，計算成本非常高，因此衍生出 Dropout 這種方式。</p>
+<p>Dropout 可以依照我們設定的機率值 ( 這裡作者採 0.5 為機率值 )，隨機使 Neurons 停止運作，不再進行前向 / 後向傳播。這樣的方式相當於每一次的輸入，都會產生一個不同的 Neural Network。而且這樣會強制使神經元不會依賴其他神經元的存在來學習，使整個網路可以學習出更好的特徵。</p>
+<p>但因為我們隨機停掉一些神經元，因此在後面的測試階段我們必須進行幾何平均才能貼近現實情況。[^註4]</p>
+<h2 id="details-of-learning-學習過程">Details of Learning 學習過程</h2>
+<p>下列是作者對於此模型訓練的參數設定 :</p>
+<ul>
+<li>Optimization Algorithm : Stochastic Gradient Descent ( SGD ) with momentum ( 動量因子 <span class="math inline">\(\lambda=0.9\)</span> )</li>
+<li>Batch size = 128</li>
+<li>Regularizer : L1 regularization with <span class="math inline">\(\lambda=0.0005\)</span></li>
+<li>Learning Rate : 0.01 ( 當 validation error rate 沒有繼續下降時，LR 會變為0.1倍 )[^註5]</li>
+<li>權重初始值 : 利用 Gaussian Distribution ( Mean=0 , STD=0.01 )這樣的分布將所有權重進行初始化。</li>
+<li>偏置初始值 : 第 2、4、5 層以及所有的 FC 層Neurons 偏置初始值設為 1，其他偏置都為 0</li>
+</ul>
+<p>利用這樣的設定在兩個 GTX 580 3GB GPU 上訓練 120萬筆訓練資料約90個循環一共花費了 5 -- 6 天。</p>
+<h2 id="結果">結果</h2>
+<p>( 此部分主要都為實驗結果的闡述，我只提出幾個論文內有趣的部分，其他的大家有興趣再自行閱讀吧 )</p>
+<p><img src="https://i.imgur.com/8CsSWFD.png" /></p>
+<p>這是在第一層中學習到的 96 個 <span class="math inline">\(11\times 11\times 3\)</span> 個 kernels。上半部是 GPU-1 學習到的48個 kernels，而下半部則是 GPU-2 學習到的 Kernels。</p>
+<p>有趣的一點是，整個網路學習到了頻率、方向以及顏色，但由於我們架構中限制連接的結果，使得兩個 GPU 會學習到不同的重點，GPU-1 學習到的 kernels 是不帶顏色的，但 GPU-2 的 kernels 卻針對顏色來學習。而且這樣的結果不論我們如何初始化權重都依然會發生。</p>
+<h2 id="探討">探討</h2>
+<p>這篇論文作者認為在一個大量且具高度挑戰性的資料上，使用大型深度 CNN 模型處理 Supervise Problem 絕對可以有非常好的表現，但深度降低都會使性能降低，深度絕對是非常重要的架構條件之一。</p>
+<p>作者為了簡化實現，不採用任何的 Unsupervised pre-training，儘管運算能力已經足夠強大到可以這麼做且也期望它可以對整個模型更有幫助。但簡化後我們仍能確定結果是好的，效能也提高了。</p>
+<p>雖然好像整個模型變的更大，訓練時間拉得更長，但仍不及人類的視覺系統。最終作者還是希望能有更大更深的模型可以處理影片時間序列的結構。時間序列結構會有很多有用的訊息在其中，而這些訊息在靜態影像中是不這麼明顯的。</p>
+<h2 id="參考資料">參考資料</h2>
+<ol type="1">
+<li>Krizhevsky, A., Sutskever, I., &amp; Hinton, G.E. (2012). ImageNet Classification with Deep Convolutional Neural Networks. Commun. ACM, 60, 84-90. (論文<a target="_blank" rel="noopener" href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">下載</a>)</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/hduxiejun/article/details/70570086">【深度学习技术】LRN 局部响应归一化</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.twblogs.net/a/5b7c1def2b71770a43d96a77">alexnet筆記（ImageNet Classification with Deep Convolutional Neural Networks）</a></li>
+<li>StackExchange -- <a target="_blank" rel="noopener" href="https://stats.stackexchange.com/questions/174295/what-does-the-term-saturating-nonlinearities-mean">What does the term saturating nonlinearities mean?</a></li>
+</ol>
+<h2 id="註釋">註釋</h2>
+<p>[^註1] Definition of (non) satuating function: * <span class="math inline">\(f\)</span> is non-saturating function <span class="math inline">\(\iff\underset{z\to +\infty}{\lim}f(z)=+\infty\)</span> or <span class="math inline">\(\underset{z\to -\infty}{\lim}f(z)=+\infty\)</span> * <span class="math inline">\(f\)</span> is saturating function <span class="math inline">\(\iff\)</span> <span class="math inline">\(f\)</span> is non-saturating function</p>
+<p>[^註2] 側抑制 ( Lateral inhibition) : 簡單來說就是相近的神經元彼此之間發生的抑制作用﹐即在某個神經元受到刺激而產生興奮時﹐再刺激相近的神經元﹐則後者所發生的興奮對前者產生的抑制作用。 --- 引自 <a target="_blank" rel="noopener" href="https://linfengwei.pixnet.net/blog/post/10515788-lateral-inhibition(%E5%81%B4%E6%8A%91%E5%88%B6)">側抑制</a> 一文</p>
+<p>[^註3] 這樣的方式，我們又稱為 " Fancy PCA ",可參閱 " <a target="_blank" rel="noopener" href="https://deshanadesai.github.io/notes/Fancy-PCA-with-Scikit-Image">Fancy PCA (Data Augmentation) with Scikit-Image</a> " 一文，內有完整 code 實現。</p>
+<p>[^註4] 可參閱 " <a href="/ZlFtvH-0S7ORuXe3-v1hJA">Regularization 方法 : Weight Decay , Early Stopping and Dropout</a> " 一文。</p>
+<p>[^註5] 在 Keras 中我們可以利用 <code>keras.callbacks.ReduceLROnPlateau</code> 來實現這樣的 LR 自動化過程。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/07/28/[%E8%AB%96%E6%96%87]%20Imagenet%20Classification%20with%20Deep%20Convolutional%20Neural%20Networks/" title="[論文] Imagenet Classification with Deep Convolutional Neural Networks">https://allen108108.github.io/blog/2019/07/28/[論文] Imagenet Classification with Deep Convolutional Neural Networks/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/05/14/Google%20Cloud%20OnBoard%202019%20in%20TPE/" rel="prev" title="Google Cloud OnBoard 2019 in TPE">
+                  <i class="fa fa-chevron-left"></i> Google Cloud OnBoard 2019 in TPE
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/07/28/%5B%E8%AB%96%E6%96%87%5D%20Gradient-Based%20Learning%20Applied%20to%20Document%20Recognition/" rel="next" title="[ 論文 ] Gradient-Based Learning Applied to Document Recognition">
+                  [ 論文 ] Gradient-Based Learning Applied to Document Recognition <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>
