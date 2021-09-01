@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="前言 自從開始工作以來，專案及案件如雪片般飛來 (?)，導致部落格的更新幾乎呈現停擺的狀態，在這一年中，幾乎都著重在前端開發 ( Vue.js )、API串接 ( PHP )，從原本一無所知的領域，現在也總算稍微做出點成果，這一年中邊做邊學習，也累積了不少經驗，一直想要花點時間記錄下來，想歸想，也一直拖到了現在。 但正當我寫完今年的第一篇文章後才發現，我自己電腦中的 Node JS 已經被我拿">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Github.io Blog 升級，你該注意到的事情 ( Hexo 5 &#x2F; NexT v8.7 )">
+<meta property="og:url" content="https://allen108108.github.io/blog/2021/09/01/Github.io%20Blog%20%E5%8D%87%E7%B4%9A%EF%BC%8C%E4%BD%A0%E8%A9%B2%E6%B3%A8%E6%84%8F%E5%88%B0%E7%9A%84%E4%BA%8B%E6%83%85%20(%20Hexo%205%20_%20NexT%20v8.7%20)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="前言 自從開始工作以來，專案及案件如雪片般飛來 (?)，導致部落格的更新幾乎呈現停擺的狀態，在這一年中，幾乎都著重在前端開發 ( Vue.js )、API串接 ( PHP )，從原本一無所知的領域，現在也總算稍微做出點成果，這一年中邊做邊學習，也累積了不少經驗，一直想要花點時間記錄下來，想歸想，也一直拖到了現在。 但正當我寫完今年的第一篇文章後才發現，我自己電腦中的 Node JS 已經被我拿">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/EOTpkQp.png">
+<meta property="og:image" content="https://i.imgur.com/idKv60Q.png">
+<meta property="og:image" content="https://i.imgur.com/6Per7Of.png">
+<meta property="og:image" content="https://i.imgur.com/Zi4x9RU.png">
+<meta property="article:published_time" content="2021-09-01T08:18:45.000Z">
+<meta property="article:modified_time" content="2021-09-01T08:19:13.282Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/EOTpkQp.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2021/09/01/Github.io%20Blog%20%E5%8D%87%E7%B4%9A%EF%BC%8C%E4%BD%A0%E8%A9%B2%E6%B3%A8%E6%84%8F%E5%88%B0%E7%9A%84%E4%BA%8B%E6%83%85%20(%20Hexo%205%20_%20NexT%20v8.7%20)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2021/09/01/Github.io%20Blog%20%E5%8D%87%E7%B4%9A%EF%BC%8C%E4%BD%A0%E8%A9%B2%E6%B3%A8%E6%84%8F%E5%88%B0%E7%9A%84%E4%BA%8B%E6%83%85%20(%20Hexo%205%20_%20NexT%20v8.7%20)/","path":"2021/09/01/Github.io Blog 升級，你該注意到的事情 ( Hexo 5 _ NexT v8.7 )/","title":"Github.io Blog 升級，你該注意到的事情 ( Hexo 5 / NexT v8.7 )"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Github.io Blog 升級，你該注意到的事情 ( Hexo 5 / NexT v8.7 ) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nvm-for-windows"><span class="nav-number">2.</span> <span class="nav-text">NVM for windows</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#node-js-v14.17.5"><span class="nav-number">3.</span> <span class="nav-text">Node JS v14.17.5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo-5"><span class="nav-number">4.</span> <span class="nav-text">Hexo 5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#next-v8.7"><span class="nav-number">5.</span> <span class="nav-text">NexT v8.7</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pandoc"><span class="nav-number">6.</span> <span class="nav-text">Pandoc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#error-expected-variable-end"><span class="nav-number">6.1.</span> <span class="nav-text">Error expected variable end</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%80%8B%E4%BA%BA%E5%8C%96%E8%A8%AD%E5%AE%9A"><span class="nav-number">7.</span> <span class="nav-text">個人化設定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#personal-access-token"><span class="nav-number">8.</span> <span class="nav-text">Personal Access Token</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B5%90%E8%AB%96"><span class="nav-number">9.</span> <span class="nav-text">結論</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2021/09/01/Github.io%20Blog%20%E5%8D%87%E7%B4%9A%EF%BC%8C%E4%BD%A0%E8%A9%B2%E6%B3%A8%E6%84%8F%E5%88%B0%E7%9A%84%E4%BA%8B%E6%83%85%20(%20Hexo%205%20_%20NexT%20v8.7%20)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Github.io Blog 升級，你該注意到的事情 ( Hexo 5 / NexT v8.7 )
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2021-09-01 16:18:45 / 修改時間：16:19:13" itemprop="dateCreated datePublished" datetime="2021-09-01T16:18:45+08:00">2021-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%89%8D%E7%AB%AF%E9%96%8B%E7%99%BC-Frontend-Development/" itemprop="url" rel="index"><span itemprop="name">前端開發 Frontend Development</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2021/09/01/Github.io%20Blog%20%E5%8D%87%E7%B4%9A%EF%BC%8C%E4%BD%A0%E8%A9%B2%E6%B3%A8%E6%84%8F%E5%88%B0%E7%9A%84%E4%BA%8B%E6%83%85%20(%20Hexo%205%20_%20NexT%20v8.7%20)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/09/01/Github.io Blog 升級，你該注意到的事情 ( Hexo 5 _ NexT v8.7 )/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="前言">前言</h2>
+<p>自從開始工作以來，專案及案件如雪片般飛來 (?)，導致部落格的更新幾乎呈現停擺的狀態，在這一年中，幾乎都著重在前端開發 ( Vue.js )、API串接 ( PHP )，從原本一無所知的領域，現在也總算稍微做出點成果，這一年中邊做邊學習，也累積了不少經驗，一直想要花點時間記錄下來，想歸想，也一直拖到了現在。</p>
+<p>但正當我寫完今年的第一篇文章後才發現，我自己電腦中的 Node JS 已經被我拿來處理工作上的事情，版本已經與之前撰寫部落格時不同，既然都已走到這步田地，乾脆狠下心來花一些時間來做一個部落格的大升級，至少，這樣的狀態可以不用一直擔心版本的問題，也可以感受一下新版本帶來的差異性。</p>
+<span id="more"></span>
+<h2 id="nvm-for-windows">NVM for windows</h2>
+<p>首先，為了避免這次的蠢事再度發生，筆者安裝了 NVM ( Node JS Version Manager )，這是一個專門為了 Node JS 而生的版本管理器，利用簡單的指令，可以迅速切換各種不同 Node JS 版本n的環境。</p>
+<p>安裝方式非常簡單，基本上就是一鍵安裝。首先至 nvm-windows 的 <a target="_blank" rel="noopener" href="https://github.com/coreybutler/nvm-windows/releases">release</a> 中下載最新版本的 nvm，找到你想要下載的版本就下載其安裝檔直接安裝，過程筆者就不多贅述，反正就是 next / continue / OK 一路按下去就好了。</p>
+<p>安裝完成後，可以打開 cmd 輸入 <code>nvm</code> 即會顯示版本號，以及相關指令說明。</p>
+<p><img src="https://i.imgur.com/EOTpkQp.png" /></p>
+<p>這裡筆者簡單說明幾個最常使用的指令 :</p>
+<p><code>nvm ls available</code> : 顯示可以下載的 Node JS 版本 <code>nvm ls</code> : 顯示已經安裝的 Node JS 版本 <code>nvm install &lt;版本號&gt;</code> : 下載 Node JS 指定版本，例如 <code>nvm install 14.17.5</code> <code>nvm use &lt;版本號&gt;</code> : 直接切換至需要的版本，例如 <code>nvm use 14.17.5</code></p>
+<p>基本上簡單的使用，這四個指令就可以打天下了，其他的細節可以參考 <a target="_blank" rel="noopener" href="https://github.com/coreybutler/nvm-windows">官網</a> 。</p>
+<p>筆者撰寫本文時，<code>nvm</code> 的最新版本為 <code>v16.8.0</code>，筆者的確也嘗試過，以最新版本進行安裝，但會有一些問題存在，因此筆者以自身的版本搭配作為本文的建議配置，至少可以確認這樣的配置是可以進行的。</p>
+<p><img src="https://i.imgur.com/idKv60Q.png" /></p>
+<p><code>NodeJS v14.17.5</code>，此為 LTS 的最高版本。 <code>Hexo 5.4.0</code>、<code>NexT v8.7.0</code>，均為筆者遇到當下的最新版本。 <code>Pandoc v2.14.2</code>、<code>hexo-renderer-pandoc v0.3.0</code>，為了數學公式所安裝的套件。</p>
+<p>最主要是這些部分，大致上就可以應付我自己個人技術部落格的需求，也可以應付大多數的數學公式呈現。以下是最後筆者的 <code>package.json</code> 內容，供讀者們參考 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&quot;dependencies&quot;: &#123;</span><br><span class="line">  &quot;hexo&quot;: &quot;^5.0.0&quot;,</span><br><span class="line">  &quot;hexo-deployer-git&quot;: &quot;^3.0.0&quot;,</span><br><span class="line">  &quot;hexo-generator-archive&quot;: &quot;^1.0.0&quot;,</span><br><span class="line">  &quot;hexo-generator-category&quot;: &quot;^1.0.0&quot;,</span><br><span class="line">  &quot;hexo-generator-index&quot;: &quot;^2.0.0&quot;,</span><br><span class="line">  &quot;hexo-generator-tag&quot;: &quot;^1.0.0&quot;,</span><br><span class="line">  &quot;hexo-renderer-ejs&quot;: &quot;^1.0.0&quot;,</span><br><span class="line">  &quot;hexo-renderer-pandoc&quot;: &quot;^0.3.0&quot;,</span><br><span class="line">  &quot;hexo-renderer-stylus&quot;: &quot;^2.0.0&quot;,</span><br><span class="line">  &quot;hexo-server&quot;: &quot;^2.0.0&quot;,</span><br><span class="line">  &quot;hexo-theme-landscape&quot;: &quot;^0.0.3&quot;,</span><br><span class="line">  &quot;hexo-theme-next&quot;: &quot;^8.7.0&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="node-js-v14.17.5">Node JS v14.17.5</h2>
+<p>因為已經確認版本，我們便可以利用指令 <code>nvm install 14.17.5</code> 直接進行安裝，安裝完成後再利用 <code>nvm use 14.17.5</code> 來使用該環境。最後可以使用 <code>node -v</code> 來確認版本是否順利安裝。</p>
+<p>Node JS 的環境安裝，因為有了 <code>nvm</code> 的輔助變得簡單很多，隨時可以進行環境切換，當然我們也能嘗試各種不同的版本搭配，若讀者有興趣，可以嘗試看看最新版本的 Node JS 跟 Hexo 5 的搭配是否也可以運作。</p>
+<h2 id="hexo-5">Hexo 5</h2>
+<p>在進行 Hexo 5 的更新前，有一件非常重要的事情，<strong>如果你的部落格是舊版本要升級成新版本，請務必要記得，不要直接在原本的部落格上進行更新，有非常高的機會會更新失敗。</strong> 在此，筆者的建議是先創建一個新的部落格資料夾，並且建立一篇新文章，確認該文章可以呈現後，再進行後續的搬移動作。</p>
+<p>首先，在 cmd 中輸入 <code>npm install -g hexo-cli</code> ，這個步驟同時會進行 <code>hexo-cli</code> 與 <code>hexo</code> 的安裝，安裝完成後，可以利用 <code>hexo -v</code> 確認安裝版本。</p>
+<p><img src="https://i.imgur.com/6Per7Of.png" /></p>
+<p>先初始化一個新的部落格資料夾，這邊假設取名為 <code>hexoBlog</code>，進入此資料夾中進行初始化的動作，指令<code>hexo init hexoBlog</code> 之後便會在目錄中增加一個名為 <code>hexoBlog</code> 的資料夾。</p>
+<p>進入此資料夾後，輸入指令 <code>npm install</code> 便會將所需要的套件進行完整安裝。安裝完成後，基本的新版 Hexo 已經安裝完成，在其中讀者們可以發現 <code>/hexoBlog/_config.yml</code>、<code>/hexoBlog/_config.landscape.yml</code> 兩個檔案，<code>_config.yml</code> 為部落格的 site config ( 站台設定檔 )，而 <code>_config.landscape.yml</code> 則為部落格的 theme config ( 主題設定檔 )，此處預設主題為 landscape，但因為我們接下來要換成 NexT，所以在此處筆者會先改名為 <code>_config.next.yml</code>。</p>
+<h2 id="next-v8.7">NexT v8.7</h2>
+<p><strong>安裝 NexT 主題的方式有兩種，請擇一進行，同時安裝兩種方式可能會產生衝突。</strong></p>
+<p>安裝方式一 : npm 安裝，此方式會將主題套件安裝在 <code>hexoBlog/node_modules/hexo-theme-next</code> 中 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-theme-next</span><br></pre></td></tr></table></figure></p>
+<p>安裝方式二 : git 安裝，這種方式則會將主題安裝在 <code>hexoBlog/themes/next</code> 中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/next-theme/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+<p>若讀者發現自己的主題兩者均有安裝，建議移除其中一種，筆者舊版使用的是第二種方式，這次則選擇利用 npm 安裝，將 <code>hexoBlog/themes/next</code> 資料夾整個刪除，以免衝突。</p>
+<p>安裝完成後，先將主題資料夾 ( 本文例 : <code>hexoBlog/node_modules/hexo-theme-next</code> ) 內容整個覆蓋至 <code>hexoBlog/_config.next.yml</code> 檔案中。安裝步驟到了此階段，幾乎已經完成了近八成。接下來要做的就是逐步地將舊的部落格設定移至 <code>hexoBlog</code>，這裡的轉移不能直接將設定檔覆蓋，因為新舊版本的設定檔內容並不完全相同，有些設定項目並不通用，因此建議的做法是利用程式碼對照工具，將舊版的設定檔內容，逐一在新版設定檔內容作修改。</p>
+<p><img src="https://i.imgur.com/Zi4x9RU.png" /></p>
+<p>如上圖，筆者習慣利用 VSCode 的比較功能進行程式碼的比對，當然坊間有許多工具都可以使用，端看讀者習慣來搭配使用。新舊版本的設定項目互有增減，所以建議將重要的部分進行移轉後，再來調整一些細部項目。</p>
+<p>調整完站台設定檔 <code>hexoBlog/_config.yml</code> 及主題設定檔 <code>hexoBlog/_config.next.yml</code> 後，筆者開始會將舊文章進行分批搬移，每一次的搬移都會利用 <code>hexo server</code> 做一下確認，因為筆者的文章會有大量的數學公式，因此必須安裝對應的渲染器進行處理。</p>
+<p>在新版的 NexT 中，支援的數學公式渲染引擎有 <code>MathJax</code> 及 <code>KaTeX</code> 兩種，各自需要安裝的套件也不相同，筆者這邊使用的是以 <code>MathJax</code> 渲染的方式，安裝 <code>hexo-renderer-pandoc</code> 來進行數學公式的渲染。若讀者想要更全面了解其他種方式可以參考 : <a target="_blank" rel="noopener" href="https://dog.wtf/tech/making-hexo-next-theme-latex-math-equation-supported/">让 Hexo Next (v8.0.0) 支持 LaTeX 数学公式</a> 一文。</p>
+<h2 id="pandoc">Pandoc</h2>
+<p>在新版的 NexT 中，有提及以前使用的 <code>hexo-renderer-kramed</code> 已經停止維護，因此建議改用 <code>hexo-renderer-pandoc</code> 來渲染數學公式。然而在進行 <code>hexo-renderer-pandoc</code> 安裝前，幾個重要的關鍵提供讀者們注意 : * <code>hexo-renderer-pandoc</code> 是基於 Pandoc 的衍生套件，因此必須先確定 Pandoc 有安裝。 * 確認環境中沒有其他的數學公式渲染套件，若有的話務必進行刪除，例如 : <code>hexo-renderer-kramed</code>、<code>hexo-renderer-marked</code>、.....</p>
+<p>Pandoc 的安裝跟 nvm 類似，也是屬一鍵安裝，先至 Pandoc 官網進行最新版本<a target="_blank" rel="noopener" href="https://pandoc.org/installing.html">下載</a>，或是至 <a target="_blank" rel="noopener" href="https://pandoc.org/releases.html#revision-history-for-pandoc">release</a> 尋找特定版本下載。</p>
+<p>安裝完成之後便可以進行 <code>hexo-renderer-pandoc</code> 的安裝 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-renderer-pandoc --save</span><br></pre></td></tr></table></figure>
+<p>安裝過後應該要可以正常顯示嗎 ? 其實正常應該會有一些錯誤發生。</p>
+<h3 id="error-expected-variable-end"><code>Error expected variable end</code></h3>
+<p>這個錯誤訊息在之前的文章中亦有提到，主要是 LaTex 語法放進 Hexo 時會有渲染上面的問題，無法針對 <code>&#123;&#123;` 或 `&#125;&#125;</code> 這種連續大括號進行處理，過去的方式是在 <code>hexoBlog/node_modules/nunjucks/src/lexer.js</code> 中將 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var VARIABLE_START = &#x27;&#123;&#123;&#x27;;</span><br><span class="line">var VARIABLE_END = &#x27;&#125;&#125;&#x27;;</span><br></pre></td></tr></table></figure>
+<p>修改為</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var VARIABLE_START = &#x27;&#123;$&#x27;;</span><br><span class="line">var VARIABLE_END = &#x27;$&#125;&#x27;;</span><br></pre></td></tr></table></figure>
+<p>然而，這樣的方式在這次真的版本中完全行不通。</p>
+<p>最主要的原因是，新版的 Hexo 中更改了渲染方式，替換掉 <code>swig</code> 檔而以 <code>njk</code> 檔案取代，而在 <code>njk</code> 中便會用大量的雙大括號進行渲染，如果我們依照過去的方式會使整個站台無法渲染成功。</p>
+<p>因此，若文章中有大量雙大括號時，建議將雙大括號之間留空白，也就是說 <code>&#123;&#123;` 改為 `&#123; &#123;` 且 `&#125;&#125;</code> 改為 <code>&#125; &#125;</code></p>
+<p>如此一來，便可以正常顯示所有的數學符號。</p>
+<h2 id="個人化設定">個人化設定</h2>
+<p>接著我們就可以針對網站的美觀度進行個人化的調整。</p>
+<p>舊版的 Blog 中，有些 CSS 設定我仍然想要保留，希望這個 Blog 站台可以保留一些個人的特色在其中，在 NexT 8.0.0 版本後，依舊保留了個人化的選項，並且可以統一將版面的 CSS 或樣式調整統整在一處進行處理 ( 推薦 : <a target="_blank" rel="noopener" href="https://tding.top/archives/2bd6d82.html">Hexo-NexT 版本更新记录</a> ) ，但筆者希望在極短時間內進行搬移，因此仍然保留舊版的調整方式。經筆者測試過後，舊版的方式仍然可以調整 CSS 設定，因此便遵從之前的文章進行調整 ( 詳見 : <a href="https://allen108108.github.io/blog/2019/10/07/%E4%BD%BF%E7%94%A8%20Github%20page%20%E8%A3%BD%E4%BD%9C%E5%80%8B%E4%BA%BA%E7%B6%B2%E7%AB%99%20%E2%80%93%20%E4%BB%A5%20Hexo%20_%20Next%20%E8%A3%BD%E4%BD%9C%E9%83%A8%E8%90%BD%E6%A0%BC/">使用 Github page 製作個人網站 -- 以 Hexo / Next 製作部落格</a> )</p>
+<p>基本上，所有的調整我們一樣都可以利用 <code>hexo server</code> 在本機端先進行檢查，畢竟舊版的部落格還在，得先確定更新版本沒有問題在部屬上去做更換。</p>
+<p>最後，站台設定檔 <code>hexoBlog/_config.yml</code> 最後的 <code>deploy</code> 項目務必要正確填寫，這個項目完成後，基本上部屬的工作也正式轉移，之後便可以捨棄舊版，利用我們的更新版本直接 push 到原本的部落格站台進行更新。</p>
+<h2 id="personal-access-token">Personal Access Token</h2>
+<p>但是事情總是沒有這麼順利，因為太久沒更新部落格，在進行部屬的時候才發現，github 已經不是我們認識的那個 github 了.....</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">remote: Support for password authentication was removed on August 13, 2021.</span><br><span class="line">Please use a personal access token instead. remote: </span><br><span class="line">Please see https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/ for more information. </span><br><span class="line">fatal: unable to access &quot;...&quot; : The requested URL returned error: 403</span><br></pre></td></tr></table></figure>
+<p>簡單來說，就是 github 原本是用個人的登入密碼作為憑證進行專案的更新，但在 2021/08/13 便不再支援這樣的密碼憑證，取而代之的，我們必須取得 personal access token 來進行憑證更新。</p>
+<p>步驟簡易說明如下 :</p>
+<ol type="1">
+<li>前往 Github 網站並登入。</li>
+<li><code>Settings</code> &gt; <code>Developer settings</code> &gt;<code>Personal Access Tokens</code> &gt; <code>Generate New Token</code> 進行 personal access token 的新增。</li>
+<li>填入 token 的用途、期限以及權限設定後，按下 <code>Generate token</code> 便會產出一個新的 token，此時請複製下來，否則離開就不會再出現。</li>
+<li>至 Windows 控制列搜尋 <code>認證管理員</code>，選擇 <code>Windows 認證</code>。</li>
+<li>在一般憑證下尋找 <code>git:https://github.com</code>，若無，則進行新增一般憑證，填入 Github 帳號名稱，密碼則以前面複製下來的 token 值進行取代後按下儲存。</li>
+</ol>
+<p>經過了上述的種種步驟，讀者們應該也可以順利的更新部落格了。</p>
+<h2 id="結論">結論</h2>
+<p>太久沒有更新，加上 Node JS 版本管理的失當，導致筆者花了好幾天的時間尋找 Solution，幸虧還可以順利更新，否則前面一百來篇的文章就真的必須要段捨離了。</p>
+<p>這件事情讓我們知道，環境的版本管理非常重要，在進行重要專案的規劃及部屬，必須要將各框架、套件的版本都確認下來，最好是安裝檔都留有備份，才能以備不時之需。再不然，就必須要利用各種版本管理工具來協助我們進行專案的開發。</p>
+<p>最後，祝福各位讀者，可以順利更新自己的部落格內容囉 !</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2021/09/01/Github.io%20Blog%20%E5%8D%87%E7%B4%9A%EF%BC%8C%E4%BD%A0%E8%A9%B2%E6%B3%A8%E6%84%8F%E5%88%B0%E7%9A%84%E4%BA%8B%E6%83%85%20(%20Hexo%205%20_%20NexT%20v8.7%20)/" title="Github.io Blog 升級，你該注意到的事情 ( Hexo 5 &#x2F; NexT v8.7 )">https://allen108108.github.io/blog/2021/09/01/Github.io Blog 升級，你該注意到的事情 ( Hexo 5 _ NexT v8.7 )/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2021/08/30/Line%20Bot%20%E5%9C%A8%E7%BE%A4%E7%B5%84%E4%B8%AD%E7%9A%84%E5%96%9A%E9%86%92_%E4%BC%91%E7%9C%A0%E6%A9%9F%E5%88%B6%20(Django%20Database%20%E4%B9%8B%E6%87%89%E7%94%A8)/" rel="prev" title="Line Bot 在群組中的喚醒/休眠機制 (Django Database 之應用) ">
+                  <i class="fa fa-chevron-left"></i> Line Bot 在群組中的喚醒/休眠機制 (Django Database 之應用) 
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>
