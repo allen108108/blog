@@ -144,7 +144,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -288,7 +288,7 @@
 <h2 id="更新-the-deal">更新 The Deal</h2>
 <h3 id="邊界框的預測-bounding-box-prediction">邊界框的預測 Bounding Box Prediction</h3>
 <p><img width=500 src="https://i.imgur.com/tsAKJ5N.png" ></p>
-<p>上圖其實就是 YOLOv2 的邊界框預測方式，詳細可參閱 " <a href="https://">[論文] YOLO9000 : Better, Faster, Stronger</a> " 一文。在訓練中，一樣使用平方和來計算誤差，如果真實座標值為 <span class="math inline">\(\hat{t}_*\)</span> 那麼其梯度值為 <span class="math inline">\(\hat{t}_*-t_*\)</span>。 藉由上面的計算公式，我們可以輕易地推導出 <span class="math inline">\(\hat{t}_*\)</span>。</p>
+<p>上圖其實就是 YOLOv2 的邊界框預測方式，詳細可參閱 &quot; <a href="https://">[論文] YOLO9000 : Better, Faster, Stronger</a> &quot; 一文。在訓練中，一樣使用平方和來計算誤差，如果真實座標值為 <span class="math inline">\(\hat{t}_*\)</span> 那麼其梯度值為 <span class="math inline">\(\hat{t}_*-t_*\)</span>。 藉由上面的計算公式，我們可以輕易地推導出 <span class="math inline">\(\hat{t}_*\)</span>。</p>
 <p><span class="math display">\[
 \hat{t}_x=\sigma^{-1}(x_{label}-c_x)\\
 \hat{t}_y=\sigma^{-1}(y_{label}-c_y)\\
@@ -339,8 +339,8 @@
 <h3 id="取代-logistic-以線性預測-xy">取代 logistic 以線性預測 <span class="math inline">\(x,y\)</span></h3>
 <p>將 activation function 從本來的 logistic 改為 linear，一樣導致 <span class="math inline">\(mAP\)</span> 下滑。</p>
 <h3 id="focal-loss-的使用">Focal Loss 的使用</h3>
-<p>這個嘗試比較有趣，Focal Loss 出現在論文 "Focal Loss for Dense Object Detection" 中，上面提到的 RetinaNet 也是這篇論文中的一個中間產物，但重點還是放在 Focal Loss 上。簡單來說，Focal Loss 就是用來解決物件偵測中，背景比例極高的狀況。</p>
-<p>YOLO 其實利用獨立的 object score 以及 class prediction 解決了 Focal Loss 要解決的問題，然而使用 Focal Loss 後 YOLOv3 卻有兩個百分點的 <span class="math inline">\(mAP\)</span> 下降，為什麼會這樣，作者也不太確定。( 詳細討論可以閱讀一下 " <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/293369755">知乎 － 为什么 YOLOv3 用了 Focal Loss 后 mAP 反而掉了？</a> " 一文 )</p>
+<p>這個嘗試比較有趣，Focal Loss 出現在論文 &quot;Focal Loss for Dense Object Detection&quot; 中，上面提到的 RetinaNet 也是這篇論文中的一個中間產物，但重點還是放在 Focal Loss 上。簡單來說，Focal Loss 就是用來解決物件偵測中，背景比例極高的狀況。</p>
+<p>YOLO 其實利用獨立的 object score 以及 class prediction 解決了 Focal Loss 要解決的問題，然而使用 Focal Loss 後 YOLOv3 卻有兩個百分點的 <span class="math inline">\(mAP\)</span> 下降，為什麼會這樣，作者也不太確定。( 詳細討論可以閱讀一下 &quot; <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/293369755">知乎 － 为什么 YOLOv3 用了 Focal Loss 后 mAP 反而掉了？</a> &quot; 一文 )</p>
 <h3 id="使用雙-iou-閾值並分配正負樣本">使用雙 <span class="math inline">\(IOU\)</span> 閾值，並分配正負樣本</h3>
 <p>在 Faster-RCNN 中使用了兩個閾值來進行訓練。當預測的邊界框 <span class="math inline">\(IOU\)</span> 大於 <span class="math inline">\(0.7\)</span> 則將此視為正樣本，介於 <span class="math inline">\(0.3-0.7\)</span> 之間則忽略，小於 <span class="math inline">\(0.3\)</span> 便視為負樣本。如將 YOLOv3 利用類似的方法進行訓練，則無法得到好的結果。</p>
 <h2 id="意義-what-this-all-means">意義 What This All Means</h2>
@@ -430,7 +430,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

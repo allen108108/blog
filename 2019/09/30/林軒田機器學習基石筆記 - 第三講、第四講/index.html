@@ -142,7 +142,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -279,7 +279,7 @@
     <div class="post-body" itemprop="articleBody">
         <blockquote>
 <ul>
-<li><p><strong>本文為一系列課程之筆記，建議從" <a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文為一系列課程之筆記，建議從&quot; <a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> &quot;開始閱讀</strong></p></li>
 <li><p><strong>本文討論內容請參考: 機器學習基石第三講 : Types of Learning 機器學習基石第四講 : Feasibility of Learning</strong></p></li>
 <li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
 </ul>
@@ -312,7 +312,7 @@
 </ul>
 <h3 id="input-space"><strong>Input Space</strong></h3>
 <ul>
-<li><p>Concrete Feature <span class="math inline">\(\mathbb{X}\)</span> 中帶有具體的描述 / 特徵稱為 concrete feature <span class="math inline">\(x_i\)</span>，通常由 domain knowledge 決定</p></li>
+<li>Concrete Feature <span class="math inline">\(\mathbb{X}\)</span> 中帶有具體的描述 / 特徵稱為 concrete feature <span class="math inline">\(x_i\)</span>，通常由 domain knowledge 決定</li>
 <li><p>Raw Feature</p>
 <blockquote>
 <p>EX: 手寫辨識 將每一個手寫字分為256個畫素 ，依程度賦予其數值 <span class="math inline">\(\mathbb{X}\in\mathbb{R^{256}}\)</span></p>
@@ -322,7 +322,7 @@
 <h2 id="feasibility-of-learning">Feasibility of Learning</h2>
 <p><img src="https://i.imgur.com/nmOVBQz.png" /></p>
 <p>討論機器學習的可行性，我們就從講義的這一個例子開頭吧!</p>
-<p>這樣的例子在一般的智力測驗中算是非常常見的題型之一，但是，好像都不會有人質疑這樣的題目是不是真的唯一解 ?<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>這樣的例子在一般的智力測驗中算是非常常見的題型之一，但是，好像都不會有人質疑這樣的題目是不是真的唯一解 ?<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p>若從上面的例子來看，<span class="math inline">\(g(x)=+1 或是 -1\)</span>都是很合理的推測。</p>
 <p>這下糟糕了!</p>
 <p>那我們怎麼確保機器學習出來的模型可以被侷限住達到有效的預測 ? 而不會預測出來有無限多種可能性 ?</p>
@@ -376,10 +376,10 @@
 <p><span class="math inline">\(\leq2Me^{-2\epsilon^2N}\)</span></p>
 <p>所以我們可以得到以下結論 : M 為有限數 , N夠大 ，<span class="math inline">\(E_{out}(h)\)</span> 與 <span class="math inline">\(E_{in}(h)\)</span> 會夠接近 <span class="math inline">\(\implies\)</span> M 為有限數 , N夠大 ， <span class="math inline">\(E_{in}(h)\rightarrow0\)</span>，則 <span class="math inline">\(E_{out}(h)\rightarrow0\)</span> <span class="math inline">\(\implies\)</span> 機器學習中，只要 M為有限數，樣本數夠多，我們盡可能的 找出<span class="math inline">\(E_{in}(h)\rightarrow0\)</span>，則便可確保<span class="math inline">\(E_{out}(h)\rightarrow0\)</span></p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>還有一種很常見的題目「1=2；2=4；3=8，請問4= ?」 大家正常都會非常快速的回答出「16」，而答案通常也是如此。 假設有一個函數 <span class="math inline">\(f\)</span> 滿足上面的條件，<span class="math inline">\(f(1)=2，f(2)=4，f(3)=8\)</span> 從座標的角度來看可以看做給定三點<span class="math inline">\((1,2) , (2,4) ,(3,8)\)</span>求過第四點<span class="math inline">\((4,y)\)</span>的曲線， 從這裡不難發現，給定任意四點，我都可以求出一個四次方程式<span class="math inline">\(f(x)=ax^3+bx^2+cx+d\)</span>通過這四點， 也就是說，不管我們給定哪一個<span class="math inline">\(y\)</span>值，都一定可以找到一個(或以上)的 <span class="math inline">\(f\)</span> 來對應。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>還有一種很常見的題目「1=2；2=4；3=8，請問4= ?」 大家正常都會非常快速的回答出「16」，而答案通常也是如此。 假設有一個函數 <span class="math inline">\(f\)</span> 滿足上面的條件，<span class="math inline">\(f(1)=2，f(2)=4，f(3)=8\)</span> 從座標的角度來看可以看做給定三點<span class="math inline">\((1,2) , (2,4) ,(3,8)\)</span>求過第四點<span class="math inline">\((4,y)\)</span>的曲線， 從這裡不難發現，給定任意四點，我都可以求出一個四次方程式<span class="math inline">\(f(x)=ax^3+bx^2+cx+d\)</span>通過這四點， 也就是說，不管我們給定哪一個<span class="math inline">\(y\)</span>值，都一定可以找到一個(或以上)的 <span class="math inline">\(f\)</span> 來對應。<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -450,7 +450,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

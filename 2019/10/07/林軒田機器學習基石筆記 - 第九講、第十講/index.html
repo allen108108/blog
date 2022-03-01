@@ -35,8 +35,6 @@
 <meta property="og:image" content="https://i.imgur.com/N4eRcKO.png">
 <meta property="og:image" content="https://i.imgur.com/LqMNoeq.png">
 <meta property="og:image" content="https://i.imgur.com/2Ce4cew.png">
-<meta property="og:image" content="https://i.imgur.com/30cDMOj.png%20=290x">
-<meta property="og:image" content="https://i.imgur.com/J70UyQU.png%20=280x">
 <meta property="article:published_time" content="2019-10-07T05:19:26.000Z">
 <meta property="article:modified_time" content="2019-11-08T18:42:20.008Z">
 <meta property="article:author" content="Allen Tzeng">
@@ -148,7 +146,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -285,7 +283,7 @@
     <div class="post-body" itemprop="articleBody">
         <blockquote>
 <ul>
-<li><p><strong>本文為一系列課程之筆記，建議從" <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryxzB7LwN">機器學習基石筆記-1</a> "開始閱讀</strong> &gt;</p></li>
+<li><strong>本文為一系列課程之筆記，建議從&quot; <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryxzB7LwN">機器學習基石筆記-1</a> &quot;開始閱讀</strong> &gt;</li>
 <li><p><strong>本文討論內容請參考: 機器學習基石第九講 : Linear Regression</strong> <strong>機器學習基石第十講 : Logistic Regression</strong></p></li>
 <li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
 </ul>
@@ -297,7 +295,7 @@
 <p>當我們手中有一堆資料 ( <span class="math inline">\(\mathbb{D}\)</span> )，我們會先問自己，我們想要從這些資料裡面知道什麼 ? 預測什麼 ? ( <span class="math inline">\(Classification\ or\ Regression\)</span> ) 在這樣的問題下，我們最終會希望有一個模型 ( <span class="math inline">\(g\)</span> ) 可以盡量準確地預測出我們想要知道的事情。( <span class="math inline">\(g\approx f\)</span> )</p>
 <p>想要得到這樣的模型，我們就得從許多可能性中 ( <span class="math inline">\(h\)</span> )，找出跟我們手中資料真實狀況誤差最小的 ( <span class="math inline">\(\min E_{in}(h)=\min err(y,\hat y)\)</span> ) 來作為我們的模型。而這樣找出最小值的過程，就是我們所謂演算法 ( <span class="math inline">\(algorithm\)</span> )。</p>
 <p>PS: 當我們決定了想要什麼樣子型態的模型 ( PLA , Pocket , Linear regression , Logistic regression...) ，那麼找出最小值的演算法也同時被確定下來。</p>
-<p>當我們理清楚其中的關係後，很清楚地可以知道，<font color="#dd0000">所有演算法就是針對某一個error measure 尋找最小值的方法</font>，也就是說，當我們要決定模型的型態，也要先決定出來我們要用什麼樣子的 error measure 。( 回想一下，當我們決定了 error measure 後，機器學習的可行性便也可以確定<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>)</p>
+<p>當我們理清楚其中的關係後，很清楚地可以知道，<font color="#dd0000">所有演算法就是針對某一個error measure 尋找最小值的方法</font>，也就是說，當我們要決定模型的型態，也要先決定出來我們要用什麼樣子的 error measure 。( 回想一下，當我們決定了 error measure 後，機器學習的可行性便也可以確定<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>)</p>
 <h2 id="linear-regression">Linear Regression</h2>
 <p><img src="https://i.imgur.com/4RQIFTU.png" /> ( 紅線部分我們稱為 剩餘residuals )</p>
 <p>Linear regression : 找出 line / hyperplane 有最小的 residuals</p>
@@ -306,7 +304,7 @@
 <p><span class="math inline">\(err(y,\hat y)=(y-\hat y)^2\)</span> <span class="math inline">\(\Longrightarrow E_{in}(h)=\frac{1}{N}\sum\limits_{n=1}^{N}(h(\mathbb{X}_n)-y_n)^2\ and\ E_{out}(h)=\underset{(\mathbb{X},y)\sim\mathbb{P}}{\mathbb{E}}(\mathbb{W}^T\mathbb{X}-y)^2\)</span></p>
 <p><img src="https://i.imgur.com/9Ff7ClN.png" /></p>
 <p>Step 1 : 先將資料整理成矩陣型態，找出以每一筆資料為列向量的 <span class="math inline">\(\mathbb{X}\)</span> 矩陣及 <span class="math inline">\(\mathbb{Y}\)</span> 矩陣</p>
-<p>Step 2 : 計算出 pseudo-inverse<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> <span class="math inline">\(\mathbb{X}^\dagger=\begin{cases}(\mathbb{X}^T\mathbb{X})^{-1}\mathbb{X}^T,&amp; \mbox{if}\ \mathbb{X}^T\mathbb{X}\ \mbox{is invertible}\\defined\ by\ other\ way,&amp;\mbox{if}\ \mathbb{X}^T\mathbb{X}\ \mbox{is&#39;nt invertible}\end{cases}\)</span></p>
+<p>Step 2 : 計算出 pseudo-inverse<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> <span class="math inline">\(\mathbb{X}^\dagger=\begin{cases}(\mathbb{X}^T\mathbb{X})^{-1}\mathbb{X}^T,&amp; \mbox{if}\ \mathbb{X}^T\mathbb{X}\ \mbox{is invertible}\\defined\ by\ other\ way,&amp;\mbox{if}\ \mathbb{X}^T\mathbb{X}\ \mbox{is&#39;nt invertible}\end{cases}\)</span></p>
 <p>Step 3 : 最佳解 <span class="math inline">\(\mathbb{W}_{lin}=\mathbb{X}^\dagger\mathbb{Y}\)</span></p>
 <hr />
 <p><span class="math inline">\(Proof\)</span></p>
@@ -327,7 +325,7 @@
 <h3 id="linear-regression-的可行性">Linear Regression 的可行性</h3>
 <p>由上述我們可以找出有最小誤差的預測模型 <span class="math inline">\(\hat{\mathbb{Y}}=\mathbb{X}\mathbb{W}_{lin}=\mathbb{X}(\mathbb{X}^T\mathbb{X})^{-1}\mathbb{X}^T\mathbb{Y}\overset{let}{=}\mathbb{H}\mathbb{Y}\)</span></p>
 <p>我們可以把這個 <span class="math inline">\(\mathbb{H}\)</span> 看作是一種線性變換，將 <span class="math inline">\(\mathbb{Y}\)</span> 轉換到 <span class="math inline">\(\hat{\mathbb{Y}}\)</span> ，再更白話一點說，<span class="math inline">\(\mathbb{H}\)</span> 就是 <span class="math inline">\(\mathbb{Y}\)</span> 與 <span class="math inline">\(\hat{\mathbb{Y}}\)</span> 的一個線性關係。而這樣的一個關係它有一些特別的特性 : 1. <span class="math inline">\(\mathbb{H}\)</span> is symmetric 2. <span class="math inline">\(\mathbb{H}^k=\mathbb{H}\)</span> 3. <span class="math inline">\((\mathbb{I}-\mathbb{H})^k=\mathbb{I}-\mathbb{H}\)</span> 4. <span class="math inline">\(tr(\mathbb{H})=d+1\)</span></p>
-<p>我們可以利用這些特性推導出 <span class="math inline">\(\overline{E_{in}}=\underset{\mathbb{D}\overset{i.i.d}{\sim}\mathbb{P}}{\mathbb{E}}[E_{in}(\mathbb{W}_{lin}\ w.r.t\ \mathbb{D})]=noise\ level\cdot(1-\frac{d+1}{N})\)</span><a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> <span class="math inline">\(\overline{E_{out}}=noise\ level\cdot(1+\frac{d+1}{N})\)</span> ( 此式在僅用於Linear Regression，因此證明僅放在註釋中 )</p>
+<p>我們可以利用這些特性推導出 <span class="math inline">\(\overline{E_{in}}=\underset{\mathbb{D}\overset{i.i.d}{\sim}\mathbb{P}}{\mathbb{E}}[E_{in}(\mathbb{W}_{lin}\ w.r.t\ \mathbb{D})]=noise\ level\cdot(1-\frac{d+1}{N})\)</span><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> <span class="math inline">\(\overline{E_{out}}=noise\ level\cdot(1+\frac{d+1}{N})\)</span> ( 此式在僅用於Linear Regression，因此證明僅放在註釋中 )</p>
 <p>這兩式指出，只要是從 <span class="math inline">\(\mathbb{P}\)</span> 這個分佈出來的，且尺寸為 <span class="math inline">\(N\)</span> ，那麼 <span class="math inline">\(E_{in}\)</span> 與 <span class="math inline">\(E_{out}\)</span> 的平均都會跟 <span class="math inline">\(Noise\)</span> 的平均有上述關係。</p>
 <p>所以我們可以得出下圖 :</p>
 <p><img src="https://i.imgur.com/4nkAl7H.png" /></p>
@@ -340,7 +338,7 @@
 <p><span class="math inline">\(\Longrightarrow\ classification\ E_{out}\leq\ classification\ E_{in}+\Omega(N,\mathbb{H},\delta)\leq\ regression\ E_{in}+\Omega(N,\mathbb{H},\delta)\)</span></p>
 <p><span class="math inline">\(\Longrightarrow\)</span> Linear regression 的誤差上界的確比 classification 的誤差上界來的大，但是其為解析解，非常容易可以求出解，所以用一些準確度來換得效率也是一個可以接受的選項，誘惑者可先用regression求出解析解後，再拿這個解作為初始值放入PLA去求得更好的解，這樣也可以避免PLA花太多時間再做迭代。</p>
 <h2 id="logistic-regression">Logistic Regression</h2>
-<p>在現實生活中，我們有時候會想知道的事情不是單純的、絕對的、硬性的是非問題 ( 病人是否活著? )，或許我們會希望能夠有比較 soft 的分類 ( 病人活著的機率? )，或許，我們可以把這樣的 soft binary classification 視為是帶有 <span class="math inline">\(Noise\)</span> 的 classification ( <a target="_blank" rel="noopener" href="https://hackmd.io/s/rJaSpwpFV">機器學習基石筆記-5</a> 內談到的 "翻轉"機率 flipping noise level )。</p>
+<p>在現實生活中，我們有時候會想知道的事情不是單純的、絕對的、硬性的是非問題 ( 病人是否活著? )，或許我們會希望能夠有比較 soft 的分類 ( 病人活著的機率? )，或許，我們可以把這樣的 soft binary classification 視為是帶有 <span class="math inline">\(Noise\)</span> 的 classification ( <a target="_blank" rel="noopener" href="https://hackmd.io/s/rJaSpwpFV">機器學習基石筆記-5</a> 內談到的 &quot;翻轉&quot;機率 flipping noise level )。</p>
 <p><span class="math inline">\(\mathbb{X}\overset{i.i.d}{\sim}\mathbb{P}\)</span> , <span class="math inline">\(\mathbb{Y}\overset{i.i.d}{\sim}\mathbb{P}(\mathbb{Y}\mid\mathbb{X})\)</span></p>
 <p><span class="math inline">\(\Longrightarrow\begin{cases}Binary\ classification\ f(\mathbb{X})=Sign(\mathbb{P}(+1\mid\mathbb{X})-\frac{1}{2})\in\left\{+1,-1\right\}\\Soft\ binary\ classification\ f(\mathbb{X})=\mathbb{P}(+1\mid\mathbb{X})\in\left[0,1\right]\end{cases}\)</span></p>
 <p><img src="https://i.imgur.com/kr4qkyR.png" /></p>
@@ -348,7 +346,7 @@
 <p><img src="https://i.imgur.com/N4eRcKO.png" /></p>
 <h3 id="logistic-regression-algorithm">Logistic Regression Algorithm</h3>
 <p>這樣機率型態的 error measure 我們使用 cross-entropy ( 交叉熵 ) error</p>
-<p><span class="math inline">\(E_{in}(\mathbb{W})=cross-entropy=\frac{1}{N}\sum\limits_{n=1}^{N}\ln(1+e^{-y_n\mathbb{W}^T\mathbb{X_n}})\)</span><a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p><span class="math inline">\(E_{in}(\mathbb{W})=cross-entropy=\frac{1}{N}\sum\limits_{n=1}^{N}\ln(1+e^{-y_n\mathbb{W}^T\mathbb{X_n}})\)</span><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
 <p><img src="https://i.imgur.com/LqMNoeq.png" /></p>
 <p>挑選一個初始值 <span class="math inline">\(\mathbb{W}_0\)</span> Step 1 : 計算當下 <span class="math inline">\(\mathbb{W}_t\)</span> 的梯度 <span class="math inline">\(\nabla E_{in}(\mathbb{W}_t)=\frac{1}{N}\sum\limits_{n=1}^{N}\theta(-y_n\mathbb{W}^T\mathbb{X})(-y_n\mathbb{X}_n)\)</span></p>
 <p>Step 2 : 進行權重迭代更新 <span class="math inline">\(\mathbb{W}_{t+1}=\mathbb{W}_t-\eta\cdot\nabla E_{in}(\mathbb{W}_t)\)</span></p>
@@ -363,7 +361,7 @@
 <p>Case 2 : <span class="math inline">\(\frac{1}{N}\sum\theta(-y_n\mathbb{W}^T\mathbb{X})\cdot(-y_n\cdot x_{n_i})=0\Longrightarrow\)</span> 非線性方程求解困難不可行</p>
 <p>這邊我們可以發現想要找到類似 Linear Regression 的解析解會非常窒礙難行，所以我們要利用類似PLA的方式做迭代優化 :</p>
 <p><span class="math inline">\(\mathbb{W}_{t+1}=\mathbb{W}_t+\eta&#39;\cdot\nu\)</span></p>
-<h3 id="gradient-descent-梯度下降註6">Gradient Descent 梯度下降<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></h3>
+<h3 id="gradient-descent-梯度下降註6">Gradient Descent 梯度下降<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></h3>
 <h4 id="how-to-choose-eta-nu">How to choose <span class="math inline">\(\eta\)</span> &amp; <span class="math inline">\(\nu\)</span> ?</h4>
 <p>Assume <span class="math inline">\(\left\lVert\nu\right\rVert=1\)</span> and <span class="math inline">\(\eta&#39;&gt;0\)</span> is small enough</p>
 <p><span class="math inline">\(E_{in}(\mathbb{W}_{t+1})=E_{in}(\mathbb{W}_t+\eta&#39;\cdot\nu)\approx E_{in}(\mathbb{W}_{t+1})+\eta&#39;\cdot\nu^T\cdot\nabla E_{in}(\mathbb{W}_t)\)</span></p>
@@ -375,25 +373,25 @@
 <p>若 <span class="math inline">\(\eta&#39;\)</span> 太小，迭代次數會很多且容易落在相對極小值 ( 而非絕對最小值 ) 若 <span class="math inline">\(\eta&#39;\)</span> 太大，迭代結果震盪大，不夠穩定 因此最好的方式是 <span class="math inline">\(\eta&#39;\)</span> 隨著每一次迭代做調整</p>
 <p><img src="https://i.imgur.com/2Ce4cew.png" /></p>
 <p><span class="math inline">\(\Rightarrow \eta&#39;\varpropto\left\lVert\nabla E_{in}(\mathbb{W}_t)\right\rVert\Rightarrow\eta&#39;=\eta\cdot\left\lVert\nabla E_{in}(\mathbb{W}_t)\right\rVert\)</span></p>
-<p><span class="math inline">\(PS: \eta&#39;\)</span> 隨著迭代不斷更動，但更動"固定"比例為 <span class="math inline">\(\eta\)</span></p>
+<p><span class="math inline">\(PS: \eta&#39;\)</span> 隨著迭代不斷更動，但更動&quot;固定&quot;比例為 <span class="math inline">\(\eta\)</span></p>
 <p>綜合上述 :</p>
 <p><span class="math inline">\(\mathbb{W}_{t+1}\leftarrow\mathbb{W}_t+\eta&#39;\cdot\nu\Longrightarrow\mathbb{W}_{t+1}\leftarrow\mathbb{W}_t+\eta&#39;\cdot-\frac{\nabla E_{in}(\mathbb{W}_t)}{\left\lVert\nabla E_{in}(\mathbb{W}_t)\right\rVert}\Longrightarrow\mathbb{W}_{t+1}\leftarrow\mathbb{W}_t-\eta\cdot\nabla E_{in}(\mathbb{W}_t)\)</span></p>
 <h2 id="註釋">註釋</h2>
 <ol start="2" type="1">
-<li><img src="https://i.imgur.com/30cDMOj.png%20=290x" /> <img src="https://i.imgur.com/J70UyQU.png%20=280x" /></li>
+<li><embed src="https://i.imgur.com/30cDMOj.png%20=290x" /> <embed src="https://i.imgur.com/J70UyQU.png%20=280x" /></li>
 </ol>
 <p><span class="math inline">\(\because\mathbb{H}\mathbb{Y}=\hat{\mathbb{Y}}\Longrightarrow\mathbb{H}\)</span> transform <span class="math inline">\(\mathbb{Y}\)</span> to <span class="math inline">\(\hat{\mathbb{Y}}\)</span> <span class="math inline">\(\because\mathbb{Y}-\hat{\mathbb{Y}}=(\mathbb{I}-\mathbb{H})\mathbb{Y}\Longrightarrow(\mathbb{I}-\mathbb{H})\)</span> transform <span class="math inline">\(\mathbb{Y}\)</span> to <span class="math inline">\(\mathbb{Y}-\hat{\mathbb{Y}}\)</span> <span class="math inline">\(Suppose\ that\ f(\mathbb{X})\in\hat{\mathbb{Y}}=\mathbb{X}\mathbb{W}_{lin}\)</span> <span class="math inline">\(\therefore(\mathbb{I}-\mathbb{H})\)</span> transform <span class="math inline">\(Noise\)</span> to <span class="math inline">\(\mathbb{Y}-\hat{\mathbb{Y}}\)</span> ( <span class="math inline">\(\because\mathbb{Y}=f(\mathbb{X})+Noise\)</span> ) 3. <span class="math inline">\(E_{in}(\mathbb{W}_{lin})=\frac{1}{N}\begin{Vmatrix}\mathbb{Y}-\hat{\mathbb{Y}}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}(\mathbb{I}-\mathbb{H})\cdot Noise\end{Vmatrix}^2=\frac{1}{N}(N-(d+1))\begin{Vmatrix}Noise\end{Vmatrix}^2\)</span> ( <span class="math inline">\(\because\begin{Vmatrix}\mathbb{I}-\mathbb{H}\end{Vmatrix}^2=tr(\mathbb{I}-\mathbb{H})=tr(\mathbb{I})-tr(\mathbb{H})=N-(d+1)\)</span> ) <span class="math inline">\(\Longrightarrow\overline{E_{in}}=\underset{\mathbb{D}\overset{i.i.d}{\sim}\mathbb{P}}{\mathbb{E}}[E_{in}(\mathbb{W}_{lin}\ w.r.t\ \mathbb{D})]=noise\ level\cdot(1-\frac{d+1}{N})\)</span> 同理可證 : <span class="math inline">\(\overline{E_{out}}=noise\ level\cdot(1+\frac{d+1}{N})\)</span></p>
 <p><span class="math inline">\(g=\arg\max\limits_{\forall h}( likelyhood(h) )\)</span> <span class="math inline">\(\Leftrightarrow g=\arg\max\limits_{\forall\mathbb{W}}(\prod_{n=1}^{N}\theta(y_n\mathbb{W}^T\mathbb{X}))\)</span> <span class="math inline">\(\Leftrightarrow g=\arg\max\limits_{\forall\mathbb{W}}(\ln\prod_{n=1}^{N}\theta(y_n\mathbb{W}^T\mathbb{X}))\)</span> <span class="math inline">\(\Leftrightarrow g=\arg\min\limits_{\forall\mathbb{W}}(\frac{1}{N}\sum\limits_{n=1}^{N}-\ln\theta(y_n\mathbb{W}^T\mathbb{X}))\)</span> <span class="math inline">\(=\arg\min\limits_{\forall\mathbb{W}}(\frac{1}{N}\sum\limits_{n=1}^{N}-\ln(1+e^{(-y_n\mathbb{W}^T\mathbb{X})})^{-1})\)</span> <span class="math inline">\(\begin{matrix}=\arg\min\limits_{\forall\mathbb{W}}(\underbrace{\frac{1}{N}\sum\limits_{n=1}^{N}\ln(1+e^{(-y_n\mathbb{W}^T\mathbb{X})})})\\cross-entropy\ error\end{matrix}\)</span></p>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>可參閱 <a target="_blank" rel="noopener" href="https://hackmd.io/s/Sk6y3RMYE">機器學習基石筆記-4</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>擬反矩陣pseudo-inverse 又稱廣義反矩陣 <span class="math inline">\(\forall A\in\mathbb{C}^{m\times n}\ ,\ \exists !A^\dagger\)</span> s.t. :<br />
-<span class="math inline">\(1.AA^{\dagger}A=A\)</span> <span class="math inline">\(2.A^{\dagger}AA{^\dagger}=A^{\dagger}\)</span> <span class="math inline">\(3.(A^\dagger A)^T=A^\dagger A\)</span> <span class="math inline">\(4.(AA^\dagger)^T=AA^\dagger\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>廣義反矩陣在數學上的應用之一便是用來求出最小平方法之解 <span class="math inline">\(Assume\ \min\parallel AX-Y\parallel_2\ ,\ then\ X=A^\dagger Y+(I-A^\dagger A)w\ ,\ where\ w\ is\ arbitrary\ vector\)</span><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p>此證明為簡易證明，雖不夠嚴謹，但仍可有不錯的解釋力 <span class="math inline">\(Proof\)</span> 1. <span class="math inline">\(E_{in}(\mathbb{W}_{lin})=\frac{1}{N}\begin{Vmatrix}\mathbb{Y}-\hat{\mathbb{Y}}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}\mathbb{Y}-\mathbb{X}\mathbb{X}^\dagger\mathbb{Y}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}(\mathbb{I}-\mathbb{X}\mathbb{X}^\dagger)\mathbb{Y}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}(\mathbb{I}-\mathbb{H})\mathbb{Y}\end{Vmatrix}^2\)</span><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5" role="doc-endnote"><p>Cross-Entropy <span class="math inline">\(f(\mathbb{X})=\mathbb{P}(+1\mid\mathbb{X})\iff\mathbb{P}(\mathbb{Y}\mid\mathbb{X})=\begin{cases}f(\mathbb{X})&amp;y=+1\\1-f(\mathbb{X})&amp;y=-1\end{cases}\)</span> <span class="math inline">\(\Longrightarrow\prod_{n=1}^{N}\mathbb{P}(\mathbb{X}_n)\mathbb{P}(y_n\mid\mathbb{X}_n)\)</span> <span class="math inline">\(\Longrightarrow\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)f(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)(1-f(\mathbb{X}_m))\)</span> ---(1) 我們希望我們的預測 <span class="math inline">\(h\)</span> 可以有 <span class="math inline">\(f\)</span> 的表現 <span class="math inline">\(\therefore\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)h(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)(1-h(\mathbb{X}_m))\)</span> --- (2) * 若 <span class="math inline">\(h\approx f\)</span>，則上述(1)(2)兩式理應接近 且 (1)式應該會非常接近1 * 我們將(2)式定義成一個函數 稱為 <span class="math inline">\(likelyhood(h)\)</span>，則我們想要的 <span class="math inline">\(g=\arg\max\limits_{\forall h}(likelyhood(h))\)</span> <span class="math inline">\(\therefore likelyhood(h)\)</span> <span class="math inline">\(=\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)h(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)(1-h(\mathbb{X}_m))\)</span> <span class="math inline">\(=\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)h(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)\)</span><font color="#dd0000"><span class="math inline">\((-h(\mathbb{X}_m))\)</span></font> <span class="math inline">\(( \because h(\mathbb{X})=\theta(\mathbb{W}^T\mathbb{X})\ and\ 1-\theta(s)=-\theta(s) )\)</span> <span class="math inline">\(\propto\prod_{n=1}^{N}h(y_n\mathbb{X}_n)=\prod_{n=1}^{N}\theta(y_n\mathbb{W}^T\mathbb{X})\)</span><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6" role="doc-endnote"><p>有關於梯度下降法的更詳細討論可以參閱 <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryQypiDK4">Gradient descent 梯度下降</a> 一文<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>可參閱 <a target="_blank" rel="noopener" href="https://hackmd.io/s/Sk6y3RMYE">機器學習基石筆記-4</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>擬反矩陣pseudo-inverse 又稱廣義反矩陣 <span class="math inline">\(\forall A\in\mathbb{C}^{m\times n}\ ,\ \exists !A^\dagger\)</span> s.t. :<br />
+<span class="math inline">\(1.AA^{\dagger}A=A\)</span> <span class="math inline">\(2.A^{\dagger}AA{^\dagger}=A^{\dagger}\)</span> <span class="math inline">\(3.(A^\dagger A)^T=A^\dagger A\)</span> <span class="math inline">\(4.(AA^\dagger)^T=AA^\dagger\)</span><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>廣義反矩陣在數學上的應用之一便是用來求出最小平方法之解 <span class="math inline">\(Assume\ \min\parallel AX-Y\parallel_2\ ,\ then\ X=A^\dagger Y+(I-A^\dagger A)w\ ,\ where\ w\ is\ arbitrary\ vector\)</span><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>此證明為簡易證明，雖不夠嚴謹，但仍可有不錯的解釋力 <span class="math inline">\(Proof\)</span> 1. <span class="math inline">\(E_{in}(\mathbb{W}_{lin})=\frac{1}{N}\begin{Vmatrix}\mathbb{Y}-\hat{\mathbb{Y}}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}\mathbb{Y}-\mathbb{X}\mathbb{X}^\dagger\mathbb{Y}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}(\mathbb{I}-\mathbb{X}\mathbb{X}^\dagger)\mathbb{Y}\end{Vmatrix}^2=\frac{1}{N}\begin{Vmatrix}(\mathbb{I}-\mathbb{H})\mathbb{Y}\end{Vmatrix}^2\)</span><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>Cross-Entropy <span class="math inline">\(f(\mathbb{X})=\mathbb{P}(+1\mid\mathbb{X})\iff\mathbb{P}(\mathbb{Y}\mid\mathbb{X})=\begin{cases}f(\mathbb{X})&amp;y=+1\\1-f(\mathbb{X})&amp;y=-1\end{cases}\)</span> <span class="math inline">\(\Longrightarrow\prod_{n=1}^{N}\mathbb{P}(\mathbb{X}_n)\mathbb{P}(y_n\mid\mathbb{X}_n)\)</span> <span class="math inline">\(\Longrightarrow\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)f(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)(1-f(\mathbb{X}_m))\)</span> ---(1) 我們希望我們的預測 <span class="math inline">\(h\)</span> 可以有 <span class="math inline">\(f\)</span> 的表現 <span class="math inline">\(\therefore\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)h(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)(1-h(\mathbb{X}_m))\)</span> --- (2) * 若 <span class="math inline">\(h\approx f\)</span>，則上述(1)(2)兩式理應接近 且 (1)式應該會非常接近1 * 我們將(2)式定義成一個函數 稱為 <span class="math inline">\(likelyhood(h)\)</span>，則我們想要的 <span class="math inline">\(g=\arg\max\limits_{\forall h}(likelyhood(h))\)</span> <span class="math inline">\(\therefore likelyhood(h)\)</span> <span class="math inline">\(=\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)h(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)(1-h(\mathbb{X}_m))\)</span> <span class="math inline">\(=\prod_{y_n=+1}\mathbb{P}(\mathbb{X}_n)h(\mathbb{X}_n)\prod_{y_m=-1}\mathbb{P}(\mathbb{X}_m)\)</span><font color="#dd0000"><span class="math inline">\((-h(\mathbb{X}_m))\)</span></font> <span class="math inline">\(( \because h(\mathbb{X})=\theta(\mathbb{W}^T\mathbb{X})\ and\ 1-\theta(s)=-\theta(s) )\)</span> <span class="math inline">\(\propto\prod_{n=1}^{N}h(y_n\mathbb{X}_n)=\prod_{n=1}^{N}\theta(y_n\mathbb{W}^T\mathbb{X})\)</span><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>有關於梯度下降法的更詳細討論可以參閱 <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryQypiDK4">Gradient descent 梯度下降</a> 一文<a href="#fnref6" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -464,7 +462,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

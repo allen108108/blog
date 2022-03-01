@@ -149,7 +149,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -296,16 +296,16 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 將資料進行預處理，將資料尺寸處理到適合 CNN 的輸入尺寸，並將灰階數值進行 normalization</span></span><br><span class="line">train_data = train_data.reshape(-<span class="number">1</span>,<span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>).astype(<span class="string">&#x27;float32&#x27;</span>)/<span class="number">255</span></span><br><span class="line">test_data = test_data.reshape(-<span class="number">1</span>,<span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>).astype(<span class="string">&#x27;float32&#x27;</span>)/<span class="number">255</span></span><br></pre></td></tr></table></figure>
 <p>在 reshape 中，第一個維度的值設為 -1 ，正式的解釋是這會讓 python 自己根據 train_data 的輸入根據我們 reshape 設置的其他值去計算第一維度應該要多少。</p>
 <p>白話點說，就是我不想知道有多少筆，我只要確定輸入的尺寸是 <span class="math inline">\(28\times 28\)</span> 就可以這樣寫。</p>
-<p>最後維度的 " 1 " ，表示的是 channel，灰階圖片 channel=1 ，彩色圖片可以視為 RGB 三色組合而成 channel=3。</p>
+<p>最後維度的 &quot; 1 &quot; ，表示的是 channel，灰階圖片 channel=1 ，彩色圖片可以視為 RGB 三色組合而成 channel=3。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#對於 Label 做 One-Hot Encoding 處理</span></span><br><span class="line">train_label = to_categorical(train_label)</span><br><span class="line">test_label = to_categorical(test_label)</span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#從 training data 中取出 Validation data</span></span><br><span class="line">train_data,val_data,train_label,val_label=train_test_split(train_data,train_label,test_size=<span class="number">0.25</span>,random_state=<span class="number">13</span>)</span><br></pre></td></tr></table></figure>
 <p>這裡用比較簡單的 <code>train_test_split</code> 來切分驗證集，當然我們也可以利用 <code>KFold</code> 或是 <code>StratifiedKFold</code> 來處理。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#進行 CNN 模型的建構</span></span><br><span class="line">model=models.Sequential()</span><br><span class="line"></span><br><span class="line">model.add(layers.Conv2D(<span class="number">32</span>,(<span class="number">3</span>,<span class="number">3</span>),activation=<span class="string">&#x27;relu&#x27;</span>,input_shape=(<span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>)))</span><br><span class="line">model.add(layers.MaxPooling2D((<span class="number">2</span>,<span class="number">2</span>)))</span><br><span class="line">model.add(layers.Conv2D(<span class="number">64</span>,(<span class="number">3</span>,<span class="number">3</span>),activation=<span class="string">&#x27;relu&#x27;</span>))</span><br><span class="line">model.add(layers.MaxPooling2D((<span class="number">2</span>,<span class="number">2</span>)))</span><br><span class="line">model.add(layers.Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(layers.Conv2D(<span class="number">64</span>,(<span class="number">3</span>,<span class="number">3</span>),activation=<span class="string">&#x27;relu&#x27;</span>))</span><br><span class="line"></span><br><span class="line">model.add(layers.Flatten())</span><br><span class="line">model.add(layers.Dense(<span class="number">64</span>,activation=<span class="string">&#x27;relu&#x27;</span>))</span><br><span class="line">model.add(layers.Dense(<span class="number">10</span>,activation=<span class="string">&#x27;softmax&#x27;</span>))</span><br></pre></td></tr></table></figure>
 <p><code>Conv2D(32,(3,3),activation='relu',input_shape=(28,28,1))</code> 32 指的是 filter 個數，也就是 feature map 的個數。(3,3) 則是 filter 的尺寸。</p>
-<p>Activation Function 經過了長期的發展，目前使用 ReLU 可以避免梯度消失的情況，也可以有類似神經元的激發概念，算是比較熱門的 activation function。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Activation Function 經過了長期的發展，目前使用 ReLU 可以避免梯度消失的情況，也可以有類似神經元的激發概念，算是比較熱門的 activation function。<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p>值得注意的是，建構 CNN 的過程中，<code>input_shape</code> 只須寫進第一層，後續的各層會自動計算輸入尺寸。</p>
 <p><code>model.add(layers.Dropout(0.5))</code></p>
-<p>在這裡添加了一層 Dropout 層，可以防止 overfitting 的狀況發生。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>在這裡添加了一層 Dropout 層，可以防止 overfitting 的狀況發生。<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
 <p><code>model.add(layers.Dense(10,activation='softmax'))</code></p>
 <p>根據我們的目標，選定適合的 activation function 作為輸出，一般來說，Multiclass 問題選用 Softmax ，Binaryclass 問題則使用 Sigmoid。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 來看看各層的參數設置</span></span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
@@ -313,7 +313,7 @@
 <p>我們可以從這裡看到各層 feature mpa 數量、尺寸，以及參數的數量，CNN 在設置的時候各層的設置要準確，不然執行會報錯。</p>
 <p>由於此文會比較 CNN 以及 FC network 的差異，所以我會從這個部分確認兩者的總參數量要接近，才比較好判斷這兩者對於同一個問題的處理效能。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#進行模型編譯，選擇優化器、損失函數及評估方式</span></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;Adam&#x27;</span> , loss=<span class="string">&#x27;categorical_crossentropy&#x27;</span> , metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br></pre></td></tr></table></figure>
-<p>優化器部分與上述的 activation function 一樣，現今大多使用 Adam 或是 RMSprop。<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>Loss function 則依照問題來作選擇，Multiclass 問題選用 Categorical_crossentropy ，Binaryclass 問題則使用 Binary_crossentropy。</p>
+<p>優化器部分與上述的 activation function 一樣，現今大多使用 Adam 或是 RMSprop。<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>Loss function 則依照問題來作選擇，Multiclass 問題選用 Categorical_crossentropy ，Binaryclass 問題則使用 Binary_crossentropy。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#將訓練好的模型儲存到 history 中 (建議建立這種習慣)</span></span><br><span class="line">history = model.fit(train_data , train_label , epochs=<span class="number">10</span> , batch_size=<span class="number">64</span>,validation_data=[val_data,val_label])</span><br></pre></td></tr></table></figure>
 <p><img src="https://i.imgur.com/CtpU9ct.png" /></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#將模型應用到 test data 看看準確度</span></span><br><span class="line">loss,acc=model.evaluate(test_data,test_label)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;The Accuracy on Test Data = <span class="subst">&#123;acc&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
@@ -347,12 +347,12 @@
 <p><img src="https://i.imgur.com/TTxQXwg.png" /></p>
 <p>從這兩張圖來看，確實沒有明顯的 overfitting 狀況發生，而且看起來即使增加 epoch 模型也不會有很明顯地增進。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p><a href="https://allen108108.github.io/blog/2019/10/05/Gradient%20Vanishing%20Problem%20---%20以%20ReLU%20_%20Maxout%20取代%20Sigmoid%20actvation%20function/">Gradient Vanishing Problem --- 以 ReLU / Maxout 取代 Sigmoid actvation function</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p><a href="/ZlFtvH-0S7ORuXe3-v1hJA">Regularization 方法 : Weight Decay , Early Stopping and Dropout</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p><a href="https://allen108108.github.io/blog/2019/10/05/Adagrad、RMSprop、Momentum%20and%20Adam%20--%20特殊的學習率調整方式/">Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p><a href="https://allen108108.github.io/blog/2019/10/05/Gradient%20Vanishing%20Problem%20---%20以%20ReLU%20_%20Maxout%20取代%20Sigmoid%20actvation%20function/">Gradient Vanishing Problem --- 以 ReLU / Maxout 取代 Sigmoid actvation function</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="/ZlFtvH-0S7ORuXe3-v1hJA">Regularization 方法 : Weight Decay , Early Stopping and Dropout</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://allen108108.github.io/blog/2019/10/05/Adagrad、RMSprop、Momentum%20and%20Adam%20--%20特殊的學習率調整方式/">Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -423,7 +423,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

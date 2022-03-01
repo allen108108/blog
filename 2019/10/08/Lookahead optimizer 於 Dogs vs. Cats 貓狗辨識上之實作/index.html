@@ -28,7 +28,6 @@
 <meta property="og:description" content="拖稿拖了一段時間，最近才開始著手寫這一篇文章，不過這個時間來寫也是挺好的，上一周的機器學習馬拉松期末考也正好實作了一番，趁著記憶猶新來把整個演算法以及實作過程做一次總整理。">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/wcE3fEd.png">
-<meta property="og:image" content="https://i.imgur.com/O0s57DT.png%20=400x">
 <meta property="og:image" content="https://i.imgur.com/P0TQbem.png">
 <meta property="og:image" content="https://i.imgur.com/F6G8HGa.png">
 <meta property="article:published_time" content="2019-10-07T17:18:05.000Z">
@@ -142,7 +141,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -272,9 +271,9 @@
 <h2 id="optimizer">Optimizer</h2>
 <p>優化器 (optimizer) 作為一個超參數的角色，在深度學習的訓練過程中，具有主導整個訓練效能的地位，找到一個好的優化器，便可以讓 model 的表現更好，預測準確度更高。</p>
 <p>然而在過去幾年之間，Adam 在優化器中獨占鰲頭，幾乎是優化器選擇的預設選項。然而 Adam　並非這麼的無懈可擊，它的收斂性在近幾年來備受質疑，在某些狀況下甚至不及 SGD ( Stochastic Gradient Descent ) 來的優秀。</p>
-<p>然而在今年七月 (2019.07)， Department of Computer Science, University of Toronto 發表了一篇名為 " <em>Lookahead Optimizer: k steps forward, 1 step back</em> " 的論文，介紹了一種新的優化方法 Lookahead Optimizer，試圖彌補 Adam 的不足。</p>
+<p>然而在今年七月 (2019.07)， Department of Computer Science, University of Toronto 發表了一篇名為 &quot; <em>Lookahead Optimizer: k steps forward, 1 step back</em> &quot; 的論文，介紹了一種新的優化方法 Lookahead Optimizer，試圖彌補 Adam 的不足。</p>
 <p>下一個部份我們會介紹整個優化演算的概念，這邊有一個值得注意的是這篇論文的作者群。</p>
-<p>除了第四作者 Jimmy Ba 是當初 Adam 論文 " <em>Adam: A Method for Stochastic Optimization</em> " 的作者之一外，Hinton 也以第三作者的身分參與了此論文的研究，因此這篇論文的重要性不言可喻。</p>
+<p>除了第四作者 Jimmy Ba 是當初 Adam 論文 &quot; <em>Adam: A Method for Stochastic Optimization</em> &quot; 的作者之一外，Hinton 也以第三作者的身分參與了此論文的研究，因此這篇論文的重要性不言可喻。</p>
 <h2 id="lookahead-optimizer-k-steps-forward-1-step-back">Lookahead Optimizer: k steps forward, 1 step back</h2>
 <p>現今絕大多數成功的深度學習都是利用 Stochastic Gradient Descent ( SGD ) 來進行學習的。而近年來想要比 SGD 有更好表現的演算法大概分為兩種類型 :</p>
 <ol type="1">
@@ -286,7 +285,7 @@
 <p><img src="https://i.imgur.com/wcE3fEd.png" /></p>
 <p>上圖為整個 Lookahead Optimizer 的演算過程 :</p>
 <p>Step 1 : 先設定 <span class="math inline">\(\phi_0\)</span> 的初始值，以及選定 Loss function Step 2 : 確定 <span class="math inline">\(k\)</span>值、slow weight 的更新步伐 <span class="math inline">\(\alpha\)</span> 以及 optimizer <span class="math inline">\(A\)</span> Step 3 : <span class="math inline">\(\theta_{1,0}\leftarrow\phi_0\)</span> 或 <span class="math inline">\(\theta_{t,0}\leftarrow\phi_{t-1}\)</span> Step 4 : 利用 optimizer <span class="math inline">\(A\)</span> 由 <span class="math inline">\(\theta_{1,0}\)</span> 更新到 <span class="math inline">\(\theta_{1,k}\)</span> 或由 <span class="math inline">\(\theta_{t,0}\)</span> 更新到 <span class="math inline">\(\theta_{t,k}\)</span> Step 5 : <span class="math inline">\(\phi_1\leftarrow\phi_0+\alpha(\theta_{1,k}-\phi_0)\)</span> 或 <span class="math inline">\(\phi_t\leftarrow\phi_{t-1}+\alpha(\theta_{t,k}-\phi_{t-1})\)</span> 重複 Step 3 - Step 5 直至收斂。</p>
-<p><img src="https://i.imgur.com/O0s57DT.png%20=400x" /></p>
+<p><embed src="https://i.imgur.com/O0s57DT.png%20=400x" /></p>
 <p>上圖展示了 ResNet-32 在 CIFAR-100 中訓練後期的情況，在後期由於梯度已經非常小，因此從右上的圖中可以發現 SGD 更新速度極為緩慢 (fast weight)，還在慢慢探索更優化的解。但從紫色的路徑 (slow weight) 來看， Lookahead 會比較積極的往更優解的方向前去。此時 slow weight 會比 fast weight 更接近最優解。</p>
 <h2 id="lookahead-optimizer-for-keras">Lookahead Optimizer for Keras</h2>
 <p>已經有人將 Lookahead 實現在 Keras 上 ( https://github.com/bojone/keras_lookahead )，作者在介紹 Lookahead 在 keras 上的實現時有特別說到這是一種嵌(侵)入式的實現方式。</p>
@@ -369,7 +368,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

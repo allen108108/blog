@@ -33,7 +33,6 @@
 <meta property="og:image" content="https://i.imgur.com/z0mHNSn.png">
 <meta property="og:image" content="https://i.imgur.com/Obv52sn.png">
 <meta property="og:image" content="https://i.imgur.com/i5jt7QR.png">
-<meta property="og:image" content="https://i.imgur.com/kcQ0DNi.png%20=500x">
 <meta property="og:image" content="https://i.imgur.com/Z0LN3SJ.png">
 <meta property="og:image" content="https://i.imgur.com/zhJXhTD.png">
 <meta property="og:image" content="https://i.imgur.com/lZUQHJx.png">
@@ -159,7 +158,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -295,7 +294,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h2 id="化繁為簡">化繁為簡</h2>
-<p>在 " <a target="_blank" rel="noopener" href="http://bit.ly/2MoSVHB">Semi-supervised Learning</a> " 一文中曾經提到過化繁為簡的概念，簡單來說就是從我們手邊的資料去找出背後的規則、最精要的部分。</p>
+<p>在 &quot; <a target="_blank" rel="noopener" href="http://bit.ly/2MoSVHB">Semi-supervised Learning</a> &quot; 一文中曾經提到過化繁為簡的概念，簡單來說就是從我們手邊的資料去找出背後的規則、最精要的部分。</p>
 <span id="more"></span>
 <p><img width=500 src="https://i.imgur.com/4LVhZdz.png" ></p>
 <p>我們要問的是，是不是能從複雜、高維度的資料中，找到低維度的決定性因素可以決定這些高維度的表現 ?</p>
@@ -303,7 +302,7 @@
 <p>上圖上，從這3-D流形中我們是否可找出2-D的規則 ? 上圖下，在 MNIST 中，資料都是<span class="math inline">\(28\times 28\)</span> 的灰階圖。但我們知道，在 <span class="math inline">\(28\times 28\)</span> 的灰階圖中絕大多數的圖都會是亂碼圖，真正能形成數字的比例是極少的。是否代表我們可以縮減其維度呢 ?</p>
 <h2 id="algorithm-1-clustering-k-means">Algorithm 1 (Clustering) : K-means</h2>
 <p><img width=500 src="https://i.imgur.com/z0mHNSn.png" ></p>
-<p>Step 1 : 決定我們要將資料分為 K 類 <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Step 1 : 決定我們要將資料分為 K 類 <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p>Step 2 : 在資料中隨機任選 K 筆做為 cluster center</p>
 <p>Step 3 : 對所有資料點，計算他們與 cluster center 的距離，依照距離遠近進行分類</p>
 <p>Step 4 : 針對已經分好的類別進行 cluster center 的重新分配</p>
@@ -346,13 +345,13 @@ w^3=arg\max_{\|w\|=1\\ w^1\cdot w=0\\w^2\cdot w=0}Var(z_3)=arg\max_{\|w\|=1\\ w^
 W=\begin{bmatrix}(w^1)^T\\(w^2)^T\\\vdots\end{bmatrix}
 \]</span></p>
 <p>知道了方向，我們就要去試著把這些 <span class="math inline">\(\left\{w^i\right\}_{i=1}^{K}\)</span> 給找出來。</p>
-<p>經過一些證明<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>可以得到以下結論 : 1. <span class="math inline">\(w^i\ is\ the\ eigenvector\ of\ S=Cov(x)\)</span><span class="math inline">\(\ correspond\ to\ the\ i-th\ largest\ eiganvalue\)</span> " <span class="math inline">\(w^i\)</span> 是 <span class="math inline">\(S=Cov(x)\)</span> 中第 <span class="math inline">\(i\)</span> 大特徵值對應的特徵向量 "</p>
+<p>經過一些證明<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>可以得到以下結論 : 1. <span class="math inline">\(w^i\ is\ the\ eigenvector\ of\ S=Cov(x)\)</span><span class="math inline">\(\ correspond\ to\ the\ i-th\ largest\ eiganvalue\)</span> &quot; <span class="math inline">\(w^i\)</span> 是 <span class="math inline">\(S=Cov(x)\)</span> 中第 <span class="math inline">\(i\)</span> 大特徵值對應的特徵向量 &quot;</p>
 <ol start="2" type="1">
-<li><span class="math inline">\(Cov(Z)\overset{let}{=}D\ is\ a\ Diagonal\ Matrix\)</span> " <span class="math inline">\(Cov(Z)\)</span> 是一個對角矩陣"</li>
+<li><span class="math inline">\(Cov(Z)\overset{let}{=}D\ is\ a\ Diagonal\ Matrix\)</span> &quot; <span class="math inline">\(Cov(Z)\)</span> 是一個對角矩陣&quot;</li>
 </ol>
 <h2 id="從-sinular-value-decompposition-svd奇異值分解-角度來看pca">從 Sinular Value Decompposition ( SVD，奇異值分解 ) 角度來看PCA</h2>
 <p>了解了整個演算法是如何做空間轉換之後，我們其實可以從另外一個角度來理解 PCA</p>
-<p><img src="https://i.imgur.com/kcQ0DNi.png%20=500x" /></p>
+<p><embed src="https://i.imgur.com/kcQ0DNi.png%20=500x" /></p>
 <p>任何 objetct ，都可以被解釋成由很多個部分線性組合而成</p>
 <p><span class="math display">\[
 x\approx c_1u^1+c_2u^2+\cdots+c_Ku^K+\bar{x}\\
@@ -418,11 +417,11 @@ R\approx V^TW
 <ol start="2" type="1">
 <li><span class="math inline">\(Cov(Z)=\displaystyle{\frac{1}{N}}\sum\limits_{z}(z-\bar{z})(z-\bar{z})^T=WSW^T\)</span> ( where <span class="math inline">\(S=Cov(X)\)</span> ) <span class="math inline">\(=WS[w^1\cdots w^K]=W[Sw^1\cdots Sw^K]=W[\lambda_1w^1\cdots \lambda_Kw^K]\)</span> <span class="math inline">\([\lambda_1Ww^1\cdots \lambda_KWw^K]=[\lambda_1e_1\cdots \lambda_Ke^K]=\)</span>Diagonal Matrix</li>
 </ol>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>如何決定 K 值?雖然說這是一個 Open Question，但也是一個 Data Driven 的問題。我們還是可以從資料的觀察中看看是否有自然的分類 ? 或是從我們要研究的問題中來決定如何取 K 值。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>證明如下 : (1) <span class="math inline">\(\because Var(z_1)=\displaystyle{\frac{1}{N}}\sum\limits_{z_1}(z_1-\bar{z_1})^2\)</span> <span class="math inline">\(=\displaystyle{\frac{1}{N}}\sum\limits_{x}(w\cdot x-w\cdot \bar{x})^2\)</span> <span class="math inline">\(=\displaystyle{\frac{1}{N}}\sum\limits_{x}(w\cdot (x- \bar{x}))^2\)</span> <span class="math inline">\(=\displaystyle{\frac{1}{N}}\sum\limits_{x}(w)^T(x- \bar{x})(x- \bar{x})^Tw\)</span> <span class="math inline">\(\Big(\because (a\cdot b)^2=(a^Tb)^2=a^Tba^Tb\ \overset{(a^Tb=scalar)}{=}\ a^Tb(a^Tb)^T=a^Tbb^Ta\Big)\)</span> <span class="math inline">\(=(w)^T=\displaystyle{\frac{1}{N}}\sum\limits_{x}(x-\bar{x})(x-\bar{x})^Tw\)</span> <span class="math inline">\(=(w)^TCov(X)w\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>如何決定 K 值?雖然說這是一個 Open Question，但也是一個 Data Driven 的問題。我們還是可以從資料的觀察中看看是否有自然的分類 ? 或是從我們要研究的問題中來決定如何取 K 值。<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>證明如下 : (1) <span class="math inline">\(\because Var(z_1)=\displaystyle{\frac{1}{N}}\sum\limits_{z_1}(z_1-\bar{z_1})^2\)</span> <span class="math inline">\(=\displaystyle{\frac{1}{N}}\sum\limits_{x}(w\cdot x-w\cdot \bar{x})^2\)</span> <span class="math inline">\(=\displaystyle{\frac{1}{N}}\sum\limits_{x}(w\cdot (x- \bar{x}))^2\)</span> <span class="math inline">\(=\displaystyle{\frac{1}{N}}\sum\limits_{x}(w)^T(x- \bar{x})(x- \bar{x})^Tw\)</span> <span class="math inline">\(\Big(\because (a\cdot b)^2=(a^Tb)^2=a^Tba^Tb\ \overset{(a^Tb=scalar)}{=}\ a^Tb(a^Tb)^T=a^Tbb^Ta\Big)\)</span> <span class="math inline">\(=(w)^T=\displaystyle{\frac{1}{N}}\sum\limits_{x}(x-\bar{x})(x-\bar{x})^Tw\)</span> <span class="math inline">\(=(w)^TCov(X)w\)</span><a href="#fnref2" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -493,7 +492,7 @@ R\approx V^TW
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

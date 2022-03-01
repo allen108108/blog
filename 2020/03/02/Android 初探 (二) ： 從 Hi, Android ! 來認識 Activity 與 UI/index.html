@@ -157,7 +157,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -293,7 +293,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h2 id="前言">前言</h2>
-<p>上一篇文章 " <a target="_blank" rel="noopener" href="https://bit.ly/3bouPaB">Android 初探 (一) ： Android 初探 (一) ： 從 Hello World ! 認識 Android 專案開發</a> " 簡單介紹了一個 Android 專案的主要架構以及如何在模擬器上 run 出整個結果，這一篇會著重在一個 Android app是怎麼運作的，以及可以怎麼簡單設計使用者介面。</p>
+<p>上一篇文章 &quot; <a target="_blank" rel="noopener" href="https://bit.ly/3bouPaB">Android 初探 (一) ： Android 初探 (一) ： 從 Hello World ! 認識 Android 專案開發</a> &quot; 簡單介紹了一個 Android 專案的主要架構以及如何在模擬器上 run 出整個結果，這一篇會著重在一個 Android app是怎麼運作的，以及可以怎麼簡單設計使用者介面。</p>
 <span id="more"></span>
 <p>這兩篇文章主要都是以 <a target="_blank" rel="noopener" href="https://developer.android.com/docs">Android Developers Documentation</a> 為主，另外補充一些資料進來，如果已有紮實的基礎，或許可以直接跟著 Android Developers Documentation 進行也是不錯的方向。</p>
 <h2 id="activity">Activity</h2>
@@ -310,7 +310,7 @@
 <p>總的來說，<code>Activity</code>、<code>View</code>與 windows的關係可以這樣解釋 ： 不可視的<code>Activity</code> 必須經由 windows 來對可視的 <code>View</code> 做管理，而<code>View</code> 需要利用 windows 來展示於 <code>Activity</code> 上。</p>
 <h2 id="從-hello-world-變成-hi-android">從 Hello World 變成 Hi Android</h2>
 <p>簡單了解 Android UI 的運作後，我們可以實際應用在專案上。</p>
-<p><code>app &gt; res &gt; layout &gt; activity_main.xml</code> 存放的就是前面提到的 <code>main activity</code>，現在裡面應該只有 "Hello World!" 的字樣。</p>
+<p><code>app &gt; res &gt; layout &gt; activity_main.xml</code> 存放的就是前面提到的 <code>main activity</code>，現在裡面應該只有 &quot;Hello World!&quot; 的字樣。</p>
 <p>在 <code>activity_main.xml</code> 中我們選擇 <code>design</code> 後，我們可以從 Android Studio 看到以下的區塊</p>
 <p><img src="https://i.imgur.com/3iAgWFW.png" /></p>
 <p><code>Palette</code> 存放了我們可以配置在畫面中的所有元組件，<code>Component Tree</code> 顯示了整個畫面中元件的階層結構，中間的 <code>Design Editor</code> 呈現了元件配置的視覺效果，最右邊的 <code>Attributes</code> 可以調整每一個元件的細節特性。</p>
@@ -335,7 +335,7 @@
 <p>首先輸入 <code>Key</code> 為 <code>edit_name</code>，而 <code>default value</code> (會顯示在視窗上) 為 <code>Enter a name ~</code>，按下 OK 後即新增一個新的字串資料</p>
 <p><img width=500 src="https://i.imgur.com/qLxsVk6.png" ></p>
 <p>利用同樣方法新增一個 <code>Key</code> 為 <code>button_send</code>，而 <code>default value</code> 為 <code>Send</code> 的字串資料。新增完成之後，我們就可以在剛剛設置的 layout 上面進行這些字串的配置。</p>
-<p>選取 <code>EditText</code> 後，至右側的 <code>Attributes &gt; text</code> 刪除其值 "Name"，再至 <code>Attributes &gt; hint</code> 按下右側長條選擇我們剛剛新增的字串 <code>edit_name</code></p>
+<p>選取 <code>EditText</code> 後，至右側的 <code>Attributes &gt; text</code> 刪除其值 &quot;Name&quot;，再至 <code>Attributes &gt; hint</code> 按下右側長條選擇我們剛剛新增的字串 <code>edit_name</code></p>
 <p><img width=500 src="https://i.imgur.com/kheJjIg.png" ></p>
 <p>同樣的方式我們可以選擇 <code>Button</code> 的 <code>Attributes &gt; text</code> 之值為剛剛新增的 <code>button_send</code> 字串。</p>
 <h4 id="利用-chain-進行配置">利用 chain 進行配置</h4>
@@ -469,7 +469,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

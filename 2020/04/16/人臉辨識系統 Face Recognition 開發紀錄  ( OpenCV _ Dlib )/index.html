@@ -140,7 +140,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -324,7 +324,7 @@
 <p>上面的流程就是單純人臉身分判斷的流程及部分程式碼解析，這樣的方式應用在 Windows 系統中 Inference time 稍長大概是唯一的問題，其判別的準確度筆者認為並不算太差。</p>
 <p><img src="https://i.imgur.com/mGUgrGI.jpg" /></p>
 <h2 id="活人偵測-liveness-detection">活人偵測 Liveness Detection</h2>
-<p>在筆者實作人臉辨識專案的同時，意外地看到了一篇挺有趣的新聞 : " <a target="_blank" rel="noopener" href="https://www.setn.com/News.aspx?NewsID=619777">刷臉被破解！小學生拿「彩色照」秒解鎖　側臉、偷拍都能開</a> "，讓筆者不禁思考，如何可以在不另外安裝硬體設備 (譬如 : 深度相機、紅外線鏡頭...等) 下，盡可能地避免這樣的狀況發生 ?</p>
+<p>在筆者實作人臉辨識專案的同時，意外地看到了一篇挺有趣的新聞 : &quot; <a target="_blank" rel="noopener" href="https://www.setn.com/News.aspx?NewsID=619777">刷臉被破解！小學生拿「彩色照」秒解鎖　側臉、偷拍都能開</a> &quot;，讓筆者不禁思考，如何可以在不另外安裝硬體設備 (譬如 : 深度相機、紅外線鏡頭...等) 下，盡可能地避免這樣的狀況發生 ?</p>
 <p>搜尋了一些資料，以目前的狀況大約有兩個方向可行 : (1) 直接訓練一個 Deep Learning Model 判斷人臉真假 ，(2) 利用眨眼的過程進行真實人臉的判斷。在此專案中，筆者採用了後者的方式進行 Liveness Detection。</p>
 <p>眨眼偵測，筆者使用了 <a target="_blank" rel="noopener" href="https://towardsdatascience.com/real-time-face-liveness-detection-with-python-keras-and-opencv-c35dc70dafd3">Jordan Van Eetveldt</a> 預訓練好的左右眼開闔判別模型，先偵測鏡頭捕捉的眼睛是開啟還是閉眼。</p>
 <p>再來配合簡單的邏輯判斷，當偵測眼睛的過程中出現了開、閉、開的過程，即判斷為真人，將前述的人臉辨識結果呈現出來。</p>
@@ -337,7 +337,7 @@
 <p>一開始，系統僅會偵測眼睛，雖然同時也會對人臉進行辨識，卻不會顯示出來。而這個部分定義了，在什麼樣子的狀態下，才會將人臉辨識的結果呈現出來。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> isBlinking(eyes_detected[rec_name],<span class="number">3</span>):</span><br><span class="line">    cv2.rectangle(frame, (x, y), (x+w, y+h), (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">2</span>)</span><br><span class="line">    <span class="comment"># Display name</span></span><br><span class="line">    y = y - <span class="number">15</span> <span class="keyword">if</span> y - <span class="number">15</span> &gt; <span class="number">15</span> <span class="keyword">else</span> y + <span class="number">15</span></span><br><span class="line">    cv2.putText(frame, rec_name, (x, y),     </span><br></pre></td></tr></table></figure>
 <h2 id="後記">後記</h2>
-<p>其實看了此文介紹的人臉辨識，用了兩三個模型進行最終的人臉判別，其實如果有看過 FaceNet 論文 "<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1503.03832"><em>FaceNet: A Unified Embedding for Face Recognition and Clustering</em></a>" 其概念幾乎完全一樣，但是用了更快的方法來達成而已，或許，這個專案未來可以試著用 FaceNet 來替代 Dlib 的方式進行辨識。</p>
+<p>其實看了此文介紹的人臉辨識，用了兩三個模型進行最終的人臉判別，其實如果有看過 FaceNet 論文 &quot;<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1503.03832"><em>FaceNet: A Unified Embedding for Face Recognition and Clustering</em></a>&quot; 其概念幾乎完全一樣，但是用了更快的方法來達成而已，或許，這個專案未來可以試著用 FaceNet 來替代 Dlib 的方式進行辨識。</p>
 <p>另外，這種 Liveness Detection 的方式是否能完全杜絕人臉辨識被破解 ? 其實不然，基本上利用一個人臉有眨眼的影片或許也可以破解這個部分，但是正如筆者所提到的，真正萬無一失的辦法還是得另外安裝硬體設備，單純使用深度學習的方式或許盡可能可以做到的就是如此。</p>
 <h2 id="參考資料">參考資料</h2>
 <ol type="1">
@@ -413,7 +413,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

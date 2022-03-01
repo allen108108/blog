@@ -27,9 +27,7 @@
 <meta property="og:site_name" content="Math.py">
 <meta property="og:description" content="&quot; What I cannot create, I do not understand. &quot; --- Richard Feynman  我們想要知道機器是不是真的能學到東西，直覺得就是他能不能夠根據它所學到的東西進行創造，創造出可以以假亂真的成品出來。">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:image" content="https://i.imgur.com/YUBN2qQ.png%20=400x">
 <meta property="og:image" content="https://i.imgur.com/gwkOoAb.png">
-<meta property="og:image" content="https://i.imgur.com/0bpPzmF.png%20=450x">
 <meta property="og:image" content="https://i.imgur.com/JoNfLCr.png">
 <meta property="og:image" content="https://i.imgur.com/eePORC5.png">
 <meta property="og:image" content="https://i.imgur.com/hUFoG9E.gif">
@@ -39,7 +37,6 @@
 <meta property="og:image" content="https://i.imgur.com/bWYFJnx.png">
 <meta property="og:image" content="https://i.imgur.com/V78Tv6m.png">
 <meta property="og:image" content="https://i.imgur.com/phsgs2U.png">
-<meta property="og:image" content="https://i.imgur.com/Rgoqgqq.png%20=300x">
 <meta property="og:image" content="https://i.imgur.com/6glyfff.png">
 <meta property="og:image" content="https://i.imgur.com/Nrxug09.jpg">
 <meta property="og:image" content="https://i.imgur.com/IenlZLA.png">
@@ -47,7 +44,7 @@
 <meta property="article:modified_time" content="2019-11-02T17:54:00.856Z">
 <meta property="article:author" content="Allen Tzeng">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.imgur.com/YUBN2qQ.png%20=400x">
+<meta name="twitter:image" content="https://i.imgur.com/gwkOoAb.png">
 
 
 <link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(6)%20--%20Generation%20(%20PixelRNN%E3%80%81Variational%20Auto-Encoder%20(%20VAE%20)%20)/">
@@ -154,7 +151,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -290,11 +287,11 @@
     
     <div class="post-body" itemprop="articleBody">
         <blockquote>
-<p>" What I cannot create, I do not understand. " --- Richard Feynman</p>
+<p>&quot; What I cannot create, I do not understand. &quot; --- Richard Feynman</p>
 </blockquote>
 <p>我們想要知道機器是不是真的能學到東西，直覺得就是他能不能夠根據它所學到的東西進行創造，創造出可以以假亂真的成品出來。</p>
 <span id="more"></span>
-<p><img src="https://i.imgur.com/YUBN2qQ.png%20=400x" /></p>
+<p><embed src="https://i.imgur.com/YUBN2qQ.png%20=400x" /></p>
 <h2 id="pixelrnn">PixelRNN</h2>
 <h3 id="recurrent-neural-networks-rnn-遞歸神經網路">Recurrent Neural Networks ( RNN , 遞歸神經網路 )</h3>
 <p>在講 PixelRNN 以前，我們要先簡單的了解 Recurrent Neural Networks ( RNN , 遞歸神經網路 )是什麼。由於在後面的課程中，李宏毅老師會有一整個 Lecture 來講 RNN，這邊我們大概解釋一下 RNN 的精神即可。</p>
@@ -303,12 +300,12 @@
 <p>每一天的晚餐都會因為前一天晚餐而有所影響，利用 RNN 我們就可以做出當天晚餐的預測。</p>
 <h3 id="pixelrnn-1">PixelRNN</h3>
 <p>PixelRNN 是一種直觀的方式，利用前一個 pixel 讓機器預測下一個 pixel，藉此完成一整張圖片。</p>
-<p><img src="https://i.imgur.com/0bpPzmF.png%20=450x" /></p>
+<p><embed src="https://i.imgur.com/0bpPzmF.png%20=450x" /></p>
 <p>雖然說這樣的方式太過直覺，但實際上進行預測，仍能生成出蠻合理的圖片。以下是李宏毅老師利用神奇寶貝 ( 寶可夢，Pokémon ) 來試圖生成新的神奇寶貝圖片。</p>
 <p>實務上進行生成會有一些問題，因此李宏毅老師進行了一些原始資料的預處理。</p>
 <ul>
 <li>原本圖片都是 <span class="math inline">\(40\times 40\)</span> ，這樣維度太高，因此截取中間的 <span class="math inline">\(20\times 20\)</span> 作為輸入</li>
-<li>進行生成時會發現圖片都偏灰暗，表示其 RGB 預測值對比度低，所以先對原始圖像 pixel 進行 1-of-N Encoding，再將相似色 clustering，最後一共有 167 種顏色分類。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
+<li>進行生成時會發現圖片都偏灰暗，表示其 RGB 預測值對比度低，所以先對原始圖像 pixel 進行 1-of-N Encoding，再將相似色 clustering，最後一共有 167 種顏色分類。<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></li>
 </ul>
 <p>最後利用一個 1-layer LSTM 不調太多參數來生成圖片。</p>
 <p><img src="https://i.imgur.com/JoNfLCr.png" /> ( 第一列為原始圖片，第二列是給上半部50%讓機器預測下面50%，第三列則是給上半部25%讓祭器預測下面75% )</p>
@@ -317,12 +314,12 @@
 <p>然而，PixelRNN 不只是只能用於圖像上，我們可以利用這樣的概念進行語音或影片的生成。</p>
 <p><img src="https://i.imgur.com/hUFoG9E.gif" /></p>
 <h2 id="variational-auto-encoder-vae">Variational Auto-Encoder ( VAE )</h2>
-<p>先前我們提到 Auto-Encoder 意圖讓原本的圖片 encoder 壓縮成更低維度但仍保有原始資料資訊的 " code " 再由 decoder 還原回去。如果訓練出一組 Auto-Encoder，是否可以輸入一組隨機的 code 利用 decoder 畫出更接近真實的圖片呢 ?</p>
-<p>很遺憾的，這樣子的方式生成的圖片都不會太理想。 原因其實可以簡單的這樣解釋，我們隨機給予的 code 並不是由圖片 encoder 而得，所以不見得會帶有 information，那想當然爾，經過 decoder 生成的圖片便不見得會有我們期待的結果出現，甚至可能生成出完全沒有意義的圖片。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
-<p>為了要解決這樣的問題，出現了 " Variational Auto-Encoder ( VAE ) "</p>
+<p>先前我們提到 Auto-Encoder 意圖讓原本的圖片 encoder 壓縮成更低維度但仍保有原始資料資訊的 &quot; code &quot; 再由 decoder 還原回去。如果訓練出一組 Auto-Encoder，是否可以輸入一組隨機的 code 利用 decoder 畫出更接近真實的圖片呢 ?</p>
+<p>很遺憾的，這樣子的方式生成的圖片都不會太理想。 原因其實可以簡單的這樣解釋，我們隨機給予的 code 並不是由圖片 encoder 而得，所以不見得會帶有 information，那想當然爾，經過 decoder 生成的圖片便不見得會有我們期待的結果出現，甚至可能生成出完全沒有意義的圖片。<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>為了要解決這樣的問題，出現了 &quot; Variational Auto-Encoder ( VAE ) &quot;</p>
 <p><img src="https://i.imgur.com/uLklWnd.jpg" /></p>
 <h3 id="從-gaussian-mixture-model-角度來看-vae">從 Gaussian Mixture Model 角度來看 VAE</h3>
-<p>要理解 VAE 以前，我們先回顧一下，原本的 AE 是將輸入轉換成一個 information preserving " CODE "，也可以看成是一組低維度的隱藏特徵，每一個特徵上給予一個數值。</p>
+<p>要理解 VAE 以前，我們先回顧一下，原本的 AE 是將輸入轉換成一個 information preserving &quot; CODE &quot;，也可以看成是一組低維度的隱藏特徵，每一個特徵上給予一個數值。</p>
 <p><img src="https://i.imgur.com/ZYG02PE.png" /> (圖片來源 : <a target="_blank" rel="noopener" href="https://www.jeremyjordan.me/variational-autoencoders/">Variational autoencoders.</a>)</p>
 <p>而 VAE 則可以看做是這些隱含特徵的 Gaussian Mixture Model，也就是說，我們將每一個隱含特徵上都給予其機率分布，而這些分布經由加權總合後形成一個輸入的分布 。我們也可以從另外一個角度來看 VAE，VAE 相當於在輸入加入一些 Noise ，讓整個模型有更好的泛化能力，能夠解決生成圖像不連續的狀況。</p>
 <p><img src="https://i.imgur.com/sKl5XPV.png" /></p>
@@ -348,8 +345,8 @@ P(x)=\int\limits_{z}P_{\theta}(z)P_{\theta}(x\mid z)dz
 P_{\theta}(z\mid x) = \displaystyle{\frac{P_{\theta}(x\mid z)\cdot P_{\theta}(z)}{P_{\theta}(x)}}
 \]</span></p>
 <p>這個方向仍然要面對 <span class="math inline">\(P_{\theta}(x)\)</span> 也是死路一條。</p>
-<p>在 VAE 原始論文<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>中利用 Log data likelihood ，並試圖用另外一個分布 <span class="math inline">\(q_{\phi}(z\mid x)\)</span> 來逼近 <span class="math inline">\(P_{\theta}(x\mid z)\)</span>。</p>
-<p><img src="https://i.imgur.com/Rgoqgqq.png%20=300x" /></p>
+<p>在 VAE 原始論文<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>中利用 Log data likelihood ，並試圖用另外一個分布 <span class="math inline">\(q_{\phi}(z\mid x)\)</span> 來逼近 <span class="math inline">\(P_{\theta}(x\mid z)\)</span>。</p>
+<p><embed src="https://i.imgur.com/Rgoqgqq.png%20=300x" /></p>
 <p><span class="math display">\[
 \log P_{\theta}(x)=\max\log P_{\theta}(x)\cdot\int\limits_{z} q_{\phi}(z\mid x)dz\\
 =\int\limits_{z} q_{\phi}(q_{\phi}z\mid x)\log P_{\theta}(x)dz\\
@@ -364,7 +361,7 @@ P_{\theta}(z\mid x) = \displaystyle{\frac{P_{\theta}(x\mid z)\cdot P_{\theta}(z)
 =\int\limits_{z}q_{\phi}(z\mid x)\log P_{\theta}(x\mid z)dz-KL_a+KL_b\\
 =\boldsymbol{E}_{q_{\phi}(z\mid x)}\big(\log P_{\theta}(x\mid z)\big)-KL_a+KL_b\\
 \geq \boldsymbol{E}_{q_{\phi}(z\mid x)}\big(\log P_{\theta}(x\mid z)\big)-KL_a\overset{let}{=}\mathcal{L}(x,\theta,\phi)\cdots\cdots(1) 
-\]</span> (這裡牽扯到 KL Divergence (KL散度) 的幾個性質，我就放在註釋內 <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>)</p>
+\]</span> (這裡牽扯到 KL Divergence (KL散度) 的幾個性質，我就放在註釋內 <a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>)</p>
 <ol type="1">
 <li>式中，<span class="math inline">\(\mathcal{L}\)</span> 即為 <span class="math inline">\(\log P_{\theta}(x)\)</span> 的下界，如果我們要最大化 <span class="math inline">\(\log P_{\theta}(x)\)</span> ，我們只要專注在最大化它的下界 <span class="math inline">\(\mathcal{L}\)</span> 即可。</li>
 </ol>
@@ -387,16 +384,16 @@ P_{\theta}(z\mid x) = \displaystyle{\frac{P_{\theta}(x\mid z)\cdot P_{\theta}(z)
 <h3 id="problems-of-vae">Problems of VAE</h3>
 <p>然而，整個 VAE 學習生成圖片的方式是經由數值方式優化的結果，整個 model 其實並沒有學習到 「怎麼生成圖片」這件事情。所以只要在數值優化的過程中，符合優化的結果，圖像如何呈現、是否合理，VAE 本身並不會在意。</p>
 <p><img src="https://i.imgur.com/IenlZLA.png" /></p>
-<p>上途中， " Realistic " 與 " Fake " 都與我們現實的圖像僅一個 pixel 的差異，以 VAE 的角度來看，這兩者都是可以接受的成像，但就現實來看 " Fake " 的成像其實很有可能是另外一個類別的圖像。</p>
+<p>上途中， &quot; Realistic &quot; 與 &quot; Fake &quot; 都與我們現實的圖像僅一個 pixel 的差異，以 VAE 的角度來看，這兩者都是可以接受的成像，但就現實來看 &quot; Fake &quot; 的成像其實很有可能是另外一個類別的圖像。</p>
 <h2 id="註釋">註釋</h2>
 <p><span class="math inline">\(KL( P\|Q)=\)</span> KL Divergence of Q with respect to P <span class="math inline">\(\overset{defn}{=}-\sum P(x)\log\Big(\displaystyle{\frac{Q(x)}{P(x)}}\Big)\)</span> (a) <span class="math inline">\(KL\geq 0\cdots KL\)</span>恆大於零 (b) <span class="math inline">\(KL(P\|Q)\neq KL(Q\| P)\cdots KL\)</span> 不具對稱性</p>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>李宏毅老師將其資料都放在下列網址，可以進行使用 * Original image (40 x 40): (http://speech.ee.ntu.edu.tw/~tlkagk/courses/ML_2016/Pokemon_creation/image.rar) * Pixels (20 x 20): (http://speech.ee.ntu.edu.tw/~tlkagk/courses/ML_2016/Pokemon_creation/pixel_color.txt) * Each line corresponds to an image, and each number corresponds to a pixel (http://speech.ee.ntu.edu.tw/~tlkagk/courses/ML_2016/Pokemon_cre)<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>可參考 " <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/27549418">花式解释AutoEncoder与VAE</a> " 一文<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>Kingma, Diederik P. and Max Welling. “<em>Auto-Encoding Variational Bayes.</em>” CoRR abs/1312.6114 (2014): n. pag.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p>KL Divergence ( KLD，KL散度，相對熵 ) : 簡單來說，這是一個衡量兩個分布相似度的方式，有些人會解釋成兩個分布的「距離」，但如果從 KLD 的性質來看會發現用距離來形容它的確不太恰當。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>李宏毅老師將其資料都放在下列網址，可以進行使用 * Original image (40 x 40): (http://speech.ee.ntu.edu.tw/~tlkagk/courses/ML_2016/Pokemon_creation/image.rar) * Pixels (20 x 20): (http://speech.ee.ntu.edu.tw/~tlkagk/courses/ML_2016/Pokemon_creation/pixel_color.txt) * Each line corresponds to an image, and each number corresponds to a pixel (http://speech.ee.ntu.edu.tw/~tlkagk/courses/ML_2016/Pokemon_cre)<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>可參考 &quot; <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/27549418">花式解释AutoEncoder与VAE</a> &quot; 一文<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Kingma, Diederik P. and Max Welling. “<em>Auto-Encoding Variational Bayes.</em>” CoRR abs/1312.6114 (2014): n. pag.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>KL Divergence ( KLD，KL散度，相對熵 ) : 簡單來說，這是一個衡量兩個分布相似度的方式，有些人會解釋成兩個分布的「距離」，但如果從 KLD 的性質來看會發現用距離來形容它的確不太恰當。<a href="#fnref4" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -467,7 +464,7 @@ P_{\theta}(z\mid x) = \displaystyle{\frac{P_{\theta}(x\mid z)\cdot P_{\theta}(z)
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

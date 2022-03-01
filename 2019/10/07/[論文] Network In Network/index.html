@@ -142,7 +142,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -279,7 +279,7 @@
     <div class="post-body" itemprop="articleBody">
         <h2 id="概述">概述</h2>
 <p>一般的 Convolutional Neural Network ( CNN ) 模型包含了卷積層以及池化層。卷積層中藉由 filters ( kernels ) 對輸入層的每一個局部域做線性卷積運算後再通過非線性的 activation function 輸出 feature maps。而池化層利用 subsampling 在不影響特徵的前提下縮減參數數量，並且提高感受野 ( receptive field )。 <span id="more"></span></p>
-<p>然而作者認為 CNN 是一個廣義線性模型 ( Generalized Linear Model,GLM )，在 GLM 中萃取出來的特徵都是抽象化程度低的特徵。所謂的抽象化程度<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>意即某一個概念，在進行特徵轉換的過程當中，能夠保有多少的不變性。抽象化程度越高的特徵，在一連串轉換下便能保有更高的不變性，也越不受外界干擾而產生影響。這樣也表示 CNN 是以資料轉換到特徵空間中是線性可分的條件做為前提，但在現實狀況下，轉換後的資料通常都是以 非線性流形( nonlinear manifold )存在，因此作者希望將 CNN 中 GLM 的部分利用非線性結構來取代。</p>
+<p>然而作者認為 CNN 是一個廣義線性模型 ( Generalized Linear Model,GLM )，在 GLM 中萃取出來的特徵都是抽象化程度低的特徵。所謂的抽象化程度<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>意即某一個概念，在進行特徵轉換的過程當中，能夠保有多少的不變性。抽象化程度越高的特徵，在一連串轉換下便能保有更高的不變性，也越不受外界干擾而產生影響。這樣也表示 CNN 是以資料轉換到特徵空間中是線性可分的條件做為前提，但在現實狀況下，轉換後的資料通常都是以 非線性流形( nonlinear manifold )存在，因此作者希望將 CNN 中 GLM 的部分利用非線性結構來取代。</p>
 <p>Network in Network ( NIN ) 便是在這樣的概念發想中產生，利用 MLPConv Layer 來取代傳統 CNN 中的 Conv Layer。在 MLPConv Layer 中仍保留傳統 Conv Layer 中共享權重的特性對於輸入圖像進行滑窗運算。</p>
 <p><img src="https://i.imgur.com/smNdXaV.png" /></p>
 <p>而 NIN 便是由 MLPConv Layers 堆疊組合而成的模型。</p>
@@ -290,7 +290,7 @@
 <h2 id="卷積神經網路-convolutional-neural-network">卷積神經網路 Convolutional Neural Network</h2>
 <p>當資料經過特徵轉換後是線性可分的，那麼傳統 CNN 的線性卷積運算應該足以對特徵進行足夠的抽象化萃取。</p>
 <p>然而，現實情況下，資料轉換到特徵空間中都是高度非線性函數，按理來說，只要我們的 filters 足夠多，仍足以對任意非線性函數進行近似逼近，但此舉亦會造成整個模型的參數量暴增，因此，若能在局部特徵萃取時便能做到近似非線性的逼近，便能避免使用大量 filters 來逼近。</p>
-<p>作者注意到 Maxout Network <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>利用可學習性的 maximum activation function 來降低 feature maps 的數量，並且這樣的方式可以逼近任意的凸函數，似乎可以改善傳統 CNN 無法有效非線性函數的缺點。</p>
+<p>作者注意到 Maxout Network <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>利用可學習性的 maximum activation function 來降低 feature maps 的數量，並且這樣的方式可以逼近任意的凸函數，似乎可以改善傳統 CNN 無法有效非線性函數的缺點。</p>
 <p>雖然 Maxout Network 看起來很強大，但卻只能逼近「凸函數」，這樣的條件在一般狀況下並不一定會成立，因此作者在此論文中提出了 NIN 這樣的網路架構來解決 CNN 無法妥善處理的問題。</p>
 <h2 id="network-in-network">Network in Network</h2>
 <h3 id="多層感知器卷積層-mlp-convolutional-layers">多層感知器卷積層 MLP Convolutional Layers</h3>
@@ -305,7 +305,7 @@ f_{i,j,k_2}^2=\max({w_{k_2}^2}^Tf_{i,j}^1+b_{k_2},0)\\
 f_{i,j,k_n}^n=\max({w_{k_n}^n}^Tf_{i,j}^{n-1}+b_{k_2},0)\cdots\cdots(2)
 \]</span></p>
 <p>從 MLPConv Layer 的計算過程來看，第一層是一般的卷積運算，之後每經過一層MLP運算，等於將上一層的各個 channels、feature maps 的資訊混合加權運算 ，這相當於在傳統的 CNN Conv Layer 中進行 Cascaded Cross Channel Parametric Pooling ( 級聯跨信道參數池化，我自己理解就是對不同 Channel 進行訊息交流的池化過程 )，經由一層又一層的 MLP layer，不同 channel 間的訊息可以一次又一次的交流，便可以實現複雜且可學習的 cross channel information 交流。</p>
-<p>值得注意的是，Cascaded Cross Channel Parametric Pooling 這樣的結構就等同於一個 <span class="math inline">\(1\times 1\)</span> convolution layer<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>。</p>
+<p>值得注意的是，Cascaded Cross Channel Parametric Pooling 這樣的結構就等同於一個 <span class="math inline">\(1\times 1\)</span> convolution layer<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>。</p>
 <p>所以 NIN 中 MLPConv Layer 我們可以視為是一般傳統 CNN 卷積層後再接一個 <span class="math inline">\(1\times 1\)</span> 卷積層，也是將原本 CNN 網路變得更深的方式。</p>
 <p>我們也可以跟 Maxout Network 來做比較 :</p>
 <p><span class="math display">\[
@@ -324,7 +324,7 @@ f_{i,j,k}=\max_{m}(w_k^Tx_{i,j})\cdots\cdots(3)
 <li>Global Average Pooling 中沒有參數需要優化，可避免 overfitting</li>
 <li>Global Average Pooling 將空間資訊結合，對輸入特徵的空間轉換具有更好的強健性。</li>
 </ol>
-<p>作者在此段最後說明， Global Average Pooling 就是一個 regulaizer，強制將最後輸出的 feature maps 直接映射到分類機率<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>。</p>
+<p>作者在此段最後說明， Global Average Pooling 就是一個 regulaizer，強制將最後輸出的 feature maps 直接映射到分類機率<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>。</p>
 <h3 id="network-in-network-structure">Network In Network Structure</h3>
 <p>由上面敘述中可以清楚了解到 MLPConv Layer 以及 Global Average Pooling 的作用，而 NIN 的整體結構其實也就是底層由 MLPConv Layer 堆疊起來，頂層則是 Global Average Pooling Layer 以及 Objective Cost Layer 的一個網路結構。</p>
 <p><img src="https://i.imgur.com/RPoQgTd.png" /></p>
@@ -349,13 +349,13 @@ f_{i,j,k}=\max_{m}(w_k^Tx_{i,j})\cdots\cdots(3)
 <li>Github -- <a target="_blank" rel="noopener" href="https://github.com/ms-sharma/Adversarial-Semisupervised-Semantic-Segmentation/issues/4">What does the confidence map mean?</a></li>
 </ol>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>在論文 " <em>Representation Learning: A Review and New Perspectives</em> " 中提到，「深度」是討論學習策略的一個重要面向，深度結構儘管訓練不易，但仍有著絕佳優勢 : (1) 促進了 feature re-use (2) 深層結構有助於萃取出更抽象的特徵。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>可參閱 "<a href="https://allen108108.github.io/blog/2019/10/05/Gradient%20Vanishing%20Problem%20---%20%E4%BB%A5%20ReLU%20_%20Maxout%20%E5%8F%96%E4%BB%A3%20Sigmoid%20actvation%20function/">Gradient Vanishing Problem --- 以 ReLU / Maxout 取代 Sigmoid actvation function</a>" 一文。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>可參考 "<a href="https://allen108108.github.io/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/">卷積神經網路 (Convolutional Neural , CNN)</a>"一文<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p>此段原文 "<em>We can see global average pooling as a structural regularizer that explicitly enforces feature maps to be confidence maps of concepts (categories).</em> "，confidence maps 簡單一點來說，其實就是將輸出的 feature maps 映射到機率空間中。這樣的方式可以使得分類器不再是黑箱作業。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>在論文 &quot; <em>Representation Learning: A Review and New Perspectives</em> &quot; 中提到，「深度」是討論學習策略的一個重要面向，深度結構儘管訓練不易，但仍有著絕佳優勢 : (1) 促進了 feature re-use (2) 深層結構有助於萃取出更抽象的特徵。<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>可參閱 &quot;<a href="https://allen108108.github.io/blog/2019/10/05/Gradient%20Vanishing%20Problem%20---%20%E4%BB%A5%20ReLU%20_%20Maxout%20%E5%8F%96%E4%BB%A3%20Sigmoid%20actvation%20function/">Gradient Vanishing Problem --- 以 ReLU / Maxout 取代 Sigmoid actvation function</a>&quot; 一文。<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>可參考 &quot;<a href="https://allen108108.github.io/blog/2019/10/07/%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%20(Convolutional%20Neural%20,%20CNN)/">卷積神經網路 (Convolutional Neural , CNN)</a>&quot;一文<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>此段原文 &quot;<em>We can see global average pooling as a structural regularizer that explicitly enforces feature maps to be confidence maps of concepts (categories).</em> &quot;，confidence maps 簡單一點來說，其實就是將輸出的 feature maps 映射到機率空間中。這樣的方式可以使得分類器不再是黑箱作業。<a href="#fnref4" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -426,7 +426,7 @@ f_{i,j,k}=\max_{m}(w_k^Tx_{i,j})\cdots\cdots(3)
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

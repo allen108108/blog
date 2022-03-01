@@ -144,7 +144,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -277,11 +277,11 @@
 <span id="more"></span>
 <h2 id="definition">Definition</h2>
 <ul>
-<li><p>隨機變量 Random Variable 在現實生活中，有一些是隨機且可重複出現的現象 ( 例如 : 股市指數、車流量、骰子點數、... ) ，我們將所有可能的重複現象稱作隨機試驗，而樣本空間 <span class="math inline">\(S\)</span> 就是這個隨機試驗的所有可能結果。以樣本空間為定義域的實質函數我們稱之為「隨機變量」<span class="math inline">\(X\)</span> <span class="math display">\[
+<li>隨機變量 Random Variable 在現實生活中，有一些是隨機且可重複出現的現象 ( 例如 : 股市指數、車流量、骰子點數、... ) ，我們將所有可能的重複現象稱作隨機試驗，而樣本空間 <span class="math inline">\(S\)</span> 就是這個隨機試驗的所有可能結果。以樣本空間為定義域的實質函數我們稱之為「隨機變量」<span class="math inline">\(X\)</span> <span class="math display">\[
 X:S\rightarrow\mathbb{R}
-\]</span></p></li>
+\]</span></li>
 <li><p>機率分佈 Probability Distribution 在數學上，以隨機變量為定義域、<span class="math inline">\([0,1]\)</span> 為對應域的函數我們稱為機率密度函數 ( Probability density function )，我們也會稱其為機率分佈函數，簡稱「機率分佈」或是「分佈」。而更廣義的來說，機率分佈指的就是一種利用事件機率來描述隨機現象的一種方式。值得注意的地方是，我們可以將「同分佈」(Identically Distributed) 視為是一種特殊的等價關係，兩個分佈相同，其隨機變量並不一定會相同。</p></li>
-<li><p>KL散度 Kullback–Leibler divergence (KL divergence) 可以參考 " <a target="_blank" rel="noopener" href="http://bit.ly/35nij9b">Unsupervised Learning – Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a> "一文，在VAE 的討論中，我們有對 KL 散度有簡單的特性描述。 <span class="math display">\[
+<li><p>KL散度 Kullback–Leibler divergence (KL divergence) 可以參考 &quot; <a target="_blank" rel="noopener" href="http://bit.ly/35nij9b">Unsupervised Learning – Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a> &quot;一文，在VAE 的討論中，我們有對 KL 散度有簡單的特性描述。 <span class="math display">\[
 KL( P\|Q)= KL\ Divergence\ of\ Q\ with\ respect\ to\ P\  \overset{defn}{=}-\sum P(x)\log\Big(\displaystyle{\frac{Q(x)}{P(x)}}\Big)
   \]</span></p></li>
 <li><p>JS散度 Jensen-Shannon divergence (JS divergence) JS 散度改善了 KL 散度不對稱的缺點，並且將對應域限制在 <span class="math inline">\([0,1]\)</span> 之間，更能清楚表述兩個不同分佈的異質關係，當 <span class="math inline">\(PQ\)</span>兩個分佈越接近，JS值會越接近 <span class="math inline">\(0\)</span>，反之，則 JS 會越趨近於 <span class="math inline">\(1\)</span>。 <span class="math display">\[
@@ -306,7 +306,7 @@ KL( P\|Q)= KL\ Divergence\ of\ Q\ with\ respect\ to\ P\  \overset{defn}{=}-\sum 
 =\arg\min_{\theta}KL(P_{data}\|P_G)
 \]</span></p>
 <p>從這裡我們可以知道，最大似然估計其實就是等價於最小化 KL 散度。</p>
-<p>MLE 的一個衍生應用就是用來做圖像生成。單純以圖像生成的任務來說，早在 80年代就開始有人進行相關研究，當時使用 Gaussian Mixture Model<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>來對手邊有的圖像進行 MLE 估測真實的分佈。</p>
+<p>MLE 的一個衍生應用就是用來做圖像生成。單純以圖像生成的任務來說，早在 80年代就開始有人進行相關研究，當時使用 Gaussian Mixture Model<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>來對手邊有的圖像進行 MLE 估測真實的分佈。</p>
 <p>但這樣的方式其實並無法準確地逼近真實的分佈，導致生成出來的圖像無法做得太清楚。一個可能的原因是我們使用了 Gaussian Mixture Model 實在不太能逼近太複雜的分佈函數，不管我們怎麼調整 Mean 跟 Variance 都很難貼近真實的分佈。</p>
 <h2 id="gan">GAN</h2>
 <p>然而，MLE 卻有一些困難點是很難克服的，舉例來說，在一個極為複雜的任務中，<span class="math inline">\(P_G\)</span> 這樣的生成分佈是非常難以估計的，即使我們利用 Gaussain Mixture Model 也仍然無法逼近真實分佈。既然 <span class="math inline">\(P_G\)</span>難以計算，那我們整個 MLE 也就無法計算出來，因此，在「生成」這件事情上面，我們需要有更一般化的作法。</p>
@@ -320,7 +320,7 @@ G^*=\arg\min Div(P_{data},P_G)
 \]</span></p>
 <p>但現在 <span class="math inline">\(P_G\)</span> 以及 <span class="math inline">\(P_{data}\)</span> 這兩個分佈我們完全不知道它們長得什麼樣子 ( 但我們可以從這兩個未知分佈中取樣 )，也當然無法計算這兩個分佈間的 divergence。GAN 解決這個困境的方式就是使用 Discriminator。</p>
 <h3 id="discriminator-of-gan">Discriminator of GAN</h3>
-<p>前文 " <a target="_blank" rel="noopener" href="http://bit.ly/2pFLIve">Generative Adversarial Network (1) --- Introduction</a> " 一文中我們有介紹 Discriminator 的作用 其實就是利用一個神經網路來對 <span class="math inline">\(P_G\)</span> 以及 <span class="math inline">\(P_{data}\)</span> 的抽樣來進行判斷，看看能不能分辨輸入圖像是生成圖像還是原圖像資料。</p>
+<p>前文 &quot; <a target="_blank" rel="noopener" href="http://bit.ly/2pFLIve">Generative Adversarial Network (1) --- Introduction</a> &quot; 一文中我們有介紹 Discriminator 的作用 其實就是利用一個神經網路來對 <span class="math inline">\(P_G\)</span> 以及 <span class="math inline">\(P_{data}\)</span> 的抽樣來進行判斷，看看能不能分辨輸入圖像是生成圖像還是原圖像資料。</p>
 <p>在實際操作上，Discriminator 會針對輸入圖像給予一個分數，分數越高就表示圖像越真實，我們最終希望這個 Discriminator 無法判斷此固定的 Generator 生成的圖像。</p>
 <p>但其實我們也可以換一個角度來看，當我們在訓練 Discriminator 時，會希望兩種圖像的分數最後會越來越接近，直至分不出來，那麼這樣的分數是不是其實也是某一種 divergence 的量化分數 ?</p>
 <p>當我們在針對 Discriminator 做訓練時，其實就是在最大化整個 Loss ( 因為是希望 discriminator 分不出來圖像的真實度 )</p>
@@ -408,10 +408,10 @@ G^*=\arg\min_{G}\max_{D} V(G,D)
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/FrankieHello/article/details/80614422">KL散度、JS散度以及交叉熵对比</a></li>
 </ol>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>參考 " <a target="_blank" rel="noopener" href="http://bit.ly/35nij9b">Unsupervised Learning – Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a> "一文<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>參考 &quot; <a target="_blank" rel="noopener" href="http://bit.ly/35nij9b">Unsupervised Learning – Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a> &quot;一文<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -482,7 +482,7 @@ G^*=\arg\min_{G}\max_{D} V(G,D)
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -32,7 +32,6 @@
 <meta property="og:image" content="https://i.imgur.com/gL6dddh.png">
 <meta property="og:image" content="https://i.imgur.com/5N3U3Uy.png">
 <meta property="og:image" content="https://i.imgur.com/V5wDXNv.png">
-<meta property="og:image" content="https://i.imgur.com/pY7ZrkX.png%20=400x">
 <meta property="article:published_time" content="2019-10-04T17:37:03.000Z">
 <meta property="article:modified_time" content="2019-10-22T07:59:10.384Z">
 <meta property="article:author" content="Allen Tzeng">
@@ -144,7 +143,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -289,7 +288,7 @@
 <p>在深度學習中，我們進行優化的方式大多使用的是 Gradient Descent，其一般化的形式</p>
 <p>矩陣型態 : <span class="math inline">\(\boldsymbol{W}^{t+1}\leftarrow\boldsymbol{W}^t-\eta\cdot\nabla L(\boldsymbol{W}^t)\)</span></p>
 <p>我們也可以單看其中一個分量權重 : <span class="math inline">\(w_i^{t+1}\leftarrow w_i^t-\eta\cdot\frac{\partial L}{\partial w_i}\)</span></p>
-<p>我們曾經在 <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryQypiDK4">Gradient descent 梯度下降</a> 一文中有討論過，若 <span class="math inline">\(\eta\)</span> ( 學習率 )固定時，太大太小都可能讓我們在優化的過程中遇到困難，最好的方式就是讓 <span class="math inline">\(\eta\)</span> 隨著優化的過程逐漸地減少。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>我們曾經在 <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryQypiDK4">Gradient descent 梯度下降</a> 一文中有討論過，若 <span class="math inline">\(\eta\)</span> ( 學習率 )固定時，太大太小都可能讓我們在優化的過程中遇到困難，最好的方式就是讓 <span class="math inline">\(\eta\)</span> 隨著優化的過程逐漸地減少。<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <h2 id="adagrad-----彈性使用-learning-rate">Adagrad --- 彈性使用 Learning Rate</h2>
 <p><span class="math inline">\(\eta\)</span> 應該怎麼設 ? 跟次數成反比的 <span class="math inline">\(\frac{1}{t}\)</span> decay 是最簡單的方式 <span class="math inline">\(\eta^t=\frac{\eta}{\sqrt{t+1}}\)</span> ，但這顯然太過簡單。</p>
 <p>Adagrad 所使用的 <span class="math inline">\(\eta^t=\displaystyle{\frac{\eta}{\sqrt{\sum\limits_{n=1}^{t}(\displaystyle{\frac{\partial L}{\partial w_i}}(\boldsymbol{W}^n))^2+\epsilon}}}\)</span> ( 此處的 <span class="math inline">\(\epsilon\)</span> 旨在不讓分母為 0 的情況產生，一般 <span class="math inline">\(\epsilon=\)</span> 10e-8 )</p>
@@ -344,7 +343,7 @@
 <p>Momentum 是利用物理學中動量的概念來進行梯度更新 ( <span class="math inline">\(\lambda\)</span> 為動量因子 )</p>
 <p><span class="math inline">\(v^0=0\)</span> <span class="math inline">\(w_i^{t+1}\leftarrow w_i^t+v^t\)</span> , where <span class="math inline">\(v^t=\lambda\cdot v^{t-1}-\eta\cdot g^t\)</span> , and <span class="math inline">\(g^t=\displaystyle{\frac{\partial L}{\partial w_i}}(\boldsymbol{W^t})\)</span></p>
 <p><font color="#dd0000"><strong>參數建議 <span class="math inline">\(\lambda=0.9\)</span></strong></font></p>
-<p><img src="https://i.imgur.com/pY7ZrkX.png%20=400x" /></p>
+<p><embed src="https://i.imgur.com/pY7ZrkX.png%20=400x" /></p>
 <p>(註 : 此圖中的 <span class="math inline">\(\theta^t\)</span> 即本文中 <span class="math inline">\(\boldsymbol{W}^t\)</span>)</p>
 <p>這樣的梯度更新包含了前次梯度的量值，也是在某種程度上面保留了原本的動能，如果遇到 local minimum 便有機會可以跳脫出來。</p>
 <h3 id="momentum-的優缺點">Momentum 的優缺點</h3>
@@ -383,10 +382,10 @@
 <li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/guoyaohua/p/8542554.html">深度学习——优化器算法Optimizer详解（BGD、SGD、MBGD、Momentum、NAG、Adagrad、Adadelta、RMSprop、Adam）</a></li>
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014595019/article/details/52989301">深度学习笔记：优化方法总结(BGD,SGD,Momentum,AdaGrad,RMSProp,Adam)</a></li>
 </ol>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>在 Keras 裡面 ，當我們要進行 model compile 時，需要設置一個 optimizer 參數，系統內提供了許多的優化器可供使用 : RMSprop、SGD、Adagrad、....，這些都是基於 Gradient Descent 之上，但在學習率上面進行不同的設置。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>在 Keras 裡面 ，當我們要進行 model compile 時，需要設置一個 optimizer 參數，系統內提供了許多的優化器可供使用 : RMSprop、SGD、Adagrad、....，這些都是基於 Gradient Descent 之上，但在學習率上面進行不同的設置。<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -457,7 +456,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

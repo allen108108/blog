@@ -140,7 +140,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -271,7 +271,7 @@
     <div class="post-body" itemprop="articleBody">
         <h2 id="shortest-paths-dijkstras-algorithm">Shortest Paths ( DijKstra's Algorithm )</h2>
 <h3 id="scenario">Scenario</h3>
-<p><span class="math inline">\(G=(V,E)\ is\ a\ directed\ graph\ and\ I(e)=lenth\ of\ edge\ e\in E,\\ where\ I(e)\geq0\ can\ be\ distance,time\ or\ cost.\)</span> <span class="math inline">\(Find\ the\ shortest\ path\ P(v)\ from\ s\ to\ each\ other\ v\in V-\{s\},\ where\ I(P)=lenth\ of\ P=\sum_{e\in P} I(e)\)</span> 給定一個有向圖以及每個 edge 的 "長度"( 可以是距離、花費時間、花費成本...)，試圖找出從 s 出發距離最短的路徑。</p>
+<p><span class="math inline">\(G=(V,E)\ is\ a\ directed\ graph\ and\ I(e)=lenth\ of\ edge\ e\in E,\\ where\ I(e)\geq0\ can\ be\ distance,time\ or\ cost.\)</span> <span class="math inline">\(Find\ the\ shortest\ path\ P(v)\ from\ s\ to\ each\ other\ v\in V-\{s\},\ where\ I(P)=lenth\ of\ P=\sum_{e\in P} I(e)\)</span> 給定一個有向圖以及每個 edge 的 &quot;長度&quot;( 可以是距離、花費時間、花費成本...)，試圖找出從 s 出發距離最短的路徑。</p>
 <span id="more"></span>
 <p>這邊比較特殊的是，這邊不預設終點。因這個演算法不單單可以找出給定起終點的最短路徑問題，也可以更廣泛的解決給定起點不限終點的最短路徑問題。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DijKstra(G,I)</span><br><span class="line">// S = the set of exploded nodes</span><br><span class="line">// d(u) = the shortest path distance from s to u</span><br><span class="line">1. initial S = &#123;s&#125; and d(s)=0</span><br><span class="line">2. while S ≠ V then do</span><br><span class="line">       choose node v ∉ S 但存在至少一條　edge 與 S 相連</span><br><span class="line">       且 d&#x27;(v) = min &#123; d(u)+I(e) &#125; , u ∈ S and e = (u,v) </span><br><span class="line">       S = S + &#123;v&#125; and  d(v)=d&#x27;(v)</span><br></pre></td></tr></table></figure>
@@ -287,7 +287,7 @@
 <p>在 DijKstra's Algorithm 中，implementation 最困難的部分就是 while loop 迴圈中的第一二行，必須配合適當的資料結構才能夠真正有效率的運行 DijKstra's Algorithm。</p>
 <h3 id="min-prior-queue">Min Prior Queue</h3>
 <p>Prior Queue ( 優先佇列 ) 在進行需要提取最大或最小元素的演算法中十分有用，除了 DijKstra's Algorithm 外，還有許多演算法會建議使用 Prior Queue 來配合。</p>
-<p>以下使用 Cormen 的 "Introduction to Algorithm" 一書中的圖例來更了解整個 DijKstra's Algorithm 的 implementation :</p>
+<p>以下使用 Cormen 的 &quot;Introduction to Algorithm&quot; 一書中的圖例來更了解整個 DijKstra's Algorithm 的 implementation :</p>
 <p><img src="https://i.imgur.com/HCOBZQp.png" /></p>
 
     </div>
@@ -357,7 +357,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

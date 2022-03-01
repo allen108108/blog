@@ -143,7 +143,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -300,13 +300,13 @@
 <p>作者使用兩顆 GPU ( GTX580 3G ) 進行並行運算。採用的方式是將所有的 Neurons 分為一半各放到兩個 GPU上做運算，除此之外還搭配一點小技巧 : GPU 之間的只在某幾層才會有進行通信 ( 第3、6、7、8層 )。這樣的配置其實是從 Cross-Validation 試驗出來的，經由 CV 的測試，我們終究可以調整出一套計算成本是我們可以負荷的通信模式。</p>
 <p>作者這套通信模式可以使 top-1 及 top-5 error rate 分別降低 1.7% , 1.2% ( 與 GPU 之間各自獨立運作，互不通信的情況相比 )。</p>
 <h3 id="local-response-normalization-局部響應歸一化-近鄰歸一化">Local Response Normalization ( 局部響應歸一化 / 近鄰歸一化 )</h3>
-<p>前面講到 ReLU 的特性，可以不用將輸入 normalization 來防止飽和，但作者在這裡還是引進了一種 normalization 方法，稱為 " Local Response Normalization "。</p>
+<p>前面講到 ReLU 的特性，可以不用將輸入 normalization 來防止飽和，但作者在這裡還是引進了一種 normalization 方法，稱為 &quot; Local Response Normalization &quot;。</p>
 <p>引進這樣的方法主要是為了整個模型可以更貼近現實，利用生物學上的側抑制 ( Lateral inhibition) [^註2] 行為概念來實現 Neural Network 中神經元的局部抑制。</p>
 <p>在這篇論文中，作者給出了 LRN 的具體計算公式</p>
 <p><img src="https://i.imgur.com/tCkcLZj.png" /></p>
 <p>而其中的 <span class="math inline">\(k,n,\alpha\)</span> 與 <span class="math inline">\(\beta\)</span> 都是超參數，可以利用 Validation Set 來找出來。最後作者在某些特定的 Layer ( 第1、2層 ) 中設置 LRN。</p>
-<p><font color="#dd0000"><strong>[ 補充 ]</strong></font> 2015年 Karen Simonyan, Andrew Zisserman 的論文 " <em>Very Deep Convolutional Networks for Large-Scale Image Recognition</em> " 中針對 LRN 有著不同的看法 :</p>
-<p>" <em>We note that none of our networks (except for one) contain Local Response Normalisation (LRN) normalisation (Krizhevsky et al., 2012): as will be shown in Sect. 4, such normalisation does not improve the performance on the ILSVRC dataset, but leads to increased memory consumption and computation time.</em> "</p>
+<p><font color="#dd0000"><strong>[ 補充 ]</strong></font> 2015年 Karen Simonyan, Andrew Zisserman 的論文 &quot; <em>Very Deep Convolutional Networks for Large-Scale Image Recognition</em> &quot; 中針對 LRN 有著不同的看法 :</p>
+<p>&quot; <em>We note that none of our networks (except for one) contain Local Response Normalisation (LRN) normalisation (Krizhevsky et al., 2012): as will be shown in Sect. 4, such normalisation does not improve the performance on the ILSVRC dataset, but leads to increased memory consumption and computation time.</em> &quot;</p>
 <p>他們認為，加入 LRN 並沒有使整體表現更好，反而增加記憶體消耗與計算時間的延長。</p>
 <h3 id="overlapping-pooling-重疊池化">Overlapping Pooling 重疊池化</h3>
 <p>一般的 CNN 架構中，Pooling kernel 針對上一層 feature map 做滑窗池化的過程中，kernel 是不會重疊的 ( <span class="math inline">\(2\times 2\)</span> kernel，stride=2 )。但在此架構中，作者令 kernel 為 <span class="math inline">\(3\times 3\)</span>，stride=2。 這樣一來，在池化的過程中必然會有重疊的部分，而這樣的方式確實也降低不少 error rate，並且更能避免 overfitting 的發生。</p>
@@ -379,8 +379,8 @@
 <h2 id="註釋">註釋</h2>
 <p>[^註1] Definition of (non) satuating function: * <span class="math inline">\(f\)</span> is non-saturating function <span class="math inline">\(\iff\underset{z\to +\infty}{\lim}f(z)=+\infty\)</span> or <span class="math inline">\(\underset{z\to -\infty}{\lim}f(z)=+\infty\)</span> * <span class="math inline">\(f\)</span> is saturating function <span class="math inline">\(\iff\)</span> <span class="math inline">\(f\)</span> is non-saturating function</p>
 <p>[^註2] 側抑制 ( Lateral inhibition) : 簡單來說就是相近的神經元彼此之間發生的抑制作用﹐即在某個神經元受到刺激而產生興奮時﹐再刺激相近的神經元﹐則後者所發生的興奮對前者產生的抑制作用。 --- 引自 <a target="_blank" rel="noopener" href="https://linfengwei.pixnet.net/blog/post/10515788-lateral-inhibition(%E5%81%B4%E6%8A%91%E5%88%B6)">側抑制</a> 一文</p>
-<p>[^註3] 這樣的方式，我們又稱為 " Fancy PCA ",可參閱 " <a target="_blank" rel="noopener" href="https://deshanadesai.github.io/notes/Fancy-PCA-with-Scikit-Image">Fancy PCA (Data Augmentation) with Scikit-Image</a> " 一文，內有完整 code 實現。</p>
-<p>[^註4] 可參閱 " <a href="/ZlFtvH-0S7ORuXe3-v1hJA">Regularization 方法 : Weight Decay , Early Stopping and Dropout</a> " 一文。</p>
+<p>[^註3] 這樣的方式，我們又稱為 &quot; Fancy PCA &quot;,可參閱 &quot; <a target="_blank" rel="noopener" href="https://deshanadesai.github.io/notes/Fancy-PCA-with-Scikit-Image">Fancy PCA (Data Augmentation) with Scikit-Image</a> &quot; 一文，內有完整 code 實現。</p>
+<p>[^註4] 可參閱 &quot; <a href="/ZlFtvH-0S7ORuXe3-v1hJA">Regularization 方法 : Weight Decay , Early Stopping and Dropout</a> &quot; 一文。</p>
 <p>[^註5] 在 Keras 中我們可以利用 <code>keras.callbacks.ReduceLROnPlateau</code> 來實現這樣的 LR 自動化過程。</p>
 
     </div>
@@ -450,7 +450,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

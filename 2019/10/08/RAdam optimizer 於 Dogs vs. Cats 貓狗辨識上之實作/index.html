@@ -27,8 +27,6 @@
 <meta property="og:site_name" content="Math.py">
 <meta property="og:description" content="就在 Lookahead Optimizer 發表後的一個月，University of Illinois, Urbana-Champaign 的博士生 Liyuan Liu 發表了一個新的優化器 Rectified Adam (RAdam)，有別於 Lookahead ，RAdam 在某種程度上直接對 Adam 進行改良，使其兼具 Adam 及 SGD 的優點，改善 Adam 落入 Local">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:image" content="https://i.imgur.com/YJD9QOZ.png%20=400x">
-<meta property="og:image" content="https://i.imgur.com/j3pxCuV.jpg%20=500x">
 <meta property="og:image" content="https://i.imgur.com/kqLr2eL.png">
 <meta property="og:image" content="https://i.imgur.com/T0wRLLh.png">
 <meta property="og:image" content="https://i.imgur.com/55DwJRn.png">
@@ -37,7 +35,7 @@
 <meta property="article:modified_time" content="2019-10-07T17:18:54.295Z">
 <meta property="article:author" content="Allen Tzeng">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.imgur.com/YJD9QOZ.png%20=400x">
+<meta name="twitter:image" content="https://i.imgur.com/kqLr2eL.png">
 
 
 <link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/RAdam%20optimizer%20%E6%96%BC%20Dogs%20vs.%20Cats%20%E8%B2%93%E7%8B%97%E8%BE%A8%E8%AD%98%E4%B8%8A%E4%B9%8B%E5%AF%A6%E4%BD%9C/">
@@ -144,7 +142,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -272,13 +270,13 @@
         <p>就在 Lookahead Optimizer 發表後的一個月，University of Illinois, Urbana-Champaign 的博士生 Liyuan Liu 發表了一個新的優化器 Rectified Adam (RAdam)，有別於 Lookahead ，RAdam 在某種程度上直接對 Adam 進行改良，使其兼具 Adam 及 SGD 的優點，改善 Adam 落入 Local Minimum 導致效果不夠好以及 SGD 收斂速度慢的缺點。</p>
 <span id="more"></span>
 <h2 id="learning-rate-warmup-in-adam">Learning Rate Warmup in Adam</h2>
-<p>Adam 是一種自適應學習率的演算法，而 Warm Up 是調整學習率的一種常見策略。在 RAdam 的論文 " <em>On the Variance of the Adaptive Learning Rate and Beyond</em> " 中，作者也對於 Warm Up 有一些討論。</p>
+<p>Adam 是一種自適應學習率的演算法，而 Warm Up 是調整學習率的一種常見策略。在 RAdam 的論文 &quot; <em>On the Variance of the Adaptive Learning Rate and Beyond</em> &quot; 中，作者也對於 Warm Up 有一些討論。</p>
 <p>所謂的 Warm up 就是在訓練初期，先利用較小(、遞增)的學習率來先讓整個模型有一定程度的收斂後，再讓學習率遞減來進行訓練。</p>
-<p>在一個原始的 Adam 中進行訓練，Training Perplexity<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 大概收斂在 500 左右，但若先進行 Warm up ，Training Perplexity 便可迅速降至 10 左右。</p>
-<p><img src="https://i.imgur.com/YJD9QOZ.png%20=400x" /></p>
+<p>在一個原始的 Adam 中進行訓練，Training Perplexity<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> 大概收斂在 500 左右，但若先進行 Warm up ，Training Perplexity 便可迅速降至 10 左右。</p>
+<p><embed src="https://i.imgur.com/YJD9QOZ.png%20=400x" /></p>
 <p>下圖是一個在不同迭代次數時梯度的機率分布圖，這是一個三維視覺圖像，X軸指的是梯度大小，Y軸是不同的迭代次數，Z軸是各梯度大小的頻率。</p>
 <p>上面的兩張圖顯示出，Adam 在沒有 Warm up 的情況下，初期的迭代梯度會有很劇烈的變化 ( 紅框標示處 )</p>
-<p><img src="https://i.imgur.com/j3pxCuV.jpg%20=500x" /></p>
+<p><embed src="https://i.imgur.com/j3pxCuV.jpg%20=500x" /></p>
 <p>這樣劇烈的變動表示，當我們資料不足，迭代次數不夠多，Adam 如果處在較差的 Local Minimum 附近，就會容易陷進去，而得不到更好的解，而整個訓練也會因為初始值選的不夠好而導致優化時間拉長、優化效率可能更差。</p>
 <p>總歸來說，問題還是在於如果訓練初期樣本數缺乏就會導致 Adam 的收斂出現問題。</p>
 <p>這個根本的問題在論文中也嘗試利用 Variance Reduction 解決，但是效能仍然相對於 Adam-warmup、Adam-2K 較差。因此這才延伸出 Rectified Adam 這個嶄新的優化器。</p>
@@ -301,10 +299,10 @@
 <p>我自己使用的顯示卡是 GTX 1060 6g ，在使用 RAdam 的時候，有時候會碰到 OOM error，這樣的情況看似是顯示卡記憶體不敷使用所導致。最後的解決方式就是將 batch_size 降低使其可正常運行。</p>
 <p>原本以為 Lookahead 同時操作兩組參數比較容易跑不動，沒想到 RAdam 的演算反而對算力的要求較高。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>Training Perplexity 可以視為一種衡量 model 的指標，Training Perplexity 越低就表示此 model 可以更好的預測樣本。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Training Perplexity 可以視為一種衡量 model 的指標，Training Perplexity 越低就表示此 model 可以更好的預測樣本。<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -375,7 +373,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

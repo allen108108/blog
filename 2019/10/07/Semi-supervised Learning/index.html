@@ -29,15 +29,8 @@
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/8d3GgWD.png">
 <meta property="og:image" content="https://i.imgur.com/2AInKRi.png">
-<meta property="og:image" content="https://i.imgur.com/x2P9nWs.png%20=500x">
 <meta property="og:image" content="https://i.imgur.com/UBzwvIL.png">
-<meta property="og:image" content="https://i.imgur.com/hos5ud0.png%20=500x">
 <meta property="og:image" content="https://i.imgur.com/466qa2g.png">
-<meta property="og:image" content="https://i.imgur.com/YwEaB3I.png%20=450x">
-<meta property="og:image" content="https://i.imgur.com/4AHWn2h.png%20=450x">
-<meta property="og:image" content="https://i.imgur.com/xo8QwjH.png%20=300x">
-<meta property="og:image" content="https://i.imgur.com/dm1t4z4.png%20=400x">
-<meta property="og:image" content="https://i.imgur.com/Jidug86.png%20=500x">
 <meta property="article:published_time" content="2019-10-07T07:54:56.000Z">
 <meta property="article:modified_time" content="2019-10-22T08:00:09.015Z">
 <meta property="article:author" content="Allen Tzeng">
@@ -149,7 +142,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -305,14 +298,14 @@
 <p><img src="https://i.imgur.com/2AInKRi.png" /></p>
 <h3 id="如何利用未標籤資料進行生成模型推估">如何利用未標籤資料進行生成模型推估 ?</h3>
 <p>我們使用迭代的方式進行模型的推估，也就是說利用一筆一筆的未標籤資料來調整模型</p>
-<p><img src="https://i.imgur.com/x2P9nWs.png%20=500x" /></p>
+<p><embed src="https://i.imgur.com/x2P9nWs.png%20=500x" /></p>
 <p>理論上這樣的模型最後會收斂，但 Initialization 的設定會影響最後結果。</p>
 <p>這樣的演算法的理論其實用到的概念很簡單 :</p>
 <p><strong><em>我們先對有標記的資料計算出各自的 Maximum likelihood，再利用未標籤的資料來最大化 Maximum likelihood</em></strong></p>
 <p><img src="https://i.imgur.com/UBzwvIL.png" /></p>
 <h2 id="approach-2-self-training">Approach 2 : Self-training</h2>
 <p>Self-training 首先利用已標籤的資料進行訓練，再使用訓練出來的 model 對未標籤資料進行標記。然後我們再取一部分的未標籤資料加到 training data 中重新訓練一個 model，進行上述的迭代訓練來取得一個好的 model。</p>
-<p><img src="https://i.imgur.com/hos5ud0.png%20=500x" /></p>
+<p><embed src="https://i.imgur.com/hos5ud0.png%20=500x" /></p>
 <p>這是一個很直覺的方式，但這個方法要能夠取得一個夠好的 model 必須奠基在<font color="#dd0000"><strong>「各類別之間有明確的分野」</strong></font>，也就是說，每一個分類之間不存在模糊的地帶，有一個明顯的 gap。</p>
 <p>而且，從 Self-training 的步驟來看，有幾個狀況並不適用 Self-training :</p>
 <ol type="1">
@@ -324,23 +317,23 @@
 <p><img src="https://i.imgur.com/466qa2g.png" /> ****</p>
 <p>要解決 Neural Network 的問題，可以使用 Entropy-based reluarization 來處理。</p>
 <p>因為 Neural Network 輸出會是機率分布，我們可以加入 entropy 的 constrain 來規範，這直覺上來說是合理的，因為我們本來就希望資料本身要夠集中才有參考價值。</p>
-<p><img src="https://i.imgur.com/YwEaB3I.png%20=450x" /></p>
+<p><embed src="https://i.imgur.com/YwEaB3I.png%20=450x" /></p>
 <p>這個演算法其實也延伸出了 Semi-Supervised SVM 。</p>
 <p>一般 Supervised SVM 的概念就是最大化 margin 且最小化 error 的分類方式，而 Semi-Supervised SVM 窮舉出所有未標籤資料的可能 label ，針對每一種可能性進行 SVM ，找出最小 error 狀況。</p>
-<p><img src="https://i.imgur.com/4AHWn2h.png%20=450x" /></p>
+<p><embed src="https://i.imgur.com/4AHWn2h.png%20=450x" /></p>
 <p>而論文 <em>Transductive Inference for Text Classication using Support Vector Machines</em> 提出了近似的估計方式解決當未標籤資料過多，無法窮舉所有情況的解決方式。</p>
 <h2 id="approach-3-graph-approach">Approach 3 : Graph Approach</h2>
 <p>為了瞭解圖論在這邊的應用，我們先給出一些定義 :</p>
 <p>首先，我們將所有的資料 <span class="math inline">\(x_1,x_2,\cdots,x_R,\cdots,x_{R+U}\)</span> 視為空間中的點 * <span class="math inline">\(Similarity\ of\ x_i,x_j=s(x_i,x_j)=e^{-\gamma\|x_i-x_j\|^2}\)</span> ( Gaussian Radial Basis Function ) * <span class="math inline">\(Add\ edge\ with\ K-Nearest Neighbor\)</span> ( <span class="math inline">\(or\ e-Nearest Neighbor\)</span> ) * <span class="math inline">\(Edge\ weight\ of\ x_i,x_j \propto s(x_i,x_j)\)</span> * <span class="math inline">\(Smothness\ of\ the\ labels\ on\ the\ graph=S=\displaystyle{\frac{1}{2}}\sum\limits_{i,j}w_{i,j}(y_i-y_j)^2\)</span> ( <span class="math inline">\(Smaller\ S\ means\ Smother\)</span> ) * <span class="math inline">\(\boldsymbol{Y}=\begin{bmatrix}\cdots y_i\cdots y_j\cdots\end{bmatrix}_{1\times (R+U)}^T\)</span> * <span class="math inline">\(\boldsymbol{W}=\begin{bmatrix}w_{i,j}\end{bmatrix}_{(R+U)\times (R+U)}\)</span> * <span class="math inline">\(\boldsymbol{D}\ is\ a\ diagonal\ matrix\ d_{i,i}=\sum\limits_{k=1}^{R+U} w_{i,k}\)</span> * <span class="math inline">\(Laplacian\ matrix=\boldsymbol{L}=\boldsymbol{D}-\boldsymbol{W}\)</span></p>
-<p><img src="https://i.imgur.com/xo8QwjH.png%20=300x" /></p>
+<p><embed src="https://i.imgur.com/xo8QwjH.png%20=300x" /></p>
 <p>從上面的定義我們可以推得 : <span class="math inline">\(S=\boldsymbol{Y}^T\boldsymbol{L}\boldsymbol{Y}\)</span></p>
 <p>我們清楚了圖論的一些概念後，從圖論的方式來進行 Semi-Supervised Learning 跟 Self-training 奠基的假設完全不同。Graph Approach 必須基於一個 Smoothness 假設上才能確保這樣的方式可以做出一個夠好的 model。</p>
 <p>那什麼是 Smoothness 假設呢 ?</p>
 <p>簡單來說，<span class="math inline">\(x_1,x_2\)</span> 如果在一個稠密的區域裡面夠接近，那麼他們的 label 必然會相同。 ( 換句話說，<span class="math inline">\(x_1,x_2\)</span> 可藉由一個高密度的路徑相互連接 )</p>
-<p><img src="https://i.imgur.com/dm1t4z4.png%20=400x" /></p>
+<p><embed src="https://i.imgur.com/dm1t4z4.png%20=400x" /></p>
 <p>最後我們可以利用上面的概念，重新將資料間的關係做一個定義，丟到 neural network 中進行訓練，而待訓練的當然就是 edge weight。</p>
 <p>然而我們一樣為了避免 overfitting 的問題，還有整個 graph 上對 smoothness 的要求，我們在 Loss function 上仍會加上一個 regularizer <span class="math inline">\(=S\)</span>。</p>
-<p><img src="https://i.imgur.com/Jidug86.png%20=500x" /></p>
+<p><embed src="https://i.imgur.com/Jidug86.png%20=500x" /></p>
 <h2 id="approach-4-better-representation">Approach 4 : Better Representation</h2>
 <p>( 待 Unsupervised Learning 進行詳細說明 )</p>
 <p>簡而言之就是我們觀察到的現象通常都比較複雜，試圖去找出潛在因素，則可以讓訓練變得比較簡單。</p>
@@ -412,7 +405,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

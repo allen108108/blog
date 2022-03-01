@@ -20,12 +20,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="On Policy &amp; Off Policy 我們前面所用的技巧稱為 &quot; On Policy &quot; ，意思就是，我們用來跟 Environment 互動的 Actor 跟我們要訓練的 Actor 是同一個。 但前面有提到，這樣的訓練其實會花非常多時間，因為每一次參數更新完，就必須要重新讓 Actor 跟 Environment 互動收集新的資料，然後再進行訓練。是不是有辦法可以讓 Act">
+<meta name="description" content="On Policy &amp; Off Policy 我們前面所用的技巧稱為 &quot; On Policy &quot; ，意思就是，我們用來跟 Environment 互動的 Actor 跟我們要訓練的 Actor 是同一個。 但前面有提到，這樣的訓練其實會花非常多時間，因為每一次參數更新完，就必須要重新讓 Actor 跟 Environment 互動收集新的資料，然後再進行訓練。是不是">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Deep Reinforcement Learning (2) --- Proximal Policy Optimization (PPO)">
 <meta property="og:url" content="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(2)%20%E2%80%94%20Proximal%20Policy%20Optimization%20(PPO)/index.html">
 <meta property="og:site_name" content="Math.py">
-<meta property="og:description" content="On Policy &amp; Off Policy 我們前面所用的技巧稱為 &quot; On Policy &quot; ，意思就是，我們用來跟 Environment 互動的 Actor 跟我們要訓練的 Actor 是同一個。 但前面有提到，這樣的訓練其實會花非常多時間，因為每一次參數更新完，就必須要重新讓 Actor 跟 Environment 互動收集新的資料，然後再進行訓練。是不是有辦法可以讓 Act">
+<meta property="og:description" content="On Policy &amp; Off Policy 我們前面所用的技巧稱為 &quot; On Policy &quot; ，意思就是，我們用來跟 Environment 互動的 Actor 跟我們要訓練的 Actor 是同一個。 但前面有提到，這樣的訓練其實會花非常多時間，因為每一次參數更新完，就必須要重新讓 Actor 跟 Environment 互動收集新的資料，然後再進行訓練。是不是">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/5Hbf2Cd.png">
 <meta property="og:image" content="https://i.imgur.com/2YP7Wxq.png">
@@ -140,7 +140,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -270,12 +270,12 @@
     
     <div class="post-body" itemprop="articleBody">
         <h2 id="on-policy-off-policy">On Policy &amp; Off Policy</h2>
-<p>我們前面所用的技巧稱為 " On Policy " ，意思就是，我們用來跟 Environment 互動的 Actor 跟我們要訓練的 Actor 是同一個。</p>
+<p>我們前面所用的技巧稱為 &quot; On Policy &quot; ，意思就是，我們用來跟 Environment 互動的 Actor 跟我們要訓練的 Actor 是同一個。</p>
 <p>但前面有提到，這樣的訓練其實會花非常多時間，因為每一次參數更新完，就必須要重新讓 Actor 跟 Environment 互動收集新的資料，然後再進行訓練。是不是有辦法可以讓 Actor 跟 Environment 互動收集的資料拿來更新多次參數，省去一直收集資料的冗長過程 ?</p>
-<p>這就是 " Off Policy " 的作用。在 Off Policy 中，我們利用一個不同的 Actor 、Policy <span class="math inline">\(\pi_{\theta}&#39;\)</span> 來跟 Environment 互動收集資料，然後讓我們想要訓練的 Actor 、 Policy <span class="math inline">\(\pi_{\theta}&#39;\)</span> 利用這些資料，一次進行多次參數更新。</p>
+<p>這就是 &quot; Off Policy &quot; 的作用。在 Off Policy 中，我們利用一個不同的 Actor 、Policy <span class="math inline">\(\pi_{\theta}&#39;\)</span> 來跟 Environment 互動收集資料，然後讓我們想要訓練的 Actor 、 Policy <span class="math inline">\(\pi_{\theta}&#39;\)</span> 利用這些資料，一次進行多次參數更新。</p>
 <span id="more"></span>
 <h2 id="important-sampling">Important Sampling</h2>
-<p>重要性取樣 （Important Sampling），是一個基於蒙地卡羅法 (Monte Carlo Method) 的取樣方式。所謂蒙地卡羅法，指的是當某一個目標函數不可得時，我們可以利用取樣的方式來對這個目標函數做逼近<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<p>重要性取樣 （Important Sampling），是一個基於蒙地卡羅法 (Monte Carlo Method) 的取樣方式。所謂蒙地卡羅法，指的是當某一個目標函數不可得時，我們可以利用取樣的方式來對這個目標函數做逼近<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>。</p>
 <p>Important Sampling 的概念也是如此，假設我們有一個分佈 <span class="math inline">\(P\)</span> 其期望值</p>
 <p><span class="math display">\[
 \mathbb{E}_{x\sim P}\big[f(z)\big]=\int f(x)P(x)dx
@@ -343,10 +343,10 @@ J^{\theta^k}(\theta)=\sum\limits_{(s_t,a_t)}\min\Big(\frac{P_{\theta}(a_t|s_t)}{
 <p><img src="https://i.imgur.com/2YP7Wxq.png" /></p>
 <p>PPO2 巧妙的避開了計算 KL-Divergence 的問題，讓整個問題變得更加簡單 (?)</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>舉例來說，我們有一個奇形怪狀的曲線，想要求得其面積非常困難。那蒙地卡羅法就認為我們可以在整張圖上面進行均勻的取樣，只要點取得夠多，那麼我們就可以去估計這個曲線下面積 <span class="math inline">\(=\)</span> 圖形內點的數量 / 所有點的數量。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>舉例來說，我們有一個奇形怪狀的曲線，想要求得其面積非常困難。那蒙地卡羅法就認為我們可以在整張圖上面進行均勻的取樣，只要點取得夠多，那麼我們就可以去估計這個曲線下面積 <span class="math inline">\(=\)</span> 圖形內點的數量 / 所有點的數量。<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -417,7 +417,7 @@ J^{\theta^k}(\theta)=\sum\limits_{(s_t,a_t)}\min\Big(\frac{P_{\theta}(a_t|s_t)}{
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

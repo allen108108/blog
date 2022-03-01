@@ -32,7 +32,6 @@
 <meta property="og:image" content="https://i.imgur.com/XzMMTjn.png">
 <meta property="og:image" content="https://i.imgur.com/nromwhe.jpg">
 <meta property="og:image" content="https://i.imgur.com/iMmpxNQ.png">
-<meta property="og:image" content="https://i.imgur.com/i4YtVCx.png%20=300x">
 <meta property="article:published_time" content="2019-11-24T07:32:22.000Z">
 <meta property="article:modified_time" content="2020-07-28T00:54:09.466Z">
 <meta property="article:author" content="Allen Tzeng">
@@ -144,7 +143,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -287,8 +286,8 @@
 <h2 id="簡介-introduction">簡介 Introduction</h2>
 <p>人類只要掃過一張圖像，就可以知道有那些物體在圖像中、它們的位置以及它們如何交互作用。人類的視覺系統非常快速且準確，使我們可以不用太多的意識思考就可以完成極為複雜的任務，如駕駛車輛。同樣的，快速且準確的物件偵測演算法可以幫助電腦駕駛車輛而不須特殊的感測器、讓輔助設備可以傳送即時資料給使用者並且釋放響應式通用機器人系統的潛力。</p>
 <p>現今的偵測系統都以分類器來進行偵測，這些系統在測試資料上使用物件分類器的多個位置上進行評估。像是 DPM 系統就是使用一個滑窗讓分類器在固定間隔的位置上對整張圖像進行判定。</p>
-<p>更多類似 R-CNN 的偵測系統，先使用了 Region Proposal Method<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>來找出圖像中可能的邊界框，再來針對這些可能的區域利用分類器進行預測。分類過後，再來調整邊界框、消除重複偵測並且根據圖像中其他物件重新估算邊界框。這樣複雜的流程也因為每一個別的部分都必須要分開訓練導致速度十分緩慢解難以優化。</p>
-<p>我們重新定義物件偵測，將其視為一個單一的回歸問題，直接從圖像的 pixel 來故算邊界框座標並且給出分類機率。利用這樣的系統，一張圖像，" You Only Look Once " (YOLO) 就可以預測物件類別及位置。</p>
+<p>更多類似 R-CNN 的偵測系統，先使用了 Region Proposal Method<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>來找出圖像中可能的邊界框，再來針對這些可能的區域利用分類器進行預測。分類過後，再來調整邊界框、消除重複偵測並且根據圖像中其他物件重新估算邊界框。這樣複雜的流程也因為每一個別的部分都必須要分開訓練導致速度十分緩慢解難以優化。</p>
+<p>我們重新定義物件偵測，將其視為一個單一的回歸問題，直接從圖像的 pixel 來故算邊界框座標並且給出分類機率。利用這樣的系統，一張圖像，&quot; You Only Look Once &quot; (YOLO) 就可以預測物件類別及位置。</p>
 <p>我們從下圖可以知道 YOLO 非常的簡潔，只要一個 CNN 就可以同時進行多邊界框與其類別機率的預測。YOLO 對整張圖像進行訓練並且直接進行優化。這種統一模型對比其他傳統的物件偵測方法有非常多的優點。</p>
 <p><img src="https://i.imgur.com/8bnOLQG.png" /></p>
 <ol type="1">
@@ -305,7 +304,7 @@
 <p><span class="math display">\[
 Confidence=P_r(Object)\times IOU_{pred.}^{truth}
 \]</span></p>
-<p>如果邊界框不含任何物件，則信賴指數為<span class="math inline">\(0\)</span>，否則，我們希望信賴指數會等於 <span class="math inline">\(IOU\)</span><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
+<p>如果邊界框不含任何物件，則信賴指數為<span class="math inline">\(0\)</span>，否則，我們希望信賴指數會等於 <span class="math inline">\(IOU\)</span><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>。</p>
 <p>每一個邊界框由五個預測值構成 : <span class="math inline">\(x,y,w,h,confidence\)</span>，其中 <span class="math inline">\((x,y)\)</span> 表示相對於所在網格邊界的邊界框的中心點座標。而 <span class="math inline">\((w,h)\)</span> 表示相對於整張圖像所預測出來的寬度及高度。最後，信賴預測值則為 <span class="math inline">\(IOU\)</span>。</p>
 <p>每一個網格也會預測 <span class="math inline">\(C\)</span> 個條件類別機率 <span class="math inline">\(P_r(Class_i|Object)\)</span>。這些機率值是指包含此物件的網格條件下預測為 <span class="math inline">\(Class_i\)</span> 類別的機率。值得注意的是，無論預測邊界框的數量 <span class="math inline">\(B\)</span> 有多少，每一個網格 YOLO 僅預測一組類別機率。</p>
 <p>在測試階段，作者將條件類別機率乘上個別邊界框的信賴預測指數，這給出了一個邊界框中針對特定類別的信賴指數。</p>
@@ -323,7 +322,7 @@ P_r(Class_i|Object)\times Confidence\\
 <p>研究團隊也訓練了一組快速版本的 YOLO 用以推進快速物件偵測的界線。Fast YOLO 使用一個僅有 9 層卷積層的 CNN，並且減少 filters 數量。除了網路尺寸的差別外，其餘的參數設計都與 YOLO 相同。一樣最後的輸出都是一個 <span class="math inline">\(7\times 7\times 30\)</span> 的張量。</p>
 <h3 id="訓練-training">訓練 Training</h3>
 <p>在整個模型中，作者先將前面 20 層卷積層接上一個平均池化層與一個全連接層利用1000個類別的 ImageNet 資料集作預訓練。預訓練時間大約花了將近一周，在 ImageNet 2012 資料集中，驗證資料可以達到 <span class="math inline">\(88%\)</span> 的 top-5 error，這結果與 Caffe 的模型集中的 GoogLeNet 相當。</p>
-<p>接著轉換模型來進行偵測。在 Ren 等人的論文 " <em>Object Detection Networks on Convolutional Feature Maps</em> " 中有提到，在預訓練模型中加入卷積層以及連接層可以提升模型表現。依據他們論文中的範例，作者在預訓練模型中加入隨機初始化權重的 4 層卷積層以及兩層全連接層。由於物件偵測通常需要細粒度 (精細化) 的視覺資訊，因此增加網路輸入解析度，由<span class="math inline">\(224\times 224\)</span> 改變成 <span class="math inline">\(448\times 448\)</span>。</p>
+<p>接著轉換模型來進行偵測。在 Ren 等人的論文 &quot; <em>Object Detection Networks on Convolutional Feature Maps</em> &quot; 中有提到，在預訓練模型中加入卷積層以及連接層可以提升模型表現。依據他們論文中的範例，作者在預訓練模型中加入隨機初始化權重的 4 層卷積層以及兩層全連接層。由於物件偵測通常需要細粒度 (精細化) 的視覺資訊，因此增加網路輸入解析度，由<span class="math inline">\(224\times 224\)</span> 改變成 <span class="math inline">\(448\times 448\)</span>。</p>
 <p>模型中最後的全連接層用來預測類別機率與邊界框的座標。研究團隊藉由全圖像的寬度與高度來標準化邊界框的寬度與高度使其值介於 0 到 1 之間。同時也利用特定網格位置來參數化邊界框的中心座標 <span class="math inline">\((x,y)\)</span> ，使其值也介於 0 到 1 之間。</p>
 <p>除了最後一層使用 linear activation function 外，其餘都使用 leakly ReLU activation function。</p>
 <p><span class="math display">\[
@@ -400,11 +399,11 @@ P_r(Class_i|Object)\times Confidence\\
 <li><a target="_blank" rel="noopener" href="https://blogs.nvidia.com.tw/2016/08/difference-deep-learning-training-inference-ai/">「深度學習訓練」與「推論」之間有什麼差別?</a></li>
 </ol>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>利用特殊方式先選出物件在進行偵測，而選出物件的這個過程我們稱之為 Region Proposal Method<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>intersection over union (<span class="math inline">\(IOU\)</span>)，指的是真實邊界框與預測邊界框的重疊面積除以兩個邊界框的聯集面積。 <span class="math display">\[IOU=\frac{overlap}{union}\]</span> <img src="https://i.imgur.com/i4YtVCx.png%20=300x" /><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>利用特殊方式先選出物件在進行偵測，而選出物件的這個過程我們稱之為 Region Proposal Method<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>intersection over union (<span class="math inline">\(IOU\)</span>)，指的是真實邊界框與預測邊界框的重疊面積除以兩個邊界框的聯集面積。 <span class="math display">\[IOU=\frac{overlap}{union}\]</span> <embed src="https://i.imgur.com/i4YtVCx.png%20=300x" /><a href="#fnref2" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -475,7 +474,7 @@ P_r(Class_i|Object)\times Confidence\\
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

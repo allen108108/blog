@@ -149,7 +149,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -283,11 +283,11 @@
 <p>若將一個移動式機器人置於一未知環境中，是否能讓其同時進行定位並建立此環境的精確地圖，這一直是在機器人領域中一個重要的問題，這種問題我們統稱為 SLAM ( Simultaneous Localisation and Mapping )。</p>
 <p>在此篇論文提出的近十年中 ( 約 1996-2006)，SLAM 問題已有不少進展，在這些進展底下看似已經出現 SLAM 問題的解決方案，但就現實來說仍然存在不少問題。</p>
 <p>在這篇論文中，第一與第二部分主要介紹 SLAM 的歷史與演進，第三部分定義出了 SLAM 之架構，第四部份則是針對這樣的 SLAM 架構介紹當時兩種主流解決方案 :以擴展卡爾曼波器 Extended Kalman Filter 為基礎的 EKF-SLAM 與以粒子濾波器為基礎的 FastSLAM。</p>
-<p>下一篇論文 "<em>Simultaneous Localisation and Mapping (SLAM) : Part II State of the Art</em>" 則是會介紹當時較為先進的做法以及一些 SLAM 的相關實現。( 此篇論文筆者暫無計畫閱讀 )</p>
+<p>下一篇論文 &quot;<em>Simultaneous Localisation and Mapping (SLAM) : Part II State of the Art</em>&quot; 則是會介紹當時較為先進的做法以及一些 SLAM 的相關實現。( 此篇論文筆者暫無計畫閱讀 )</p>
 <h2 id="歷史-history-of-the-slam-problem">歷史 History of the SLAM Problem</h2>
 <p>最早 SLAM 概念發展主要是在 1986 年於舊金山舉行的 IEEE Robotics and Automation Conference 會議上，在這個時候，機率概念正被引入到 AI 與機器人領域之中，也因此許多研究人員也努力想利用估計的方式處理定位及製圖的問題。</p>
 <p>在當時取得一致的共識，同意機率映射 (Probablistic mapping) 是在機器人技術中的一個重要概念，並且可以應用在許多的計算問題之中。在後續的幾年中，產出了相當多的關鍵論文，在這個領域中建立了完整的統計基礎，其中最重要的是，確定了定位的估計與地圖中不同地標應具有高度相關性，並且這樣的相關性會因後續持續的觀測而增長。</p>
-<p>在 " <em>Estimating uncertain spatial relationships in robotics.</em> " 這篇關鍵論文中也說明了當移動式機器人在未知環境中移動觀測時，針對這些地標的估計值會因為定位產生的一般性誤差而具有相關性。這項發現表明了，定位跟製圖這兩個問題必須要一起解決，也就是說，移動式機器人本身的定位與地標的估計應視為一個聯合狀態 (joint state)，在每一次地標觀測後都進行一次整體的更新。但，這也表示說狀態向量的維度會非常高 ( 除了定位的座標資訊外，還要包含所有的地標資訊 )，而且計算的複雜度將會提高到地標數量的平方。</p>
+<p>在 &quot; <em>Estimating uncertain spatial relationships in robotics.</em> &quot; 這篇關鍵論文中也說明了當移動式機器人在未知環境中移動觀測時，針對這些地標的估計值會因為定位產生的一般性誤差而具有相關性。這項發現表明了，定位跟製圖這兩個問題必須要一起解決，也就是說，移動式機器人本身的定位與地標的估計應視為一個聯合狀態 (joint state)，在每一次地標觀測後都進行一次整體的更新。但，這也表示說狀態向量的維度會非常高 ( 除了定位的座標資訊外，還要包含所有的地標資訊 )，而且計算的複雜度將會提高到地標數量的平方。</p>
 <p>這樣的研究方向非常好，但後來卻停滯不前。主要的原因是當時的人們並不認為持續觀察的誤差會收斂，最可能的狀況是地圖的估計誤差會持續增長並沒有上界，如果要避免這樣的狀況，研究人員就必須假設或強迫所有地標估計之間的相關性必須要盡可能的小或是甚至無相關性，最終會導致地標估計與定位估計會分開來處理。</p>
 <p>但隨著整個概念的進展，大家開始意識到將定位以及地標估計統一進行估計，事實上估計值會收斂，且前述提到的相關性越高反而會讓解決方案越成功。</p>
 <p>SLAM 這個名詞的發表主要是在 1995 年 International Symposium on Robotics Research 會議上，不管是其收斂性或是製圖定位的問題都有不同的單位著手進行。</p>
@@ -381,7 +381,7 @@ P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{z}_k)\neq P(\mathrm{x}_k\mid \mathrm{z}_k)
 <li>將移動設備模型描述成一個更通用的非高斯分佈模型 ( Non-Gaussian Distribution )，進而利用 RB 粒子濾波器 ( Rao-Blackwellised Particle Filter ) 來解決 SLAM 問題，我們稱之為 Fast-SLAM。</li>
 </ul>
 <h3 id="擴展卡爾曼濾波器-extended-kalman-filter-ekf-slam">擴展卡爾曼濾波器 Extended Kalman Filter ( EKF-SLAM )</h3>
-<p>( 在進入以下論文內容前，建議先閱讀 Bzarg 的文章 " <a target="_blank" rel="noopener" href="https://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/">How a Kalman filter works, in pictures</a> " 以及 <a target="_blank" rel="noopener" href="https://www.udacity.com/course/artificial-intelligence-for-robotics--cs373">Udacity - Artificial Intelligence for Robotics</a>，這些應該是目前最通俗易懂的 Kalman Filter 解釋文章 / 課程了。 )</p>
+<p>( 在進入以下論文內容前，建議先閱讀 Bzarg 的文章 &quot; <a target="_blank" rel="noopener" href="https://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/">How a Kalman filter works, in pictures</a> &quot; 以及 <a target="_blank" rel="noopener" href="https://www.udacity.com/course/artificial-intelligence-for-robotics--cs373">Udacity - Artificial Intelligence for Robotics</a>，這些應該是目前最通俗易懂的 Kalman Filter 解釋文章 / 課程了。 )</p>
 <p>在 EKF-SLAM 中，我們利用下面的方式為 Motion 與 Observation 建模</p>
 <p><span class="math display">\[
 \mathrm{x}_k=f(\mathrm{x}_{k-1},\mathrm{u}_k)+\mathrm{w}_k\cdots\cdots(1)\\
@@ -400,7 +400,7 @@ P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{z}_k)\neq P(\mathrm{x}_k\mid \mathrm{z}_k)
 \begin{bmatrix}\hat{\mathrm{x}}_{k\mid k}\\ \hat{\mathrm{m}}_k\end{bmatrix}=E\begin{bmatrix}\mathrm{x}_k\\ \mathrm{m}_k \end{bmatrix}\cdots\cdots(3)\\
 P_{k\mid k}=\begin{bmatrix}P_{xx}&amp;P_{xm}\\P_{xm}&amp;P_{mm}\end{bmatrix}_{k\mid k}=E\begin{bmatrix}\dbinom{\mathrm{x}_k-\hat{\mathrm{x}}_k}{\mathrm{m}_k-\hat{\mathrm{m}}_k}\dbinom{\mathrm{x}_k-\hat{\mathrm{x}}_k}{\mathrm{m}_k-\hat{\mathrm{m}}_k}^T\end{bmatrix}\cdots\cdots(4)
 \]</span></p>
-<p>論文這邊的符號很混亂，且沒有另外說明，原則上都是引用 " <em>A Solution to the Simultaneous Localization and Map Building (SLAM) Problem</em> " 這篇論文再加以調整</p>
+<p>論文這邊的符號很混亂，且沒有另外說明，原則上都是引用 &quot; <em>A Solution to the Simultaneous Localization and Map Building (SLAM) Problem</em> &quot; 這篇論文再加以調整</p>
 <ul>
 <li><span class="math inline">\(\hat{\mathrm{x}}_{p\mid q}=E\begin{bmatrix}\mathrm{x}_p\mid \mathrm{Z}_{0:q}\end{bmatrix}\)</span> ,where <span class="math inline">\(p\geq q\)</span></li>
 <li><span class="math inline">\(P_{p\mid q}=E\begin{bmatrix}\big(\hat{\mathrm{x}}_{p\mid q}-\mathrm{x}_p\big)\big(\hat{\mathrm{x}}_{p\mid q}-\mathrm{x}_p\big)^T\mid \mathrm{Z}_q\end{bmatrix}\)</span></li>
@@ -408,7 +408,7 @@ P_{k\mid k}=\begin{bmatrix}P_{xx}&amp;P_{xm}\\P_{xm}&amp;P_{mm}\end{bmatrix}_{k\
 <li><span class="math inline">\(P_{mm,p\mid q} :\)</span> 在 <span class="math inline">\(p,q\)</span> 兩個狀態下地標估測誤差之共變異矩陣</li>
 <li><span class="math inline">\(P_{xm,p\mid q} :\)</span> 在 <span class="math inline">\(p,q\)</span> 兩個狀態下定位與地標估測誤差之共變異矩陣</li>
 </ul>
-<p>有了這兩部分，就可以進行 Time-Update 與 Measurement-Update ( 這邊的相關知識及理論推導很多，這裡我們大多 follow 論文，再加一點補充，詳細完整證明過程可以參閱 " <em>Stochastic Models, Estimation and Control Volume 1</em> " 一書 )</p>
+<p>有了這兩部分，就可以進行 Time-Update 與 Measurement-Update ( 這邊的相關知識及理論推導很多，這裡我們大多 follow 論文，再加一點補充，詳細完整證明過程可以參閱 &quot; <em>Stochastic Models, Estimation and Control Volume 1</em> &quot; 一書 )</p>
 <h4 id="time-update">Time-Update</h4>
 <p>若今天有一組一維定位的先驗分佈 <span class="math inline">\((\mu_1,\sigma^2_1)\)</span>，以及「移動」本身的分佈 <span class="math inline">\((\mu_2,\sigma^2_2)\)</span>，很清楚可以得到移動後的分佈 <span class="math inline">\((\mu&#39;,\sigma&#39;^2)\)</span></p>
 <p><span class="math display">\[
@@ -498,7 +498,7 @@ w_{k}^{(i)}=\dfrac{\text{target distribution}}{\text{proposal distribution}}=\df
 <p>藉由上式計算出來的重要性權重重新進行抽樣。</p>
 <p><span class="math inline">\(SIS\)</span> 在每一次更新時都會進行重新抽樣，這使得 Fast-SLAM 有一個很重要的特性，那就是執行過 <span class="math inline">\(SIS\)</span> 後，系統會「遺忘」過去，而使得 Noise 不會持續累積下去。</p>
 <p>下圖非常清楚的展示了 Fast-SLAM 的演算過程</p>
-<p><img src="https://i.imgur.com/BRp7CvP.png" /> ("<em>Adaptive prior boosting technique for the efficient sample size in FastSLAM</em>")</p>
+<p><img src="https://i.imgur.com/BRp7CvP.png" /> (&quot;<em>Adaptive prior boosting technique for the efficient sample size in FastSLAM</em>&quot;)</p>
 <p>在文獻上，有 Fast-SLAM 1.0 及 Fast-SLAM 2.0 兩種版本，兩者的差別只在於 proposal distribution 的形式以及重要性權重的計算上有所更動。</p>
 <p>Fast-SLAM 1.0</p>
 <p><span class="math display">\[
@@ -614,7 +614,7 @@ P(\mathrm{x}_k,\mathrm{m}\mid \mathrm{Z}_{0:k-1},\mathrm{U}_{0:k},\mathrm{x}_0)=
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

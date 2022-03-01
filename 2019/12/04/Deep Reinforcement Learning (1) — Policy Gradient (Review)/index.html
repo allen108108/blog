@@ -20,12 +20,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 &quot; Reinforcement Learning &quot; 及 &quot; Generative Adversarial Network (9) — Sequence Ge">
+<meta name="description" content="作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 &quot; Reinforcement Learning &quot; 及 &quot; Generative Adversarial Network (9">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Deep Reinforcement Learning (1) --- Policy Gradient (Review)">
 <meta property="og:url" content="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(1)%20%E2%80%94%20Policy%20Gradient%20(Review)/index.html">
 <meta property="og:site_name" content="Math.py">
-<meta property="og:description" content="作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 &quot; Reinforcement Learning &quot; 及 &quot; Generative Adversarial Network (9) — Sequence Ge">
+<meta property="og:description" content="作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 &quot; Reinforcement Learning &quot; 及 &quot; Generative Adversarial Network (9">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/xNvQEIO.png">
 <meta property="og:image" content="https://i.imgur.com/fdl672p.png">
@@ -144,7 +144,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -273,7 +273,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 " <a href="https://">Reinforcement Learning</a> " 及 " <a target="_blank" rel="noopener" href="http://bit.ly/2D6MEMp">Generative Adversarial Network (9) — Sequence Generation</a> " 這兩篇筆記。</p>
+        <p>作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 &quot; <a href="https://">Reinforcement Learning</a> &quot; 及 &quot; <a target="_blank" rel="noopener" href="http://bit.ly/2D6MEMp">Generative Adversarial Network (9) — Sequence Generation</a> &quot; 這兩篇筆記。</p>
 <span id="more"></span>
 <h2 id="reinforcement-learning">Reinforcement Learning</h2>
 <p>Reinforcement Learning 說穿了就是利用機器進行實作，並且從錯誤中自行學習應該採取什麼樣子的「策略」，可以讓自己在任務中得到最大的獎勵、分數。如果拿玩遊戲跟 AlphaGO 作為例子，我們可以將整個 Reinforcement Learning 分成三個主要的部份 : <strong>Actor, Environment 以及 Reward Function</strong>，其中 Environment 以及 Reward Function 是我們無法調整的部分。</p>
@@ -305,7 +305,7 @@ P_{\theta}(\tau)=P(s_1)P_{\theta}(a_1\mid s_1)P(s_2\mid s_1,a_1)\cdot P_{\theta}
 \approx\frac{1}{N}\sum\limits_{i=1}^{N}R(\tau^n)\nabla\log P_{\theta}(\tau^n)\\
 =\frac{1}{N}\sum\limits_{i=1}^{N}\sum\limits_{t=1}^{T_n}R(\tau^n)\nabla\log P_{\theta}(a_t^n|s_t^n)
 \]</span></p>
-<p>在這邊想提一下 "Policy" 這樣的名詞，直接翻譯叫做「策略」。我想說的是，為什麼要特別提到 Policy 這樣的詞彙 ? 跟我們以前所了解的梯度下降到底有什麼不同 ?</p>
+<p>在這邊想提一下 &quot;Policy&quot; 這樣的名詞，直接翻譯叫做「策略」。我想說的是，為什麼要特別提到 Policy 這樣的詞彙 ? 跟我們以前所了解的梯度下降到底有什麼不同 ?</p>
 <p>上面的討論簡化了一些部分，如果依照以往的整個神經網路優化過程來看，我們應該要優化網路來使 Loss 盡可能的小。但在 Reinforcement Learning 中，我們卻沒辦法這樣做。</p>
 <p>在 Reinforcement Learning 中，我們用的是 Reward Function 取代 Loss function，目標也從最小化 Loss 改成最大化 Reward。現在的問題就是，我們很無法對 Reward 進行梯度下降法來優化 Actor 這個神經網路。主要的原因是因為 Actor 輸出的是一個 Action ，並不是 Reward，而且最後得到的 Reward <span class="math inline">\(R(\tau)\)</span> 事實上我們會看不到與 Actor 的參數 <span class="math inline">\(\theta\)</span> 之關係。</p>
 <p>因此我們會用上面的方式調整來進行梯度下降，雖然我們要求的是 <span class="math inline">\(\nabla\bar{R}_{\theta}\)</span> 但其實是在求 <span class="math inline">\(\nabla P_{\theta}(\tau)\)</span> 其實也就是對 「策略」本身求梯度。</p>
@@ -411,7 +411,7 @@ P_{\theta}(\tau)=P(s_1)P_{\theta}(a_1\mid s_1)P(s_2\mid s_1,a_1)\cdot P_{\theta}
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

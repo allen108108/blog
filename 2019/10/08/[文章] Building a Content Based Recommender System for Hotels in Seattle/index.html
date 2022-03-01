@@ -28,7 +28,6 @@
 <meta property="og:description" content="Susan Li .(2019 , Apr 1). Building a Content Based Recommender System for Hotels in Seattle .Retrieved June 27,2019 ,from https:&#x2F;&#x2F;towardsdatascience.com&#x2F;building-a-content-based-recommender-system-for">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/DdkI2Id.png">
-<meta property="og:image" content="https://i.imgur.com/WR6TKVh.png%20=190x">
 <meta property="og:image" content="https://i.imgur.com/uHtBp2Z.png">
 <meta property="og:image" content="https://i.imgur.com/IciTP1E.png">
 <meta property="og:image" content="https://i.imgur.com/KOhNIKV.png">
@@ -159,7 +158,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -293,15 +292,15 @@
         <p><a target="_blank" rel="noopener" href="https://towardsdatascience.com/@actsusanli">Susan Li</a> .(2019 , Apr 1). <em>Building a Content Based Recommender System for Hotels in Seattle</em> .Retrieved June 27,2019 ,from https://towardsdatascience.com/building-a-content-based-recommender-system-for-hotels-in-seattle-d724f0a32070</p>
 <span id="more"></span>
 <p>推薦系統 ( Recommendation system )有一個眾所周知的問題，便是在 Cold Start Problem 上推薦系統無法有效地將推薦項目推送給使用者。在新用戶、新產品或是新網站、平台上，由於沒有足夠多的資料，推薦系統很難建構一個適用的 model 來進行推薦。</p>
-<p>此篇文章，作者 Susan Li 使用了 Content-Based Filter<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 來做為解決 Cold Start Problem 的方法，Content-Based Recommendation System 可以適用於各種不同的領域，而且沒有 Cold Start Problem，在產品、網站一開始上線後就可以做出有效的推薦。</p>
+<p>此篇文章，作者 Susan Li 使用了 Content-Based Filter<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> 來做為解決 Cold Start Problem 的方法，Content-Based Recommendation System 可以適用於各種不同的領域，而且沒有 Cold Start Problem，在產品、網站一開始上線後就可以做出有效的推薦。</p>
 <h2 id="scenario">Scenario</h2>
 <p>作者現在模擬一個情境，我們是一個新的 Online Travel Agency ( OTA ，類似於台灣易遊網、Hotels.com...)，且有數千家飯店旅館會在我們的平台銷售。由於我們是新的平台，並沒有太多用戶資料，我們要建立一套 Content-Based Recommendation System ，利用飯店本身的商品陳述來判斷是否符合使用者需求而進行精準的推薦投放。</p>
-<p>如何判斷用戶的需求 ? 作者使用了 Cosine Similarity<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 來將我們的資料與用戶所預定、瀏覽的酒店旅館進行 Cosine Similarity 計算，針對其值進行推薦酒店的排序及投放。</p>
+<p>如何判斷用戶的需求 ? 作者使用了 Cosine Similarity<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> 來將我們的資料與用戶所預定、瀏覽的酒店旅館進行 Cosine Similarity 計算，針對其值進行推薦酒店的排序及投放。</p>
 <h2 id="the-data">The Data</h2>
 <p>由於是虛擬情境，作者本身並沒有這些公共酒店旅館的資料，因此作者自行從西雅圖各飯店網站進行資料收集，一共收集了150多家的飯店資料，其中包含名稱、地址以及飯店描述。這些資料都可以在作者 <strong><a target="_blank" rel="noopener" href="https://github.com/susanli2016/Machine-Learning-with-Python/blob/master/Seattle_Hotels.csv">Github</a></strong> <i class="fa fa-github"></i> 上取得。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> nltk.corpus <span class="keyword">import</span> stopwords</span><br><span class="line"><span class="keyword">import</span> nltk</span><br><span class="line">nltk.download(<span class="string">&#x27;stopwords&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sklearn.metrics.pairwise <span class="keyword">import</span> linear_kernel</span><br><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer</span><br><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> TfidfVectorizer</span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> LatentDirichletAllocation</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> plotly.graph_objs <span class="keyword">as</span> go</span><br><span class="line"><span class="keyword">import</span> plotly.plotly <span class="keyword">as</span> py</span><br><span class="line"><span class="keyword">import</span> cufflinks</span><br><span class="line">pd.options.display.max_columns = <span class="number">30</span></span><br><span class="line"><span class="keyword">from</span> IPython.core.interactiveshell <span class="keyword">import</span> InteractiveShell</span><br><span class="line"><span class="keyword">import</span> plotly.figure_factory <span class="keyword">as</span> ff</span><br><span class="line">InteractiveShell.ast_node_interactivity = <span class="string">&#x27;all&#x27;</span></span><br><span class="line"><span class="keyword">from</span> plotly.offline <span class="keyword">import</span> iplot</span><br><span class="line">cufflinks.go_offline()</span><br><span class="line">cufflinks.set_config_file(world_readable=<span class="literal">True</span>, theme=<span class="string">&#x27;solar&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df = pd.read_csv(<span class="string">&#x27;Seattle_Hotels.csv&#x27;</span>, encoding=<span class="string">&quot;latin-1&quot;</span>)</span><br><span class="line">df.head()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;We have &#x27;</span>, <span class="built_in">len</span>(df), <span class="string">&#x27;hotels in the data&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.imgur.com/DdkI2Id.png" /> <img src="https://i.imgur.com/WR6TKVh.png%20=190x" /></p>
+<p><img src="https://i.imgur.com/DdkI2Id.png" /> <embed src="https://i.imgur.com/WR6TKVh.png%20=190x" /></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_description</span>(<span class="params">index</span>):</span></span><br><span class="line">    example = df[df.index == index][[<span class="string">&#x27;desc&#x27;</span>, <span class="string">&#x27;name&#x27;</span>]].values[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(example) &gt; <span class="number">0</span>:</span><br><span class="line">        <span class="built_in">print</span>(example[<span class="number">0</span>])</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Name:&#x27;</span>, example[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print_description(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
 <p><img src="https://i.imgur.com/uHtBp2Z.png" /></p>
@@ -373,14 +372,14 @@ linear\_kernel (x,y)=x^Ty
 <p><img src="https://i.imgur.com/XUIiSfQ.png" /></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recommendations</span>(<span class="params">name, cosine_similarities = cosine_similarities</span>):</span></span><br><span class="line">    </span><br><span class="line">    recommended_hotels = []</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># gettin the index of the hotel that matches the name</span></span><br><span class="line">    <span class="comment"># 找出輸入飯店名稱的 index</span></span><br><span class="line">    idx = indices[indices == name].index[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># creating a Series with the similarity scores in descending order</span></span><br><span class="line">    <span class="comment"># 利用輸入飯店index，從 cosine similarity 矩陣找出這間飯店與其他飯店的 cosine similarity value 並且排序</span></span><br><span class="line">    score_series = pd.Series(cosine_similarities[idx]).sort_values(ascending = <span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># getting the indexes of the 10 most similar hotels except itself</span></span><br><span class="line">    <span class="comment"># 從這些排序後的 cosine similarity 取前10</span></span><br><span class="line">    top_10_indexes = <span class="built_in">list</span>(score_series.iloc[<span class="number">1</span>:<span class="number">11</span>].index)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># populating the list with the names of the top 10 matching hotels</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> top_10_indexes:</span><br><span class="line">        recommended_hotels.append(<span class="built_in">list</span>(df.index)[i])</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> recommended_hotels</span><br></pre></td></tr></table></figure>
 <h2 id="recommendations">Recommendations</h2>
-<p>試著輸入 " Hilton Seattle Airport &amp; Conference Center " 來看看推薦名單。</p>
+<p>試著輸入 &quot; Hilton Seattle Airport &amp; Conference Center &quot; 來看看推薦名單。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recommendations(<span class="string">&#x27;Hilton Seattle Airport &amp; Conference Center&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <p><img src="https://i.imgur.com/7SpTy3m.png" /></p>
 <p>從我們輸出的推薦名單對比我們從 google 搜尋得到的推薦，有 3/4 的重疊。</p>
 <p><img src="https://i.imgur.com/L9q3u5h.png" /></p>
 <p>以下是 tripadvisor 的推薦，與我們的推薦名單也相似。</p>
 <p><img src="https://i.imgur.com/9aLzrUf.png" /></p>
-<p>換一個輸入來搜尋看看 " The Bacon Mansion Bed and Breakfast "</p>
+<p>換一個輸入來搜尋看看 &quot; The Bacon Mansion Bed and Breakfast &quot;</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recommendations(<span class="string">&quot;The Bacon Mansion Bed and Breakfast&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p><img src="https://i.imgur.com/hOzOTEl.jpg" /></p>
 <p>比對 google 搜尋得到的推薦，仍然有高度的重疊</p>
@@ -388,11 +387,11 @@ linear\_kernel (x,y)=x^Ty
 <p>但從 tripadvisor 的推薦名單中，就與我們的推薦名單重疊度不高。</p>
 <p><img src="https://i.imgur.com/QUpPYV5.png" /></p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>詳細介紹可參閱 : http://recommender-systems.org/content-based-filtering/<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>在文本分析中，我們會將所有的文字向量化，使用兩個向量夾角的 cos 值進行相似性的判別。當兩個文字向量夾角越小， cos 值越大，此兩文字相似性越高。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>詳細介紹可參閱 : http://recommender-systems.org/content-based-filtering/<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>在文本分析中，我們會將所有的文字向量化，使用兩個向量夾角的 cos 值進行相似性的判別。當兩個文字向量夾角越小， cos 值越大，此兩文字相似性越高。<a href="#fnref2" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -463,7 +462,7 @@ linear\_kernel (x,y)=x^Ty
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

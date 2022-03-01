@@ -143,7 +143,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -275,26 +275,26 @@
 <p>論文中針對計算能力及速度利用了幾個指標來衡量 --- FLOPs 及 MAC (Memory Access Cost) --- 在論文中綜合評量發現 ShuffleNet V2 的表現優於 MobileNet、SHuffleNet、DenseNet 以及 Xception，本文不多加詳述，有興趣者可以參考論文內容。</p>
 <p><img src="https://i.imgur.com/RKtWUEw.png" /></p>
 <h2 id="shufflenet-v2-架構">ShuffleNet V2 架構</h2>
-<p>根據論文作者結合理論與實驗得出了高效率模型設計的四項準則 : 1. 相同的 channel 下，最小化記憶體訪問成本 MAC 2. 太多的 Group Convolution<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 會增加 MAC 3. 模型內部太多零碎操作<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>容易降低平行運算的能力 4. Element-Wise operation<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> 不可忽略</p>
+<p>根據論文作者結合理論與實驗得出了高效率模型設計的四項準則 : 1. 相同的 channel 下，最小化記憶體訪問成本 MAC 2. 太多的 Group Convolution<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> 會增加 MAC 3. 模型內部太多零碎操作<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>容易降低平行運算的能力 4. Element-Wise operation<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> 不可忽略</p>
 <p>在這樣的概念下，論文作者分析了 ShuffleNet 的缺失並加以改進而設計了 ShuffleNet V2 ，兩者的對比如下 :</p>
 <p><img src="https://i.imgur.com/Urwinee.png" /></p>
 <p>( a ) the basic ShuffleNet unit ( b ) the ShuffleNet unit for spatial down sampling (2X) (GConv : group convolution.) ( c ) the basic ShuffleNet V2 unit ( d ) the ShuffleNet V2 unit for spatial down sampling (2X) (DWConv : depthwise convolution.)</p>
 <h2 id="shufflenet-v2-於-keras-上的實現">ShuffleNet V2 於 keras 上的實現</h2>
 <p>在 Github 上已經有人將 ShuffleNet V2 實現在 keras 上，詳情可參考 :</p>
 <p>https://github.com/opconty/keras-shufflenetV2</p>
-<p>先前於 " <a target="_blank" rel="noopener" href="http://bit.ly/2oZH5f6">卷積神經網路 Convolutional Neural Network ( CNN ) 與 全連接神經網路 Fully Connected Feedforward Network 於 MNIST 上之實作</a> " 一文中我們比較了 CNN 與 Fully Connected Feedforward 的辨識能力比較，這次我仍然使用 MNIST 為資料集，配合上 ShuffleNet V2 進行 100 epochs 的訓練。</p>
+<p>先前於 &quot; <a target="_blank" rel="noopener" href="http://bit.ly/2oZH5f6">卷積神經網路 Convolutional Neural Network ( CNN ) 與 全連接神經網路 Fully Connected Feedforward Network 於 MNIST 上之實作</a> &quot; 一文中我們比較了 CNN 與 Fully Connected Feedforward 的辨識能力比較，這次我仍然使用 MNIST 為資料集，配合上 ShuffleNet V2 進行 100 epochs 的訓練。</p>
 <p>比較讓人意外的是，最後在 test data 上的成果竟然不比一個單純 CNN model 來的好。</p>
 <p>CNN : <img src="https://i.imgur.com/55tqS66.png" /> ShuffleNer V2 : <img src="https://i.imgur.com/a9CkuYL.png" /></p>
 <p>剛好最近在逛 reddit ML 版，便想順便問了一下這樣的情況是否正常 所得到的回覆其實有點出乎我意料</p>
 <p><img src="https://i.imgur.com/hYlPI5c.jpg" /></p>
 <p>大致上的回覆都差不多，均指出 MNIST 這樣的資料集太過簡單，可以用來檢測自己的模型 how bad ，但若要拿來檢驗 how good 可能就並不適用，或許使用 CIFAR-10 或 CIFAR-100 可以比較明確比較租模型的優劣。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>Group Convolution 最早於 AlexNet 中被提出，處理模型在雙 GPU 上的訓練。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>這裡所指的零碎操作指的是再多分支架構下，每一個分支底下的卷積層或池化層。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>Element-Wise operation 指的是 ReLU、AddTensor、AddBias...等等。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Group Convolution 最早於 AlexNet 中被提出，處理模型在雙 GPU 上的訓練。<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>這裡所指的零碎操作指的是再多分支架構下，每一個分支底下的卷積層或池化層。<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Element-Wise operation 指的是 ReLU、AddTensor、AddBias...等等。<a href="#fnref3" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -365,7 +365,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

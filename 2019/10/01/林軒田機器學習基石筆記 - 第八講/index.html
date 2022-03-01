@@ -144,7 +144,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -281,7 +281,7 @@
     <div class="post-body" itemprop="articleBody">
         <blockquote>
 <ul>
-<li><p><strong>本文為一系列課程之筆記，建議從" <a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文為一系列課程之筆記，建議從&quot; <a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> &quot;開始閱讀</strong></p></li>
 <li><p><strong>本文討論內容請參考: 機器學習基石第八講 : Noise and Error</strong></p></li>
 <li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
 </ul>
@@ -296,7 +296,7 @@
 <p>這樣的概念便在林軒田課程的第八講中有延伸性的討論。</p>
 <p>在前面幾講中，對於機率分布，我們僅討論到 <span class="math inline">\(\mathbb{X}\)</span> 應該會來自於某個 <span class="math inline">\(distribution\ \mathbb{P}\)</span>，記做 <span class="math inline">\(\mathbb{X}\overset{i.i.d}{\sim}\mathbb{P}(\mathbb{X})\)</span>，有了機率分布，也便有了 <span class="math inline">\(Noise\)</span>。</p>
 <p><img src="https://i.imgur.com/E8UWUKz.png" /></p>
-<p>但 <span class="math inline">\(Noise\)</span> 是無所不在的<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>，它也會出現在 <span class="math inline">\(y\)</span>，也就是說，我們也可以把 <span class="math inline">\(y\)</span> 視為是 <span class="math inline">\(f\)</span> 作用在 <span class="math inline">\(\mathbb{X}\overset{i.i.d}{\sim}\mathbb{P}(\mathbb{X})\)</span>之下的產物，記做 <span class="math inline">\(y\overset{i.i.d}{\sim}\mathbb{P}(y\mid \mathbb{X})\)</span> ( <span class="math inline">\(\mathbb{P}(y\mid \mathbb{X})\)</span> 我們可以解讀成，在 <span class="math inline">\(\mathbb{X}\)</span> 條件下，<span class="math inline">\(y\)</span> 發生的機率分布 )</p>
+<p>但 <span class="math inline">\(Noise\)</span> 是無所不在的<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>，它也會出現在 <span class="math inline">\(y\)</span>，也就是說，我們也可以把 <span class="math inline">\(y\)</span> 視為是 <span class="math inline">\(f\)</span> 作用在 <span class="math inline">\(\mathbb{X}\overset{i.i.d}{\sim}\mathbb{P}(\mathbb{X})\)</span>之下的產物，記做 <span class="math inline">\(y\overset{i.i.d}{\sim}\mathbb{P}(y\mid \mathbb{X})\)</span> ( <span class="math inline">\(\mathbb{P}(y\mid \mathbb{X})\)</span> 我們可以解讀成，在 <span class="math inline">\(\mathbb{X}\)</span> 條件下，<span class="math inline">\(y\)</span> 發生的機率分布 )</p>
 <hr />
 <p>上面的概念還是很難理解嗎 ?</p>
 <p>我們用幾個面向來試圖解釋這樣的隨機性 : 1. <strong>我們可以將隨機性視為每一顆球顏色狀態會一直不斷的改變 :</strong> 如下圖所示，在Bin中的球顏色會一直變動，直至我們抽出來的那一瞬間才會確定顏色狀態。</p>
@@ -306,7 +306,7 @@
 </ol>
 <hr />
 <p>當我們可以瞭解這樣的隨機性必須考慮在Machine Learning當中，我們想要知道的事情是 : <strong>我們前面的所有討論是否仍然成立 ? 也就是說，在有 Noise 的情況下VC Bound是否仍然存在 ?</strong></p>
-<p>其實如果將上圖 <span class="math inline">\(flipping\ noise\ level\)</span> 的概念加入 <span class="math inline">\(E_{in}(h)\)</span> 與 <span class="math inline">\(E_{out}(h)\)</span> 之中，經由<a target="_blank" rel="noopener" href="https://hackmd.io/s/S1U_sR-O4">機器學習基石筆記-2</a>的證明之中，應該也是可以找到一個 finite upper bound。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>其實如果將上圖 <span class="math inline">\(flipping\ noise\ level\)</span> 的概念加入 <span class="math inline">\(E_{in}(h)\)</span> 與 <span class="math inline">\(E_{out}(h)\)</span> 之中，經由<a target="_blank" rel="noopener" href="https://hackmd.io/s/S1U_sR-O4">機器學習基石筆記-2</a>的證明之中，應該也是可以找到一個 finite upper bound。<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
 <h2 id="error">Error</h2>
 <p>終於來到機器學習演算法中，最後一個元素，也是最重要的元素 -- Error 既然所有的資料均充滿了隨機性，那麼量測 error 便是一個很重要的工作，這項工作不僅可以讓我們可以評估 <span class="math inline">\(g\)</span> 與 <span class="math inline">\(f\)</span> 的近似程度，對於簡單如 PLA 或困難如 Deep Learning 來說都非常重要，因為它可以做為每一次迭代調整的依據。</p>
 <p>對某一個 hypothesis <span class="math inline">\(g\)</span>，任一資料 <span class="math inline">\(\mathbb{X}\)</span>， 我們常見的 Error Measure 有 :</p>
@@ -320,7 +320,7 @@
 <p>當我們使用不同的 error measure ，勢必會找出不同的 error 值，也因此，也會影響到我們最後形塑出來的 <span class="math inline">\(f\)</span> 會有所不同。</p>
 <h2 id="weight-classification">Weight Classification</h2>
 <p><img src="https://i.imgur.com/5i1iZLN.png" /> <img src="https://i.imgur.com/rag8yGN.png" /></p>
-<p>我們從上述例子可以發現，當分類錯誤的情況發生時，隨著不同事件，應該會有不同成本上的 COST ，因次，我們的分類器必須也將這些 " weight " 考慮進去。說是簡單，但是在真正實務上，我們根本無法將這些 cost比例 ( weight )很精準的量化出來，那當然我們會無法把真正理想中的 error 計算出來。</p>
+<p>我們從上述例子可以發現，當分類錯誤的情況發生時，隨著不同事件，應該會有不同成本上的 COST ，因次，我們的分類器必須也將這些 &quot; weight &quot; 考慮進去。說是簡單，但是在真正實務上，我們根本無法將這些 cost比例 ( weight )很精準的量化出來，那當然我們會無法把真正理想中的 error 計算出來。</p>
 <p>所以我們有幾個方向可以考慮 : 1. 我們可能可以利用 0/1 error 或 square error，將分類錯誤的點視為 noise ，讓演算法找出使 noise最小的 model。但這樣的方式在 0/1 error上會是一個 NP-Hard 問題。</p>
 <ol start="2" type="1">
 <li>或者我們乾脆找出比較容易讓演算法好運作的解，close-form solution ( analystic ) 或是 convex object solution ( like Gradient Descent )。</li>
@@ -332,11 +332,11 @@
 <p>我們可以將每一個權重視為資料的複製次數，然後再來做 0/1 error 的 Pocket Algorithm。</p>
 <p><strong>PS : 在實務上我們並不會真的複製這麼多份數，如此太耗費計算成本，因此我們會將這樣的概念延伸成為相應資料被抽中檢查的機率</strong></p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>就機率論的角度而言，或許根本不存在這種 determinate 的狀態，所有的事件都帶有隨機性。所以在機率論中 0% 機率不代表絕對不會發生，100% 也不代表絕對會發生。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>這是一個比較直觀的想法，但目前尚未看到比較嚴謹的數學證明，待找到後再行補上。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>就機率論的角度而言，或許根本不存在這種 determinate 的狀態，所有的事件都帶有隨機性。所以在機率論中 0% 機率不代表絕對不會發生，100% 也不代表絕對會發生。<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>這是一個比較直觀的想法，但目前尚未看到比較嚴謹的數學證明，待找到後再行補上。<a href="#fnref2" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -407,7 +407,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

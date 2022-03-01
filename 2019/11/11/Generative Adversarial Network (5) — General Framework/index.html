@@ -139,7 +139,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -270,7 +270,7 @@
     <div class="post-body" itemprop="articleBody">
         <p>從上一個部分的推導，我們可以知道如果我們調整 <span class="math inline">\(V(G,D)\)</span>，最後的結果可能就會是另外一種計算 Divergence 的方式，而不會是 JS-Divergence。那我們能不能找出一個 divergence 通式，直接藉由調整通式來改變我們想要的 Divergence ?</p>
 <span id="more"></span>
-<p>Sebastian Nowozin 等人在 2016年發表的論文 "<em><span class="math inline">\(f\)</span>-GAN: Training Generative Neural Samplers using Variational Divergence Minimization</em>" 便是將這樣的概念應用在 GAN 上面。</p>
+<p>Sebastian Nowozin 等人在 2016年發表的論文 &quot;<em><span class="math inline">\(f\)</span>-GAN: Training Generative Neural Samplers using Variational Divergence Minimization</em>&quot; 便是將這樣的概念應用在 GAN 上面。</p>
 <h2 id="f-divergence"><span class="math inline">\(f\)</span>-divergence</h2>
 <p><span class="math inline">\(f\)</span>-divergence 我們可以視為是這些 divergence 的通式</p>
 <p><span class="math display">\[
@@ -290,7 +290,7 @@ P(x)=Q(x)\Longrightarrow D_f(P\|Q)=\int\limits_{x}Q(x)\cdot f(\frac{Q(x)}{Q(x)})
 \]</span></p>
 <h2 id="convex-conjugate-fenchel-conjugate">Convex Conjugate ( Fenchel Conjugate )</h2>
 <p>在最優化問題上，共軛 (conjugate) 的概念十分重要，原空間難以處理的問題可以轉換到對偶空間上處理，在機器學習中 SVM 便是一個利用對偶概念來建立的模型。</p>
-<p>在數學上，共軛函數 (Conjugate Function) 的定義如下<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>我覺得可 :</p>
+<p>在數學上，共軛函數 (Conjugate Function) 的定義如下<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>我覺得可 :</p>
 <p><span class="math display">\[
 for\ a\ funciton\  f:X\rightarrow\mathbb{R}\cup\{-\infty,+\infty\}\\
 its\ conjugate\ function\ f^*:X^*\rightarrow\mathbb{R}\cup\{-\infty,+\infty\}\\
@@ -318,10 +318,10 @@ G^*=\arg\min\limits_{G} D_f(P_{data}\|P_G)\\
 \]</span></p>
 <p>將 <span class="math inline">\(V(G,D)\)</span> 表達式一般化，可以在各種不同 divergence 之間做變換。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>凸共軛的圖形我覺得可以參考下列網址 https://www.researchgate.net/figure/Construction-of-the-Legendre-Fenchel-conjugate-of-a-convex-function-The-left-plot_fig6_279825155<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>凸共軛的圖形我覺得可以參考下列網址 https://www.researchgate.net/figure/Construction-of-the-Legendre-Fenchel-conjugate-of-a-convex-function-The-left-plot_fig6_279825155<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -392,7 +392,7 @@ G^*=\arg\min\limits_{G} D_f(P_{data}\|P_G)\\
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

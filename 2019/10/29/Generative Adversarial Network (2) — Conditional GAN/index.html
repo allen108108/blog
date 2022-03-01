@@ -154,7 +154,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -307,7 +307,7 @@
 <p><img src="https://i.imgur.com/CfahGx2.png" /></p>
 <p>我們可以將上述的整個過程寫成演算法如下 ( 其實就是調整一下基本的 GAN 演算法 )</p>
 <ul>
-<li><p>初始化 <span class="math inline">\(G\)</span> 與 <span class="math inline">\(D\)</span> 的參數 <span class="math inline">\(\theta_g\)</span> 與 <span class="math inline">\(\theta_d\)</span></p></li>
+<li>初始化 <span class="math inline">\(G\)</span> 與 <span class="math inline">\(D\)</span> 的參數 <span class="math inline">\(\theta_g\)</span> 與 <span class="math inline">\(\theta_d\)</span></li>
 <li><p>循環迭代進行</p>
 <ul>
 <li>Updeate <span class="math inline">\(D\)</span>
@@ -352,7 +352,7 @@
 <p>在圖片尺寸稍大的狀況下，如果用整張圖片丟進 Discriminator 來做檢查很容易導致訓練時間過長、Overfitting 或是 performance 不好等狀況，因此 Patch GAN 便是只採取整張圖片的 patch 做檢查。</p>
 <p>這邊我想補充一點，單就課程內容來看，好像很容易會誤以為我們只要針對某一個 patch 丟給 Discriminator 就好，但是我查了一下似乎並非如此。</p>
 <p><img width=500 src="https://i.imgur.com/nfEjU6M.png" ></p>
-<p>在 "<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiaoxifei/article/details/86506955">关于PatchGAN的理解</a>" 一文中有談到， Patch GAN 事實上是輸出一個 <span class="math inline">\(N\times N\)</span> 矩陣，而每一個矩陣內元素是代表著一個大的感受野，亦即代表一個圖像的 patch。這樣的實現其實也就是藉由 CNN 來完成。</p>
+<p>在 &quot;<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiaoxifei/article/details/86506955">关于PatchGAN的理解</a>&quot; 一文中有談到， Patch GAN 事實上是輸出一個 <span class="math inline">\(N\times N\)</span> 矩陣，而每一個矩陣內元素是代表著一個大的感受野，亦即代表一個圖像的 patch。這樣的實現其實也就是藉由 CNN 來完成。</p>
 <p>Patch GAN 的 Discriminator 輸出尺寸就是一張 CNN 的 feature map 尺寸，然後內部元素對應的就是對於此 feature map 的相似度判定。</p>
 <p>Image to Image 的模式，可以適用於任何以圖像表示的任務上，例如 Speech Enhancement ( 語音增強 ) 上。目前的語音任務大多利用 spectrum 來進行分析，而 spectrum 也跟一般圖像任務一樣具有結構性，使用 conditional GAN 當然沒有什麼問題。</p>
 <p><img src="https://i.imgur.com/CSVORtT.png" /></p>
@@ -429,7 +429,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

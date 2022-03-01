@@ -151,7 +151,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -293,7 +293,7 @@
 <p>Git 應該可以算是目前最熱門的開源版控系統了，有別於 CVS 已逐漸退流行因此不再提供新功能，Git 的開發與維護都還不斷的在持續更新中。</p>
 <p>Git 跟 SVN 與 CVS 最大不同點是其為分散式版本控制系統 ( Distributed Version Control System )，Git 的開發者必須在開發時將整個專案複製 (clone) 至 local，達成去中心化的概念。從下圖可以發現，開發者可以在 local 直接離線 commit，後續再藉由連線 puch 到 server 中進行同步。</p>
 <p><img src="https://i.imgur.com/NPYYC4C.png" /></p>
-<p>前面有提到 SVN 與 Git 都是基於改良 CVS 而發展出來的系統，Git 當初在開發時，Linus Torvalds 開發者提出了 " WWCVSND " ( What Would CVS Not Do ) 開發原則，至今看來，Git 目前的發展也的確達到這樣的原則，Git 發展至今已經不單單是一個版本控制系統，還是一個檔案管理系統。</p>
+<p>前面有提到 SVN 與 Git 都是基於改良 CVS 而發展出來的系統，Git 當初在開發時，Linus Torvalds 開發者提出了 &quot; WWCVSND &quot; ( What Would CVS Not Do ) 開發原則，至今看來，Git 目前的發展也的確達到這樣的原則，Git 發展至今已經不單單是一個版本控制系統，還是一個檔案管理系統。</p>
 <h3 id="cvs-svn-git-比較">CVS, SVN, Git 比較</h3>
 <p>下面筆者簡單的列出這三者的比較 :</p>
 <p><img src="https://i.imgur.com/y02SzCH.png" /></p>
@@ -332,7 +332,7 @@
 <p>不過別忘了，當初我們是將原本專案中要版控的檔案 <strong>移動</strong> 到 <code>temp/new/trunk</code> 中，我們還是會希望在原本的專案位址中進行檔案的修改，而非在 <code>temp/new/trunk</code> 進行更動，所以最後一步便是要將其導回原本的專案位址中。</p>
 <p>這步很簡單，我們在原本專案資料夾中，按下滑鼠右鍵選擇 <code>SVN Checkout</code> ， URL 的部分填入 <code>file:///C:/SVN/test/trunk</code> ，而 Checkout Directory 部分填入 <code>C:\projects\project_1</code></p>
 <p><img src="https://i.imgur.com/q9gx0rM.png" /></p>
-<p>按下 OK 後，便可以發現到需要版控的檔案都回到原本資料夾中，且前面都會多了一個小綠勾，表示目前版本為最新版本。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>按下 OK 後，便可以發現到需要版控的檔案都回到原本資料夾中，且前面都會多了一個小綠勾，表示目前版本為最新版本。<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p><img src="https://i.imgur.com/cF3SUoD.png" /></p>
 <p>別忘了，我們還有不需要版控的資料再將其移回至此資料夾中即可。</p>
 <h2 id="專案版本控制">專案版本控制</h2>
@@ -347,10 +347,10 @@
 <li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/difference-between-concurrent-versions-system-cvs-and-subversion-svn/">Difference between Concurrent Versions System (CVS) and Subversion (SVN)</a></li>
 </ol>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>如果我們的電腦曾經下載過一些軟體，例如趨勢防毒、onedrive...等，這些都會使用到圖示的疊加功能，Windows有限制最多只能有 15 個圖示疊加，如果未出現 TotoiseSVN 沒有出現小綠勾 很有可能是前面安裝過的軟體已經佔掉這 15個名額，詳細調整方法可以參考 : <a target="_blank" rel="noopener" href="http://mycodetub.logdown.com/posts/253390-tortoisegit-green-hook-is-gone">TortoiseGit 的綠色勾勾消失了</a>、<a target="_blank" rel="noopener" href="https://www.taodabai.com/how/885112511.html">SVN圖標突然消失了怎麼辦</a>..等文章<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>如果我們的電腦曾經下載過一些軟體，例如趨勢防毒、onedrive...等，這些都會使用到圖示的疊加功能，Windows有限制最多只能有 15 個圖示疊加，如果未出現 TotoiseSVN 沒有出現小綠勾 很有可能是前面安裝過的軟體已經佔掉這 15個名額，詳細調整方法可以參考 : <a target="_blank" rel="noopener" href="http://mycodetub.logdown.com/posts/253390-tortoisegit-green-hook-is-gone">TortoiseGit 的綠色勾勾消失了</a>、<a target="_blank" rel="noopener" href="https://www.taodabai.com/how/885112511.html">SVN圖標突然消失了怎麼辦</a>..等文章<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -421,7 +421,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -139,7 +139,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -310,7 +310,7 @@
 <p>Case 2 : <span class="math inline">\(m\)</span> 曾經 propose <span class="math inline">\(w&#39;\)</span> 既然 <span class="math inline">\(m\)</span> 曾經 propose <span class="math inline">\(w&#39;\)</span>，但最後卻與 <span class="math inline">\(w\)</span> 配對，則可確定當時 propose <span class="math inline">\(w&#39;\)</span> 時被拒絕，這樣也表示 <span class="math inline">\(w&#39;\)</span> 喜歡某人( 可能是 <span class="math inline">\(m&#39;\)</span> 也可能是另外一個 <span class="math inline">\(m&#39;&#39;\)</span> )勝過 <span class="math inline">\(m\)</span>。 若 <span class="math inline">\(m&#39;=m&#39;&#39;\)</span> ，則 <span class="math inline">\(w&#39;\)</span> prefers <span class="math inline">\(m&#39;\)</span> to <span class="math inline">\(m\)</span> ( <span class="math inline">\(\rightarrow\leftarrow\)</span> ) 若 <span class="math inline">\(m&#39;\neq m&#39;&#39;\)</span> ，則 <span class="math inline">\(w&#39;\)</span> 喜歡 <span class="math inline">\(m&#39;\)</span> 勝過 <span class="math inline">\(m&#39;&#39;\)</span>，根據Case 2的推導， <span class="math inline">\(w&#39;\)</span> 喜歡 <span class="math inline">\(m&#39;&#39;\)</span> 又勝過 <span class="math inline">\(m\)</span>，那麼 <span class="math inline">\(w&#39;\)</span> 喜歡 <span class="math inline">\(m&#39;\)</span> 必然勝過 <span class="math inline">\(m\)</span> ( <span class="math inline">\(\rightarrow\leftarrow\)</span> )</p>
 <h3 id="male-optimality-of-gale-shapley-algorithm">3. Male-Optimality of Gale &amp; Shapley Algorithm</h3>
 <p><strong>Claim : Assume <span class="math display">\[w^*=best(m)\]</span> is the best valid partner of m <span class="math inline">\(\Longrightarrow\)</span> Gale &amp; Shapley Algorithm return solution <span class="math display">\[S^* =\left\{(m, w^*)\ |\ \forall m\right\}\]</span> .</strong></p>
-<p>對每一個男性 m 來說，一定會存在一些女性是可能的配對對象，之所以稱之為「可能」，意即在這樣的配對下是有可能達到全體 stable matching 的狀態。而在這個 property 下，可以確定每一個男性最後配對的對象必然是可能對象中最好的那一個。而這個 propertｙ　也間接證明了，Gale &amp; Shapley Algorithm　return 的必是唯一解<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<p>對每一個男性 m 來說，一定會存在一些女性是可能的配對對象，之所以稱之為「可能」，意即在這樣的配對下是有可能達到全體 stable matching 的狀態。而在這個 property 下，可以確定每一個男性最後配對的對象必然是可能對象中最好的那一個。而這個 propertｙ　也間接證明了，Gale &amp; Shapley Algorithm　return 的必是唯一解<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>。</p>
 <p><strong><proof></strong></p>
 <p>假設某次執行 Gale &amp; Shapley Algorithm <span class="math inline">\(E\)</span> 時 solution <span class="math inline">\(S_E\)</span> 中存在一組配對女方並非男方的 Best valid partner。</p>
 <p><span class="math inline">\(\Longrightarrow\)</span> 既然女方並非男方的 Best valid partner,則可確定這配對中的男生，一定有被自己的 valid partner 拒絕的經驗</p>
@@ -323,10 +323,10 @@
 <p><span class="math inline">\(\Longrightarrow\)</span> <span class="math inline">\(m&#39;\)</span> 喜歡 <span class="math display">\[w^*\]</span> 更勝於 <span class="math inline">\(w&#39;&#39;\)</span> <span class="math inline">\(\cdots\cdots( 2 )\)</span></p>
 <p>從 ( 1 ) ( 2 ) 來看，在 Stable Matching solution <span class="math inline">\(S_{E&#39;}\)</span> 中會存在一個 instable 的狀況 ( <span class="math inline">\(\rightarrow\leftarrow\)</span> )，得證。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>這個部分有個邏輯性的問題待釐清，Stable Matching 的解並不會是唯一解，但 Gale &amp; Shapley Algorithm 會吐出的是對男性來說最優的解，也就是 Gale &amp; Shapley Algorithm 的解是唯一的。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>這個部分有個邏輯性的問題待釐清，Stable Matching 的解並不會是唯一解，但 Gale &amp; Shapley Algorithm 會吐出的是對男性來說最優的解，也就是 Gale &amp; Shapley Algorithm 的解是唯一的。<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -397,7 +397,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -41,17 +41,6 @@
 <meta property="og:image" content="https://i.imgur.com/o8vS3LJ.png">
 <meta property="og:image" content="https://i.imgur.com/5iRLh7x.png">
 <meta property="og:image" content="https://i.imgur.com/KTueXMi.png">
-<meta property="og:image" content="https://i.imgur.com/RlyGi8q.png">
-<meta property="og:image" content="https://i.imgur.com/4eodqna.png%20=200x">
-<meta property="og:image" content="https://i.imgur.com/F4hPJKm.png%20=200x">
-<meta property="og:image" content="https://i.imgur.com/nraEUuS.png%20=400x">
-<meta property="og:image" content="https://i.imgur.com/r7JUwlJ.png%20=400x">
-<meta property="og:image" content="https://i.imgur.com/dNPWx9l.png%20=200x">
-<meta property="og:image" content="https://i.imgur.com/0hKSJDv.png">
-<meta property="og:image" content="https://i.imgur.com/EhIh9Hf.png%20=200x">
-<meta property="og:image" content="https://i.imgur.com/ROft4yi.png%20=400x">
-<meta property="og:image" content="https://i.imgur.com/cNBJexA.png">
-<meta property="og:image" content="https://i.imgur.com/vgHjqUU.png">
 <meta property="article:published_time" content="2019-05-14T11:18:07.000Z">
 <meta property="article:modified_time" content="2019-10-07T17:41:53.617Z">
 <meta property="article:author" content="Allen Tzeng">
@@ -163,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -320,7 +309,7 @@
 <h3 id="google-cloud-spanner">Google Cloud Spanner</h3>
 <p>Cloud Spanner 是一個可水平擴展且具有強一致性的關聯資料庫，與一般傳統資料庫不同之處在於 :</p>
 <p><img src="https://i.imgur.com/O5LdFbg.png" /></p>
-<p>過去我們曾學過，在計算機理論中對任何的分散式計算系統來說，必然會符合 CAP theory<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> ，但 Cloud Spanner 是唯一能夠打破 CAP theory 的系統。</p>
+<p>過去我們曾學過，在計算機理論中對任何的分散式計算系統來說，必然會符合 CAP theory<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> ，但 Cloud Spanner 是唯一能夠打破 CAP theory 的系統。</p>
 <p><img src="https://i.imgur.com/sfvJgXE.png" /></p>
 <p>一般關聯性資料庫 (如 MySQL) 在資料大於某種程度時會產生嚴重的 Latency ，但在 Cloud Spanner 中我們可以利用增加 nodes 來減緩這樣的 Latency。</p>
 <h3 id="google-bigtable">Google Bigtable</h3>
@@ -351,67 +340,6 @@
 <h3 id="google-cloud-pubsub-google-dataflow">Google Cloud Pub/Sub &amp; Google Dataflow</h3>
 <p>在 Big Data 的處理上，常會面臨大量串流以及批次的資料，我們必須在限定時間內不僅面對批次資料，甚至也要加入持續產生的大量串流資料一起做資料分析，而最後介紹的這兩個服務便能讓用戶可以輕鬆處理串流及批次資料， Google Dataflow 讓用戶可以使用 Apache Beam SDK 設定各種時間區間以及多資料來源的接收等獨特的方式在串流及批次資料同時發生的情況下也可以快速地進行開發。</p>
 <p><img src="https://i.imgur.com/KTueXMi.png" /></p>
-<table style="width:6%;">
-<colgroup>
-<col style="width: 5%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>## 實務分享 --- 愛料理</td>
-</tr>
-<tr class="even">
-<td><img src="https://i.imgur.com/RlyGi8q.png" /></td>
-</tr>
-<tr class="odd">
-<td>以下是愛料理基於 GCP 之上的各式應用</td>
-</tr>
-<tr class="even">
-<td>### Recipe Q&amp;A Interactive Chatbot --- 聊天機器人 <img src="https://i.imgur.com/4eodqna.png%20=200x" /> ● Dialogflow ● Cloud Firestore ● Cloud Functions</td>
-</tr>
-<tr class="odd">
-<td>### Actions on Google --- Google語音機器人 <img src="https://i.imgur.com/F4hPJKm.png%20=200x" /> ● Dialogflow ● Cloud Functions ### VIP feature - Popularity sorting --- VIP獨特的食譜排序 <img src="https://i.imgur.com/nraEUuS.png%20=400x" /></td>
-</tr>
-<tr class="even">
-<td>● BigQuery ● Cloud SQL ● Composer ● AutoML Natural Languages ● AutoML Vision (Testing) ### Social listening on Instagram --- 社交媒體上的留言判別並回覆 <img src="https://i.imgur.com/r7JUwlJ.png%20=400x" /></td>
-</tr>
-<tr class="odd">
-<td>● BigQuery ● Cloud Functions ● AutoML Natural Languages ### Product recommendation on LINE --- Line 的推薦系統 <img src="https://i.imgur.com/dNPWx9l.png%20=200x" /></td>
-</tr>
-<tr class="even">
-<td>● BigQuery ● Dialogflow ● Dataflow ● Cloud Pub/Sub ● Cloud Functions</td>
-</tr>
-<tr class="odd">
-<td>## 實務分享 --- 17直播</td>
-</tr>
-<tr class="even">
-<td><img src="https://i.imgur.com/0hKSJDv.png" /></td>
-</tr>
-<tr class="odd">
-<td>### 即時監控串流情況 <img src="https://i.imgur.com/EhIh9Hf.png%20=200x" /><img src="https://i.imgur.com/ROft4yi.png%20=400x" /> 很多人認為監控就是一直刷每一個直播主的直播，但事實上比較多的是是監控每一個直播主的流量、CPU運作、溫度...等硬體資訊，來確認直播的絣直是否受影響</td>
-</tr>
-<tr class="even">
-<td><img src="https://i.imgur.com/cNBJexA.png" /></td>
-</tr>
-<tr class="odd">
-<td><img src="https://i.imgur.com/vgHjqUU.png" /></td>
-</tr>
-<tr class="even">
-<td>整場聽下來，其實心裡面有很大的感觸，在學習AI 的過程中，我們是不是也會成為被機器學習的對象 ? 在 Google 這波自動化過程中，我們應該如何自處 ? 我們又應該思考，如若這樣的風潮持續，我們應該怎麼看待我們自身的存在 ?</td>
-</tr>
-<tr class="odd">
-<td>所有的危機都會是轉機，或許我們都該想想在這樣的情況下，我們是不是真正有能夠不被取代的價值。</td>
-</tr>
-<tr class="even">
-<td>雖感覺有點悲觀，但是我還是從這場會議中看到很多以前沒想過而且可以應用的機器學習問題 ，而這些想法或許可以作為未來的專題的發想 :</td>
-</tr>
-<tr class="odd">
-<td>* 在圖片辨識的學習過程中，我們好像都還在討論「如何辨識」的階段，但是在商務、實務應用上，這樣的階段其實只是一個開始，重點還是放在「我們該利用這樣的辨識來對用戶做什麼回饋 ?」給予推薦 ? 提出警示 ? 這或許是未來我自身在專題製作上最重要的目的。</td>
-</tr>
-<tr class="even">
-<td>* 原本我對於NLP ( Natural Language Processing ) 並沒有太大的興趣，但今天的實務分享讓我覺得 NLP 其實很有趣，聊天機器人如何能夠更精準、更人性化的回饋，並且給予最符合用戶需求的推薦，這問題實在有趣。</td>
-</tr>
-</tbody>
-</table>
 <h2 id="參考資料">參考資料</h2>
 <p>整個會議的主要內容大部份都講完了，很有價值的還有整個過程中所有的 Resourse，這些都會是未來學習的材料 :</p>
 <h3 id="about-google-cloud-platform">About Google Cloud Platform</h3>
@@ -460,10 +388,10 @@
 <li>Google Cloud Platform curated articles (https://medium.com/google-cloud)</li>
 </ul>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>在理論計算機科學中，CAP定理（CAP theorem），又被稱作布魯爾定理（Brewer's theorem），它指出對於一個分布式計算系統來說，不可能同時滿足以下三點： 1. 一致性（Consistency） （等同於所有節點訪問同一份最新的數據副本） 2. 可用性（Availability）（每次請求都能獲取到非錯的響應——但是不保證獲取的數據為最新數據） 3. 分區容錯性（Partition tolerance）（以實際效果而言，分區相當於對通信的時限要求。系統如果不能在時限內達成數據一致性，就意味著發生了分區的情況，必須就當前操作在C和A之間做出選擇。）<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>在理論計算機科學中，CAP定理（CAP theorem），又被稱作布魯爾定理（Brewer's theorem），它指出對於一個分布式計算系統來說，不可能同時滿足以下三點： 1. 一致性（Consistency） （等同於所有節點訪問同一份最新的數據副本） 2. 可用性（Availability）（每次請求都能獲取到非錯的響應——但是不保證獲取的數據為最新數據） 3. 分區容錯性（Partition tolerance）（以實際效果而言，分區相當於對通信的時限要求。系統如果不能在時限內達成數據一致性，就意味著發生了分區的情況，必須就當前操作在C和A之間做出選擇。）<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -531,7 +459,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

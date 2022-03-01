@@ -141,7 +141,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -272,12 +272,12 @@
 <p>在該環境下的 Anaconda Prompt 或是 Pycharm 上執行都不會有問題，但同一個環境下的 VS Code 終端機執行卻屢屢發生錯誤。</p>
 <p>目前大概猜想是預設終端機 PowerShell 上面的問題，既然如此乾脆把 VS Code 終端機設定為 Anaconda Prompt ，也解決一些整合上的問題。</p>
 <h2 id="step-1.-開啟設定檔">Step 1. 開啟設定檔</h2>
-<p>檔案 &gt; 喜好設定 &gt; 設定 &gt; 功能 &gt; 終端機 &gt; Integrated › Shell: Windows 點選 " 在 settings.json 內編輯 "</p>
+<p>檔案 &gt; 喜好設定 &gt; 設定 &gt; 功能 &gt; 終端機 &gt; Integrated › Shell: Windows 點選 &quot; 在 settings.json 內編輯 &quot;</p>
 <p><img src="https://i.imgur.com/UwZMBZH.png" /></p>
 <h2 id="step-2.-修改設定檔">Step 2. 修改設定檔</h2>
-<h3 id="修改-terminal.integrated.shell.windows">修改 "terminal.integrated.shell.windows"</h3>
-<p>將其值改為 "C:\WINDOWS\System32\cmd.exe"</p>
-<h3 id="加上-terminal.integrated.shellargs.windows">加上 "terminal.integrated.shellArgs.windows"</h3>
+<h3 id="修改-terminal.integrated.shell.windows">修改 &quot;terminal.integrated.shell.windows&quot;</h3>
+<p>將其值改為 &quot;C:\WINDOWS\System32\cmd.exe&quot;</p>
+<h3 id="加上-terminal.integrated.shellargs.windows">加上 &quot;terminal.integrated.shellArgs.windows&quot;</h3>
 <p>在 { } 內部最後加上一段</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;terminal.integrated.shellArgs.windows&quot;: [</span><br><span class="line">        &quot;/K&quot;, &quot;C:\Users\allen\Anaconda3\Scripts\activate.bat C:\Users\allen\Anaconda3&quot;</span><br><span class="line">    ]</span><br></pre></td></tr></table></figure>
 <p><img src="https://i.imgur.com/MQxGYwj.png" /></p>
@@ -351,7 +351,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

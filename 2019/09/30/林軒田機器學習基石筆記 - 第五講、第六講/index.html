@@ -27,21 +27,15 @@
 <meta property="og:site_name" content="Math.py">
 <meta property="og:description" content="本文為一系列課程之筆記，建議從&quot; 機器學習基石筆記-1 &quot;開始閱讀 本文討論內容請參考: 機器學習基石第五講 : Training versus Testing 機器學習基石第六講 : Theory of Generalization 本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:image" content="https://i.imgur.com/GYAMpry.png%20=200x">
 <meta property="og:image" content="https://i.imgur.com/A7RzZrl.png">
 <meta property="og:image" content="https://i.imgur.com/hAG2G5G.png">
-<meta property="og:image" content="https://i.imgur.com/cuNoGXM.png%20=300x">
-<meta property="og:image" content="https://i.imgur.com/hJOlpy9.png%20=300x">
-<meta property="og:image" content="https://i.imgur.com/SFDXhiD.png%20=300x">
-<meta property="og:image" content="https://i.imgur.com/A21Tr8u.png%20=300x">
-<meta property="og:image" content="https://i.imgur.com/xP147ab.png%20=300x">
 <meta property="og:image" content="https://i.imgur.com/xJrAxfj.png">
 <meta property="og:image" content="https://i.imgur.com/cuNoGXM.png">
 <meta property="article:published_time" content="2019-09-30T14:15:23.000Z">
 <meta property="article:modified_time" content="2021-08-30T14:13:55.346Z">
 <meta property="article:author" content="Allen Tzeng">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.imgur.com/GYAMpry.png%20=200x">
+<meta name="twitter:image" content="https://i.imgur.com/A7RzZrl.png">
 
 
 <link rel="canonical" href="https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%BA%94%E8%AC%9B%E3%80%81%E7%AC%AC%E5%85%AD%E8%AC%9B/">
@@ -148,7 +142,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -285,7 +279,7 @@
     <div class="post-body" itemprop="articleBody">
         <blockquote>
 <ul>
-<li><p><strong>本文為一系列課程之筆記，建議從" <a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
+<li><p><strong>本文為一系列課程之筆記，建議從&quot; <a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> &quot;開始閱讀</strong></p></li>
 <li><p><strong>本文討論內容請參考: 機器學習基石第五講 : Training versus Testing 機器學習基石第六講 : Theory of Generalization</strong></p></li>
 <li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
 </ul>
@@ -303,7 +297,7 @@
 </ol>
 <p>這兩個問題其實是一體兩面，解決了一個，另外一個也就能順利解決。 我們能不能找到一個足以代表 <span class="math inline">\(infinite\ \mathbb{H}\)</span> 的一個 <span class="math inline">\(finite\ number\ -m_{\mathbb{H} }\)</span> 替換掉 <span class="math inline">\(M\)</span> ，形成一個更逼近的上界，也可以處理 <span class="math inline">\(infinite\ \mathbb{H}\)</span>沒有上界的情況 ?</p>
 <h3 id="me-2epsilon2n這個上界夠好嗎"><span class="math inline">\(2Me^{-2\epsilon^2N}\)</span>這個上界夠好嗎?</h3>
-<p><img src="https://i.imgur.com/GYAMpry.png%20=200x" /></p>
+<p><embed src="https://i.imgur.com/GYAMpry.png%20=200x" /></p>
 <p>這是一個簡單的文式圖，如果我們今天要算 <span class="math inline">\(B_1\cup B_2\cup B_3\)</span> 數量的上界，最簡單的莫過於直接把三者數量相加， <span class="math inline">\(B_1+B_2+B_3\)</span> 絕對是 <span class="math inline">\(B_1\cup B_2\cup B_3\)</span>的其中一個上界，但我們也很清楚的知道，當三者重疊部分越多，這樣的上界越不逼近。</p>
 <p>但在上一篇的證明中，我們卻利用這樣的方法找出其上界</p>
 <p><img src="https://i.imgur.com/A7RzZrl.png" /></p>
@@ -311,7 +305,7 @@
 <h2 id="如果-mathbbh-是-infinite-set">### 如果 <span class="math inline">\(\mathbb{H}\)</span> 是 <span class="math inline">\(infinite\ set\)</span> ?</h2>
 <p>在處理這個問題以前，我們先定義一些概念: * <strong>dichotomy</strong> 以 <span class="math inline">\(\mathbb{R}^2\)</span> 為例，在其中有<span class="math inline">\(N\)</span>個資料點 <span class="math inline">\(\mathbb{X}_1,\mathbb{X}_2,...,\mathbb{X}_N\)</span>，則顯然的能將這 <span class="math inline">\(N\)</span>個資料點進行二元分類的 <span class="math inline">\(\mathbb{H}\)</span> 是一個 <span class="math inline">\(infinite\ set\)</span> (任何一條在 <span class="math inline">\(\mathbb{R}^2\)</span> 的直線都是一個 <span class="math inline">\(h\)</span>)。 從數學的角度來說， <span class="math inline">\(dichotomy\)</span> 代表的是一個族 ( <span class="math inline">\(family\)</span> )，就 hypothesis <span class="math inline">\(\mathbb{H}\)</span> 來看，若把對 <span class="math inline">\(\mathbb{X}_1,\mathbb{X}_2,...,\)</span>family<span class="math inline">\(\mathbb{X}_N\)</span> 進行同一種分類的 <span class="math inline">\(h\)</span> 視為同一族，那麼我們便可以將無限多的 <span class="math inline">\(h\)</span> 變成有限個 <span class="math inline">\(dichotomies\)</span>。</p>
 <ul>
-<li><p><strong>Growth Function <span class="math inline">\(m_\mathbb{H}(N)\)</span> :</strong> <span class="math inline">\(\mathbb{H}\rightarrow\mathbb{R}^1\)</span> <span class="math inline">\(m_\mathbb{H}(N)=\max\limits_{\forall x_i\in\chi}(\mathbb{H}(\mathbb{X}_1,\mathbb{X}_2,...,\mathbb{X}_N ))\)</span>，這函數白話一點來說，就是所有的 <span class="math inline">\(h\)</span> 到底可以把資料點做出多少種不同的二元分類。在 Machine Learning 的討論中，<span class="math inline">\(N\)</span> 都是有限正整數，那麼<span class="math inline">\(m_\mathbb{H}(N)\)</span>出來的值也必然會是有限正整數 ( <span class="math inline">\(\leq2^N\)</span> )<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p></li>
+<li><p><strong>Growth Function <span class="math inline">\(m_\mathbb{H}(N)\)</span> :</strong> <span class="math inline">\(\mathbb{H}\rightarrow\mathbb{R}^1\)</span> <span class="math inline">\(m_\mathbb{H}(N)=\max\limits_{\forall x_i\in\chi}(\mathbb{H}(\mathbb{X}_1,\mathbb{X}_2,...,\mathbb{X}_N ))\)</span>，這函數白話一點來說，就是所有的 <span class="math inline">\(h\)</span> 到底可以把資料點做出多少種不同的二元分類。在 Machine Learning 的討論中，<span class="math inline">\(N\)</span> 都是有限正整數，那麼<span class="math inline">\(m_\mathbb{H}(N)\)</span>出來的值也必然會是有限正整數 ( <span class="math inline">\(\leq2^N\)</span> )<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p></li>
 <li><p><strong>shatter</strong> 我們說 <span class="math inline">\(\mathbb{X}_1,\mathbb{X}_2,...,\mathbb{X}_N\)</span> 可以被 <span class="math inline">\(shatter\)</span> <span class="math inline">\(\implies m_\mathbb{H}(N)=2^N\)</span> (所有的分類情況都會發生)。所以在 <span class="math inline">\(\mathbb{R}^2\)</span> 情況下，<span class="math inline">\(\mathbb{X}_1,\mathbb{X}_2,...,\mathbb{X}_N\)</span> 可以被 <span class="math inline">\(shatter\)</span> (當 <span class="math inline">\(N\leq3\)</span>)</p>
 <p><span class="math inline">\(Mathematical\ \ \ Definition\ :\)</span> <span class="math inline">\(C\ shatters\ A\ \ if\  \ \forall a\in A，\exists c\in C\ \ s.t\ \ a=c\cap A \\ i.e.\ \mathbb{P}(A)=\left\{ c\cap A \mid\ c\in C\right\}\)</span></p></li>
 <li><p><strong>Break Point</strong> 第一個不會被 <span class="math inline">\(shatter\)</span> 的 <span class="math inline">\(N\)</span>，在 <span class="math inline">\(\mathbb{R}^2\)</span> 情況下，<span class="math inline">\(break\ point=4\)</span> &gt; Break Point是一項很重要的指標，代表著當 <span class="math inline">\(N&gt;Break\ Point\)</span> 時，整個成長會大幅趨緩 ( <span class="math inline">\(O(N)\ll 2^N,when\ N&gt;Break\ Point\)</span> )。</p></li>
@@ -321,7 +315,7 @@
 <table>
 <thead>
 <tr class="header">
-<th>資料空間 &amp;分類型態<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></th>
+<th>資料空間 &amp;分類型態<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></th>
 <th>Break Point</th>
 <th><span class="math inline">\(m_\mathbb{H}(N)\)</span></th>
 <th>O(N)</th>
@@ -355,32 +349,32 @@
 </tbody>
 </table>
 <ul>
-<li><p><strong>Bounding Function <span class="math inline">\(B(N,K)=\max\limits_{N&gt;K}(m_{\mathbb{H} }),\ where\ K=Break\ Point\)</span></strong> 這樣看起來還是有點抽象，我引用林軒田與Yaser S . Abu-Mostafa所著的 " Learning From Data " 一書的說法比較清楚 : <span class="math display">\[B (N, k)\ is\ the\ maximum\ number\ of\ dichotomies\\ on\ N\ points\ such\ that\ no\ subset\ of\ size\ k\ of\ the\ N\ points\ can\ be\ shattered\\ by\ these\ dichotomies.\]</span> 在討論Bounding Function時，我們已經不管分類的型態是什麼，單純只看Break Point K為多少。(1-D perceptron 或是 1-D positive ray K值都是3)</p>
+<li><p><strong>Bounding Function <span class="math inline">\(B(N,K)=\max\limits_{N&gt;K}(m_{\mathbb{H} }),\ where\ K=Break\ Point\)</span></strong> 這樣看起來還是有點抽象，我引用林軒田與Yaser S . Abu-Mostafa所著的 &quot; Learning From Data &quot; 一書的說法比較清楚 : <span class="math display">\[B (N, k)\ is\ the\ maximum\ number\ of\ dichotomies\\ on\ N\ points\ such\ that\ no\ subset\ of\ size\ k\ of\ the\ N\ points\ can\ be\ shattered\\ by\ these\ dichotomies.\]</span> 在討論Bounding Function時，我們已經不管分類的型態是什麼，單純只看Break Point K為多少。(1-D perceptron 或是 1-D positive ray K值都是3)</p>
 <p><img src="https://i.imgur.com/hAG2G5G.png" /> (這邊在課堂上都保守的以 <span class="math inline">\(\leq\)</span> 表示，但實際上有更強的 <span class="math inline">\(=\)</span> 關係)</p>
-<p>從上圖我們可以發現Bounding Function的幾個重要性質<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> : <span class="math display">\[B(N,K)=B(N-1,K)+B(N-1,K-1)\]</span> <span class="math display">\[m_\mathbb{H}(N)\leq B(N,K)\]</span></p></li>
+<p>從上圖我們可以發現Bounding Function的幾個重要性質<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> : <span class="math display">\[B(N,K)=B(N-1,K)+B(N-1,K-1)\]</span> <span class="math display">\[m_\mathbb{H}(N)\leq B(N,K)\]</span></p></li>
 </ul>
 <hr />
-<p>現在所有的工具都準備好了，我們該準備來面對上面的問題了~ 為了避免因為 <span class="math inline">\(infinite\ \mathbb{H}\)</span> 而造成的上界快速擴張狀況，我們用<span class="math inline">\(m_\mathbb{H}(N)\)</span>來取代原本的 <span class="math inline">\(M\)</span> 最後可以得到一個比較逼近的上界<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> : <span class="math display">\[\mathbb{P}(\mid E_{out}(\mathbb{H})-E_{in}(\mathbb{H}) \mid&gt;\epsilon)\leq 4m_\mathbb{H}(N)e^{\frac{1}{8}\epsilon^2N}\]</span> 我們稱之為 <span class="math inline">\(Vapnik-Chervonenkis Bound\ (VC\ Bound)\)</span></p>
+<p>現在所有的工具都準備好了，我們該準備來面對上面的問題了~ 為了避免因為 <span class="math inline">\(infinite\ \mathbb{H}\)</span> 而造成的上界快速擴張狀況，我們用<span class="math inline">\(m_\mathbb{H}(N)\)</span>來取代原本的 <span class="math inline">\(M\)</span> 最後可以得到一個比較逼近的上界<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> : <span class="math display">\[\mathbb{P}(\mid E_{out}(\mathbb{H})-E_{in}(\mathbb{H}) \mid&gt;\epsilon)\leq 4m_\mathbb{H}(N)e^{\frac{1}{8}\epsilon^2N}\]</span> 我們稱之為 <span class="math inline">\(Vapnik-Chervonenkis Bound\ (VC\ Bound)\)</span></p>
 <h3 id="結論">結論</h3>
 <p><span class="math inline">\(\mathbb{P}(\mid E_{in}(g)-E_{out}(g)\mid&gt;\epsilon)\)</span> <span class="math inline">\(\leq 4m_\mathbb{H}(2N)\cdot e^{-\frac{1}{8}\epsilon^2N}\)</span> <span class="math inline">\(\leq 4(2N)^{K-1}\cdot e^{-\frac{1}{8}\epsilon^2N}\ ,\ if\ N\ is\ large\ enough\ and\ K\ exists.\)</span> (<span class="math inline">\(\because m_\mathbb{H}(N)\leq B(N,K)\leq N^{K-1}\)</span>)</p>
 <p><span class="math inline">\(\therefore\)</span>存在 <span class="math inline">\(Break\ point\)</span> 且 <span class="math inline">\(N\)</span> 夠大的情況下，即使 <span class="math inline">\(infinite\ \mathbb{H}\)</span>，演算法從<span class="math inline">\(E_{in}\)</span>很小的條件下挑出一個 <span class="math inline">\(g\)</span>，都一定會有一個有限上界可以確保<span class="math inline">\(E_{in}\)</span>跟<span class="math inline">\(E_{out}\)</span>夠接近。</p>
 <h3 id="註釋">註釋</h3>
-<p><img src="https://i.imgur.com/cuNoGXM.png%20=300x" /><img src="https://i.imgur.com/hJOlpy9.png%20=300x" /> <img src="https://i.imgur.com/SFDXhiD.png%20=300x" /><img src="https://i.imgur.com/A21Tr8u.png%20=300x" /></p>
+<p><embed src="https://i.imgur.com/cuNoGXM.png%20=300x" /><embed src="https://i.imgur.com/hJOlpy9.png%20=300x" /> <embed src="https://i.imgur.com/SFDXhiD.png%20=300x" /><embed src="https://i.imgur.com/A21Tr8u.png%20=300x" /></p>
 <p><span class="math inline">\(\because B(N,K)=\sum\limits_{j=0}^{K-1}{ {N}\choose{j} }={ {N}\choose{0} }+{ {N}\choose{1} }+{ {N}\choose{2} }+...+{ {N}\choose{K-1} }\\ ={ {N}\choose{0} }+({ {N-1}\choose{1} }+{ {N-1}\choose{0} })+({ {N-1}\choose{2} }+{ {N-1}\choose{1} })+...+({ {N-1}\choose{k-1} }+{ {N-1}\choose{k-2} })\\ ={ {N-1}\choose{0} }+({ {N-1}\choose{1} }+{ {N-1}\choose{2} }+..+{ {N-1}\choose{k-1} })+({ {N-1}\choose{0} }+{ {N-1}\choose{1} }+..+{ {N-1}\choose{k-2} })\\ =\sum\limits_{j=0}^{K-2}{ {N}\choose{j} }+\sum\limits_{j=0}^{K-1}{ {N-1}\choose{j} }\)</span></p>
 <p>PS: <span class="math inline">\(E_{in},E&#39;_{in}\ and\ E_{out}\)</span>，其實就是個別代表著實務上的 <span class="math inline">\(E_{train},E_{val}\ and\ E_{test}\)</span></p>
-<p>Step2 : <img src="https://i.imgur.com/xP147ab.png%20=300x" /> 當<span class="math inline">\(N\)</span>足夠大時，<span class="math inline">\(E_{in}(E&#39;_{in})\)</span>的整體分布狀況會近似於以<span class="math inline">\(E_{out}\)</span>為中心的常態分佈，<span class="math inline">\(E_{in}\)</span>越往右跑，<span class="math inline">\(E&#39;_{in}\)</span>會越往左靠</p>
+<p>Step2 : <embed src="https://i.imgur.com/xP147ab.png%20=300x" /> 當<span class="math inline">\(N\)</span>足夠大時，<span class="math inline">\(E_{in}(E&#39;_{in})\)</span>的整體分布狀況會近似於以<span class="math inline">\(E_{out}\)</span>為中心的常態分佈，<span class="math inline">\(E_{in}\)</span>越往右跑，<span class="math inline">\(E&#39;_{in}\)</span>會越往左靠</p>
 <p><span class="math inline">\(\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E&#39;_{in}(h)\mid&gt;\frac{\epsilon}{2})\)</span> <span class="math inline">\(\geq\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E&#39;_{in}(h)\mid&gt;\frac{\epsilon}{2}\ and\ \sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)\)</span> <span class="math inline">\(=\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)\times\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E&#39;_{in}(h)\mid&gt;\frac{\epsilon}{2}\ \  \mid \ \sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)\)</span></p>
 <p><img src="https://i.imgur.com/xJrAxfj.png" /></p>
 <p><span class="math inline">\(\therefore\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E&#39;_{in}(h)\mid&gt;\frac{\epsilon}{2})\geq(1-2e^{-2({\frac{\epsilon}{2} })^2N})\times\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)\)</span></p>
 <p>Step3 : W.L.O.G assum : <span class="math inline">\(e^{\frac{1}{2}\epsilon^2N}&lt; \frac{1}{4}\)</span> (if not ,VC BOund 顯然為真) <span class="math inline">\(\therefore\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E&#39;_{in}(h)\mid&gt;\frac{\epsilon}{2})\geq\frac{1}{2}\times\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)\)</span> <span class="math inline">\(\therefore 2\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E&#39;_{in}(h)\mid&gt;\frac{\epsilon}{2})\geq\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)\)</span></p>
 <p>Step4 : 現在整個母體的機率已經被我們用<span class="math inline">\(D\ and\ D&#39;\)</span>限制住 <span class="math inline">\(\mathbb{P}(\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)\)</span> <span class="math inline">\(\leq2\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E&#39;_{in}(h)\mid&gt;\frac{\epsilon}{2})\)</span> <span class="math inline">\(\leq 2\sum\limits_{h\in\mathbb{H} }\mathbb{P}(\mid E_{in}(h)-E&#39;_{in}(h)\mid&gt;\frac{\epsilon}{2})\)</span> <span class="math inline">\(=2m_\mathbb{H}(2N)\times\mathbb{P}(\mid E_{in}(h)-E&#39;_{in}(h)\mid&gt;\frac{\epsilon}{2})\mid)\)</span> (<span class="math inline">\(\because\)</span>把<span class="math inline">\(D,D&#39;\)</span>作為一個母體來看) <span class="math inline">\(=2m_\mathbb{H}(2N)\times\mathbb{P}(\mid E_{in}(h)-\frac{E_{in}(h)-E&#39;_{in}(h)}{2}\mid&gt;\frac{\epsilon}{2})&gt;\frac{\epsilon}{4}\mid)\)</span> (<span class="math inline">\(\because E_{in}(h)-E&#39;_{in}(h)&lt;\frac{\epsilon}{2}\implies\frac{E_{in}(h)-E&#39;_{in}(h)}{2}&lt;\frac{\epsilon}{4}\implies E_{in}(h)-\frac{E_{in}(h)}{2}-\frac{E&#39;_{in}(h)}{2}&lt;\frac{\epsilon}{4}\)</span>) <span class="math inline">\(\leq 2m_\mathbb{H}(2N)\cdot 2\cdot e^{-2e^{-2({\frac{\epsilon}{2} })^2N} }\)</span>(<span class="math inline">\(\because\)</span>針對單一<span class="math inline">\(h\)</span>，所以<span class="math inline">\(M=1\)</span>) <span class="math inline">\(=4m_\mathbb{H}(2N)e^{-\frac{1}{8}\epsilon^2N}\)</span>得證</p>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>為什麼 <span class="math inline">\(m_\mathbb{H}(N)\)</span> 不一定會等於要取 <span class="math inline">\(\max\)</span> ? 為什麼不等於<span class="math inline">\(2^N\)</span>? 從排列組合的觀點來看，<span class="math inline">\(N\)</span> 個點的二元分類應該要有 <span class="math inline">\(2^N\)</span> 種，但我們這裡要的是 <span class="math inline">\(&quot;Linear\ separable&quot;\)</span> 所以會有所差異。 <img src="https://i.imgur.com/cuNoGXM.png" /> 從上圖可以看出來，<span class="math inline">\(N=4\)</span> 時，應該會有16種二分法，但是由於我們要求線性可分，因此一定「至少」有兩種 ( 圖中打 X 的狀況以及其對稱情況 )不符合我們的需求。 為什麼是「至少」? 如果這 <span class="math inline">\(N\)</span> 筆資料有特別的排列情況(EX:共線)，當然有可能有更多種狀況會被排除，但，<span class="math inline">\(m_\mathbb{H}(N)\)</span>函數要的是「max」，也就是說我現在要看的是被排除最少的情況，所以在 <span class="math inline">\(N=4\)</span> 時，<span class="math inline">\(m_\mathbb{H}(4)=14\)</span> ( 那兩種被排除的狀況，就是不管四筆資料怎麼分布，絕對都會被排除 ) 當然，<span class="math inline">\(m_\mathbb{H}(N)\)</span>也會跟資料本身處的維度空間有關。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>林軒田教授在課堂上講了四種的資料空間及分類型態 : <strong>2-D Preceptron , 1-D Positive Ray , 1-D Positive interval and Convex Set</strong><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>試證明 <span class="math inline">\(B(N,K)=B(N-1,K)+B(N-1,K-1)\)</span> Claim:<span class="math inline">\(B(N,K)=\sum\limits_{j=0}^{K-1}{ {N}\choose{j} }\)</span> Proof : <span class="math inline">\(B(N,K)\\=2^N-{ {N}\choose{K} }-{ {N}\choose{K+1} }-...-{ {N}\choose{N} }\\={ {N}\choose{0} }+{ {N}\choose{1} }+{ {N}\choose{2} }+...+{ {N}\choose{K-1} }\\=\sum\limits_{j=0}^{K-1}{ {N}\choose{j} }\)</span> <span class="math inline">\(B(N,K)\)</span>的最高次項為<span class="math inline">\(N^{K-1}\)</span> 因為最後一項為<span class="math inline">\(\frac{N(N-1)(N-2)...(N-K+1)}{K!}\)</span><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p>證明 <span class="math inline">\(\mathbb{P}(\mid E_{out}(\mathbb{H})-E_{in}(\mathbb{H}) \mid&gt;\epsilon)\leq 4m_\mathbb{H}(N)e^{\frac{1}{8}\epsilon^2N}\)</span> Proof : Step1 : Assume <span class="math inline">\(D&#39;\)</span> iid with <span class="math inline">\(D\)</span> is a data set with size N (ghost data) (若<span class="math inline">\(E_{in}\)</span>與<span class="math inline">\(E_{out}\)</span>離得很遠，則<span class="math inline">\(D\)</span>裡面N筆資料大多沒選到error點，那母體種再取N個點(<span class="math inline">\(D&#39;\)</span>)就會包含比較多的error，<span class="math inline">\(E&#39;_{in}\)</span>與<span class="math inline">\(E_{out}\)</span>就會有較大機率會比較靠近)<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>為什麼 <span class="math inline">\(m_\mathbb{H}(N)\)</span> 不一定會等於要取 <span class="math inline">\(\max\)</span> ? 為什麼不等於<span class="math inline">\(2^N\)</span>? 從排列組合的觀點來看，<span class="math inline">\(N\)</span> 個點的二元分類應該要有 <span class="math inline">\(2^N\)</span> 種，但我們這裡要的是 <span class="math inline">\(&quot;Linear\ separable&quot;\)</span> 所以會有所差異。 <img src="https://i.imgur.com/cuNoGXM.png" /> 從上圖可以看出來，<span class="math inline">\(N=4\)</span> 時，應該會有16種二分法，但是由於我們要求線性可分，因此一定「至少」有兩種 ( 圖中打 X 的狀況以及其對稱情況 )不符合我們的需求。 為什麼是「至少」? 如果這 <span class="math inline">\(N\)</span> 筆資料有特別的排列情況(EX:共線)，當然有可能有更多種狀況會被排除，但，<span class="math inline">\(m_\mathbb{H}(N)\)</span>函數要的是「max」，也就是說我現在要看的是被排除最少的情況，所以在 <span class="math inline">\(N=4\)</span> 時，<span class="math inline">\(m_\mathbb{H}(4)=14\)</span> ( 那兩種被排除的狀況，就是不管四筆資料怎麼分布，絕對都會被排除 ) 當然，<span class="math inline">\(m_\mathbb{H}(N)\)</span>也會跟資料本身處的維度空間有關。<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>林軒田教授在課堂上講了四種的資料空間及分類型態 : <strong>2-D Preceptron , 1-D Positive Ray , 1-D Positive interval and Convex Set</strong><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>試證明 <span class="math inline">\(B(N,K)=B(N-1,K)+B(N-1,K-1)\)</span> Claim:<span class="math inline">\(B(N,K)=\sum\limits_{j=0}^{K-1}{ {N}\choose{j} }\)</span> Proof : <span class="math inline">\(B(N,K)\\=2^N-{ {N}\choose{K} }-{ {N}\choose{K+1} }-...-{ {N}\choose{N} }\\={ {N}\choose{0} }+{ {N}\choose{1} }+{ {N}\choose{2} }+...+{ {N}\choose{K-1} }\\=\sum\limits_{j=0}^{K-1}{ {N}\choose{j} }\)</span> <span class="math inline">\(B(N,K)\)</span>的最高次項為<span class="math inline">\(N^{K-1}\)</span> 因為最後一項為<span class="math inline">\(\frac{N(N-1)(N-2)...(N-K+1)}{K!}\)</span><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>證明 <span class="math inline">\(\mathbb{P}(\mid E_{out}(\mathbb{H})-E_{in}(\mathbb{H}) \mid&gt;\epsilon)\leq 4m_\mathbb{H}(N)e^{\frac{1}{8}\epsilon^2N}\)</span> Proof : Step1 : Assume <span class="math inline">\(D&#39;\)</span> iid with <span class="math inline">\(D\)</span> is a data set with size N (ghost data) (若<span class="math inline">\(E_{in}\)</span>與<span class="math inline">\(E_{out}\)</span>離得很遠，則<span class="math inline">\(D\)</span>裡面N筆資料大多沒選到error點，那母體種再取N個點(<span class="math inline">\(D&#39;\)</span>)就會包含比較多的error，<span class="math inline">\(E&#39;_{in}\)</span>與<span class="math inline">\(E_{out}\)</span>就會有較大機率會比較靠近)<a href="#fnref4" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -451,7 +445,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

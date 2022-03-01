@@ -146,7 +146,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -300,25 +300,25 @@
 <p>這是一個比較簡單的說法。我們想要將 <span class="math inline">\(P_G\)</span> 轉換成 <span class="math inline">\(P_{data}\)</span> 那就必須從 <span class="math inline">\(P_G\)</span> 的樣本中進行轉移，高的分一些給低的，低的分一些給高的。</p>
 <p>當然轉移的方法有千百種。</p>
 <p><img src="https://i.imgur.com/Uj1TRTY.jpg" /> (圖片來源 : <a target="_blank" rel="noopener" href="https://vincentherrmann.github.io/blog/wasserstein/">Wasserstein GAN and the Kantorovich-Rubinstein Duality</a>)</p>
-<p>這些針對一個分佈 <span class="math inline">\(P_G\)</span> 中的每一個「轉移計劃」 (move plan)，我們都能計算出每一個樣本平均轉移的距離 ( 或每一個樣本轉移距離的期望值 )，最後取這些平均(期望)值中的最小值。而這個值就可以定義成 <span class="math inline">\(P_{data}\)</span> 跟 <span class="math inline">\(P_G\)</span> 的距離，這樣的距離我們也稱作 " Wasserstein distance "。</p>
+<p>這些針對一個分佈 <span class="math inline">\(P_G\)</span> 中的每一個「轉移計劃」 (move plan)，我們都能計算出每一個樣本平均轉移的距離 ( 或每一個樣本轉移距離的期望值 )，最後取這些平均(期望)值中的最小值。而這個值就可以定義成 <span class="math inline">\(P_{data}\)</span> 跟 <span class="math inline">\(P_G\)</span> 的距離，這樣的距離我們也稱作 &quot; Wasserstein distance &quot;。</p>
 <p><span class="math display">\[
 W(P_G,P_{data})=\min\limits_{\gamma\in mp_{P_{G} } }\mathbb{E}_{(x_g,x_{data})\in\gamma}\big( \|x_g-x_{data}\| \big)\\
 \text{where } mp_{P_G}\text{ is move plans of }P_G\\
 \text{and } \gamma=\{(x_g,x_{data})\ is\ the\ moving\ from\ x_g\ to\ x_{data}|x_g\in P_G,x_{data}\in P_{data}\}\in mp_{P_G}
 \]</span></p>
 <p>(這邊我用跟李弘毅課程裡不太一樣的表示式，我覺得會稍微清楚一點。)</p>
-<p>我們也可以做成一個 "move plan matrix" 來將整個 move plan 的每一個移動可視化。</p>
+<p>我們也可以做成一個 &quot;move plan matrix&quot; 來將整個 move plan 的每一個移動可視化。</p>
 <p><img src="https://i.imgur.com/wCzIvjw.png" /> (圖片來源 : <a target="_blank" rel="noopener" href="https://vincentherrmann.github.io/blog/wasserstein/">Wasserstein GAN and the Kantorovich-Rubinstein Duality</a>)</p>
 <p>利用 move plan 的概念來定義 <span class="math inline">\(P_{data}\)</span> 跟 <span class="math inline">\(P_G\)</span> 的距離好處是，不管兩個分佈距離多遠或多近，這個距離都會有量值，除非完全一樣，不然模型都可以繼續往前推進。</p>
 <p>該怎麼樣訓練一個 Discriminator 讓他最後的結果可以是一個 Wasserstein distance ? Kantorovich-Rubinstein duality 理論告訴我們可以得到下列的結果 :</p>
 <p><span class="math display">\[
 V(G,D)=\max\limits_{D\in 1-Lipschitz}\{ {\mathbb{E}_{x\sim P_{data} } }\big(D(x)\big)-\mathbb{E}_{x\sim P_G}\big(D(x)\big)\}
 \]</span></p>
-<p>其中，這裡對 <span class="math inline">\(D\)</span> 有一個比較強的條件限制 : <span class="math inline">\(D\in 1-Lipschitz\)</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>，<span class="math inline">\(D\)</span> 必須要是一個足夠平緩的連續函數，這樣的限制可以避免上式在訓練過程中 <span class="math inline">\(\mathbb{E}_{x\sim P_{data} }\big(D(x)\big)\)</span> 值被拉到無限大，而 <span class="math inline">\(\mathbb{E}_{x\sim P_G}\big(D(x)\big)\)</span> 被壓到無限小的狀況。</p>
-<p>在數學理論上這樣沒問題，但在實作上，要限制 <span class="math inline">\(D\)</span> 一定要是 <span class="math inline">\(1-Lipschitz\)</span> 則是非常困難的。因此 WGAN 的原始論文上利用了 weight clipping<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 來促使 <span class="math inline">\(D\)</span> 有「類似」於 <span class="math inline">\(1-Lipschitz\)</span> 函數的光滑性質。</p>
+<p>其中，這裡對 <span class="math inline">\(D\)</span> 有一個比較強的條件限制 : <span class="math inline">\(D\in 1-Lipschitz\)</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>，<span class="math inline">\(D\)</span> 必須要是一個足夠平緩的連續函數，這樣的限制可以避免上式在訓練過程中 <span class="math inline">\(\mathbb{E}_{x\sim P_{data} }\big(D(x)\big)\)</span> 值被拉到無限大，而 <span class="math inline">\(\mathbb{E}_{x\sim P_G}\big(D(x)\big)\)</span> 被壓到無限小的狀況。</p>
+<p>在數學理論上這樣沒問題，但在實作上，要限制 <span class="math inline">\(D\)</span> 一定要是 <span class="math inline">\(1-Lipschitz\)</span> 則是非常困難的。因此 WGAN 的原始論文上利用了 weight clipping<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> 來促使 <span class="math inline">\(D\)</span> 有「類似」於 <span class="math inline">\(1-Lipschitz\)</span> 函數的光滑性質。</p>
 <p>然而，這樣的方式卻也造成訓練過程中會出現一些問題。</p>
 <h2 id="wgan-gp">WGAN-GP</h2>
-<p>在 "<em>Improved Training of Wasserstein GANs</em>" 論文中提出了一個改善原始 WGAN 的方法 : Gradient Penalty，而這樣的方法也被稱作 WGAN-GP。</p>
+<p>在 &quot;<em>Improved Training of Wasserstein GANs</em>&quot; 論文中提出了一個改善原始 WGAN 的方法 : Gradient Penalty，而這樣的方法也被稱作 WGAN-GP。</p>
 <p>論文中利用了 Lipschitz continuity 一個特別的性質 :</p>
 <p><span class="math display">\[
 f\in K-Lipschitz\Longleftrightarrow \|\nabla f\|\leq K,\ \forall x
@@ -332,7 +332,7 @@ V(G,D)=\max\limits_{\|\nabla D\|\leq 1}\{ {\mathbb{E}_{x\sim P_{data} } }\big(D(
 V(G,D)=\max\limits_{\|\nabla D\|\leq 1}\{ {\mathbb{E}_{x\sim P_{data} } }\big(D(x)\big)-\mathbb{E}_{x\sim P_G}\big(D(x)\big)\}\\
 \approx\max\limits_{D}\{ {\mathbb{E}_{x\sim P_{data} } }\big(D(x)\big)-\mathbb{E}_{x\sim P_G}\big(D(x)\big)-\lambda\int\limits_{x}\max(0,\|\nabla D(x)-1\|)dx\}\\
 \]</span></p>
-<p>然而，我們手中只有少許的資料，根本無法對所有的 <span class="math inline">\(x\)</span> 做積分<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>，因此在 WGAN-GP 中提出了另一個分佈 <span class="math inline">\(P_{penalty}\)</span> ，將後面 penalty 的積分值用這個分佈的梯度期望值來取代</p>
+<p>然而，我們手中只有少許的資料，根本無法對所有的 <span class="math inline">\(x\)</span> 做積分<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>，因此在 WGAN-GP 中提出了另一個分佈 <span class="math inline">\(P_{penalty}\)</span> ，將後面 penalty 的積分值用這個分佈的梯度期望值來取代</p>
 <p><span class="math display">\[
 V(G,D)\approx\max\limits_{D}\{ {\mathbb{E}_{x\sim P_{data} } }\big(D(x)\big)-\mathbb{E}_{x\sim P_G}\big(D(x)\big)-\lambda\mathbb{E}_{x\sim P_{penalty} }\big(\max(0,\|\nabla D(x)-1\|)\big)\}
 \]</span></p>
@@ -345,8 +345,8 @@ V(G,D)\approx\max\limits_{D}\{ {\mathbb{E}_{x\sim P_{data} } }\big(D(x)\big)-\ma
 \]</span></p>
 <p>我們可以給出整個 WGAN 的演算法 :</p>
 <ul>
-<li><p>Discriminator 的 sigmoid 拿掉</p></li>
-<li><p>初始化 <span class="math inline">\(G\)</span> 與 <span class="math inline">\(D\)</span> 的參數 <span class="math inline">\(\theta_g\)</span> 與 <span class="math inline">\(\theta_d\)</span></p></li>
+<li>Discriminator 的 sigmoid 拿掉</li>
+<li>初始化 <span class="math inline">\(G\)</span> 與 <span class="math inline">\(D\)</span> 的參數 <span class="math inline">\(\theta_g\)</span> 與 <span class="math inline">\(\theta_d\)</span></li>
 <li><p>循環迭代進行</p>
 <ul>
 <li>Updeate <span class="math inline">\(D\)</span>
@@ -370,7 +370,7 @@ V(G,D)\approx\max\limits_{D}\{ {\mathbb{E}_{x\sim P_{data} } }\big(D(x)\big)-\ma
 </ul></li>
 </ul>
 <h2 id="energy-based-gan-ebgan">Energy based GAN (EBGAN)</h2>
-<p>Junbo Zhao 等人於 2016年發表的論文 " <em>Energy-based Generative Adversarial Network</em> " 中，將 Discriminator 視為一個能量函數。其概念上是真實的圖形能量為 <span class="math inline">\(0\)</span>，越靠近真實圖像的能量就越接近 <span class="math inline">\(0\)</span>，越不像真實圖像的能像就會越遠離 <span class="math inline">\(0\)</span>。這樣的方式讓 Discriminator 不限於只是一個二元分類器，而可以是一個可訓練的能量函數。</p>
+<p>Junbo Zhao 等人於 2016年發表的論文 &quot; <em>Energy-based Generative Adversarial Network</em> &quot; 中，將 Discriminator 視為一個能量函數。其概念上是真實的圖形能量為 <span class="math inline">\(0\)</span>，越靠近真實圖像的能量就越接近 <span class="math inline">\(0\)</span>，越不像真實圖像的能像就會越遠離 <span class="math inline">\(0\)</span>。這樣的方式讓 Discriminator 不限於只是一個二元分類器，而可以是一個可訓練的能量函數。</p>
 <p>訓練的過程，由 Generator 生成圖像，讓 Discriminator 去算其能量，跟 GAN 的概念一樣，藉由 Discriminator 輸出的能量值來推進 Generator 的進化，彼此互相訓練，讓 Generator 可以生成越來越低能量的圖像。</p>
 <p>論文內利用一個 Auto Encoder 來實現 EBGAN 的 Discriminator。</p>
 <p><img src="https://i.imgur.com/LiTcrDD.jpg" /></p>
@@ -393,12 +393,12 @@ V(G,D)\approx\max\limits_{D}\{ {\mathbb{E}_{x\sim P_{data} } }\big(D(x)\big)-\ma
 </ol>
 <h2 id="註釋">註釋</h2>
 <p><img width=400 src="https://i.imgur.com/BnRfbAx.gif" ></p>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>Lipschitz continuity 是一個比一般連續還要更強的光滑性條件，它限制了函數的起伏。<span class="math inline">\(f:X\subseteq\mathbb{R}\rightarrow\mathbb{R}\ s.t.  \forall x,y\in X\ ,\ |f(x)-f(y)|\leq K|x-y|,then\ f\in K-Lipschitz\)</span> 從函數圖形來看，符合 Lipschitz continuity 的函數，一定存在一個雙圓錐，其頂點沿著函數圖形平移時，函數曲線(面)都會在此雙圓錐之外。而 K 值決定了此雙圓錐的開口大小。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>Weight Clipping 技術其實意義上等同於 Gradient Clipping，限制 <span class="math inline">\(-c\leq weight\leq c\)</span>，實踐的方式就是如果 <span class="math inline">\(weight\geq c\)</span>，則 <span class="math inline">\(weight=c\)</span> ; 如果 <span class="math inline">\(weight\leq c\)</span>，則 <span class="math inline">\(weight=-c\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>事實上在ICRL 2018 年的論文 "<em>Spectral Normalization for Generative Adversarial Networks</em>" 中提到可以利用 Spectral Normalization 使所有 <span class="math inline">\(x\)</span> 的 gradient 都為 1。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Lipschitz continuity 是一個比一般連續還要更強的光滑性條件，它限制了函數的起伏。<span class="math inline">\(f:X\subseteq\mathbb{R}\rightarrow\mathbb{R}\ s.t.  \forall x,y\in X\ ,\ |f(x)-f(y)|\leq K|x-y|,then\ f\in K-Lipschitz\)</span> 從函數圖形來看，符合 Lipschitz continuity 的函數，一定存在一個雙圓錐，其頂點沿著函數圖形平移時，函數曲線(面)都會在此雙圓錐之外。而 K 值決定了此雙圓錐的開口大小。<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Weight Clipping 技術其實意義上等同於 Gradient Clipping，限制 <span class="math inline">\(-c\leq weight\leq c\)</span>，實踐的方式就是如果 <span class="math inline">\(weight\geq c\)</span>，則 <span class="math inline">\(weight=c\)</span> ; 如果 <span class="math inline">\(weight\leq c\)</span>，則 <span class="math inline">\(weight=-c\)</span><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>事實上在ICRL 2018 年的論文 &quot;<em>Spectral Normalization for Generative Adversarial Networks</em>&quot; 中提到可以利用 Spectral Normalization 使所有 <span class="math inline">\(x\)</span> 的 gradient 都為 1。<a href="#fnref3" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
@@ -469,7 +469,7 @@ V(G,D)\approx\max\limits_{D}\{ {\mathbb{E}_{x\sim P_{data} } }\big(D(x)\big)-\ma
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
