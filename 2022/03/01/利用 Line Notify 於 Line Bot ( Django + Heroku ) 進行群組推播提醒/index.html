@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="系列文章  MoBot : LINE Bot 開發紀錄 ( LINE &#x2F; Heroku ) 芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 ) Line Bot 在群組中的喚醒&#x2F;休眠機制 (Django Database 之應用)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用 Line Notify 於 Line Bot ( Django + Heroku ) 進行群組推播提醒">
+<meta property="og:url" content="https://allen108108.github.io/blog/2022/03/01/%E5%88%A9%E7%94%A8%20Line%20Notify%20%E6%96%BC%20Line%20Bot%20(%20Django%20+%20Heroku%20)%20%E9%80%B2%E8%A1%8C%E7%BE%A4%E7%B5%84%E6%8E%A8%E6%92%AD%E6%8F%90%E9%86%92/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="系列文章  MoBot : LINE Bot 開發紀錄 ( LINE &#x2F; Heroku ) 芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 ) Line Bot 在群組中的喚醒&#x2F;休眠機制 (Django Database 之應用)">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/X815ciJ.png">
+<meta property="og:image" content="https://i.imgur.com/G4Baw0J.png">
+<meta property="og:image" content="https://i.imgur.com/h5t0jco.png">
+<meta property="og:image" content="https://i.imgur.com/Tsiojr2.png">
+<meta property="og:image" content="https://i.imgur.com/2L8CrL9.png">
+<meta property="og:image" content="https://i.imgur.com/ik379lP.png">
+<meta property="article:published_time" content="2022-03-01T11:53:50.000Z">
+<meta property="article:modified_time" content="2022-03-01T11:54:51.031Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/X815ciJ.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2022/03/01/%E5%88%A9%E7%94%A8%20Line%20Notify%20%E6%96%BC%20Line%20Bot%20(%20Django%20+%20Heroku%20)%20%E9%80%B2%E8%A1%8C%E7%BE%A4%E7%B5%84%E6%8E%A8%E6%92%AD%E6%8F%90%E9%86%92/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2022/03/01/%E5%88%A9%E7%94%A8%20Line%20Notify%20%E6%96%BC%20Line%20Bot%20(%20Django%20+%20Heroku%20)%20%E9%80%B2%E8%A1%8C%E7%BE%A4%E7%B5%84%E6%8E%A8%E6%92%AD%E6%8F%90%E9%86%92/","path":"2022/03/01/利用 Line Notify 於 Line Bot ( Django + Heroku ) 進行群組推播提醒/","title":"利用 Line Notify 於 Line Bot ( Django + Heroku ) 進行群組推播提醒"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>利用 Line Notify 於 Line Bot ( Django + Heroku ) 進行群組推播提醒 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">系列文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#whats-line-notify"><span class="nav-number">2.</span> <span class="nav-text">What&#39;s Line Notify ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#line-notify-%E7%99%BB%E9%8C%84%E6%AD%A5%E9%A9%9F"><span class="nav-number">3.</span> <span class="nav-text">Line Notify 登錄步驟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#access-token"><span class="nav-number">4.</span> <span class="nav-text">Access Token</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%A3%E5%8B%95%E7%B6%B2%E5%9D%80%E5%8F%96%E5%BE%97"><span class="nav-number">4.0.1.</span> <span class="nav-text">連動網址取得</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#user-code-%E5%8F%96%E5%BE%97"><span class="nav-number">4.0.2.</span> <span class="nav-text">User Code 取得</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#user-access-token-%E5%8F%96%E5%BE%97"><span class="nav-number">4.0.3.</span> <span class="nav-text">User Access Token 取得</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#django-%E7%9A%84%E8%A8%AD%E7%BD%AE"><span class="nav-number">5.</span> <span class="nav-text">Django 的設置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A8%8A%E6%81%AF%E6%8E%A8%E6%92%AD"><span class="nav-number">6.</span> <span class="nav-text">訊息推播</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">7.</span> <span class="nav-text">後記</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2022/03/01/%E5%88%A9%E7%94%A8%20Line%20Notify%20%E6%96%BC%20Line%20Bot%20(%20Django%20+%20Heroku%20)%20%E9%80%B2%E8%A1%8C%E7%BE%A4%E7%B5%84%E6%8E%A8%E6%92%AD%E6%8F%90%E9%86%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          利用 Line Notify 於 Line Bot ( Django + Heroku ) 進行群組推播提醒
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2022-03-01 19:53:50 / 修改時間：19:54:51" itemprop="dateCreated datePublished" datetime="2022-03-01T19:53:50+08:00">2022-03-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%B0%88%E6%A1%88-Project/" itemprop="url" rel="index"><span itemprop="name">專案 Project</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2022/03/01/%E5%88%A9%E7%94%A8%20Line%20Notify%20%E6%96%BC%20Line%20Bot%20(%20Django%20+%20Heroku%20)%20%E9%80%B2%E8%A1%8C%E7%BE%A4%E7%B5%84%E6%8E%A8%E6%92%AD%E6%8F%90%E9%86%92/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/03/01/利用 Line Notify 於 Line Bot ( Django + Heroku ) 進行群組推播提醒/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="系列文章">系列文章</h2>
+<ul>
+<li><a href="https://allen108108.github.io/blog/2020/03/26/MoBot%20_%20LINE%20Bot%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%28%20LINE%20_%20Heroku%20%29">MoBot : LINE Bot 開發紀錄 ( LINE / Heroku )</a></li>
+<li><a href="https://allen108108.github.io/blog/2020/06/26/%E8%8A%8B%E9%A6%99%E5%86%AC%E7%93%9C%E3%80%8C%E6%9F%A5%E3%80%8D%20_%20%E5%B0%88%E7%82%BA%E8%87%AA%E5%AE%B6%E9%9C%80%E6%B1%82%E7%9A%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%9F%A5%E8%A9%A2%E7%B3%BB%E7%B5%B1%20App%20%28%20MoBot%20ver.2%20%29/">芋香冬瓜「查」 : 專為自家需求的機器人查詢系統 App ( MoBot ver.2 )</a></li>
+<li><a href="https://allen108108.github.io/blog/2021/08/30/Line%20Bot%20%E5%9C%A8%E7%BE%A4%E7%B5%84%E4%B8%AD%E7%9A%84%E5%96%9A%E9%86%92_%E4%BC%91%E7%9C%A0%E6%A9%9F%E5%88%B6%20(Django%20Database%20%E4%B9%8B%E6%87%89%E7%94%A8)/#more">Line Bot 在群組中的喚醒/休眠機制 (Django Database 之應用)</a></li>
+</ul>
+<span id="more"></span>
+<h2 id="whats-line-notify">What's Line Notify ?</h2>
+<p>Line Bot 的應用中，除了「被動回覆」使用者外，「主動推播」的功能在 Line Bot 中亦是不可或缺的一環。在商業應用上，主動推播的需求甚至高過於被動回覆，主動推播可以讓業主進行最即時的通知，無論是警示通知或是行銷企劃的宣傳，都會讓使用者對於 Line Bot 的依賴性更強，當然，也可以讓業主的行銷變得更精準，進而帶來後續的收益。</p>
+<p>一定有人會問，主動推播功能不就利用帳號直接傳送給使用者就好了嗎 ? 的確，不管是以前的 Line@ 還是 Line Bot，直接利用帳號進行訊息的傳送最簡單，但當使用者人數增加到一定的程度後，訊息的費用也會是一筆可觀的費用，以下是 Line 官方帳號針對訊息的計費方式 :</p>
+<p><img src="https://i.imgur.com/X815ciJ.png" /></p>
+<p>官方帳號的計費方式以用量做區分，分為低、中、高用量，每月的免費訊息則數個別是 500、4000、25000 則，對於精打細算的業主來說，雖然費用不算太高，但也總是期望是否能有更好的選擇。也因此，Line Notify 便是 CP 值相對高的另一種主動推播方案。</p>
+<p>Line Notify 我們可以視為是 Line 生態系中的一個小工具，可以讓我們利用其進行免費主動推播，在概念上，其實就相當於我們將要發送的訊息先傳至 Line Notufy 中，再由 Line Notify 來進行推播。</p>
+<h2 id="line-notify-登錄步驟">Line Notify 登錄步驟</h2>
+<p>Line Notify 並非 Line 的主體服務，所以我們必須前往 Line Notify 的網站 ( <a target="_blank" rel="noopener" href="https://notify-bot.line.me/zh_TW/" class="uri">https://notify-bot.line.me/zh_TW/</a> ) 進行相關設定。</p>
+<p>利用 Line 的帳號密碼進行登入後，網站右上角會顯示登入的 Line 帳號暱稱，點擊後會出現下拉選單 : * 個人頁面 : 顯示目前 Line Notify 的連動狀況，簡單來說就是顯示目前有哪些服務可以使用 Line Notify，另外，此頁面也提供了個人 ( 開發人員 ) 的連動權杖發行。 * 管理登錄服務 : 此頁面針對提供服務的用戶進行 Line Notify 的連動，我們要使用 Line Bot 連棟則是透過這部分來進行。 * 登出</p>
+<p>本篇文章主要旨在介紹 Line Bot 如何與 Line Notify 進行連動，因此筆者接下來介紹的會以【管理登錄服務】來進行 Notify 的相關設定。</p>
+<p><img src="https://i.imgur.com/G4Baw0J.png" /></p>
+<p>從登入的下拉選單中我們選擇【管理登錄服務】，之後點選【登錄服務】後會出現下圖的欄位需要填寫，每一個欄位都是必填，但除了最後的 Callback 欄位外，其餘的部分其實都簡單填寫即可，不會影響後續的操作。</p>
+<p><img src="https://i.imgur.com/h5t0jco.png" /></p>
+<p>Callback 網址的設定主要是參照 Line Bot 的 webhook url 再加上 <code>/notufy</code>，以筆者例子來說，將 Line Bot 部署於 heroku 的話 Callback 網址就會是如下的型態 : <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://&lt;LineBot App name&gt;.herokuapp.com/notify</span><br></pre></td></tr></table></figure> 填妥上述資訊後，按下 【同意並前往下一步】後，我們可以得到一組 Client ID 以及 Client Secret，連同上面的 Callback url，之後都會在 後續的步驟以及 Django 的設置中使用到。</p>
+<h2 id="access-token">Access Token</h2>
+<p>當我們要利用 Line Notify 進行訊息推播前，須取得對方的 Access Token 才能進行推播，接下來的部分較為複雜，這也是筆者認為利用 Notify 中最麻煩的部分。</p>
+<p>要取得 Access Token 我們需要以下幾個步驟來進行：</p>
+<ol type="1">
+<li>先進入連動用網址，利用此網址進行 Line Notify 綁定</li>
+<li>取得 User Code</li>
+<li>利用 user Code 來取得 User Access Token</li>
+</ol>
+<h4 id="連動網址取得">連動網址取得</h4>
+<p>根據 <a target="_blank" rel="noopener" href="https://notify-bot.line.me/doc/en/https://notify-bot.line.me/doc/en/">Line Notify API Document</a>的說明，我們可以利用 <code>create_auth_link</code> 函式來進行連動網址的生成。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_auth_link</span>(<span class="params">user_id, client_id=client_id, redirect_uri=redirect_uri</span>):</span></span><br><span class="line">    </span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">&#x27;response_type&#x27;</span>: <span class="string">&#x27;code&#x27;</span>, </span><br><span class="line">        <span class="string">&#x27;client_id&#x27;</span>: client_id, </span><br><span class="line">        <span class="string">&#x27;redirect_uri&#x27;</span>: redirect_uri, </span><br><span class="line">        <span class="string">&#x27;scope&#x27;</span>: <span class="string">&#x27;notify&#x27;</span>, </span><br><span class="line">        <span class="string">&#x27;state&#x27;</span>: user_id,</span><br><span class="line">        <span class="string">&#x27;response_mode&#x27;</span>: <span class="string">&#x27;from_post&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    query_str = urllib.parse.urlencode(data)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&#x27;https://notify-bot.line.me/oauth/authorize?<span class="subst">&#123;query_str&#125;</span>&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>其中參數說明如下：</p>
+<ul>
+<li>response_type : 輸入字串<code>code</code></li>
+<li>client_id : 輸入 Line Notify 的 Client ID</li>
+<li>redirect_url : 輸入 Line Notify 的 Callback URL</li>
+<li>scope : 輸入字串 <code>notify</code></li>
+<li>state : 輸入任意亂碼字串，目的是避免網路攻擊。</li>
+<li>response_mode : 輸入字串 <code>from_post</code></li>
+</ul>
+<h4 id="user-code-取得">User Code 取得</h4>
+<p>將生成出來的網址放入瀏覽器中進行連結，會出現一個頁面，可以選擇要連結 Notify 服務的群組</p>
+<p><img src="https://i.imgur.com/Tsiojr2.png" /></p>
+<p>選取要連結之群組後，按下【同意並連動】之按鈕後，網址會轉換成下列型態：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Callback URL&gt;?code=&lt;CODE&gt;&amp;state=&lt;STATE&gt;</span><br></pre></td></tr></table></figure>
+<p>並且在 Line Notify 中會即時傳送一個群組連動成功之訊息</p>
+<p><img src="https://i.imgur.com/2L8CrL9.png" /></p>
+<p>此時我們可以將 Notufy 帳號加至欲連動之群組中。</p>
+<h4 id="user-access-token-取得">User Access Token 取得</h4>
+<p>利用 Line Notify API 來進行 User Access Token 的取得</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">token_get_url = <span class="string">&#x27;https://notify-bot.line.me/oauth/token&#x27;</span></span><br><span class="line">params = &#123;</span><br><span class="line">    <span class="string">&#x27;grant_type&#x27;</span>:<span class="string">&#x27;authorization_code&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;code&#x27;</span>:&lt;CODE&gt;,</span><br><span class="line">    <span class="string">&#x27;redirect_uri&#x27;</span>: redirect_uri,</span><br><span class="line">    <span class="string">&#x27;client_id&#x27;</span>: client_id,</span><br><span class="line">    <span class="string">&#x27;client_secret&#x27;</span>: client_secret,</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">get_token = requests.post(token_get_url,params=params)</span><br></pre></td></tr></table></figure>
+<p>數數說明 ：</p>
+<ul>
+<li>grant_type : 輸入字串<code>authorization_code</code></li>
+<li>code ： 擷取出 <code>&lt;CODE&gt;</code> 的部分填入</li>
+<li>redirect_url : 輸入 Line Notify 的 Callback URL</li>
+<li>client_id : 輸入 Line Notify 的 Client ID</li>
+<li>client_secret : 輸入 Line Notify 的 Client Secret</li>
+</ul>
+<p>利用這樣的方式我們便可以取得群組的 Access Token，後續 Line Notify 便會根據這個token 來針對特定群組進行訊息的推播。</p>
+<h2 id="django-的設置">Django 的設置</h2>
+<p>在 Line Bot 側，我們需要監控 Notify 是否有推播訊息，因此在 Line Bot 程式中要加入以下程式碼 ：</p>
+<p><code>views.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">notify</span>(<span class="params">request</span>):</span></span><br><span class="line">    <span class="comment">#取得 code</span></span><br><span class="line">    pattern = <span class="string">&#x27;code=.*&amp;&#x27;</span></span><br><span class="line">    raw_uri = request.get_raw_uri()</span><br><span class="line">    codes = re.findall(pattern,raw_uri)</span><br><span class="line">    <span class="keyword">for</span> code <span class="keyword">in</span> codes:</span><br><span class="line">        code = code[<span class="number">5</span>:-<span class="number">1</span>]</span><br><span class="line">        <span class="built_in">print</span>(code)</span><br><span class="line"></span><br><span class="line">    <span class="comment">#取得 token</span></span><br><span class="line">    user_notify_token_get_url = <span class="string">&#x27;https://notify-bot.line.me/oauth/token&#x27;</span></span><br><span class="line">    params = &#123;</span><br><span class="line">        <span class="string">&#x27;grant_type&#x27;</span>:<span class="string">&#x27;authorization_code&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;code&#x27;</span>:code,</span><br><span class="line">        <span class="string">&#x27;redirect_uri&#x27;</span>: &lt;Callback&gt;</span><br><span class="line">        <span class="string">&#x27;client_id&#x27;</span>:&lt;Client ID&gt;</span><br><span class="line">        <span class="string">&#x27;client_secret&#x27;</span>: &lt;Client Secret&gt;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    get_token = requests.post(user_notify_token_get_url,params=params)</span><br><span class="line">    <span class="comment">#print(get_token.json())</span></span><br><span class="line">    token = get_token.json()[<span class="string">&#x27;access_token&#x27;</span>]</span><br><span class="line">    <span class="comment">#print(token)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#抓取user的info</span></span><br><span class="line">    user_info_url = <span class="string">&#x27;https://notify-api.line.me/api/status&#x27;</span></span><br><span class="line">    headers = &#123;<span class="string">&#x27;Authorization&#x27;</span>:<span class="string">&#x27;Bearer &#x27;</span>+token&#125;</span><br><span class="line">    get_user_info = requests.get(user_info_url,headers=headers)</span><br><span class="line">    <span class="comment">#print(get_user_info.json())</span></span><br><span class="line">    notify_user_info = get_user_info.json()</span><br><span class="line">    <span class="keyword">return</span> HttpResponse()</span><br></pre></td></tr></table></figure>
+<p>至此，我們已經完成了所有 Line Notify 連動的相關工作。</p>
+<h2 id="訊息推播">訊息推播</h2>
+<p>我們目前已經可以取得要推播的群組之 Access Token，就可以來進行訊息的推播了，透過下面的 script 我們可以將想要傳送的訊息透過 API 進行推播 ：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">api = <span class="string">&#x27;https://notify-api.line.me/api/notify&#x27;</span></span><br><span class="line">message = <span class="string">&#x27;【LineBot】測試通知 : Notify 訊息測試 !&#x27;</span></span><br><span class="line">headers = &#123;</span><br><span class="line">  <span class="string">&quot;Authorization&quot;</span>: <span class="string">&quot;Bearer &quot;</span> + access_token, </span><br><span class="line">  <span class="string">&quot;Content-Type&quot;</span> : <span class="string">&quot;application/x-www-form-urlencoded&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">payload = &#123;<span class="string">&#x27;message&#x27;</span>: message&#125;</span><br><span class="line">r = requests.post(<span class="string">&quot;https://notify-api.line.me/api/notify&quot;</span>, headers = headers, params = payload)</span><br></pre></td></tr></table></figure>
+<p>之後我們便可以在該群組中收到訊息如下 ：</p>
+<p><img src="https://i.imgur.com/ik379lP.png" /></p>
+<h2 id="後記">後記</h2>
+<p>這篇文章主要是要讓讀者了解整個 Notify 推播的主要流程，熟悉這樣的流程後，其實可以有更多的應用面，例如，我們可以利用最後的 script 搭配 Django 資料庫系統將各個群組的 Access Token 進行儲存，也可以將這段 Script 寫進 API 中，在特定狀況下直接 trigger API 達到自動推播的效果。</p>
+<p>不過正如同本文最前面提到的，提供服務的 Line Bot 在訊息中其實並沒有很明顯的辨識度，這是 Notify 在商業應用中較為可惜的一點，倘若讀者可以接受這樣的呈現方式，那麼 Line Notify 確是一個蠻不錯的推播工具的。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2022/03/01/%E5%88%A9%E7%94%A8%20Line%20Notify%20%E6%96%BC%20Line%20Bot%20(%20Django%20+%20Heroku%20)%20%E9%80%B2%E8%A1%8C%E7%BE%A4%E7%B5%84%E6%8E%A8%E6%92%AD%E6%8F%90%E9%86%92/" title="利用 Line Notify 於 Line Bot ( Django + Heroku ) 進行群組推播提醒">https://allen108108.github.io/blog/2022/03/01/利用 Line Notify 於 Line Bot ( Django + Heroku ) 進行群組推播提醒/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2022/03/01/%E3%80%90Python%E3%80%91%20%E5%9C%A8%20Linux%20%E7%B3%BB%E7%B5%B1%E4%B8%AD%E4%BD%BF%E7%94%A8%20paramiko%20%E5%AF%A6%E7%8F%BE%E9%81%A0%E7%AB%AF%E8%87%AA%E5%8B%95%E4%B8%8B%E8%BC%89%E5%8A%9F%E8%83%BD/" rel="prev" title="【Python】 在 Linux 系統中使用 paramiko 實現遠端自動下載功能">
+                  <i class="fa fa-chevron-left"></i> 【Python】 在 Linux 系統中使用 paramiko 實現遠端自動下載功能
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>
