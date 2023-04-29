@@ -27,7 +27,9 @@
 <meta property="og:site_name" content="Math.py">
 <meta property="og:description" content="我一直想要針對 Machine Learning &#x2F; Deep Learning 的基礎優化方式來寫一篇比較詳盡又不會太困難的文章，一方面想介紹這些很「優美」的方法給初學者或是有點興趣的人知道，另一方面也是想重新審視一下自己對於這些基礎算法的理解到底可以到哪裡。 其實也不是第一次寫這些文章，就梯度下降這一篇也是幾個月前就寫好的，但經過這幾個月來論文、課程的淬鍊之後，對於梯度下降也有一些新的認識跟">
 <meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/YuKOsXB.jpg%20=400x">
 <meta property="og:image" content="https://i.imgur.com/2gfrexA.jpg">
+<meta property="og:image" content="https://i.imgur.com/gqHKVoB.jpg%20=400x">
 <meta property="og:image" content="https://i.imgur.com/jxToNR7.jpg">
 <meta property="og:image" content="https://i.imgur.com/Fj03Kt3.jpg">
 <meta property="og:image" content="https://i.imgur.com/E1AvmX2.gif">
@@ -36,7 +38,7 @@
 <meta property="article:modified_time" content="2020-09-06T02:10:53.390Z">
 <meta property="article:author" content="Allen Tzeng">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.imgur.com/2gfrexA.jpg">
+<meta name="twitter:image" content="https://i.imgur.com/YuKOsXB.jpg%20=400x">
 
 
 <link rel="canonical" href="https://allen108108.github.io/blog/2019/10/22/Gradient%20descent%20%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/">
@@ -143,13 +145,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -285,7 +287,7 @@
 <p><span class="math display">\[
 Slope=\displaystyle{\frac{\Delta y}{\Delta x}=\frac{y_1-y_2}{x_1-x_2}}
 \]</span></p>
-<p><embed src="https://i.imgur.com/YuKOsXB.jpg%20=400x" /></p>
+<p><img src="https://i.imgur.com/YuKOsXB.jpg%20=400x" /></p>
 <p>直觀上來看斜率，可以代表直線的陡峭程度以及傾斜方向。也就是說，給我們一條直線 <span class="math inline">\(L\)</span> 的斜率，原則上我們大概就可以在腦中形塑出這條直線的模樣 ( 或許可能會有一些平移上的差距，但原則上大概就是長那個樣子 )</p>
 <p>這是我們國高中、大學基本上對於斜率的了解及認識。 那我們是否可以換一個角度來看「斜率」?</p>
 <p>那如果我們站在這條直線上想要往上爬，應該要往哪個方向 ? 斜率能不能告訴我們這件事情 ?</p>
@@ -295,7 +297,7 @@ Slope=\displaystyle{\frac{\Delta y}{\Delta x}=\frac{y_1-y_2}{x_1-x_2}}
 <p>簡單來說，若斜率為正，表示只要你在這條直線上，往 <span class="math inline">\(x\)</span> 軸的正向走，便會越走越高，反之，若斜率為負，那麼在直線上往 <span class="math inline">\(x\)</span> 軸的負向走，便會越走越高。</p>
 <h3 id="切線斜率">切線斜率</h3>
 <p>清楚了直線定義後，對於任一個曲線 (曲面)上任一點，我們如果能夠找到這一點在某方向上的切線斜率，那我們不也可以知道在這一點上的傾斜程度及方向嗎 ? 那不也就可以知道如果我們要往上爬，在這一個方向上，我們該往哪裡走嗎 ?</p>
-<p><embed src="https://i.imgur.com/gqHKVoB.jpg%20=400x" /></p>
+<p><img src="https://i.imgur.com/gqHKVoB.jpg%20=400x" /></p>
 <h2 id="導數">導數</h2>
 <p>現在的問題是，如果我們知道了一條曲線方程式，我們該怎麼找到某一點的切線斜率 ?</p>
 <p>這時候微積分中導數的概念便可輕鬆解決這樣的問題</p>
@@ -422,7 +424,7 @@ L(w^t)=\frac{1}{N}\sum\limits_{n=1}^{N}err(y^n,\hat{y}^n)=\frac{1}{N}\sum\limits
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

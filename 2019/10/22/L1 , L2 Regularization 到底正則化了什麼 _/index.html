@@ -20,12 +20,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="在機器學習中藉由降低 error 來訓練出一個能對未知資料有準確預測的 model，在利用訓練資料優化 error function 的過程中，不意外的會得到一個 error 極低的 model ，但是往往在測試資料上卻會有出乎意外的高 error 會造成這樣的原因是，我們利用訓練資料而得到的模型太過於擬合「訓練資料」本身，反而偏離了一般化的目標，我們稱這現象為 &quot; Overfitti">
+<meta name="description" content="在機器學習中藉由降低 error 來訓練出一個能對未知資料有準確預測的 model，在利用訓練資料優化 error function 的過程中，不意外的會得到一個 error 極低的 model ，但是往往在測試資料上卻會有出乎意外的高 error 會造成這樣的原因是，我們利用訓練資料而得到的模型太過於擬合「訓練資料」本身，反而偏離了一般化的目標，我們稱這現象為 &quot; Overfitting &quot;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="L1 , L2 Regularization 到底正則化了什麼 ?">
 <meta property="og:url" content="https://allen108108.github.io/blog/2019/10/22/L1%20,%20L2%20Regularization%20%E5%88%B0%E5%BA%95%E6%AD%A3%E5%89%87%E5%8C%96%E4%BA%86%E4%BB%80%E9%BA%BC%20_/index.html">
 <meta property="og:site_name" content="Math.py">
-<meta property="og:description" content="在機器學習中藉由降低 error 來訓練出一個能對未知資料有準確預測的 model，在利用訓練資料優化 error function 的過程中，不意外的會得到一個 error 極低的 model ，但是往往在測試資料上卻會有出乎意外的高 error 會造成這樣的原因是，我們利用訓練資料而得到的模型太過於擬合「訓練資料」本身，反而偏離了一般化的目標，我們稱這現象為 &quot; Overfitti">
+<meta property="og:description" content="在機器學習中藉由降低 error 來訓練出一個能對未知資料有準確預測的 model，在利用訓練資料優化 error function 的過程中，不意外的會得到一個 error 極低的 model ，但是往往在測試資料上卻會有出乎意外的高 error 會造成這樣的原因是，我們利用訓練資料而得到的模型太過於擬合「訓練資料」本身，反而偏離了一般化的目標，我們稱這現象為 &quot; Overfitting &quot;">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/8Gnrd1m.png">
 <meta property="og:image" content="https://i.imgur.com/3UV63nV.png">
@@ -145,13 +145,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -277,7 +277,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>在機器學習中藉由降低 error 來訓練出一個能對未知資料有準確預測的 model，在利用訓練資料優化 error function 的過程中，不意外的會得到一個 error 極低的 model ，但是往往在測試資料上卻會有出乎意外的高 error</p>
-<p>會造成這樣的原因是，我們利用訓練資料而得到的模型太過於擬合「訓練資料」本身，反而偏離了一般化的目標，我們稱這現象為 &quot; Overfitting &quot;</p>
+<p>會造成這樣的原因是，我們利用訓練資料而得到的模型太過於擬合「訓練資料」本身，反而偏離了一般化的目標，我們稱這現象為 " Overfitting "</p>
 <span id="more"></span>
 <p><img src="https://i.imgur.com/8Gnrd1m.png" /> (圖片來源 : <a target="_blank" rel="noopener" href="https://hackernoon.com/memorizing-is-not-learning-6-tricks-to-prevent-overfitting-in-machine-learning-820b091dc42">Memorizing is not learning! — 6 tricks to prevent overfitting in machine learning.</a>)</p>
 <p>從上圖我們可以理解，在機器學習中，我們或許願意以一些準確度來交換一般性，使其在測試資料上的準確度可以提高。</p>
@@ -286,7 +286,7 @@
 <p>正則化我們最常使用的就是 L1 Regularization &amp; L2 Regularization，這兩種方式其實就是在 Loss Function 中加上對應的 L1 及 L2 penalty (懲罰項)</p>
 <p>L1 Penalty : <span class="math inline">\(\lambda\sum\limits_{i=1}^{d}\mid w_i\mid\)</span> L2 Penalty : <span class="math inline">\(\lambda\sum\limits_{i=1}^{d}w_i^2\)</span></p>
 <p>現在的問題是，為什麼 regularization 可以解決 overfitting 的問題 ?</p>
-<p>如果你 google &quot;regularization&quot; 很常會看到以下兩個圖來試圖解釋正則化的運作原理，但我想很多人可能不見得理解</p>
+<p>如果你 google "regularization" 很常會看到以下兩個圖來試圖解釋正則化的運作原理，但我想很多人可能不見得理解</p>
 <p><img src="https://i.imgur.com/3UV63nV.png" /></p>
 <p>要解釋這兩個圖，我想從數學的角度來解釋或許會比較清楚。</p>
 <h2 id="lagrange-乘數法">Lagrange 乘數法</h2>
@@ -304,7 +304,7 @@
 <p>我們換個角度來看，是不是似曾相似 ?</p>
 <p><img width=500 src="https://i.imgur.com/oxsSI4z.jpg" > <img width=500 src="https://i.imgur.com/WK4qrVu.png" ></p>
 <p>沒錯，我們google出來大家常拿來解釋的圖形便為 loss function 與限制的 2D 投影，而 L2 regularization 便是我們為了不讓整個優化過程走的太遠、太精準而加上一個限制解必須在圓柱體內的條件。</p>
-<p>所以我們要求這樣具條件的極限值問題，就可以利用上述的 Lagrange 乘數法將原本的loss function 與我們的條件做結合 : <span class="math inline">\(Loss(w_0,w_1,\ldots,w_d)+\lambda\sum\limits_{i=1}^{d}w_i^2\)</span> 我們可以看到，後面的條件便為我們最開始介紹的 L2 penalty<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>所以我們要求這樣具條件的極限值問題，就可以利用上述的 Lagrange 乘數法將原本的loss function 與我們的條件做結合 : <span class="math inline">\(Loss(w_0,w_1,\ldots,w_d)+\lambda\sum\limits_{i=1}^{d}w_i^2\)</span> 我們可以看到，後面的條件便為我們最開始介紹的 L2 penalty<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <p>同樣的道理，如果我們將限制的條件改為 <span class="math inline">\(\mid w_1\mid+\mid w_2\mid+\ldots+\mid w_d\mid\)</span>，幾何意義上就是把圓柱體的限制改為中心為原點且頂點都在三軸上的正四角柱體內。</p>
 <h2 id="lambda-的影響"><span class="math inline">\(\lambda 的影響\)</span></h2>
 <p>經過了 Lagrange 乘數法的轉換後，Loss Function 加上 Penalty後便多了一個參數 <span class="math inline">\(\lambda\)</span>，這個參數在 sklearn 裡面我們常用的參數是 <span class="math inline">\(\alpha\)</span>，不管是哪一個符號其實都是在針對同樣的東西 --- Lagrange Multiplier。</p>
@@ -318,11 +318,11 @@
 <p>我們可以把我們的超平面變的厚一點，可以容納更多的 Noise ( SVM )，也可以利用投票的方式來把整個 error 變的平均一點 ( bagging、Random Forest )，2; 我們也可以提早結束整個優化過程 ( NNet )....</p>
 <p>從上面的整理我們可以發現，其實我們的很多演算法內，已經包含了 regularization 在其中，型態可能不像 L1 L2 如此明顯，但都在避免 overfitting 的發生。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>其實這段寫得很簡單，不等式的 constraint ，最優解並非 closed-form，我們可以用許多的優化算法來找出解，在優化理論中，Karush-Kuhn-Tucker( KKT ) condition 則是非線性規劃中最佳解的必要條件。<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>如果仔細一點你會發現 : (1) penalty當中沒有 <span class="math inline">\(w_0\)</span> 項 (2)<span class="math inline">\(\lambda r^2\)</span> 不見了 <span class="math inline">\(w_0\)</span> 這個參數 ( threshold )在計算 error 的時候就會被消去，因此不需要考慮。 至於 <span class="math inline">\(\lambda r^2\)</span> 這部分從 KKT condition 可以證明沒有這項的最佳化解仍然相同，並且 <span class="math inline">\(\lambda\)</span> 與半徑 <span class="math inline">\(r\)</span> 成反比。<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>其實這段寫得很簡單，不等式的 constraint ，最優解並非 closed-form，我們可以用許多的優化算法來找出解，在優化理論中，Karush-Kuhn-Tucker( KKT ) condition 則是非線性規劃中最佳解的必要條件。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>如果仔細一點你會發現 : (1) penalty當中沒有 <span class="math inline">\(w_0\)</span> 項 (2)<span class="math inline">\(\lambda r^2\)</span> 不見了 <span class="math inline">\(w_0\)</span> 這個參數 ( threshold )在計算 error 的時候就會被消去，因此不需要考慮。 至於 <span class="math inline">\(\lambda r^2\)</span> 這部分從 KKT condition 可以證明沒有這項的最佳化解仍然相同，並且 <span class="math inline">\(\lambda\)</span> 與半徑 <span class="math inline">\(r\)</span> 成反比。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -393,7 +393,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

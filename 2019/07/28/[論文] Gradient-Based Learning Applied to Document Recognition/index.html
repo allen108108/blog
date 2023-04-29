@@ -30,6 +30,8 @@
 <meta property="og:image" content="https://i.imgur.com/BXEWBsY.png">
 <meta property="og:image" content="https://i.imgur.com/WDxti0L.png">
 <meta property="og:image" content="https://i.imgur.com/U1Qy4xM.png">
+<meta property="og:image" content="https://i.imgur.com/kPUkWKL.png%20=250x">
+<meta property="og:image" content="https://i.imgur.com/7tGTZHB.png%20=400x">
 <meta property="og:image" content="https://i.imgur.com/XJ5yPms.jpg">
 <meta property="og:image" content="https://i.imgur.com/zG8PMM3.png">
 <meta property="og:image" content="https://i.imgur.com/o49ic8B.png">
@@ -144,13 +146,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -282,7 +284,7 @@
         <h2 id="前言">前言</h2>
 <p>機器學習或是深度學習，雖說發展已久，但在近幾年的發展突飛猛進，不管是 google , Facebook 還是 Amazon 的論文發表真的是一篇接著一篇，新技巧、新概念的開展著實讓人覺得不可思議，要了解整個發展以及新技術的應用，閱讀論文想必是最快速的方法。</p>
 <p>在台灣 Pytorch Taiwan 以及許多讀書會也都開始有論文閱讀的部分都是正在進行式，我也是期待自己養成閱讀論文的習慣，因此便著手第一篇論文的閱讀。</p>
-<p>第一篇論文，就從這 Convolutional Neural Network 的發源論文 <em>&quot;Gradient-Based Learning Applied to Document Recognition&quot;</em> 作為起頭吧 ! 這篇論文介紹了經典模型 LeNet-5 進行手寫數字辨識，許多人都將此論文視為 CNN 的起源，雖然說此論文年代稍為久遠，與現今的 CNN 模型稍有不同，但仍可藉由此論文體會、了解 CNN 的架構及精神。</p>
+<p>第一篇論文，就從這 Convolutional Neural Network 的發源論文 <em>"Gradient-Based Learning Applied to Document Recognition"</em> 作為起頭吧 ! 這篇論文介紹了經典模型 LeNet-5 進行手寫數字辨識，許多人都將此論文視為 CNN 的起源，雖然說此論文年代稍為久遠，與現今的 CNN 模型稍有不同，但仍可藉由此論文體會、了解 CNN 的架構及精神。</p>
 <span id="more"></span>
 <p>此論文內容非常充實，足足有46頁之多，本篇文章主要著重在論文兩個核心部分，分別是 Introduction 以及 Convolutional Neural Network for Isolated Character Recognition。</p>
 <h2 id="論文摘要">論文摘要</h2>
@@ -327,7 +329,7 @@ W_k=W_{k-1}-\epsilon\displaystyle{\frac{\partial E^{p_k}(W)}{\partial W}}
 </ol>
 <p>BP 的核心概念就是從輸出層往前推導到輸入層，有效率的計算梯度，雖然在 60 年代初期就有類似的概念出現，但還沒應用在機器學習的問題中。</p>
 <h3 id="d.-learning-in-real-handwriting-recognition-systems">D. Learning in Real Handwriting Recognition Systems</h3>
-<p>( 略 ) 手寫辨識中，最困難的並非辨識單獨的字母或數字，而是要對一整個句子或單字進行切割、分段。&quot;Heuristic Over-segmentation&quot; 便是處理這樣子問題的標準模式，它要能夠生成各種可能的切割方式，並從中找出最合適的組合。</p>
+<p>( 略 ) 手寫辨識中，最困難的並非辨識單獨的字母或數字，而是要對一整個句子或單字進行切割、分段。"Heuristic Over-segmentation" 便是處理這樣子問題的標準模式，它要能夠生成各種可能的切割方式，並從中找出最合適的組合。</p>
 <p>而在此論文的後面幾個部分會提到如何實現 Segmentation ，但這不在本篇文章的討論範圍，因此不再贅述。</p>
 <h3 id="e.-globally-trainable-systems">E. Globally Trainable Systems</h3>
 <p>( 略 ) 這一個部分，主要在談一個完整辨識系統的各個模組是如何運作、如何互相串接，這部分也非本篇文章的討論範圍，因此也先不詳細介紹。</p>
@@ -344,7 +346,7 @@ W_k=W_{k-1}-\epsilon\displaystyle{\frac{\partial E^{p_k}(W)}{\partial W}}
 <p><strong>Local receptive fields</strong></p>
 <p>局部感受野的概念在早期的醫學、生物學上面就有許多的研究，在這樣的局部館策中，視覺神經元可以直接萃取出圖像上的特徵 ( 如 : 邊緣、端點、角落...)，而這些特徵可以組合成夠高層次的特徵。而這些特徵仍然保有其拓樸性質。</p>
 <p>而這樣特徵萃取的概念應用在 Neural Network 上便是利用一組 identical weight vector ( 在 CNN 中稱之為 kernel 或是 filter ) 掃過整張圖片，然後輸出一張 feature map。這樣的過程對應到論文中的 LeNet-5 模型即為 卷積層 ( Convolution Layer )。一個完整的卷積層會有多個 kernel ( weight vector ) 組成，然後轉出成若干個 feature maps。</p>
-<p>之所以稱為卷積，主要是因為 kernel 利用滑動的方式掃過整張圖的每一個位置，並且記錄下每一個位置的狀態然後對應到 feature map 的相對位置，這樣的操作與數學上的 「卷積」 相同。<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>之所以稱為卷積，主要是因為 kernel 利用滑動的方式掃過整張圖的每一個位置，並且記錄下每一個位置的狀態然後對應到 feature map 的相對位置，這樣的操作與數學上的 「卷積」 相同。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <p>經過卷積層的操作後，一旦特徵被偵測出來後，這個特徵的精確位置便不是那麼重要，重要的反而是這個特徵與其他特徵的相對位置。</p>
 <p><strong>Sub-sampling</strong></p>
 <p>既然我們在意的是特徵間的相對位置，而不在意其精確的位置，最簡單的方式就是直接減少 feature map 的空間分辨率 ( Spatial Resolution )，做法便是將局部感受野進行平均化及子採樣，這過程便對應到 LeNet-5 的 Subsampling Layer ( 又稱作池化層 )。</p>
@@ -367,7 +369,7 @@ W_k=W_{k-1}-\epsilon\displaystyle{\frac{\partial E^{p_k}(W)}{\partial W}}
 <p>這一層一共有 <span class="math inline">\((1+1)\times 6=12\)</span>個權重，且有 <span class="math inline">\(4\times 14^2\times 6+14^2\times 6=5880\)</span> 個連結數。</p>
 <h4 id="c_3-卷積層"><span class="math inline">\(C_3\)</span> (卷積層)</h4>
 <p>此層較為特別，作者採用的方式是將數個 <span class="math inline">\(S_2\)</span> 的 feature maps 一起做卷積，這樣會產生一共 16 個 feature maps，且每一個 feature map 大小為 <span class="math inline">\(10\times 10\)</span>。( 連結方式如下圖右 )</p>
-<p><embed src="https://i.imgur.com/kPUkWKL.png%20=250x" /> <embed src="https://i.imgur.com/7tGTZHB.png%20=400x" /></p>
+<p><img src="https://i.imgur.com/kPUkWKL.png%20=250x" /> <img src="https://i.imgur.com/7tGTZHB.png%20=400x" /></p>
 <p>為何不採用全連接的方式 ? 首先，這樣可以減少參數。其次，<span class="math inline">\(C_3\)</span> 每一個輸入的 feature map 都是 <span class="math inline">\(C_1\)</span> 的 kernel 針對輸入圖像所萃取出來的特徵圖，利用這樣不對稱的連結方式，反而可以組合成更高層級的特徵。</p>
 <p>這一層中我們有 <span class="math inline">\(6\times(25\times 3+1)+9\times(4\times 25+1)+1\times(6\times 25+1)=1516\)</span> 個參數及 <span class="math inline">\(151600\)</span> 個連結。</p>
 <h4 id="s_4-池化層"><span class="math inline">\(S_4\)</span> (池化層)</h4>
@@ -403,7 +405,7 @@ E(W)=\displaystyle{\frac{1}{P}}\sum\limits_{p=1}^{P}y_{D_{p}}(Z^p,W)
 <p>但這樣的 Loss Function 有一些缺點 :</p>
 <ol type="1">
 <li><p>RBF 的參數不可拿來訓練。倘若 RBF 的權重也可拿來訓練，會導致 RBF 權重會因不斷調整而趨於相等，而 <span class="math inline">\(F_6\)</span> 層的結果也會趨近於 RBF 權重，最後 RBF輸出均為 0。亦即不管輸入什麼資料，最後訓練出來的 RBF 輸出都會是 0 。</p></li>
-<li><p>缺乏考慮各類別間的競爭關係。這樣的競爭關係我們可以用 Maximum a posteriori ( MAP , 最大後驗機率法 ) 來表示。假定一個樣本，我們希望他的預測可以接近真實的 label ，那我們從機率的角度來看就是要試著最大化它的後驗機率<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>。( 或是最小化正確類別的機率值取 <span class="math inline">\(\log\)</span> )。因此從這個方向我們可以修改一下我們的 Loss Function</p></li>
+<li><p>缺乏考慮各類別間的競爭關係。這樣的競爭關係我們可以用 Maximum a posteriori ( MAP , 最大後驗機率法 ) 來表示。假定一個樣本，我們希望他的預測可以接近真實的 label ，那我們從機率的角度來看就是要試著最大化它的後驗機率<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。( 或是最小化正確類別的機率值取 <span class="math inline">\(\log\)</span> )。因此從這個方向我們可以修改一下我們的 Loss Function</p></li>
 </ol>
 <p><span class="math display">\[
 E(W)=\displaystyle{\frac{1}{P}}\sum\limits_{p=1}^{P}y_{D_{p}}(Z^p,W)+\log(e^{-j}+\sum\limits_{i}e^{-y_i(Z^p,W)})
@@ -420,11 +422,11 @@ E(W)=\displaystyle{\frac{1}{P}}\sum\limits_{p=1}^{P}y_{D_{p}}(Z^p,W)+\log(e^{-j}
 <li>論文筆記 --- <a target="_blank" rel="noopener" href="https://hackmd.io/@K3QB5C-YSsyBr6dBBo6IkQ/rka5m35NX">Gradient-Based Learning Applied to Document Recognition</a></li>
 </ol>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>在CNN上卷積操作其實就是 Slide + Inner Product，利用滑動的方式遍歷所有位置，並記錄下 kernel 與相對位置的內積值於 feature map 的相對位置上。<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>條件機率 : 在事件 <span class="math inline">\(y\)</span> 發生的前提下，事件 <span class="math inline">\(x\)</span> 發生的機率 <span class="math inline">\(\boldsymbol{P}(x\mid y)\)</span> 後驗機率 : 事件 <span class="math inline">\(x\)</span> 事件發生後的反向條件機率 <span class="math inline">\(\boldsymbol{P}(y\mid x)=\displaystyle{\frac{\boldsymbol{P}(x\mid y)\cdot\boldsymbol{P}(y)}{\boldsymbol{P}(x)}}\)</span><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>在CNN上卷積操作其實就是 Slide + Inner Product，利用滑動的方式遍歷所有位置，並記錄下 kernel 與相對位置的內積值於 feature map 的相對位置上。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>條件機率 : 在事件 <span class="math inline">\(y\)</span> 發生的前提下，事件 <span class="math inline">\(x\)</span> 發生的機率 <span class="math inline">\(\boldsymbol{P}(x\mid y)\)</span> 後驗機率 : 事件 <span class="math inline">\(x\)</span> 事件發生後的反向條件機率 <span class="math inline">\(\boldsymbol{P}(y\mid x)=\displaystyle{\frac{\boldsymbol{P}(x\mid y)\cdot\boldsymbol{P}(y)}{\boldsymbol{P}(x)}}\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -495,7 +497,7 @@ E(W)=\displaystyle{\frac{1}{P}}\sum\limits_{p=1}^{P}y_{D_{p}}(Z^p,W)+\log(e^{-j}
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

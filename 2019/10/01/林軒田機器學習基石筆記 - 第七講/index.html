@@ -140,13 +140,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -277,7 +277,7 @@
     <div class="post-body" itemprop="articleBody">
         <blockquote>
 <ul>
-<li><p><strong>本文為一系列課程之筆記，建議從&quot; <a href="hhttps://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> &quot;開始閱讀</strong></p></li>
+<li><p><strong>本文為一系列課程之筆記，建議從" <a href="hhttps://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> "開始閱讀</strong></p></li>
 <li><p><strong>本文討論內容請參考: 機器學習基石第七講 : The VC Dimension</strong></p></li>
 <li><p><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></p></li>
 </ul>
@@ -349,7 +349,7 @@
 <blockquote>
 <p>在這裡，VC Dimension與 Algorithm , Distribution 或是 target function都無關</p>
 </blockquote>
-<p>不管是直觀<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>或經由繁雜的證明<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>，我們都不難確認 <span class="math inline">\(d_{vc}(\mathbb{H})= d+1\)</span> ( <span class="math inline">\(d\)</span> 為資料 <span class="math inline">\(\mathbb{X}\)</span> 的維度 )</p>
+<p>不管是直觀<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>或經由繁雜的證明<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>，我們都不難確認 <span class="math inline">\(d_{vc}(\mathbb{H})= d+1\)</span> ( <span class="math inline">\(d\)</span> 為資料 <span class="math inline">\(\mathbb{X}\)</span> 的維度 )</p>
 <p>總的來說， <span class="math inline">\(h\in \mathbb{H}\ ,\ h(\mathbb{X})=Sign(\sum\limits_{i=1}^{d}w_ix_i+w_0)\)</span> * <span class="math inline">\(h\)</span> 是由 <span class="math inline">\((w_1,w_2,w_3,...,w_d)\)</span> 所決定，我們可以將 <span class="math inline">\(d_{vc}(\mathbb{H})=d+1\)</span>視為自由度 * <span class="math inline">\(d_{vc}(\mathbb{H})\)</span> 即為 <span class="math inline">\(\mathbb{H}\)</span> 的能力指標 * <span class="math inline">\(\mid\mathbb{H}\mid=M\ is\ finite\implies\)</span> 可以利用 <span class="math inline">\(M\)</span> 來控制VC bound <span class="math inline">\(\mid\mathbb{H}\mid=M\ is\ infinite\implies\)</span> 可以利用 <span class="math inline">\((2N)^{d_{vc}}\)</span> 取代 <span class="math inline">\(M\)</span> 來控制 VC bound</p>
 <p><strong>[ Remark ] 讓我們來重新審視一下 VC Bound</strong></p>
 <p><span class="math inline">\(\mathbb{P}_{\mathbb{D}}[\\![\mid E_{in}(g)-E_{out}(g)\mid&gt;\epsilon]\\!]\leq 4(2N)^{d_{vc}}e^{-\frac{1}{8}\epsilon^2N}\)</span></p>
@@ -368,11 +368,11 @@
 <p><span class="math inline">\(\because \mathbb{D}\ can\ be\ shattered\)</span> <span class="math inline">\(\therefore \forall\ \mathbb{Y}=\left\{y_1,...,y_{d+2}\right\}\subseteq\left\{+1,-1\right\}\)</span> (不管 <span class="math inline">\(\mathbb{X}_k\)</span> 怎麼被分類) <span class="math inline">\(\exists\ \mathbb{W}\ s.t.\ y_k=Sign(\mathbb{W}^T\mathbb{X}_k)\)</span> (我們都可以找到 <span class="math inline">\(\mathbb{W}\)</span> 來滿足)</p>
 <p>那我們指定一個特殊的分類 : <span class="math inline">\(\mathbb{X}_i=y_i=-1\)</span> 且 <span class="math inline">\(\mathbb{X}_j=y_j=Sign(a_j)\ ,\ \forall j\neq i\)</span> <span class="math inline">\(\implies \mathbb{W}^T\mathbb{X}&lt;0\ and\ (\mathbb{W}^T\mathbb{X}_j)\cdot(Sign(a_j))&gt;0\)</span> (兩者同號) <span class="math inline">\(\implies\mathbb{W}^T\mathbb{X}=\sum\limits _{j\neq i}a_j\mathbb{W}^T\mathbb{X}_j&gt;0\)</span> (Contradiction!)</p>
 <p><span class="math inline">\(\therefore\forall\mathbb{D}\ with\ size-d+2\ cannot\ be\ shattered\)</span> <span class="math inline">\(\implies d_{vc}(\mathbb{H})\leq d+1\)</span></p>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>從 Linear Algebra 的角度來看，我們可以如下定義出「dimension」: <span class="math inline">\(V\ is\ a\ vector\ space\ ,dim(V)=the\ cardinal\ number\ of\ B\)</span> <span class="math inline">\(where\ B\ is\ a\ basis\ of\ V\ i.e.\ V=span(B)\ and\ B\ is\ a\ linear\ independent\ set.\)</span> 對比到我們的hypothesis set <span class="math inline">\(\mathbb{H}\)</span>，之前我們才說過，<span class="math inline">\(\mathbb{H}\)</span> 可以唯一由 <span class="math inline">\(\left\{w_0,w_1,...,w_d\right\}\)</span> 決定，且 <span class="math inline">\(w_i\)</span>之間互相獨立，如若我們把 VC dimension 看成是 <span class="math inline">\(\mathbb{H}\)</span> 這個空間的維度，那麼也可以把 <span class="math inline">\(\left\{w_0,w_1,...,w_d\right\}\)</span> 看成是他的一組基底，那麼 VC dimension很明顯的就是 <span class="math inline">\(d+1\)</span>。 <img src="https://i.imgur.com/CdqQidL.png" /> 其實意義上跟課程的這個圖是一樣的。<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>試證明 <span class="math inline">\(VC\ dimension=d+1\)</span> &lt;p.f&gt; <span class="math inline">\(Claim:d_{vc}\geq d+1\)</span> <span class="math inline">\(Assume\ \mathbb{D}=\left\{\mathbb{X}_0,\mathbb{X}_1,...,\mathbb{X}_d\right\}\)</span> <span class="math inline">\(where\ \mathbb{X}_0=(0,0,...,0)\)</span> <span class="math inline">\(\mathbb{X}_1=(1,0,...,0)\)</span> <span class="math inline">\(\vdots\)</span> <span class="math inline">\(\mathbb{X}_d=(0,0,...,1)\)</span><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>從 Linear Algebra 的角度來看，我們可以如下定義出「dimension」: <span class="math inline">\(V\ is\ a\ vector\ space\ ,dim(V)=the\ cardinal\ number\ of\ B\)</span> <span class="math inline">\(where\ B\ is\ a\ basis\ of\ V\ i.e.\ V=span(B)\ and\ B\ is\ a\ linear\ independent\ set.\)</span> 對比到我們的hypothesis set <span class="math inline">\(\mathbb{H}\)</span>，之前我們才說過，<span class="math inline">\(\mathbb{H}\)</span> 可以唯一由 <span class="math inline">\(\left\{w_0,w_1,...,w_d\right\}\)</span> 決定，且 <span class="math inline">\(w_i\)</span>之間互相獨立，如若我們把 VC dimension 看成是 <span class="math inline">\(\mathbb{H}\)</span> 這個空間的維度，那麼也可以把 <span class="math inline">\(\left\{w_0,w_1,...,w_d\right\}\)</span> 看成是他的一組基底，那麼 VC dimension很明顯的就是 <span class="math inline">\(d+1\)</span>。 <img src="https://i.imgur.com/CdqQidL.png" /> 其實意義上跟課程的這個圖是一樣的。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>試證明 <span class="math inline">\(VC\ dimension=d+1\)</span> &lt;p.f&gt; <span class="math inline">\(Claim:d_{vc}\geq d+1\)</span> <span class="math inline">\(Assume\ \mathbb{D}=\left\{\mathbb{X}_0,\mathbb{X}_1,...,\mathbb{X}_d\right\}\)</span> <span class="math inline">\(where\ \mathbb{X}_0=(0,0,...,0)\)</span> <span class="math inline">\(\mathbb{X}_1=(1,0,...,0)\)</span> <span class="math inline">\(\vdots\)</span> <span class="math inline">\(\mathbb{X}_d=(0,0,...,1)\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -443,7 +443,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

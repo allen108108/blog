@@ -151,13 +151,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -283,7 +283,7 @@
         <p>在 GAN 的應用中，前面有提到可以用來做 conditional image generation，這種技術我們可以用來進行圖像風格的轉換、語音上的轉換...等等。</p>
 <span id="more"></span>
 <p>當然我們也可以用在 NLP 領域中，我們稱之為 conditional sequence generation，簡單來說，就是一個生成 Sequence 的任務，比較常看見的例子就是語音轉文字、語音翻譯、聊天機器人...等。這樣的輸出就是一串 Word Sequence。</p>
-<p>然而，在一般的 Seq2Seq Model 中利用 MLE 來做預測，很容易會碰到一些問題。舉例來說，當一個　Model 接收到 &quot; How are you ? &quot; 這樣的句子時，訓練階段我們認為 &quot; I'm good. &quot; 這樣的回答是好的。訓練結束過後，當我們在進行應用時，遇到相同問題，下列兩個回答，機器人會怎麼做抉擇 ?</p>
+<p>然而，在一般的 Seq2Seq Model 中利用 MLE 來做預測，很容易會碰到一些問題。舉例來說，當一個　Model 接收到 " How are you ? " 這樣的句子時，訓練階段我們認為 " I'm good. " 這樣的回答是好的。訓練結束過後，當我們在進行應用時，遇到相同問題，下列兩個回答，機器人會怎麼做抉擇 ?</p>
 <ol type="1">
 <li>I'm John.</li>
 <li>Not Bad.</li>
@@ -355,9 +355,9 @@
 <li>藉由更新 <span class="math inline">\(G\)</span> 來減少 <span class="math inline">\(D(c,x)\)</span> ，並增加 <span class="math inline">\(D(c&#39;,\tilde{x})\)</span></li>
 </ul></li>
 </ul>
-<p>然而，Sentence 上的訓練，並非直接輸入一個 Sentence 向量，<span class="math inline">\(G\)</span> 是一個 Seq2Seq Model，可能使用的是一個類似 RNN 的方式在運作，每一次吐出一個 token<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>。但是 RNN 在運作的過程中，其實是藉由抽樣 (sample) 來得到 token。</p>
+<p>然而，Sentence 上的訓練，並非直接輸入一個 Sentence 向量，<span class="math inline">\(G\)</span> 是一個 Seq2Seq Model，可能使用的是一個類似 RNN 的方式在運作，每一次吐出一個 token<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。但是 RNN 在運作的過程中，其實是藉由抽樣 (sample) 來得到 token。</p>
 <p><img src="https://i.imgur.com/y7hHuFT.jpg" /></p>
-<p>現在遇到的困難是，<span class="math inline">\(G\)</span> 利用這樣抽樣的過程得到 token，當我們要進行 <span class="math inline">\(G\)</span> 的優化時，這個過程是沒有辦法微分的。<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>現在遇到的困難是，<span class="math inline">\(G\)</span> 利用這樣抽樣的過程得到 token，當我們要進行 <span class="math inline">\(G\)</span> 的優化時，這個過程是沒有辦法微分的。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <p>無法微分就不能進行 GD 優化，但在許多 paper 中有許多種不同的方式來解決這樣的問題 :</p>
 <ol type="1">
 <li>Gumbel-Softmax</li>
@@ -376,14 +376,14 @@
 <p>第三個方法，我們利用 RL 訓練的方式來進行，可以解決這個不可微分的狀況。</p>
 <p>作法很簡單，其實就把 RL 中的人改成 <span class="math inline">\(D\)</span>，把 Reward <span class="math inline">\(R(c^i,x^i)\)</span> 改成 <span class="math inline">\(D(c^i,x^i)\)</span>，然後訓練方法跟上面介紹的 RL 訓練過程一模一樣即可。</p>
 <p>但是上面的步驟只有 train <span class="math inline">\(G\)</span> ，但現在我們還必須要 train <span class="math inline">\(D\)</span>，方式跟一般的 Discriminator 訓練其實一樣，我們用真人對話的資料跟生成對話的資料輸入給 <span class="math inline">\(D\)</span>，讓其盡可能地分辨出真偽。最後再反覆地對 <span class="math inline">\(G\)</span> 及 <span class="math inline">\(D\)</span> 進行訓練即可。</p>
-<p>現在假設我們輸入一個 sentence <span class="math inline">\(c^i=\)</span>&quot; What's your name ? &quot;，而我們得到一個生成回應 <span class="math inline">\(x^i=\)</span> &quot; I don't know &quot;</p>
-<p>這樣的回應並不是很好，因此我們會希望得到的 Reward 是負值，也會希望<span class="math inline">\(x^i\)</span> 的機率 <span class="math inline">\(P(x^i|c^i)\)</span> 下降。但我們知道整個 <span class="math inline">\(x^i\)</span> 的生成是利用 RNN 一個一個 token 生成出來的。在這個例子中，可以切出三個 token : &quot; I &quot;, &quot;'don't&quot;,&quot;know&quot;，而且 <span class="math inline">\(x^i\)</span> 的發生機率應該是這三者的個別發生機率之乘積，而當我們希望 <span class="math inline">\(x^i\)</span> 的機率 <span class="math inline">\(P(x^i|c^i)\)</span> 下降 也就是希望上面這三個 token 的發生機率均下降。</p>
+<p>現在假設我們輸入一個 sentence <span class="math inline">\(c^i=\)</span>" What's your name ? "，而我們得到一個生成回應 <span class="math inline">\(x^i=\)</span> " I don't know "</p>
+<p>這樣的回應並不是很好，因此我們會希望得到的 Reward 是負值，也會希望<span class="math inline">\(x^i\)</span> 的機率 <span class="math inline">\(P(x^i|c^i)\)</span> 下降。但我們知道整個 <span class="math inline">\(x^i\)</span> 的生成是利用 RNN 一個一個 token 生成出來的。在這個例子中，可以切出三個 token : " I ", "'don't","know"，而且 <span class="math inline">\(x^i\)</span> 的發生機率應該是這三者的個別發生機率之乘積，而當我們希望 <span class="math inline">\(x^i\)</span> 的機率 <span class="math inline">\(P(x^i|c^i)\)</span> 下降 也就是希望上面這三個 token 的發生機率均下降。</p>
 <p><span class="math display">\[
 \nabla\bar{R}_{\theta}\approx\frac{1}{N}\sum\limits_{i=1}^{N}D(x^i,c^i)\nabla\log P_{\theta}(x^i|c^i)
 \]</span></p>
 <p><img src="https://i.imgur.com/euBGH4d.png" /></p>
-<p>但是 &quot;I&quot; 這個 token 其實並沒有這麼差，如果要將其產生機率下降其實有些不合理。但在「理想狀況」下，這樣的狀況其實並沒有什麼問題，因為 &quot; I don't know &quot; 是抽樣出來的結果，我們也可能抽樣到 <span class="math inline">\(x^i=\)</span> &quot; I am John &quot;, &quot;I am Mary&quot; 之類的 Sentence，這些回應句都該得到正值的 Reward，而且希望 <span class="math inline">\(P(x^i|c^i)\)</span> 上升，當然這也代表了 &quot;I&quot; 出現的機率在這樣的前提下應該要被提高。</p>
-<p>於是在整個抽樣下，只要我們抽樣得夠多，&quot;I&quot; 這個 token 一加一減後其實會抵消，不會造成負面的影響。但這前提就是 「抽樣得夠多」，我們往往會知道這種理想狀態通常不會發生。</p>
+<p>但是 "I" 這個 token 其實並沒有這麼差，如果要將其產生機率下降其實有些不合理。但在「理想狀況」下，這樣的狀況其實並沒有什麼問題，因為 " I don't know " 是抽樣出來的結果，我們也可能抽樣到 <span class="math inline">\(x^i=\)</span> " I am John ", "I am Mary" 之類的 Sentence，這些回應句都該得到正值的 Reward，而且希望 <span class="math inline">\(P(x^i|c^i)\)</span> 上升，當然這也代表了 "I" 出現的機率在這樣的前提下應該要被提高。</p>
+<p>於是在整個抽樣下，只要我們抽樣得夠多，"I" 這個 token 一加一減後其實會抵消，不會造成負面的影響。但這前提就是 「抽樣得夠多」，我們往往會知道這種理想狀態通常不會發生。</p>
 <p>所以我們會希望當 <span class="math inline">\(P(x^i|c^i)\)</span> 上升或下降時，每一個 token 的機率可以個別進行估計，不要一起上升或下降。</p>
 <p>底下是採用的修改方式 ( 課程中簡單帶過，我們也簡單看過就好 )</p>
 <p><img src="https://i.imgur.com/hF2pffJ.png" /></p>
@@ -405,7 +405,7 @@
 <p>下圖可以明顯看出，僅使用了 500k 筆資料進行的 Unsupervised Learning，其準確度進逼使用 3.8M 筆資料進行 Supervised Learning。也就是說，用了相較少量的資料我就可以做出幾乎相同的成果。</p>
 <p><img src="https://i.imgur.com/oxZdYWX.png" /></p>
 <h3 id="unsupervised-machine-translation">Unsupervised Machine Translation</h3>
-<p>課程這部分沒講什麼，有興趣的可以看看課程中給的兩篇 Paper : &quot; <em><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.04087">Word Translation Without Parallel Data</a></em> &quot; 以及 &quot; <em><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1711.00043">Unsupervised Machine Translation Using Monolingual Corpora Only</a></em> &quot;</p>
+<p>課程這部分沒講什麼，有興趣的可以看看課程中給的兩篇 Paper : " <em><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.04087">Word Translation Without Parallel Data</a></em> " 以及 " <em><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1711.00043">Unsupervised Machine Translation Using Monolingual Corpora Only</a></em> "</p>
 <p>比較有趣的還是實驗結果，在下途中可以看到，如果我們手中的資料十萬筆，利用 Unsupervised 的方式是可能會勝過 Supervised 的。</p>
 <p><img src="https://i.imgur.com/rL2as6D.png" /></p>
 <h3 id="unsupervised-speech-recognition">Unsupervised Speech Recognition</h3>
@@ -415,11 +415,11 @@
 <p><img src="https://i.imgur.com/byVjRGy.png" /></p>
 <p>語音使用 TIMIT Corpus ，而文字使用的是 WMT Corpus，這兩個語料庫間並沒有對應關係。從上面的實驗解果看來，我們可能會覺得 Unsupervised 的效果不如預期，但事實上這樣的表現遠遠勝過隨機亂猜，這表明了機器仍有學習到一些東西。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Token 在 NLP 領域中指的是句子經過切詞後產生的不同長度的字詞，不一定是&quot;字&quot;(word)，而每一個 token 我們都會以一個向量來表示。<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>我們可以從一個比較直觀的角度來看這個取樣的過程，取樣其實不會是一個平滑的過程，既然不是平滑的，那我們就無法對這樣的函數(<span class="math inline">\(G\)</span>)進行微分。<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>Token 在 NLP 領域中指的是句子經過切詞後產生的不同長度的字詞，不一定是"字"(word)，而每一個 token 我們都會以一個向量來表示。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>我們可以從一個比較直觀的角度來看這個取樣的過程，取樣其實不會是一個平滑的過程，既然不是平滑的，那我們就無法對這樣的函數(<span class="math inline">\(G\)</span>)進行微分。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -490,7 +490,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

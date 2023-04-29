@@ -149,13 +149,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -301,7 +301,7 @@ Generator+Classifier = Auto-Encoder
 <p><img src="https://i.imgur.com/lvaX2CH.png" /></p>
 <p>( a ) : Info GAN 改變第一維的數值可以改變數字 ( b ) : 一般 GAN 改變第一維的數值影響並不明顯 ( c ) : Info GAN 改變第二維的數值可以改變角度 ( d ) : Info GAN 改變第三維的數值可以改變手寫粗細</p>
 <h2 id="vae-gan">VAE GAN</h2>
-<p>VAE GAN 就是一種 VAE ( Variational Auto Encoder ) 與 GAN 互相輔助的 GAN 變體。關於 VAE 的詳細介紹可以參閱 &quot; <em><a target="_blank" rel="noopener" href="http://bit.ly/35nij9b">Unsupervised Learning – Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a></em> &quot; 一文。簡單來說，VAE 從原本 AE 內部要求取向量 Latent Code 改變成找出其分佈，來改善 AE 本身的不足。</p>
+<p>VAE GAN 就是一種 VAE ( Variational Auto Encoder ) 與 GAN 互相輔助的 GAN 變體。關於 VAE 的詳細介紹可以參閱 " <em><a target="_blank" rel="noopener" href="http://bit.ly/35nij9b">Unsupervised Learning – Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a></em> " 一文。簡單來說，VAE 從原本 AE 內部要求取向量 Latent Code 改變成找出其分佈，來改善 AE 本身的不足。</p>
 <p>而 VAE GAN 其實就是將 VAE 的 decoder 視為 generator，後面再接上一個 Discriminator 的結構。</p>
 <p><img src="https://i.imgur.com/MoSzB5r.png" /></p>
 <p>VAE 藉由 Reconstruction Error 的優化來生成接近輸入的圖片，但 Reconstruction Error 低並不代表整個生成圖像夠真實，大多數 VAE 生成的圖片都是模糊不清楚的，因此 Discriminator 在這裡就是為了讓生成圖片可以更像真實的圖像。</p>
@@ -347,11 +347,11 @@ Generator+Classifier = Auto-Encoder
 <p>但是要注意，這是指兩者的 optimal 狀況下，兩者會相等，但我們知道，基本上 optimal 的情況幾乎不會出現，所以兩種方式訓練出來的 model 還是會有所不同，在實務上 BiGAN 有較強的語意捕捉能力，也就是生成的圖片就意義上會與原輸入圖片的概念較為相近。</p>
 <h2 id="triple-gan">Triple GAN</h2>
 <p><img src="https://i.imgur.com/aPAkgEv.png" /></p>
-<p>在論文 &quot; <em>Triple Generative Adversarial Nets</em> &quot; 中提出的這個是 基於 Semi-Supervised Learning 的一種 GAN 變體。</p>
+<p>在論文 " <em>Triple Generative Adversarial Nets</em> " 中提出的這個是 基於 Semi-Supervised Learning 的一種 GAN 變體。</p>
 <p>Generator <span class="math inline">\(G\)</span> 跟 Discriminator <span class="math inline">\(D\)</span> 構成了一個 Conditional GAN，這邊倒是沒有什麼問題。Triple GAN 最特別的就是引入了一個 Classifier <span class="math inline">\(C\)</span>。一般來說，我們手邊有 Label 的資料通常不會很多，我們可以利用這些已經標記好的資料先訓練出一個分類器，這個分類器的作用就是將生成的資料進行機器標註，在跟原本已經標註好的資料一起丟進 Discriminator。</p>
 <h2 id="domain-adversarial-neural-network">Domain Adversarial Neural Network</h2>
 <p><img src="https://i.imgur.com/02dhSS4.png" /></p>
-<p>DANN 在之前的課程 &quot; <em><a target="_blank" rel="noopener" href="http://bit.ly/2OExmWb">Transfer Learning 遷移學習</a></em> &quot; 中有過比較詳細的介紹。</p>
+<p>DANN 在之前的課程 " <em><a target="_blank" rel="noopener" href="http://bit.ly/2OExmWb">Transfer Learning 遷移學習</a></em> " 中有過比較詳細的介紹。</p>
 <p>簡單來說，就是要訓練一個特徵萃取器可以不被 Domain 干擾 (所以要試圖騙過 domain classifier) ，另外，萃取出來的特徵還要確認可以被正確分類 ( label predict 的工作 )。</p>
 <p>DANN 的訓練過程可以同時進行，也可以如同 GAN 一樣利用迭代的方式進行。( 當然，GAN要同時訓練也是沒有問題，但是穩定性會變得較差 )</p>
 <h2 id="feature-disentangle">Feature Disentangle</h2>
@@ -433,7 +433,7 @@ Generator+Classifier = Auto-Encoder
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -148,13 +148,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -282,7 +282,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gc</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> lightgbm <span class="keyword">as</span> lgb</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm_notebook</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_auc_score, roc_curve</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> StratifiedKFold</span><br><span class="line">warnings.filterwarnings(<span class="string">&#x27;ignore&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <p>從這邊我們大概可以看到在後面的Code裡面大概會用到那些模組、工具 ( 不過 Gabriel Preda的這一連串匯入中，有些本次似乎用不到。 )</p>
 <p>會用 <strong>os</strong> 模組做一些系統操作 ( EX: 讀取檔案...)、<strong>numpy</strong>及<strong>pandas</strong>則是數據處理的好幫手、<strong>seaborn</strong>及<strong>matplotlib</strong>處理視覺化、<strong>roc_auc_score</strong>用來評估、<strong>StratifiedKFold</strong>用來驗證，最後此次用的 Model 則是 <strong>lightgbm</strong></p>
-<p>而這一整份的模組或許也可以當作我們的一份必備清單，日後是否有需要增減再做調整。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%%time</span><br><span class="line">train_df = pd.read_csv(<span class="string">&quot;train.csv&quot;</span>)</span><br><span class="line">test_df = pd.read_csv(<span class="string">&quot;test.csv&quot;</span>)</span><br></pre></td></tr></table></figure> 這裡，我將kaggle提供的檔案跟這個ipynb檔放在一起，所以在讀取的時候就很簡單，直接讀取就可以。若不同資料夾存放則可使用os模組進行讀取 <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>而這一整份的模組或許也可以當作我們的一份必備清單，日後是否有需要增減再做調整。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%%time</span><br><span class="line">train_df = pd.read_csv(<span class="string">&quot;train.csv&quot;</span>)</span><br><span class="line">test_df = pd.read_csv(<span class="string">&quot;test.csv&quot;</span>)</span><br></pre></td></tr></table></figure> 這裡，我將kaggle提供的檔案跟這個ipynb檔放在一起，所以在讀取的時候就很簡單，直接讀取就可以。若不同資料夾存放則可使用os模組進行讀取 <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <h3 id="data-exploration">Data exploration</h3>
 <h4 id="check-the-data">Check the data</h4>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">train_df.shape, test_df.shape</span><br></pre></td></tr></table></figure>
@@ -313,7 +313,7 @@
 <p>這裡的部分，主要是把剛剛觀察的現象做一個視覺化的處理來確認我們的「觀察」是有根據的。從這裏的圖片看來，不管哪一個欄位，在兩個部分的資料的分布都算集中。</p>
 <p>( 意即 : 在這40萬筆資料中，每一筆的資料的各個欄位/特徵大概都在某些範圍內不會有太大的異常值 )</p>
 <blockquote>
-<p>有兩個問題大家可以思考一下 : 1. 圖片中每一個點代表的意思是什麼?<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> 2. 假如出現完全零散不集中、或是呈現特殊集中方式代表的意義是什麼 ?</p>
+<p>有兩個問題大家可以思考一下 : 1. 圖片中每一個點代表的意思是什麼?<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 2. 假如出現完全零散不集中、或是呈現特殊集中方式代表的意義是什麼 ?</p>
 </blockquote>
 <pre><code><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">features = [<span class="string">&#x27;var_0&#x27;</span>, <span class="string">&#x27;var_1&#x27;</span>,<span class="string">&#x27;var_2&#x27;</span>,<span class="string">&#x27;var_3&#x27;</span>, <span class="string">&#x27;var_4&#x27;</span>, <span class="string">&#x27;var_5&#x27;</span>, <span class="string">&#x27;var_6&#x27;</span>, </span><br><span class="line">           <span class="string">&#x27;var_7&#x27;</span>, <span class="string">&#x27;var_8&#x27;</span>, <span class="string">&#x27;var_9&#x27;</span>, <span class="string">&#x27;var_10&#x27;</span>,<span class="string">&#x27;var_11&#x27;</span>,<span class="string">&#x27;var_12&#x27;</span>, <span class="string">&#x27;var_13&#x27;</span>, <span class="string">&#x27;var_14&#x27;</span>, <span class="string">&#x27;var_15&#x27;</span>, </span><br><span class="line">           ]</span><br><span class="line">plot_feature_scatter(train_df[<span class="number">0</span>:<span class="number">1</span>],test_df[<span class="number">0</span>:<span class="number">1</span>], features)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 我們就只取一個點來看看會是什麼
@@ -330,11 +330,11 @@ index=0 時 Test Data var_0= 11.0656 (Y軸)</code></pre>
 <p>遇到了一個大難題，這是一個 unbalence 的情況。 之所以會困難是因為，如果我們訓練出一個模型，只會把所有資料無差別分類成 target 0 (Dummy classifier)，這樣的準確率也會接近90%，這會影響我們評估這個模型的好壞。(++這也是為什麼在最前面我們發現他選擇使用roc_auc_score, roc_curve來做為評估模型的指標++)</p>
 <p>嗯，很順利的現在進行了1/3.....</p>
 <h3 id="to-be-continue....">To be Continue....</h3>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>存放於不同資料夾的檔案讀取 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dpath=os.path.abspath(<span class="string">&quot;待讀取資料的絕對路徑(不含檔案本身)&quot;</span>) <span class="comment">#資料夾位置</span></span><br><span class="line">fpath=os.path.join(dpath,<span class="string">&quot;檔名(含副檔名)&quot;</span>)                <span class="comment">#檔案位置</span></span><br><span class="line">a_train=pd.read_csv(fpath)                               <span class="comment">#讀檔</span></span><br></pre></td></tr></table></figure><a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>這個問題我其實思考了一陣子，我們稍微更改一下code你就能知道這代表什麼了:<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>存放於不同資料夾的檔案讀取 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dpath=os.path.abspath(<span class="string">&quot;待讀取資料的絕對路徑(不含檔案本身)&quot;</span>) <span class="comment">#資料夾位置</span></span><br><span class="line">fpath=os.path.join(dpath,<span class="string">&quot;檔名(含副檔名)&quot;</span>)                <span class="comment">#檔案位置</span></span><br><span class="line">a_train=pd.read_csv(fpath)                               <span class="comment">#讀檔</span></span><br></pre></td></tr></table></figure><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>這個問題我其實思考了一陣子，我們稍微更改一下code你就能知道這代表什麼了:<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -405,7 +405,7 @@ index=0 時 Test Data var_0= 11.0656 (Y軸)</code></pre>
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -148,13 +148,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -302,9 +302,9 @@
 <h2 id="相關工作-related-work">相關工作 Related work</h2>
 <p>這篇論文建立在許多領域先前的努力之上，其中包含 : 集合預測的二元匹配、Transformer 的 Encoder-Decoder 結構、平行解碼以及物件偵測。</p>
 <h3 id="集合預測-set-prediction">集合預測 Set Prediction</h3>
-<p>沒有任何的典型深度學習模型 (Canonical Deep Learning Model)<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> 可以用來直接預測集合。最基本的集合預測任務就是多標籤分類 (Multilabel Classification)，這種任務的基準方法，one-vs-rest，也不適合用於偵測某個結構在許多元素之間的存在位置這類型的問題 ( 例如，幾乎相同的邊界框 )。</p>
+<p>沒有任何的典型深度學習模型 (Canonical Deep Learning Model)<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 可以用來直接預測集合。最基本的集合預測任務就是多標籤分類 (Multilabel Classification)，這種任務的基準方法，one-vs-rest，也不適合用於偵測某個結構在許多元素之間的存在位置這類型的問題 ( 例如，幾乎相同的邊界框 )。</p>
 <p>這類型的任務最困難的部分就是要避免重複的問題。現今大多數的物件偵測器都是使用非極大抑制法來後處理解決這樣的問題，但是如果要直接做集合預測就無法進行後處理。最好就是有一個全域推論框架，模型可以對所有待預測物件進行交互作用且避免冗餘，對於固定大小的集合預測，密集連接層固然可以做到，但是計算成本太高，一種比較通用的方式就是使用類似 RNN 這樣的自回歸模型。</p>
-<p>不管在什麼狀況下，損失函數應該要對於預測物件的排列具不變性。一個通用的解決方法是使用基於匈牙利演算法<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>的損失函數，在預測與真實標註上進行二分匹配。這會強制排列不變，而且可以保證每一個目標都進有唯一的匹配。作者們遵循著二分匹配損失，但不使用自回歸模型，採用的是帶有平行解碼的 Transformer。</p>
+<p>不管在什麼狀況下，損失函數應該要對於預測物件的排列具不變性。一個通用的解決方法是使用基於匈牙利演算法<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>的損失函數，在預測與真實標註上進行二分匹配。這會強制排列不變，而且可以保證每一個目標都進有唯一的匹配。作者們遵循著二分匹配損失，但不使用自回歸模型，採用的是帶有平行解碼的 Transformer。</p>
 <h3 id="transformer-與平行解碼-transformers-and-parallel-decoding">Transformer 與平行解碼 Transformers and Parallel Decoding</h3>
 <p>Transformer 由 Vaswani 等人所提出，是一個新型基於注意力的機器翻譯模組。注意力機制是一個可以整合整個輸入序列資訊的神經網路結構。在 Transformer 中引入了類似非局部神經網路的自我注意力層，它可以掃過整個序列的每一個元素，並且藉由彙整後的資訊來進行更新。</p>
 <p>這樣的方式其中一個優點在於基於注意力機制的模型會進行全域計算而且具有完善的記憶體儲存，與 RNN 相比，更適合用於長序列上。也因為如此，Transformer 在許多自然語言處理、語音處理或是電腦視覺問題上都取代了 RNN 的地位。</p>
@@ -343,7 +343,7 @@
 <p><span class="math display">\[
 \mathcal{L}_{\text{Hungarian}}(y,\hat{y})=\sum_{i=1}^{N}\Big[-\log \hat{p}_{\hat{\sigma}(i)}(c_i)+\mathbb{I}_{\{c_i\neq\phi\}}\mathcal{L}_{\text{box}}(b_i,b_{\hat{\sigma}(i)})\Big]
 \]</span></p>
-<p><span class="math inline">\(\hat{\sigma}\)</span> 指的是第一步驟所找出來的最佳分配。實務上，當 <span class="math inline">\(c=\phi\)</span> 時，會將機率對數值的權重降低十倍，以解決分類上的不平衡。<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>這樣的方法類似於 Faster R-CNN 中利用次採樣 (Subsampling) 來平衡正負候選框 (Proposals)。</p>
+<p><span class="math inline">\(\hat{\sigma}\)</span> 指的是第一步驟所找出來的最佳分配。實務上，當 <span class="math inline">\(c=\phi\)</span> 時，會將機率對數值的權重降低十倍，以解決分類上的不平衡。<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>這樣的方法類似於 Faster R-CNN 中利用次採樣 (Subsampling) 來平衡正負候選框 (Proposals)。</p>
 <p>值得注意的地方是，物件與 <span class="math inline">\(\phi\)</span> 的匹配成本並不取決於預測，也就是說，在這種情況下匹配成本是一個常數。再這樣的匹配成本中，利用機率值 <span class="math inline">\(\hat{p}_{\hat{\sigma}(i)}(c_i)\)</span> 取代機率對數值。這樣的方式會使分類預測項可與 <span class="math inline">\(\mathcal{L}_{\text{box}}(\cdot,\cdot)\)</span> 相稱 (後面會進行解釋)，並且作者也觀察到這樣會有更好的實證表現。</p>
 <h4 id="邊界框損失-bounding-box-loss">邊界框損失 Bounding box loss</h4>
 <p>匹配損失與匈牙利損失中的第二項 <span class="math inline">\(\mathcal{L}_{\text{box}}(\cdot)\)</span> 指的就是邊界框的分數。與其他的偵測器將邊界框預測視為針對初始猜測的偏移不同，DETR 是直接進行邊界框的預測。儘管這樣的方法可以簡化整個預測，但卻同時會造成損失相對放大的問題。</p>
@@ -417,12 +417,12 @@
 <p>這篇論文中提出了 DETR，一種基於 Transformers 與二分匹配損失的全新物件偵測系統，可以直接進行及和預測。在 COCO 資料集上，DETR 可以獲得與最佳化過後的 Faster R-CNN 接近的結果。DETR 容易實現，而且具有彈性的架構可以輕易擴展到全景分割任務中，並且獲得不錯的結果。除此之外，DETR 在大型物件上的表現比 Faster R-CNN 更好，或許這可以歸功於自我注意力機制的全局訊息處理上。</p>
 <p>但是這全新的物件偵測系統也迎來新的挑戰，尤其是在小物件上的訓練、最佳化及性能上。現今的偵測系統都需要幾年的時間改進來應付類似的問題，作者也期待在未來的努力上 DETR 可以成功解決這些問題。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>典型模型 Canonical Model : 典型模型指的是一種更高層級的設計模式，可以藉由模組與不同模型之間進行資料交互，換個角度來說，我們也可以稱典型模型是一般模型的 superset。<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>匈牙利演算法 Hungarian Algorithm : 一種建立在匈牙利數學家 Dénes Kőnig和Jenő Egerváry 的研究之上的演算法，專門處理在多項式時間內求解任務分配問題的組合演算法。<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>細節可以參考 &quot;<a href="https://allen108108.github.io/blog/2019/11/24/%5B%E8%AB%96%E6%96%87%5D%20You%20Only%20Look%20Once%20_%20Unified,%20Real-Time%20Object%20Detection/">[論文] You Only Look Once : Unified, Real-Time Object Detection</a> &quot; 一文。<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>典型模型 Canonical Model : 典型模型指的是一種更高層級的設計模式，可以藉由模組與不同模型之間進行資料交互，換個角度來說，我們也可以稱典型模型是一般模型的 superset。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>匈牙利演算法 Hungarian Algorithm : 一種建立在匈牙利數學家 Dénes Kőnig和Jenő Egerváry 的研究之上的演算法，專門處理在多項式時間內求解任務分配問題的組合演算法。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>細節可以參考 "<a href="https://allen108108.github.io/blog/2019/11/24/%5B%E8%AB%96%E6%96%87%5D%20You%20Only%20Look%20Once%20_%20Unified,%20Real-Time%20Object%20Detection/">[論文] You Only Look Once : Unified, Real-Time Object Detection</a> " 一文。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -493,7 +493,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

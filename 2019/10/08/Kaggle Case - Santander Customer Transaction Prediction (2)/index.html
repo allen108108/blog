@@ -151,13 +151,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -277,7 +277,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <blockquote>
-<p>本篇為此系列文中第二篇，若還沒有讀過前文的讀者，建議從&quot; <a target="_blank" rel="noopener" href="https://hackmd.io/s/B1YMZu6wN">Kaggle Case - Santander Customer Transaction Prediction (1)</a> &quot;開始閱讀唷 !</p>
+<p>本篇為此系列文中第二篇，若還沒有讀過前文的讀者，建議從" <a target="_blank" rel="noopener" href="https://hackmd.io/s/B1YMZu6wN">Kaggle Case - Santander Customer Transaction Prediction (1)</a> "開始閱讀唷 !</p>
 </blockquote>
 <span id="more"></span>
 <h3 id="data-exploration">Data exploration</h3>
@@ -295,7 +295,7 @@
 <p><img src="https://i.imgur.com/1dpxjZq.png" /></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">features = train_df.columns.values[<span class="number">102</span>:<span class="number">202</span>]</span><br><span class="line">plot_feature_distribution(train_df, test_df, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;test&#x27;</span>, features)</span><br></pre></td></tr></table></figure>
 <p><img src="https://i.imgur.com/jEq3j6f.png" /></p>
-<p>我們可以發現到，儘管在上面我們提到的幾個&quot;特別&quot;的特徵分布上，訓練資料與測試資料上的表現幾乎呈現相同的狀況。</p>
+<p>我們可以發現到，儘管在上面我們提到的幾個"特別"的特徵分布上，訓練資料與測試資料上的表現幾乎呈現相同的狀況。</p>
 <h4 id="distribution-of-mean-and-std">Distribution of mean and std</h4>
 <p>首先，先來看看均值(mean)的分布 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">features = train_df.columns.values[<span class="number">2</span>:<span class="number">202</span>]</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of mean values per row in the train and test set&quot;</span>)</span><br><span class="line">sns.distplot(train_df[features].mean(axis=<span class="number">1</span>),color=<span class="string">&quot;green&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">sns.distplot(test_df[features].mean(axis=<span class="number">1</span>),color=<span class="string">&quot;blue&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure> <img src="https://i.imgur.com/7v0Vu7i.png" /></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of mean values per column in the train and test set&quot;</span>)</span><br><span class="line">sns.distplot(train_df[features].mean(axis=<span class="number">0</span>),color=<span class="string">&quot;magenta&quot;</span>,kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">sns.distplot(test_df[features].mean(axis=<span class="number">0</span>),color=<span class="string">&quot;darkblue&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
@@ -305,7 +305,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of std values per column in the train and test set&quot;</span>)</span><br><span class="line">sns.distplot(train_df[features].std(axis=<span class="number">0</span>),color=<span class="string">&quot;blue&quot;</span>,kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">sns.distplot(test_df[features].std(axis=<span class="number">0</span>),color=<span class="string">&quot;green&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">plt.legend(); plt.show()</span><br></pre></td></tr></table></figure>
 <p><img src="https://i.imgur.com/ydSQ9Zi.png" /></p>
 <p>很好，上面四張圖大概又要讓人崩潰了。 其實只要看懂上面兩張，下面兩張只是統計量不同罷了。</p>
-<p>(為了排版及整體性考量，我把解釋放在註解<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>)</p>
+<p>(為了排版及整體性考量，我把解釋放在註解<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>)</p>
 <p>除了拿Training Data 與 Test Data來比較外，我們也可以比較Training Data內不同Target的均值(標準差)有什麼不同。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">t0 = train_df.loc[train_df[<span class="string">&#x27;target&#x27;</span>] == <span class="number">0</span>]</span><br><span class="line">t1 = train_df.loc[train_df[<span class="string">&#x27;target&#x27;</span>] == <span class="number">1</span>]</span><br><span class="line">plt.figure(figsize=(<span class="number">16</span>,<span class="number">6</span>))</span><br><span class="line">plt.title(<span class="string">&quot;Distribution of mean values per row in the train set&quot;</span>)</span><br><span class="line">sns.distplot(t0[features].mean(axis=<span class="number">1</span>),color=<span class="string">&quot;red&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;target = 0&#x27;</span>)</span><br><span class="line">sns.distplot(t1[features].mean(axis=<span class="number">1</span>),color=<span class="string">&quot;blue&quot;</span>, kde=<span class="literal">True</span>,bins=<span class="number">120</span>, label=<span class="string">&#x27;target = 1&#x27;</span>)</span><br><span class="line">plt.legend(); plt.show()</span><br></pre></td></tr></table></figure>
 <p><img src="https://i.imgur.com/t7qPPi3.png" /></p>
@@ -317,17 +317,17 @@
 </blockquote>
 <p>做到這邊，冗長的Data Exploration總算告一段落，下一部分要面對的就是Feature Engineering以及 run Model 惹~</p>
 <h3 id="to-be-continue....">To be Continue....</h3>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>一樣都是均值(標準差)的分布，這兩張有什麼不同? 想要知道差別，我們要先了解code裡面<code>train_df[features]</code>以及<code>train_df[features].mean(axis=1)</code>各代表什麼意思。 <img src="https://i.imgur.com/cvleG1R.png" /> <code>train_df[features]</code>就是把原先的表格拿掉ID跟target單純以特徵呈現</p>
+<li id="fn1" role="doc-endnote"><p>一樣都是均值(標準差)的分布，這兩張有什麼不同? 想要知道差別，我們要先了解code裡面<code>train_df[features]</code>以及<code>train_df[features].mean(axis=1)</code>各代表什麼意思。 <img src="https://i.imgur.com/cvleG1R.png" /> <code>train_df[features]</code>就是把原先的表格拿掉ID跟target單純以特徵呈現</p>
 <p><img src="https://i.imgur.com/dp00T6D.png" /></p>
-<p><img src="https://i.imgur.com/aPOZIyq.png" /> 上面兩張，可以知道axis參數代表的就是計算均值(標準差)的&quot;方向&quot;。當axis=0時，計算的方向便是以行(垂直)的方式計算，而當axis=1時，便是以列(水平)做計算方向。</p>
+<p><img src="https://i.imgur.com/aPOZIyq.png" /> 上面兩張，可以知道axis參數代表的就是計算均值(標準差)的"方向"。當axis=0時，計算的方向便是以行(垂直)的方式計算，而當axis=1時，便是以列(水平)做計算方向。</p>
 <ul>
 <li>axis=0 : 呈現各別特徵的平均(標準差)</li>
 <li>axis=1 : 表示每一筆資料，所有特徵值的平均(標準差)</li>
 </ul>
-<a href="#fnref1" class="footnote-back">↩</a></li>
+<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></li>
 </ol>
 </section>
 
@@ -398,7 +398,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

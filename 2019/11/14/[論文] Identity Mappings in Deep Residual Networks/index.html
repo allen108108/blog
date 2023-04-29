@@ -145,13 +145,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -281,7 +281,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h2 id="概要-abstrct">概要 Abstrct</h2>
-<p>深層殘差網路不管在預測準確度以及收斂速度上都有著非常好的表現。在這篇論文中，作者們從前向及反向的信息傳播分析中，提出了將 shortcut connection 以及相加後的 activation 均使用恆等映射 (identity mapping) ，信息能夠藉由前後向傳播在 block 間進行傳遞。這篇論文中，利用一系列的「消融實驗」( ablation experiments )<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>來確定這些恆等映射的重要性。</p>
+<p>深層殘差網路不管在預測準確度以及收斂速度上都有著非常好的表現。在這篇論文中，作者們從前向及反向的信息傳播分析中，提出了將 shortcut connection 以及相加後的 activation 均使用恆等映射 (identity mapping) ，信息能夠藉由前後向傳播在 block 間進行傳遞。這篇論文中，利用一系列的「消融實驗」( ablation experiments )<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>來確定這些恆等映射的重要性。</p>
 <span id="more"></span>
 <p>這樣的結論激勵了研究團隊提出了一個嶄新的 Residual unit，讓訓練變得更加簡單也能增強模型的泛化能力。研究團隊利用這種結構，在各個資料集的預測結果均有成長，而且在 1001 層的 ResNet 上也能得到很好的結果。( code : https://github.com/KaimingHe/resnet-1k-layers )</p>
 <h2 id="簡介-introduction">簡介 Introduction</h2>
@@ -293,7 +293,7 @@
 <p><span class="math inline">\(\mathrm{x}_l\)</span> 與 <span class="math inline">\(\mathrm{x}_{l+1}\)</span> 是第 <span class="math inline">\(l\)</span> 個殘差單元的輸入及輸出，<span class="math inline">\(\mathcal{F}\)</span> 是殘差函數 (residual function) ，<span class="math inline">\(f\)</span> 是 activation function，在論文中用的是 ReLU ，而 <span class="math inline">\(h\)</span> 則是恆等映射。</p>
 <p>100多層的 ResNet 在各項資料集中都能有極佳的表現，最主要的想法就是學習一個對應於恆等映射 <span class="math inline">\(h\)</span> 的函數 <span class="math inline">\(\mathcal{F}\)</span> 。而這樣的 <span class="math inline">\(h\)</span> 在整個 model structure 中就是藉由 Shortcut connction 來達成。</p>
 <p>在此篇論文中，作者們藉由創造一個可以計算整個網路結構 ( 不是只有殘差單元 ) 信息傳導的直接路徑來分析深層殘差網路，藉由整個推導作者發現若讓 <span class="math inline">\(h\)</span> 與 <span class="math inline">\(f\)</span> 同為恆等映射，則信息無論在前向或反向傳播中均可以在殘差單元間直接傳遞。從論文裡的各項實驗數據可以證明當模型越接近上面兩個條件時會更易於訓練。</p>
-<p>為了更了解 Skip/Shortcut Connection 的運作，研究團隊分析並比較多種 <span class="math inline">\(h(\mathrm{x}_l)\)</span> 的型態，發現上一篇論文使用的 <span class="math inline">\(h(\mathrm{x}_l)=\mathrm{x}_l\)</span> 可以獲得最低的 error 以及最快的收斂速度。在 skip connection 上的任何操作 ( 縮放、門控、<span class="math inline">\(1\times 1\)</span> 卷積 ) 都會造成較高的 training loss 及 error。這些實驗結果都表明了，一條越 &quot; 乾淨 &quot; 的信息路徑，能使訓練變得更加容易。</p>
+<p>為了更了解 Skip/Shortcut Connection 的運作，研究團隊分析並比較多種 <span class="math inline">\(h(\mathrm{x}_l)\)</span> 的型態，發現上一篇論文使用的 <span class="math inline">\(h(\mathrm{x}_l)=\mathrm{x}_l\)</span> 可以獲得最低的 error 以及最快的收斂速度。在 skip connection 上的任何操作 ( 縮放、門控、<span class="math inline">\(1\times 1\)</span> 卷積 ) 都會造成較高的 training loss 及 error。這些實驗結果都表明了，一條越 " 乾淨 " 的信息路徑，能使訓練變得更加容易。</p>
 <p><img src="https://i.imgur.com/bjcq2D4.png" /></p>
 <p>PS: 上圖跟上一篇論文的殘差塊 ( residual block ) 呈現方式相反。在這篇論文中，灰色箭頭的部分指是 shortcut connection，旁邊分支出來的才是原本的信息路徑。</p>
 <p>另一個部分，想要建造一個 <span class="math inline">\(f(\mathrm{y}_l)=\mathrm{y}_l\)</span> 這樣的恆等映射，作者在原本的信息路徑上的 activation function ( <span class="math inline">\(ReLU\)</span> 與 <span class="math inline">\(BN\)</span> ) 從傳統的「後激活」( Post-Actvation ) 轉換成「預激活」( Pre-Activation )。這種新型態的殘差塊 (上圖右(b)) 用在 1001 層的 ReaNet 上面在 CIFAR-10/100 上訓練，整個模型訓練變得更加容易，而且泛化程度更佳。而原本在 200層 ResNet 上會出現的 overfit 現象也可以藉由這種新的殘差塊獲得改善。</p>
@@ -373,7 +373,7 @@
 <li><p>Post-activation or pre-activation ? 在原始的結構設計上， activation function 會直接影響到下一個殘差塊的兩條路徑 ( 權重層路徑與捷徑 ) : <span class="math inline">\(\mathrm{x}_{l+1}=f(\mathrm{y}_l)\)</span>。研究團隊試圖研究一個非對稱結構使 activation function <span class="math inline">\(\hat{f}\)</span> 在任何的 <span class="math inline">\(l\)</span> 殘差單元只對權重層路徑有影響 : <span class="math inline">\(\mathrm{x}_{l+1}=\mathrm{x}_l+\mathcal{F}(\hat{f}(\mathrm{x}_l),\mathcal{W}_l)\)</span> 。這樣的設計等價於我們用了一個「預激活」(Pre-activation) <span class="math inline">\(\hat{f}\)</span> 於下一個殘差單元。 <img width=1000 src="https://i.imgur.com/wxH5VAP.png" > 「預激活」(Pre-activation) 與「後激活」 (Post-activation) 的差別在於元素級加法所導致。對一個一般的 <span class="math inline">\(N\)</span> 層神經網路來說，其中 <span class="math inline">\(N-1\)</span> 個 activation function ( <span class="math inline">\(BN\)</span> 與 <span class="math inline">\(ReLU\)</span> ) 是「預激活」或是「後激活」其實並沒有太多的差別。但對於有分支的結構來說，activation 的位置就大有關係。 在此論文中，作者們使用了兩種設計來實驗 : (1) 僅使用 <span class="math inline">\(ReLU\)</span> 作為預激活，以及 (2) 使用 <span class="math inline">\(ReLU\)</span> 與 <span class="math inline">\(BN\)</span> 一起作為預激活項。結果發現前者單獨使用 <span class="math inline">\(ReLU\)</span> 無法享受 <span class="math inline">\(BN\)</span> 帶來的好處，導致結果與原始結構差不多。但後者卻呈現了極佳的表現。 <img width=1000 src="https://i.imgur.com/wCDltJq.png" ></p></li>
 </ul>
 <h3 id="分析">分析</h3>
-<p>作者們發現，預激活的影響是雙重的 : 1. Ease of optimization 由於 <span class="math inline">\(f\)</span> 是恆等映射，使得訓練變得更佳容易。 2. Reducing overfitting 使用 <span class="math inline">\(BN\)</span> 作為預激活相當於是對模型的正則化<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>。</p>
+<p>作者們發現，預激活的影響是雙重的 : 1. Ease of optimization 由於 <span class="math inline">\(f\)</span> 是恆等映射，使得訓練變得更佳容易。 2. Reducing overfitting 使用 <span class="math inline">\(BN\)</span> 作為預激活相當於是對模型的正則化<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
 <h4 id="ease-of-optimization">Ease of optimization</h4>
 <p>這樣的影響在訓練 1001 層的 ResNet 更加明顯。當我們使用原始模型設計時，在一開始訓練初期，訓練誤差降低的速度會非常慢。對於 <span class="math inline">\(f=ReLU\)</span> 來說，訊號為負值時會被影響，而且當殘差單元數量很多時，這樣的影響會變得非常明顯，前向或反向傳播式就無法進行很好的估計。</p>
 <p>換一個角度來說，若 <span class="math inline">\(f\)</span> 為恆等映射，則訊號可以直接在任一兩個殘差單元間傳遞，即使在 1001 層 ResNet　中訓練誤差可以快速降低。</p>
@@ -388,13 +388,13 @@
 <p>本論文針對深層殘差網路中關於捷徑連結機制做形式化探討。作者們的推導顯示恆等映射的 shortcut connections 以及元素及加法後的 activaiton 對於訊息傳導的平滑性來說是絕對必要的。</p>
 <p>一系列的消融實驗支持了我們的推導結果，並且我們可以使 1001層的 ResNet 訓練更加容易且可以得到更好的表現。</p>
 <h2 id="後記">後記</h2>
-<p>前一篇論文 &quot; <em>Deep Residual Learning for Image Recognition</em> &quot; 可謂經典必讀論文，然而其中許多的細節並沒有在當下有很好的解釋及說明。想要更理解 ResNet 的整個運作過程及原理，本篇論文不可不讀。藉由各種消融實驗可以說明為什麼 ResNet 架構可以有這麼好的表現。</p>
+<p>前一篇論文 " <em>Deep Residual Learning for Image Recognition</em> " 可謂經典必讀論文，然而其中許多的細節並沒有在當下有很好的解釋及說明。想要更理解 ResNet 的整個運作過程及原理，本篇論文不可不讀。藉由各種消融實驗可以說明為什麼 ResNet 架構可以有這麼好的表現。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>ablation experiments 其實就是藉由控制變量來尋找對結果最有直接影響的變因。當一個結果可能由許多因素所導致，那我們藉由一連串實驗，將這些變因進行刪除、替換等方式，來觀察結果的變化，進而找出最關鍵的變因。香菇討論可以參閱 &quot; <em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/263837982/answer/273653126">深度学习里的ablation experiment？</a></em> &quot; 及 &quot; <em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/291655038">消融实验是什么？</a></em> &quot;<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>Batch Normalization 的意義是限制每一層的輸出都要同分布，以符合神經網路的假設，然而這樣的限制在某種層面來說就是一種正則化。相關詳細討論可以參閱 &quot; <em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/288370837">关于batchnormalization和正则化的一些问题？</a></em> &quot;<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>ablation experiments 其實就是藉由控制變量來尋找對結果最有直接影響的變因。當一個結果可能由許多因素所導致，那我們藉由一連串實驗，將這些變因進行刪除、替換等方式，來觀察結果的變化，進而找出最關鍵的變因。香菇討論可以參閱 " <em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/263837982/answer/273653126">深度学习里的ablation experiment？</a></em> " 及 " <em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/291655038">消融实验是什么？</a></em> "<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>Batch Normalization 的意義是限制每一層的輸出都要同分布，以符合神經網路的假設，然而這樣的限制在某種層面來說就是一種正則化。相關詳細討論可以參閱 " <em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/288370837">关于batchnormalization和正则化的一些问题？</a></em> "<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -465,7 +465,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

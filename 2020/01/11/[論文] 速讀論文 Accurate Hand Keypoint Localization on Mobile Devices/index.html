@@ -141,13 +141,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -266,12 +266,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>論文中提出了一個網路結構，可以將一般圖片 ( 未經過處理 ) 輸入後，直接進行手部關鍵點的定位。此方法利用改良過的 VNect<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> 來對輸入圖像計算其 Heatmap，再利用此 Heatmap 來進行關鍵點的定位。</p>
+        <p>論文中提出了一個網路結構，可以將一般圖片 ( 未經過處理 ) 輸入後，直接進行手部關鍵點的定位。此方法利用改良過的 VNect<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 來對輸入圖像計算其 Heatmap，再利用此 Heatmap 來進行關鍵點的定位。</p>
 <span id="more"></span>
 <p>這樣的方法在一些 Open dataset 上取得了優異的成果，甚至可優於現今 SOTA 的方法，這也使得這樣的結構可以成為移動設備上用來定位關鍵點的重要部件。</p>
 <p><img src="https://i.imgur.com/yRGgQ1I.jpg" /></p>
 <h2 id="vnect">VNect</h2>
-<p>利用 RGB Camera 進行 3D 姿勢辨識一直以來都是一個極具挑戰性的問題，在 VNect 中利用了兩個部份來進行即時的 3D 姿勢預測 : * CNN 回歸預測 ( CNN Pose Regression ) : 以 CNN 方法來將生成 2D Heatmap 以及 3D Location map。<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> * 骨架擬合 ( Kinematic Skeleton Fitting ) : 利用 Model-based kinematic skeleton fitting 來修正 CNN 迴歸分析後的關鍵點座標，來確保運動的一致性。</p>
+<p>利用 RGB Camera 進行 3D 姿勢辨識一直以來都是一個極具挑戰性的問題，在 VNect 中利用了兩個部份來進行即時的 3D 姿勢預測 : * CNN 回歸預測 ( CNN Pose Regression ) : 以 CNN 方法來將生成 2D Heatmap 以及 3D Location map。<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> * 骨架擬合 ( Kinematic Skeleton Fitting ) : 利用 Model-based kinematic skeleton fitting 來修正 CNN 迴歸分析後的關鍵點座標，來確保運動的一致性。</p>
 <p>網路結構如下 :</p>
 <p><img src="https://i.imgur.com/SHrtVls.png" /></p>
 <p>將 ResNet50 在 4f 層的輸出接上上述結構，最後輸出 Heatmap 以及 X,Y,Z 的 Location maps。</p>
@@ -280,7 +280,7 @@
 <p>修改的方向如下 :</p>
 <ol type="1">
 <li>將 ResNet 改為輕量級的 MobileNet v2</li>
-<li>原本的 Convolution Layer 改為 Depthwise Convolution Layer<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></li>
+<li>原本的 Convolution Layer 改為 Depthwise Convolution Layer<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></li>
 </ol>
 <p><img src="https://i.imgur.com/v2IeruH.jpg" /></p>
 <p>這也就是此論文主要使用的網路結構，這樣的結構生成出手部關鍵點 Heatmap <span class="math inline">\(H(p)\)</span>，之後會利用 MLE 的方式來找出關鍵點座標 <span class="math inline">\(\bar{k}\)</span></p>
@@ -288,13 +288,13 @@
 \bar{k}=\arg\max_{p\in P}H(p)
 \]</span></p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Dushyant Mehta et al. <em>&quot;Vnect: Real-time 3d human pose estimation with a single rgb camera&quot;</em>. In: ACM Trans. on Graphics (TOG) 36.4 (2017).<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>為什麼在現今的姿勢預測中，不直接針對關鍵點進行回歸預測即可 ? 除了省去 Bounding Box 的預測計算成本外，使用 Heatmap 來進行關鍵點預測還有許多的優點，詳細說明可參閱知乎 : 《<em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/293815527">关键点检测中，为什么要生成高斯图，而不是直接与groundtruth比较？</a></em> 》<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>CSDN : <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36165459/article/details/78320781">论文阅读《<em>Flowing ConvNets for Human Pose Estimation in Videos</em>》</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>Convolution 與 Depthwise convolution 的差異可以參閱 : <a target="_blank" rel="noopener" href="https://medium.com/@chih.sheng.huang821/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-mobilenet-depthwise-separable-convolution-f1ed016b3467">深度學習-MobileNet (Depthwise separable convolution)</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>Dushyant Mehta et al. <em>"Vnect: Real-time 3d human pose estimation with a single rgb camera"</em>. In: ACM Trans. on Graphics (TOG) 36.4 (2017).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>為什麼在現今的姿勢預測中，不直接針對關鍵點進行回歸預測即可 ? 除了省去 Bounding Box 的預測計算成本外，使用 Heatmap 來進行關鍵點預測還有許多的優點，詳細說明可參閱知乎 : 《<em><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/293815527">关键点检测中，为什么要生成高斯图，而不是直接与groundtruth比较？</a></em> 》<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>CSDN : <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36165459/article/details/78320781">论文阅读《<em>Flowing ConvNets for Human Pose Estimation in Videos</em>》</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>Convolution 與 Depthwise convolution 的差異可以參閱 : <a target="_blank" rel="noopener" href="https://medium.com/@chih.sheng.huang821/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-mobilenet-depthwise-separable-convolution-f1ed016b3467">深度學習-MobileNet (Depthwise separable convolution)</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -365,7 +365,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

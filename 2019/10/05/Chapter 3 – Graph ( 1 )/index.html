@@ -145,13 +145,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -291,14 +291,14 @@
 <p>最後，我們可以把剛剛被簡化的部分重新考慮進來，試著延伸、調整設計好的演算法來解決最原始的問題。但，千萬不要一開始就處理這樣的部分。</p>
 <h2 id="seven-bridge-problem">Seven Bridge Problem</h2>
 <p>十八世紀 Königsberg 市區中河道中心有兩座小島，分別有七座橋連接彼此與河的兩岸，Euler 試圖解決一個問題是 : 是否有可能每一座橋只經過一次的情況下，把每一座橋都走過？</p>
-<p>Euler 將問題簡化成點和線的情況，並證明這個問題並不存在解。<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>Euler 將問題簡化成點和線的情況，並證明這個問題並不存在解。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <p><img src="https://i.imgur.com/SWbTa5j.png" /></p>
 <p>這篇論文不但被視為是圖論的始源，也是奠定了數學中拓樸學的基礎。</p>
 <h2 id="definition-application-of-graph">Definition &amp; Application of Graph</h2>
 <h3 id="definition">Definition</h3>
 <ul>
-<li>A Graph <span class="math inline">\(G(V,E)\)</span> where <span class="math inline">\(V\)</span> is a vertices ( nodes ) set and <span class="math inline">\(E\)</span> is a edge set. A Graph <span class="math inline">\(G\)</span> 是由點集合<span class="math inline">\(V\)</span>與線集合 <span class="math inline">\(E\)</span> 構成</li>
-<li><span class="math inline">\(E=\{e\mid e=(u,v),\ u,v\in V\}\)</span> 每一個 edge 均是由兩個頂點所構成</li>
+<li><p>A Graph <span class="math inline">\(G(V,E)\)</span> where <span class="math inline">\(V\)</span> is a vertices ( nodes ) set and <span class="math inline">\(E\)</span> is a edge set. A Graph <span class="math inline">\(G\)</span> 是由點集合<span class="math inline">\(V\)</span>與線集合 <span class="math inline">\(E\)</span> 構成</p></li>
+<li><p><span class="math inline">\(E=\{e\mid e=(u,v),\ u,v\in V\}\)</span> 每一個 edge 均是由兩個頂點所構成</p></li>
 <li><p><span class="math inline">\(G\)</span> is a undirected graph, if edges are undirected, i.e. , <span class="math inline">\(e=(u,v)=(v,u)=\{v,u\}\)</span> Undirected graph 具對稱性，連接兩頂點的 edge 可用大括號表示</p></li>
 <li><p><span class="math inline">\(G\)</span> is a directed graph, if edges are directed, i.e. , <span class="math inline">\(e=(u,v)\neq(v,u)\)</span> Undirected graph 不具對稱性。</p></li>
 <li><p><span class="math inline">\(u,v\in V\)</span>, <span class="math inline">\(v\)</span> is a neighbor of <span class="math inline">\(u\)</span>, if <span class="math inline">\(\exists\)</span> <span class="math inline">\(e=(u,v)\)</span> <span class="math inline">\(v\)</span> 與 <span class="math inline">\(u\)</span> 有 edge 相連，則可稱 <span class="math inline">\(v\)</span> 為 <span class="math inline">\(u\)</span> 的 neighbor。(undirected graph)</p></li>
@@ -377,10 +377,10 @@
 <li>DFS Tree 的 Non-Tree Edge 連結上下層級且至少相差兩層以上的 vertex ; BFS Tree 的 Non-Tree Edge 連結上下一層或是同層的 vertex。</li>
 </ul>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>證明可參閱 <a target="_blank" rel="noopener" href="https://web.math.sinica.edu.tw/math_media/d364/36404.pdf"><em>數學傳播 36卷4期 pp. 42-47</em></a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>證明可參閱 <a target="_blank" rel="noopener" href="https://web.math.sinica.edu.tw/math_media/d364/36404.pdf"><em>數學傳播 36卷4期 pp. 42-47</em></a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -451,7 +451,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

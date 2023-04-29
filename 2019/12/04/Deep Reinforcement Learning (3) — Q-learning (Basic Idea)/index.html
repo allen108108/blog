@@ -145,13 +145,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -287,7 +287,7 @@
 <p><img width=500 src="https://i.imgur.com/j81cCdN.png" ></p>
 <p>在 <span class="math inline">\(V^{\pi}(s)\)</span> 的訓練上，我們要怎麼訓練 ? 一般來說有兩種方法 : 1. Monte Carlo (MC) based approach 2. Temporal difference (TD) approach</p>
 <h3 id="monte-carlo-mc-based-approach">Monte Carlo (MC) based approach</h3>
-<p>在 &quot; Deep Reinforcement Learning (2) — Proximal Policy Optimization (PPO) &quot; 一文中有提到， Monte Carlo approach 就是利用抽樣來針對一個無法估測的函數進行逼近。在這邊也是類似的概念，我們無法窮舉所有的 <span class="math inline">\(s\)</span> 來訓練 <span class="math inline">\(V^{\pi}(s)\)</span>，因此讓 <span class="math inline">\(\pi\)</span> 與 Environment 作互動來獲得有限筆資料，直接對 <span class="math inline">\(V^{\pi}(s)\)</span> 訓練。</p>
+<p>在 " Deep Reinforcement Learning (2) — Proximal Policy Optimization (PPO) " 一文中有提到， Monte Carlo approach 就是利用抽樣來針對一個無法估測的函數進行逼近。在這邊也是類似的概念，我們無法窮舉所有的 <span class="math inline">\(s\)</span> 來訓練 <span class="math inline">\(V^{\pi}(s)\)</span>，因此讓 <span class="math inline">\(\pi\)</span> 與 Environment 作互動來獲得有限筆資料，直接對 <span class="math inline">\(V^{\pi}(s)\)</span> 訓練。</p>
 <p><img src="https://i.imgur.com/KmOrfBx.png" /></p>
 <h3 id="temporal-difference-td-approach">Temporal difference (TD) approach</h3>
 <p>Monte Carlo approach 的一個問題是，我們必須要讓 <span class="math inline">\(\pi\)</span> 與 Environment 作一次又一次的完整互動，這樣所需要的時間實在太長，於是有了 Temporal difference approach。</p>
@@ -342,7 +342,7 @@ V^{\pi}(s)=Q^{\pi}(s,\pi(s))\leq\max\limits_{a}Q^{\pi}(s,a)=Q^{\pi}(s,\pi&#39;(s
 \]</span></p>
 <h2 id="tips-of-q-learning">Tips of Q-Learning</h2>
 <h3 id="target-function">Target Function</h3>
-<p>在基本的 Q-Learning 中要學習一個 Q-function 通常使用的是前面提過的 TD method : <span class="math inline">\(Q^{\pi}(s_t,a_t)=r_t+Q^{\pi}(s_{t+1},a_{t+1})\)</span>，但 TD 在實務上處理往往會有訓練不穩定的狀況，因為訓練過程中等號左右兩邊都是在變動的值，在訓練過程中要收斂變得非常困難。要解決這樣的問題，我們會讓等號右邊的 &quot;Target&quot; 先固定，只 train 等號右邊的 Q-function。待 Q-function 迭代更新數次後再用其替換掉 Target Network 繼續更新 Q-function。</p>
+<p>在基本的 Q-Learning 中要學習一個 Q-function 通常使用的是前面提過的 TD method : <span class="math inline">\(Q^{\pi}(s_t,a_t)=r_t+Q^{\pi}(s_{t+1},a_{t+1})\)</span>，但 TD 在實務上處理往往會有訓練不穩定的狀況，因為訓練過程中等號左右兩邊都是在變動的值，在訓練過程中要收斂變得非常困難。要解決這樣的問題，我們會讓等號右邊的 "Target" 先固定，只 train 等號右邊的 Q-function。待 Q-function 迭代更新數次後再用其替換掉 Target Network 繼續更新 Q-function。</p>
 <p><img src="https://i.imgur.com/HGkoTaN.jpg" /></p>
 <h3 id="exploration">Exploration</h3>
 <p><span class="math display">\[
@@ -449,7 +449,7 @@ P(a|s)=\frac{\exp(Q^{\pi}(s,a))}{\sum\limits_{a}\exp(Q^{\pi}(s,a))}
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

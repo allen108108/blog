@@ -142,13 +142,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -304,22 +304,22 @@
 <p>在林軒田的課程中，講義的符號的一些細節常常會讓人忽略，然而讀到後面就會開始腦袋打結，例如 : 資料點 <span class="math inline">\(X\)</span> (我自己習慣用<span class="math inline">\(\mathbb{X}\)</span>) 與 <span class="math inline">\(x\)</span> 的差別</p>
 <p>在Step2中，以數學的觀點來看，第 <span class="math inline">\(t\)</span> 次迭代找到的錯誤點 <span class="math inline">\(\left(\mathbb{X}_{n_{t}},y_{n_{t}}\right)\)</span> 並非剛好就會是原始資料中的第 <span class="math inline">\(n\)</span> 個資料，因此便在 <span class="math inline">\(n\)</span> 下方再多一個下標 <span class="math inline">\(t\)</span>，以明確標示出每一個錯誤的點。</p>
 <ul>
-<li><p><strong>經過這樣一系列的迭代過程，PLA最終真的會停止(halt)嗎</strong>? 是的，只要我們手中的 Dataset 是線性可分(Linear Separable)，最後 PLA 必然會收斂，這就是所謂的 &quot; Perceptron Convergence Theorem&quot;</p>
+<li><p><strong>經過這樣一系列的迭代過程，PLA最終真的會停止(halt)嗎</strong>? 是的，只要我們手中的 Dataset 是線性可分(Linear Separable)，最後 PLA 必然會收斂，這就是所謂的 " Perceptron Convergence Theorem"</p>
 <p><img src="https://i.imgur.com/HvSXMny.png" /></p></li>
 <li><p>PLA其實是一個極為理想的狀態，是否真正存在一個理想的<span class="math inline">\(f\)</span> 我們不能確定，而且現實的dataset絕大多數都會因為noise而不會Linear Separable</p>
-<p>如果我們真的找不到完美的分類器，那麼可以退而求其次，找出誤差最小的總可以了吧! <span class="math display">\[\mathbb{W}_g=arg\min\limits_{\forall\mathbb{W}}\sum\limits_{n=1}^{N}[\![y_n\neq(\mathbb{W}^T\mathbb{X}+b)]\!]\]</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> 很遺憾的，這是一個NP-Hard的問題看來也是無解。</p></li>
+<p>如果我們真的找不到完美的分類器，那麼可以退而求其次，找出誤差最小的總可以了吧! <span class="math display">\[\mathbb{W}_g=arg\min\limits_{\forall\mathbb{W}}\sum\limits_{n=1}^{N}[\![y_n\neq(\mathbb{W}^T\mathbb{X}+b)]\!]\]</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 很遺憾的，這是一個NP-Hard的問題看來也是無解。</p></li>
 </ul>
 <h2 id="pocket-algorethm">Pocket Algorethm</h2>
 <p>這是一種PLA的變形演算法，過程與PLA大致都相同，一樣要經過迭代程序，但不同的地方在於 : 「PLA目的在找出一個絕對好的分類器，但Pocket則是找出相對好的即可。」</p>
-<p>每一次的迭代過程，都把新的 <span class="math inline">\(\mathbb{W}_t\)</span> 跟上一個 <span class="math inline">\(\mathbb{W}_{t-1}\)</span> 做比較，誤差量相對小的就把她暫時當成目前最好的分類器 <span class="math inline">\(\tilde{\mathbb{W}}\)</span> 放在Pocket中，雖然經過不斷的迭代，但Pocket中的 <span class="math inline">\(\tilde{\mathbb{W}}\)</span> 絕對是&quot;當下&quot;最好的分類器。</p>
+<p>每一次的迭代過程，都把新的 <span class="math inline">\(\mathbb{W}_t\)</span> 跟上一個 <span class="math inline">\(\mathbb{W}_{t-1}\)</span> 做比較，誤差量相對小的就把她暫時當成目前最好的分類器 <span class="math inline">\(\tilde{\mathbb{W}}\)</span> 放在Pocket中，雖然經過不斷的迭代，但Pocket中的 <span class="math inline">\(\tilde{\mathbb{W}}\)</span> 絕對是"當下"最好的分類器。</p>
 <p><code>[Remark] Pocket演算法不見得最終會 halt (因為現實資料並不見得線性可分)，那麼停止的條件便只能用人為來判斷迭代次數，只要我們認為迭代次數夠多了就可以停止Pocket Algorithm</code></p>
 <p>這樣的演算法，便能克服在現實狀況中會遇到的問題。</p>
 <p>但是這也不是非常完美的方式，這樣的演算法的計算時間相對PLA要來的久 ( 因為要不斷儲存 <span class="math inline">\(\tilde{\mathbb{W}}\)</span>，而且每一次迭代都必須重新計算誤差量 )。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p><span class="math inline">\([\\![a]\\!]\)</span> 雙方括號 : 可以表達為小於等於 a 的最大整數，但在此為 <span class="math inline">\(Iverson\ bracket\)</span> ，在括號內的邏輯條件為 True 則為 1，為 Flase 則為 0。<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p><span class="math inline">\([\\![a]\\!]\)</span> 雙方括號 : 可以表達為小於等於 a 的最大整數，但在此為 <span class="math inline">\(Iverson\ bracket\)</span> ，在括號內的邏輯條件為 True 則為 1，為 Flase 則為 0。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -390,7 +390,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

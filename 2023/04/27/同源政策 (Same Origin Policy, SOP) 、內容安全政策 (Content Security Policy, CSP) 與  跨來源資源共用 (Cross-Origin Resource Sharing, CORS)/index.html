@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="前言 這兩三年的 Web APP 前端開發經驗，讓我對前端的一些概念也逐漸地變得清晰，最近剛好有點時間，也想把遇到過的一些問題記錄下來。 有一些問題在本機端開發時沒有發生，一直到網站要部屬到 Server 的時候，就會發現出現了一連串的錯誤。這錯誤在本地端開發時完全沒有遇到。 為了究其原因，花了一些時間與同事們進行研究與處理，才將這個問題解決，也想趁著最近把這些問題整理起來。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="同源政策 (Same Origin Policy, SOP)、內容安全政策(Content Security Policy, CSP)與跨來源資源共用 (Cross-Origin Resource Sharing, CORS)">
+<meta property="og:url" content="https://allen108108.github.io/blog/2023/04/27/%E5%90%8C%E6%BA%90%E6%94%BF%E7%AD%96%20(Same%20Origin%20Policy,%20SOP)%20%E3%80%81%E5%85%A7%E5%AE%B9%E5%AE%89%E5%85%A8%E6%94%BF%E7%AD%96%20(Content%20Security%20Policy,%20CSP)%20%E8%88%87%20%20%E8%B7%A8%E4%BE%86%E6%BA%90%E8%B3%87%E6%BA%90%E5%85%B1%E7%94%A8%20(Cross-Origin%20Resource%20Sharing,%20CORS)/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="前言 這兩三年的 Web APP 前端開發經驗，讓我對前端的一些概念也逐漸地變得清晰，最近剛好有點時間，也想把遇到過的一些問題記錄下來。 有一些問題在本機端開發時沒有發生，一直到網站要部屬到 Server 的時候，就會發現出現了一連串的錯誤。這錯誤在本地端開發時完全沒有遇到。 為了究其原因，花了一些時間與同事們進行研究與處理，才將這個問題解決，也想趁著最近把這些問題整理起來。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/lnksDeG.png">
+<meta property="og:image" content="https://i.imgur.com/W7PIaaw.png">
+<meta property="og:image" content="https://i.imgur.com/ZqqnciN.png">
+<meta property="og:image" content="https://i.imgur.com/PcCGU7z.png">
+<meta property="article:published_time" content="2023-04-26T23:50:06.000Z">
+<meta property="article:modified_time" content="2023-04-29T08:55:48.616Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/lnksDeG.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2023/04/27/%E5%90%8C%E6%BA%90%E6%94%BF%E7%AD%96%20(Same%20Origin%20Policy,%20SOP)%20%E3%80%81%E5%85%A7%E5%AE%B9%E5%AE%89%E5%85%A8%E6%94%BF%E7%AD%96%20(Content%20Security%20Policy,%20CSP)%20%E8%88%87%20%20%E8%B7%A8%E4%BE%86%E6%BA%90%E8%B3%87%E6%BA%90%E5%85%B1%E7%94%A8%20(Cross-Origin%20Resource%20Sharing,%20CORS)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2023/04/27/%E5%90%8C%E6%BA%90%E6%94%BF%E7%AD%96%20(Same%20Origin%20Policy,%20SOP)%20%E3%80%81%E5%85%A7%E5%AE%B9%E5%AE%89%E5%85%A8%E6%94%BF%E7%AD%96%20(Content%20Security%20Policy,%20CSP)%20%E8%88%87%20%20%E8%B7%A8%E4%BE%86%E6%BA%90%E8%B3%87%E6%BA%90%E5%85%B1%E7%94%A8%20(Cross-Origin%20Resource%20Sharing,%20CORS)/","path":"2023/04/27/同源政策 (Same Origin Policy, SOP) 、內容安全政策 (Content Security Policy, CSP) 與  跨來源資源共用 (Cross-Origin Resource Sharing, CORS)/","title":"同源政策 (Same Origin Policy, SOP)、內容安全政策(Content Security Policy, CSP)與跨來源資源共用 (Cross-Origin Resource Sharing, CORS)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>同源政策 (Same Origin Policy, SOP)、內容安全政策(Content Security Policy, CSP)與跨來源資源共用 (Cross-Origin Resource Sharing, CORS) | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#same-origin-policy-sop"><span class="nav-number">2.</span> <span class="nav-text">Same Origin Policy (SOP)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#content-security-policy-csp"><span class="nav-number">3.</span> <span class="nav-text">Content Security Policy (CSP)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AA%9E%E6%B3%95-syntax"><span class="nav-number">3.1.</span> <span class="nav-text">語法 Syntax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4-directives"><span class="nav-number">3.2.</span> <span class="nav-text">指令 Directives</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#default-src"><span class="nav-number">3.2.1.</span> <span class="nav-text">default-src</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#style-src-script-src"><span class="nav-number">3.2.2.</span> <span class="nav-text">style-src &#x2F; script-src</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#img-src"><span class="nav-number">3.2.3.</span> <span class="nav-text">img-src</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A8%AD%E5%AE%9A%E5%80%BC-values"><span class="nav-number">3.3.</span> <span class="nav-text">設定值 Values</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#http.example.com"><span class="nav-number">3.3.1.</span> <span class="nav-text">http:&#x2F;&#x2F;*.example.com</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#self"><span class="nav-number">3.3.2.</span> <span class="nav-text">self</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#unsafe-inline"><span class="nav-number">3.3.3.</span> <span class="nav-text">unsafe-inline</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#none"><span class="nav-number">3.3.4.</span> <span class="nav-text">none</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cross-origin-resource-sharing-cors"><span class="nav-number">4.</span> <span class="nav-text">Cross-Origin Resource Sharing (CORS)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#http-header"><span class="nav-number">4.1.</span> <span class="nav-text">Http Header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#csp-cors"><span class="nav-number">4.2.</span> <span class="nav-text">CSP ? CORS ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cors-%E4%BB%A3%E7%90%86%E4%BC%BA%E6%9C%8D%E5%99%A8"><span class="nav-number">4.3.</span> <span class="nav-text">CORS 代理伺服器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cloudflare"><span class="nav-number">4.4.</span> <span class="nav-text">Cloudflare</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%8C%E8%A8%98"><span class="nav-number">5.</span> <span class="nav-text">後記</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2023/04/27/%E5%90%8C%E6%BA%90%E6%94%BF%E7%AD%96%20(Same%20Origin%20Policy,%20SOP)%20%E3%80%81%E5%85%A7%E5%AE%B9%E5%AE%89%E5%85%A8%E6%94%BF%E7%AD%96%20(Content%20Security%20Policy,%20CSP)%20%E8%88%87%20%20%E8%B7%A8%E4%BE%86%E6%BA%90%E8%B3%87%E6%BA%90%E5%85%B1%E7%94%A8%20(Cross-Origin%20Resource%20Sharing,%20CORS)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          同源政策 (Same Origin Policy, SOP)、內容安全政策(Content Security Policy, CSP)與跨來源資源共用 (Cross-Origin Resource Sharing, CORS)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2023-04-27 07:50:06" itemprop="dateCreated datePublished" datetime="2023-04-27T07:50:06+08:00">2023-04-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2023-04-29 16:55:48" itemprop="dateModified" datetime="2023-04-29T16:55:48+08:00">2023-04-29</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%AF%A6%E4%BD%9C-Implementation/" itemprop="url" rel="index"><span itemprop="name">實作 Implementation</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2023/04/27/%E5%90%8C%E6%BA%90%E6%94%BF%E7%AD%96%20(Same%20Origin%20Policy,%20SOP)%20%E3%80%81%E5%85%A7%E5%AE%B9%E5%AE%89%E5%85%A8%E6%94%BF%E7%AD%96%20(Content%20Security%20Policy,%20CSP)%20%E8%88%87%20%20%E8%B7%A8%E4%BE%86%E6%BA%90%E8%B3%87%E6%BA%90%E5%85%B1%E7%94%A8%20(Cross-Origin%20Resource%20Sharing,%20CORS)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/04/27/同源政策 (Same Origin Policy, SOP) 、內容安全政策 (Content Security Policy, CSP) 與  跨來源資源共用 (Cross-Origin Resource Sharing, CORS)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="前言">前言</h2>
+<p>這兩三年的 Web APP 前端開發經驗，讓我對前端的一些概念也逐漸地變得清晰，最近剛好有點時間，也想把遇到過的一些問題記錄下來。</p>
+<p>有一些問題在本機端開發時沒有發生，一直到網站要部屬到 Server 的時候，就會發現出現了一連串的錯誤。這錯誤在本地端開發時完全沒有遇到。</p>
+<p>為了究其原因，花了一些時間與同事們進行研究與處理，才將這個問題解決，也想趁著最近把這些問題整理起來。</p>
+<span id="more"></span>
+<h2 id="same-origin-policy-sop">Same Origin Policy (SOP)</h2>
+<p>同源政策 (Same Origin Policy, SOP)，是一種瀏覽器安全功能，在這樣的政策下，限制了不同來源的文件與 script 相互存取的機制。</p>
+<p>簡單來說，當我的網站有同源政策的保護，外界就不能隨意存取我網站的任何資源，也可以避免有心人士針對網站的攻擊。當然，這也會同時限制我們去存取其他網站資源。</p>
+<p>從資訊安全的角度來說固然是一項好的政策，但從開發者的角度來說，變多了這一層顧慮要去考量，這是一體兩面的事情。</p>
+<h2 id="content-security-policy-csp">Content Security Policy (CSP)</h2>
+<p>那麼，什麼是 Content Security Policy ( 簡稱 CSP ) ? 簡單來說，就是寫在你網站上的一個規則，主要是給瀏覽器看的。這個規則，告訴瀏覽器說本網站可以引用的圖片來源、Javascript 來源、....。有做這樣的限制，可以使網站避免一些外部的攻擊，為資訊安全加上一層保護。</p>
+<h3 id="語法-syntax">語法 Syntax</h3>
+<p>在實作上，通常我們會在 html 網站的 head 部分，加上 CSP 的設定指令，瀏覽器便會在顯示網站時使用我們所要求的指令來進行顯示 ：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=en&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;meta http-equiv=&quot;Content-Security-Polict&quot; content=&quot;&lt;policy-directive&gt;; &lt;policy-directive&gt;&quot;&gt;</span><br><span class="line">        &lt;meta charset=utf-8&gt;</span><br><span class="line">        &lt;meta http-equiv=X-UA-Compatible content=&quot;IE=edge&quot;&gt;</span><br><span class="line">        &lt;meta name=viewport content=&quot;width=device-width,initial-scale=1&quot;&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>當然，也可以在 web.config 中進行設定 ：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;system.webServer&gt;</span><br><span class="line">        &lt;httpProtocol&gt;</span><br><span class="line">            &lt;customHeaders&gt;</span><br><span class="line">                &lt;remove name=&quot;Content-Security-Policy&quot; /&gt;</span><br><span class="line">                &lt;add name=&quot;Content-Security-Policy&quot; value=&quot;&lt;policy-directive&gt;; &lt;policy-directive&gt;&quot; /&gt;</span><br><span class="line">            &lt;/customHeaders&gt;</span><br><span class="line">        &lt;/httpProtocol&gt;</span><br><span class="line">        &lt;httpErrors errorMode=&quot;Detailed&quot; /&gt;</span><br><span class="line">    &lt;/system.webServer&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
+<p>其中 <code>&lt;policy-directive&gt;</code> 便是將我們想要設定的指令寫進去，每一個指令都包含了 <code>&lt;directive&gt;</code> 以及 <code>&lt;value&gt;</code>，而不同的指令之間用 <code>;</code> 來區隔。</p>
+<h3 id="指令-directives">指令 Directives</h3>
+<p>詳細的指令種類，讀者們可以從 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy">MDN Web Docs: Content-Security-Policy</a> 中查閱，在本文中僅簡單介紹幾個比較常使用到的指令。</p>
+<h4 id="default-src">default-src</h4>
+<p>所有指令的預設值，當其他指令未進行任何設定時，會使用 <code>default-src</code> 的設定，<code>-src</code> 指的來源，從這邊我們也可以知道，CSP 中，有很大一部分會針對網頁中的「來源」有較多的限制。</p>
+<h4 id="style-src-script-src">style-src / script-src</h4>
+<p>針對 stylesheets / JavaScript 的來源進行限制，一般來說，CSP 是禁止我們利用 inline 程式碼的，原因是因為很多的駭客也會利用這樣的方式進行網頁的入侵。</p>
+<p>如果要開發就必須要加上設定值 <code>unsafe-inline</code> 才可確保 inline 的部分可以正常使用，但相對的也會容易有資安的問題。</p>
+<h4 id="img-src">img-src</h4>
+<p>針對 image 的來源進行限制。在網頁的設計上，我們也往往會使用到非常多的圖片來進行妝點或是增加訊息的吸睛度，但一旦使用外部圖片也容易會有資安的問題。</p>
+<h3 id="設定值-values">設定值 Values</h3>
+<p>指令的意義大家大致上了解了，接下來筆者就簡單介紹幾個比較常用的設定值。</p>
+<h4 id="http.example.com"><code>http://*.example.com</code></h4>
+<p>允許使用以 example.com 的任何子網域為來源，這其實就是一個白名單的概念。</p>
+<h4 id="self"><code>self</code></h4>
+<p>允許使用以相同的網域跟 port 為來源。</p>
+<h4 id="unsafe-inline"><code>unsafe-inline</code></h4>
+<p>允許使用 inline 程式碼。</p>
+<h4 id="none"><code>none</code></h4>
+<p>禁止任何的來源。</p>
+<h2 id="cross-origin-resource-sharing-cors">Cross-Origin Resource Sharing (CORS)</h2>
+<p>筆者在這幾年的開發過程中，會碰到 Cross-Origin Resource Sharing ( 簡稱 CORS )的狀況大約會是在網站開發過程中，若瀏覽器需要針對外部 API 進行 Request 的時候，就可能會遇到。</p>
+<h3 id="http-header">Http Header</h3>
+<p>正規的做法應該是在 API 開發的時候，在 header 加上通行證，讓瀏覽器可以進行 API Request，常見的 http header 便是直接在 API header 中設定白名單</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Allow-Origin: &lt;http://web.com.tw&gt;</span><br></pre></td></tr></table></figure>
+<p>若要無條件開放則把網址部分以 <code>*</code> 來取代即可。</p>
+<h3 id="csp-cors">CSP ? CORS ?</h3>
+<p>上面提到了 CSP 以及 CORS，乍聽之下這兩者實在很相近，那這兩者在開發場景上到底有什麼不同呢 ?</p>
+<p>簡單來說，當我們的網站要去存取別人的資源 ( 或是別人的網站要來存取我們的資源 )，那就會跟 CORS 政策相關，但倘若我們要載入別人的資源到我們的網站，這牽扯的部分就會是 CSP 政策。</p>
+<h3 id="cors-代理伺服器">CORS 代理伺服器</h3>
+<p>要解決 CORS 的問題，過往有 CORS Anywhere 這樣的 CORS 代理伺服器的服務，因為 CORS 的源頭是由瀏覽器產生，而且有時候 API 伺服器因為較嚴謹的資安限制無法在API 上進行鬆綁，所以當瀏覽器要去跟 API 要資料的時候就會被阻擋而造成錯誤的發生。</p>
+<p>類似 CORS Anywhere 這樣的代理伺服器服務便是為了解決這樣的兩難狀況，瀏覽器將請求發送至 CORS 代理伺服器後再轉送至 API 伺服器，因為 CORS 代理伺服器並非瀏覽器，因此便能藉此避開 CORS 的限制。</p>
+<p>但，隨著現在 Heroku 的免費方案於去年底終結，CORS Anywhere 這樣的服務也逐漸凋零，但前端開發不可能因此而停止，我們還是得找一個解決方法來處理 CORS。</p>
+<h3 id="cloudflare">Cloudflare</h3>
+<p>Cloudflare 利用單一介面為大大小小的企業甚至於個人提供穩定且安全的網路服務，用較不準確的說法，或許我們可以將 Cloudflare 感覺就是服務功能在多一些的 Heroku，而我們會利用一個 JavaScript 程式碼部署在這邊，利用 Cloudflare 來作為 CORS 的代理伺服器。</p>
+<p>首先註冊並登入 Cloudflare</p>
+<p><img src="https://i.imgur.com/lnksDeG.png" /></p>
+<ul>
+<li><code>服務名稱</code> : 原則上可以任取，最後會變成代理伺服器網址的一部分。</li>
+<li><code>選擇啟動器</code> : 這部分只是系統會給你一個樣板讓我們便於部署我們的服務程式碼，不管選擇哪一個，最終還是依照我們放上去的 script 來執行。</li>
+</ul>
+<p>建立服務後就會出現下列資訊，我們可以點擊快速編輯按鈕將我們的 Script 放入服務中</p>
+<p><img src="https://i.imgur.com/W7PIaaw.png" /></p>
+<p>我們接著利用 <a target="_blank" rel="noopener" href="https://github.com/andy922200/cloudflare-cors-anywhere/blob/master/index.js">cloudflare-cors-anywhere</a> 這個專案來進行服務的部署。</p>
+<p>將專案中 <code>index.js</code> 檔中的所有內容複製貼上至下圖左側的欄位中</p>
+<p><img src="https://i.imgur.com/ZqqnciN.png" /></p>
+<p>之後按下 <code>儲存並部署</code> 的按鈕後，我們就成功的建立了一個 CORS 的代理伺服器服務。</p>
+<p>回到 Dashboard 中，下圖紅框處就是我們代理伺服器的網址 <img src="https://i.imgur.com/PcCGU7z.png" /></p>
+<p>使用方式 : <code>&lt;CORS代理伺服器網址&gt;?&lt;API網址&gt;</code> 這樣就可以在開發過程中進行跨域的 API 存取了。</p>
+<h2 id="後記">後記</h2>
+<p>前端網頁開發上，勢必會遇到 CSP/CORS 的狀況，若公司對於資安比較嚴格一點，建議在開發前先確定允許的設定有哪些再進行後續開發。不要像筆者一樣，開發了一個大型 Web App 後才發現公司伺服器規範與開發設計有出入，屆時要進行大規模的修正反而得不償失。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2023/04/27/%E5%90%8C%E6%BA%90%E6%94%BF%E7%AD%96%20(Same%20Origin%20Policy,%20SOP)%20%E3%80%81%E5%85%A7%E5%AE%B9%E5%AE%89%E5%85%A8%E6%94%BF%E7%AD%96%20(Content%20Security%20Policy,%20CSP)%20%E8%88%87%20%20%E8%B7%A8%E4%BE%86%E6%BA%90%E8%B3%87%E6%BA%90%E5%85%B1%E7%94%A8%20(Cross-Origin%20Resource%20Sharing,%20CORS)/" title="同源政策 (Same Origin Policy, SOP)、內容安全政策(Content Security Policy, CSP)與跨來源資源共用 (Cross-Origin Resource Sharing, CORS)">https://allen108108.github.io/blog/2023/04/27/同源政策 (Same Origin Policy, SOP) 、內容安全政策 (Content Security Policy, CSP) 與  跨來源資源共用 (Cross-Origin Resource Sharing, CORS)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2023/04/20/Line%20Bot%20%E9%83%A8%E5%B1%AC%E5%B9%B3%E5%8F%B0%E7%9A%84%E9%81%B8%E6%93%87%20_%20%E4%BB%A5%20ngrok%20%E8%88%87%20Render%20%E4%BE%86%E5%8F%96%E4%BB%A3%20Heroku/" rel="prev" title="Line Bot 部屬平台的選擇 : 以 ngrok 與 Render 來取代 Heroku">
+                  <i class="fa fa-chevron-left"></i> Line Bot 部屬平台的選擇 : 以 ngrok 與 Render 來取代 Heroku
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

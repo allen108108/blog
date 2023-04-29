@@ -139,13 +139,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -271,7 +271,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h2 id="前言">前言</h2>
-<p>撰寫此文主要受 &quot;<a target="_blank" rel="noopener" href="https://www.ycc.idv.tw/deep-dl_4.html">剖析深度學習 (4)：Sigmoid, Softmax怎麼來？為什麼要用MSE和Cross Entropy？談廣義線性模型</a>&quot; 一文所激勵。</p>
+<p>撰寫此文主要受 "<a target="_blank" rel="noopener" href="https://www.ycc.idv.tw/deep-dl_4.html">剖析深度學習 (4)：Sigmoid, Softmax怎麼來？為什麼要用MSE和Cross Entropy？談廣義線性模型</a>" 一文所激勵。</p>
 <span id="more"></span>
 <p>上述文章算是簡繁體中文技術部落格中高度掌握脈絡的優質好文，但筆者想從不同的脈絡進展下來理解古典線性模型與廣義線性模型，因此決定進行此文的編寫。</p>
 <h2 id="古典線性模型-clrm-classic-linear-regression-model">古典線性模型 CLRM, Classic Linear Regression Model</h2>
@@ -384,7 +384,7 @@ Var\big[t(x)\big]=\dfrac{\partial^2 a(\eta)}{\partial\eta^2}
 </ul>
 <p>特別說一下 Link Function，這個部分在廣義線性模型中是最難讓人理解的一環，引入這樣的函數關係究竟有什麼意義呢 ?</p>
 <p>有一個角度或許可以比較清楚 Link Function 的作用。在進行擬合的過程，線性預測 <span class="math inline">\(\boldsymbol{w}^T\boldsymbol{x}\)</span> 的值域應該是 <span class="math inline">\([-\infty,+\infty]\)</span> ，但我們在不同任務上所得到的 <span class="math inline">\(y\)</span> 值分布可能沒有這麼廣 ( 例如: 二分類任務 <span class="math inline">\(y\in\{0,1\}\)</span> )，這種分布上面的差異會使得擬合出現問題，此時，便需要一個函數將指數族分布的均值 <span class="math inline">\(\mu\)</span> 一對一映射至 <span class="math inline">\([-\infty,+\infty]\)</span> 。</p>
-<p>當然這函數理所當然地便稱為 &quot; Link Function &quot;。由於這是一個一對一函數，其反函數必存在，並稱其為 &quot; Response Function &quot;</p>
+<p>當然這函數理所當然地便稱為 " Link Function "。由於這是一個一對一函數，其反函數必存在，並稱其為 " Response Function "</p>
 <p>由上述的解釋中，或許可以更清楚理解廣義線性模型藉由上述的假設以及 Link Function 的引入，創造了更多的可能性，也使預測模型更加強健。有了廣義線性模型，我們可以藉此來解釋一些機器學習中的問題。</p>
 <h2 id="補充-深度學習中的-sigmoid-softmax-函數">補充 : 深度學習中的 Sigmoid , Softmax 函數</h2>
 <p>在深度學習中，當我們針對特定任務建構網路結構時，最後一層的 activation function 似乎就隨著任務型態而確定，為什麼會這樣子呢 ? 或許我們可以從 GLM 的角度來解釋這一切。</p>
@@ -544,7 +544,7 @@ E\big[t(\boldsymbol{x})\big]=\dfrac{\partial a(\boldsymbol{\eta})}{\partial\bold
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

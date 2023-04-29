@@ -20,12 +20,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="反向傳播是現今深度學習中非常重要的一個演算法，利用反向傳播，我們可以用有效率的方式找到損失函數對於權重的梯度，進而利用梯度下降法 ( Gradient Descent ) 來對每一個權重進行優化。梯度下降法在本文不另贅述，有興趣的話可以參考筆者很早寫的一篇簡單介紹 &quot; Gradient descent 梯度下降 &quot;，本文將會簡單介紹整個反向傳播的運作原理，以及到底為什麼我們會需">
+<meta name="description" content="反向傳播是現今深度學習中非常重要的一個演算法，利用反向傳播，我們可以用有效率的方式找到損失函數對於權重的梯度，進而利用梯度下降法 ( Gradient Descent ) 來對每一個權重進行優化。梯度下降法在本文不另贅述，有興趣的話可以參考筆者很早寫的一篇簡單介紹 &quot; Gradient descent 梯度下降 &quot;，本文將會簡單介紹整個反向傳播的運作原理，以及到底為什麼我們會需要反向傳播 ?">
 <meta property="og:type" content="article">
 <meta property="og:title" content="為什麼需要反向傳播 ? Why Backpropagation ?">
 <meta property="og:url" content="https://allen108108.github.io/blog/2020/06/01/%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E5%8F%8D%E5%90%91%E5%82%B3%E6%92%AD%20_%20Why%20Backpropagation%20_/index.html">
 <meta property="og:site_name" content="Math.py">
-<meta property="og:description" content="反向傳播是現今深度學習中非常重要的一個演算法，利用反向傳播，我們可以用有效率的方式找到損失函數對於權重的梯度，進而利用梯度下降法 ( Gradient Descent ) 來對每一個權重進行優化。梯度下降法在本文不另贅述，有興趣的話可以參考筆者很早寫的一篇簡單介紹 &quot; Gradient descent 梯度下降 &quot;，本文將會簡單介紹整個反向傳播的運作原理，以及到底為什麼我們會需">
+<meta property="og:description" content="反向傳播是現今深度學習中非常重要的一個演算法，利用反向傳播，我們可以用有效率的方式找到損失函數對於權重的梯度，進而利用梯度下降法 ( Gradient Descent ) 來對每一個權重進行優化。梯度下降法在本文不另贅述，有興趣的話可以參考筆者很早寫的一篇簡單介紹 &quot; Gradient descent 梯度下降 &quot;，本文將會簡單介紹整個反向傳播的運作原理，以及到底為什麼我們會需要反向傳播 ?">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/wllk0uc.png">
 <meta property="og:image" content="https://i.imgur.com/pXVrJRl.png">
@@ -146,13 +146,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -277,7 +277,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>反向傳播是現今深度學習中非常重要的一個演算法，利用反向傳播，我們可以用有效率的方式找到損失函數對於權重的梯度，進而利用梯度下降法 ( Gradient Descent ) 來對每一個權重進行優化。梯度下降法在本文不另贅述，有興趣的話可以參考筆者很早寫的一篇簡單介紹 &quot; <a target="_blank" rel="noopener" href="http://bit.ly/32EPtzi">Gradient descent 梯度下降</a> &quot;，本文將會簡單介紹整個反向傳播的運作原理，以及到底為什麼我們會需要反向傳播 ?</p>
+        <p>反向傳播是現今深度學習中非常重要的一個演算法，利用反向傳播，我們可以用有效率的方式找到損失函數對於權重的梯度，進而利用梯度下降法 ( Gradient Descent ) 來對每一個權重進行優化。梯度下降法在本文不另贅述，有興趣的話可以參考筆者很早寫的一篇簡單介紹 " <a target="_blank" rel="noopener" href="http://bit.ly/32EPtzi">Gradient descent 梯度下降</a> "，本文將會簡單介紹整個反向傳播的運作原理，以及到底為什麼我們會需要反向傳播 ?</p>
 <span id="more"></span>
 <h2 id="反向傳播-backpropagation">反向傳播 Backpropagation</h2>
 <p>反向傳播最主要的概念，就是將誤差值往回傳遞資訊，使權重可以利用這樣的資訊進行梯度下降法來更新權重，進一步的降低誤差。為什麼要利用這樣的方式來更新權重 ? 在這一個部分筆者暫時先不進行解釋，我們先來了解所謂的反向傳播應該怎麼傳播，最後，利用一個簡單的例子來手推一次反向傳播過程。</p>
@@ -327,7 +327,7 @@ net_j^l=\sum_{i=1}^{n^{l-1}}w_{ij}^lf(net_i^{l-1})
 w_{ij}^l \longleftarrow w_{ij}^l-\eta\cdot \dfrac{\partial E}{\partial w_{ij}^l}
 \]</span></p>
 <h2 id="誤差傳播">誤差傳播</h2>
-<p>再許多的反向傳播部落格文章中，甚至 Sepp Hochreiter 提出的 LSTM 論文 &quot; <a target="_blank" rel="noopener" href="https://www.bioinf.jku.at/publications/older/2604.pdf"><em>LONG SHORT-TERM MEMORY</em></a> &quot; 中都有提及反向傳播法的概念可以視為是一個「誤差傳播」的方式。但是究竟誤差是怎麼傳播的呢 ?</p>
+<p>再許多的反向傳播部落格文章中，甚至 Sepp Hochreiter 提出的 LSTM 論文 " <a target="_blank" rel="noopener" href="https://www.bioinf.jku.at/publications/older/2604.pdf"><em>LONG SHORT-TERM MEMORY</em></a> " 中都有提及反向傳播法的概念可以視為是一個「誤差傳播」的方式。但是究竟誤差是怎麼傳播的呢 ?</p>
 <p>要知道傳播的方式，我們先定義 <span class="math inline">\((t_j-o_j)=\delta_j^L\)</span>，那麼 :</p>
 <p><span class="math display">\[
 \dfrac{\partial E}{\partial w_{ij}^L}=\delta_j^L\cdot f&#39;(net_j^{L})\cdot f(net_i^{L-1})
@@ -371,9 +371,9 @@ w_{ij}^l \longleftarrow w_{ij}^l-\eta\cdot \dfrac{\partial E}{\partial w_{ij}^l}
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/40761721">反向传播算法</a></li>
 <li><a target="_blank" rel="noopener" href="http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html">Principles of training multi-layer neural network using backpropagation</a></li>
 <li><a target="_blank" rel="noopener" href="https://blog.yani.io/deltarule/">Backpropagation Derivation - Delta Rule</a></li>
-<li>Raul Rojas. (2013). &quot;<a target="_blank" rel="noopener" href="https://page.mi.fu-berlin.de/rojas/neural/neuron.pdf"><em>Neural Networks : A Systematic Introduction</em></a>&quot;. Springer Science &amp; Business Media.</li>
-<li>Hsuan-Tien Lin. (2017).&quot;<em><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=fFSi5I3OLtk&amp;feature=youtu.be">Machine Learning Techniques : neural network</a></em>&quot; from National Taiwan University .</li>
-<li>Fei-Fei Li, Justin Johnson &amp; Serena Yeung. (2017). &quot;<em><a target="_blank" rel="noopener" href="http://cs231n.stanford.edu/2017/">CS231n: Convolutional Neural Networks for Visual Recognition.</a></em>&quot; Spring, 2017, from Stanford University.</li>
+<li>Raul Rojas. (2013). "<a target="_blank" rel="noopener" href="https://page.mi.fu-berlin.de/rojas/neural/neuron.pdf"><em>Neural Networks : A Systematic Introduction</em></a>". Springer Science &amp; Business Media.</li>
+<li>Hsuan-Tien Lin. (2017)."<em><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=fFSi5I3OLtk&amp;feature=youtu.be">Machine Learning Techniques : neural network</a></em>" from National Taiwan University .</li>
+<li>Fei-Fei Li, Justin Johnson &amp; Serena Yeung. (2017). "<em><a target="_blank" rel="noopener" href="http://cs231n.stanford.edu/2017/">CS231n: Convolutional Neural Networks for Visual Recognition.</a></em>" Spring, 2017, from Stanford University.</li>
 </ol>
 
     </div>
@@ -443,7 +443,7 @@ w_{ij}^l \longleftarrow w_{ij}^l-\eta\cdot \dfrac{\partial E}{\partial w_{ij}^l}
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

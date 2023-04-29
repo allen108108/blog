@@ -142,13 +142,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -277,11 +277,11 @@
 <h2 id="前言">前言</h2>
 <p>前面的工作已經為我們的專案開發打好了基礎，接下來就可以開始進行專案開發。筆者試圖將之前自己作的幾個開發專案移植到 Jetson Nano ，看看是否可行。除此之外，筆者也藉由 Jetson Nano 搭配 MLX 90615 紅外線測溫模組來對專案進行延伸開發。</p>
 <h2 id="手勢辨識-gesture-recognition">手勢辨識 Gesture Recognition</h2>
-<p>手勢辨識專案之前筆者已經寫過一篇專題介紹 &quot; <a href="https://allen108108.github.io/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/">Gesture Recognition using YOLO v3 tiny</a> &quot; ，但移植到 Jetson Nano 的模型是基於 Darknet 的 YOLOv2 tiny ，訓練資料及時間上都與前文之版本不太相同，因此表現上也有所差異，但這並非本文所要討論的內容，因此不多加解釋。</p>
+<p>手勢辨識專案之前筆者已經寫過一篇專題介紹 " <a href="https://allen108108.github.io/blog/2020/01/18/Gesture%20Recognition%20using%20YOLO%20v3%20tiny/">Gesture Recognition using YOLO v3 tiny</a> " ，但移植到 Jetson Nano 的模型是基於 Darknet 的 YOLOv2 tiny ，訓練資料及時間上都與前文之版本不太相同，因此表現上也有所差異，但這並非本文所要討論的內容，因此不多加解釋。</p>
 <div class="video-container"><iframe src="https://www.youtube.com/embed/UoOW0amTH9w" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
 <p>硬體上與筆電仍有差異，因此效能上會有落差，這是可以預期的，可以藉由 Gstream 調整畫面大小來提升 FPS。但要達到 Nvidia 官方宣稱的 25 FPS 我認為有其難度，這方面還需要再研究。</p>
 <h2 id="人臉辨識-face-recognition">人臉辨識 Face Recognition</h2>
-<p>這個專案沿用了 &quot;<a href="https://allen108108.github.io/blog/2020/04/16/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E7%B3%BB%E7%B5%B1%20Face%20Recognition%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%20%28%20OpenCV%20_%20Dlib%20%29/">人臉辨識系統 Face Recognition 開發紀錄 ( OpenCV / Dlib )</a>&quot; 並且利用 MLX 90615 來量測體溫。</p>
+<p>這個專案沿用了 "<a href="https://allen108108.github.io/blog/2020/04/16/%E4%BA%BA%E8%87%89%E8%BE%A8%E8%AD%98%E7%B3%BB%E7%B5%B1%20Face%20Recognition%20%E9%96%8B%E7%99%BC%E7%B4%80%E9%8C%84%20%20%28%20OpenCV%20_%20Dlib%20%29/">人臉辨識系統 Face Recognition 開發紀錄 ( OpenCV / Dlib )</a>" 並且利用 MLX 90615 來量測體溫。</p>
 <p><img src="https://i.imgur.com/GmxuUp4.jpg" /></p>
 <p>MLX 90615 是一個紅外線溫度感測模組，支援 I2C 接口，因此額外購入了 其附上的 I2C 接線筆者想直接使用，因此額外購入了 Base Hat for Raspberry Pi Zero 將 MLX 90615 與 Jetson Nano 可以直接串接。</p>
 <p><img src="https://i.imgur.com/FFiuXhb.jpg" /></p>
@@ -332,8 +332,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(7)%20%E2%80%94%20Sparse%20Reward/" rel="next" title="Deep Reinforcement Learning (7) --- Sparse Reward">
-                  Deep Reinforcement Learning (7) --- Sparse Reward <i class="fa fa-chevron-right"></i>
+                <a href="/blog/2020/04/21/Deep%20Reinforcement%20Learning%20(6)%20%E2%80%94%20Actor-Critic/" rel="next" title="Deep Reinforcement Learning (6) --- Actor-Critic">
+                  Deep Reinforcement Learning (6) --- Actor-Critic <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -360,7 +360,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

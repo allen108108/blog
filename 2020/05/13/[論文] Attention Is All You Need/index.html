@@ -33,6 +33,7 @@
 <meta property="og:image" content="https://i.imgur.com/opC8sB0.png">
 <meta property="og:image" content="https://i.imgur.com/G9zAO4m.png">
 <meta property="og:image" content="https://i.imgur.com/5cmTFpu.gif">
+<meta property="og:image" content="https://i.imgur.com/Jh53wzI.png%20=350x">
 <meta property="og:image" content="https://i.imgur.com/R8mXjVh.png">
 <meta property="og:image" content="https://i.imgur.com/KgdqdW2.png">
 <meta property="og:image" content="https://i.imgur.com/dd28sYK.png">
@@ -149,13 +150,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -305,7 +306,7 @@
 <h3 id="注意力機制-attention">注意力機制 Attention</h3>
 <p>注意力函式，可以視為將 Query 與一組 Key-Value 映射輸出成一組向量，其中Query, Key 與 Value 亦為向量。這個函式先利用一個相容性函數 ( Compatibility Function ) 將 Query 與 Key 映射成為 Value 的權重，再將 Value 經過加權總和算出輸出。</p>
 <h4 id="自我注意力機制-scaled-dot-product-attention">自我注意力機制 Scaled Dot-Product Attention</h4>
-<p>作者將 Transformer 中特別的注意力函式稱之為 &quot; Scaled Dot-Product Attention &quot;，由 Query 向量, 維度 <span class="math inline">\(d_k\)</span> 的 Key 向量以及維度 <span class="math inline">\(d_v\)</span> 的 Value 向量作為輸入。先將 Query 與所有的 Key 進行點積 ( dot product ) 後通通除以 <span class="math inline">\(\sqrt{d_k}\)</span>，再使用 Softmax 函數得到 Value 的權重。</p>
+<p>作者將 Transformer 中特別的注意力函式稱之為 " Scaled Dot-Product Attention "，由 Query 向量, 維度 <span class="math inline">\(d_k\)</span> 的 Key 向量以及維度 <span class="math inline">\(d_v\)</span> 的 Value 向量作為輸入。先將 Query 與所有的 Key 進行點積 ( dot product ) 後通通除以 <span class="math inline">\(\sqrt{d_k}\)</span>，再使用 Softmax 函數得到 Value 的權重。</p>
 <p>在實務上，Query, Key 與 Value 都會包在矩陣 <span class="math inline">\(Q\)</span>, <span class="math inline">\(K\)</span> 與 <span class="math inline">\(V\)</span> 中進行矩陣運算 :</p>
 <p><span class="math display">\[
 \text{Attention}(Q,K,V)=\text{Softmax}\Big(\dfrac{QK^T}{\sqrt{d_k}}\Big)V
@@ -331,21 +332,21 @@
 </ul>
 <h4 id="補充----about-attention"><strong>[ 補充 -- About Attention ]</strong></h4>
 <p>看了論文中上述對注意力機制與 Transformer 的介紹，或許還是沒辦法太能理解究竟在 Transformer 中是怎麼運用注意力機制的，因此筆者嘗試利用一個實際例子再根據一些參考資料重新解釋一次 Transformer 與注意力機制的關係。</p>
-<p><strong>例子 : 利用 Transformer 進行 &quot; <em>I arrived at the</em> &quot; 語句進行翻譯。</strong></p>
+<p><strong>例子 : 利用 Transformer 進行 " <em>I arrived at the</em> " 語句進行翻譯。</strong></p>
 <p>在 Encoder 的部分，輸入語句先利用一次權重生成 Query, Key 與 Value，再分別給予個別不同的權重生成不同的 Query, Key 與 Value 並同時進行注意力機制，利用這樣多頭注意力積只可使系統能夠更廣泛的抓取輸入語句的表徵，最後再將不同注意力機制下生成的輸出拼接成一個向量，詳細如下圖 :</p>
 <p><img src="https://i.imgur.com/opC8sB0.png" /></p>
-<p>然而，Transformer 並非完全沒有使用到 RNN 的方式，在 Decoder 中，要生成語句或翻譯，還是得利用 RNN 的模式來循環輸出。當我輸入 &quot; <em>I arrived at the</em> &quot;，在 Decoder 的部分就會「依序」生成 &quot; <em>Je suis arrivé</em> &quot;。</p>
+<p>然而，Transformer 並非完全沒有使用到 RNN 的方式，在 Decoder 中，要生成語句或翻譯，還是得利用 RNN 的模式來循環輸出。當我輸入 " <em>I arrived at the</em> "，在 Decoder 的部分就會「依序」生成 " <em>Je suis arrivé</em> "。</p>
 <p>在這個部分，輸入不單單使用 Encoder 的輸出，也會將先前生成的語句一同作為輸入，如此一來便可獲取輸入的資訊。</p>
 <p><img src="https://i.imgur.com/G9zAO4m.png" /></p>
-<p>我們可以利用 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2017/08/transformer-novel-neural-network.html">Google AI Blog &quot;Transformer: A Novel Neural Network Architecture for Language Understanding&quot;</a> 中的一個 GIF 動畫來理解 Transformer 的動態生成過程 :</p>
+<p>我們可以利用 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2017/08/transformer-novel-neural-network.html">Google AI Blog "Transformer: A Novel Neural Network Architecture for Language Understanding"</a> 中的一個 GIF 動畫來理解 Transformer 的動態生成過程 :</p>
 <p><img src="https://i.imgur.com/5cmTFpu.gif" /></p>
 <h4 id="補充----about-mask"><strong>[ 補充 -- About Mask ]</strong></h4>
 <p>我們要先了解到，真正會用到 Mask 的部分是在訓練的階段，因為在訓練過程中，可能因為每個 Batch 輸入的序列長度不同或是最後生成的結果完全可見的原因，我們必須要做某種程度上的 Mask 來保證訓練過程不會有問題。</p>
 <p>真正在 Transformer 中使用到的 Mask 技巧有兩種 : Padding Mask 與 Sequence Mask。在實務上，無論是 Encoder 還是 Decoder 層都會使用到 Padding Mask，主要是限制輸入序列的長度必須要一樣，具體來說， Padding Mask 就是語句長度的對齊，將短語句的後面通通補上 0。</p>
 <p>比較重要的是 Sequence Mask，當我們在訓練 Transformer 時，由於結果可見，但又必須要避免生成某位置時不能被其後的「答案」影響到生成，因此必須要進行 Mask，在實際操作上，會利用類似在實際操作上，會利用類似一個三角矩陣的概念來對應到訓練資料的Label上。</p>
-<p>如果拿上面翻譯的例子來看，&quot; <em>Je suis arrivé</em> &quot; 在訓練過程中應該會像下面這樣 :</p>
+<p>如果拿上面翻譯的例子來看，" <em>Je suis arrivé</em> " 在訓練過程中應該會像下面這樣 :</p>
 <center>
-<p><embed src="https://i.imgur.com/Jh53wzI.png%20=350x" /></p>
+<p><img src="https://i.imgur.com/Jh53wzI.png%20=350x" /></p>
 </center>
 <p>有人認為 Mask 的概念正是 Transformer 成功的關鍵之一，利用上述的概念，我們可以用來表徵語句的各種順序。</p>
 <p><img src="https://i.imgur.com/R8mXjVh.png" /></p>
@@ -358,7 +359,7 @@
 <h3 id="向量嵌入與-softmax-embedding-softmax">向量嵌入與 Softmax Embedding &amp; Softmax</h3>
 <p>與一般的 Seq2Seq 模型類似，我們可以利用已經學習到的模型將輸入輸出 token 轉換成維度 <span class="math inline">\(d_{model}\)</span> 的向量，然後再利用模型中的線性變換以及 Softmax 函數將 decoder 的輸出轉換成為預測 token 的機率。在 Transformer 中，作者們設計使兩個嵌入層以及 Softmax 變換間共享權重，並且在嵌入層終將所權重均除以 <span class="math inline">\(\sqrt{d_{model}}\)</span>。</p>
 <h3 id="位置編碼-position-encoding">位置編碼 Position Encoding</h3>
-<p>由於 Transformer 並不包含 RNN 與 CNN，因此如果我們仔細看注意力機制會發現整個過程獨立於序列的順序 ( 也就是說，&quot; <em>I arrived at the</em> &quot; 與 &quot; <em>I at the arrived</em> &quot; 並無相異 )，為了讓模型的運作可以考慮到序列的順序，因此，作者在 Encoder 與 Decoder 底部輸入均加上了位置編碼 ( Position Encoding )。由於輸入序列與位置編碼的維度相同因此我們可以直接進行相加。至於如何為位置進行編碼 ? 可以利用學習而得也可以使用固定編碼 ( 類似 One-Hot enoding )。</p>
+<p>由於 Transformer 並不包含 RNN 與 CNN，因此如果我們仔細看注意力機制會發現整個過程獨立於序列的順序 ( 也就是說，" <em>I arrived at the</em> " 與 " <em>I at the arrived</em> " 並無相異 )，為了讓模型的運作可以考慮到序列的順序，因此，作者在 Encoder 與 Decoder 底部輸入均加上了位置編碼 ( Position Encoding )。由於輸入序列與位置編碼的維度相同因此我們可以直接進行相加。至於如何為位置進行編碼 ? 可以利用學習而得也可以使用固定編碼 ( 類似 One-Hot enoding )。</p>
 <p>在 Transformer 中，作者們將位置編碼做了如下的設計 :</p>
 <p><span class="math display">\[
 PE_{(pos,2i)}=\sin(pos/10000^{2i/d_{model}})\\
@@ -523,7 +524,7 @@ LR=d_{model}^{-0.5}\cdot\min(step\text{_}num^{-0.5},step\text{_}num\cdot warmup\
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

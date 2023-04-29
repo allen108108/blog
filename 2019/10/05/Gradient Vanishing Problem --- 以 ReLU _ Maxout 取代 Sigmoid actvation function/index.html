@@ -27,17 +27,19 @@
 <meta property="og:site_name" content="Math.py">
 <meta property="og:description" content="本文內容參考自Hung-yi Lee , Machine Learning(2017) 課程內容 : Tips for Training DNN 本文圖片部分來自於課程講義內容">
 <meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/mlzgQy1.png%20=450x">
 <meta property="og:image" content="https://i.imgur.com/XVCR5Wp.png">
 <meta property="og:image" content="https://i.imgur.com/di2NKzI.png">
 <meta property="og:image" content="https://i.imgur.com/OhIc8Xq.png">
 <meta property="og:image" content="https://i.imgur.com/eKJmGeq.png">
 <meta property="og:image" content="https://i.imgur.com/BOZPTjl.png">
 <meta property="og:image" content="https://i.imgur.com/0is8BGa.png">
+<meta property="og:image" content="https://i.imgur.com/T4tZkaW.png%20=450x">
 <meta property="article:published_time" content="2019-10-04T17:48:30.000Z">
 <meta property="article:modified_time" content="2019-10-22T07:59:35.472Z">
 <meta property="article:author" content="Allen Tzeng">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.imgur.com/XVCR5Wp.png">
+<meta name="twitter:image" content="https://i.imgur.com/mlzgQy1.png%20=450x">
 
 
 <link rel="canonical" href="https://allen108108.github.io/blog/2019/10/05/Gradient%20Vanishing%20Problem%20---%20%E4%BB%A5%20ReLU%20_%20Maxout%20%E5%8F%96%E4%BB%A3%20Sigmoid%20actvation%20function/">
@@ -144,13 +146,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -290,16 +292,16 @@
 <p>「類似」於 Sigmoid function 的激勵函數，普遍帶有梯度消失 ( Gradient Vanish ) 的隱憂，那究竟什麼是梯度消失?</p>
 <p><span class="math inline">\(Sigmoid\ function=\theta(s)=\displaystyle{\frac{1}{1+e^{-s}}}\)</span></p>
 <p>此函數圖形為</p>
-<p><embed src="https://i.imgur.com/mlzgQy1.png%20=450x" /> (圖片取自 :　<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/S%E5%87%BD%E6%95%B0">Wikipedia --- Sigmoid function</a>)</p>
-<p>從圖上可知，其圖形切線斜率 ( 導數 ) 不會超過0.25，如此情況當我們在進行 Gradient Descent 的過程中，隨著迭代次數的增加，參數的更新會越來越緩慢 而整個 train 不起來。<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p><img src="https://i.imgur.com/mlzgQy1.png%20=450x" /> (圖片取自 :　<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/S%E5%87%BD%E6%95%B0">Wikipedia --- Sigmoid function</a>)</p>
+<p>從圖上可知，其圖形切線斜率 ( 導數 ) 不會超過0.25，如此情況當我們在進行 Gradient Descent 的過程中，隨著迭代次數的增加，參數的更新會越來越緩慢 而整個 train 不起來。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <h2 id="rectified-linear-unit-relu">Rectified Linear Unit ( ReLU )</h2>
 <p>從上述對 Gradient Vanish 的觀察，以 Sigmoid 作為 actvation function 雖然是一個平滑便於求導數的函數且能壓縮資料到0-1之間，但是卻有梯度消失的問題，也因此衍生出了 Rectified Linear Unit ( ReLU ) 這樣的 activation function。</p>
 <p><span class="math inline">\(ReLU(x)=max(0,x)\)</span></p>
 <p><img src="https://i.imgur.com/XVCR5Wp.png" /> (圖片取自 : <a target="_blank" rel="noopener" href="https://medium.com/@kanchansarkar/relu-not-a-differentiable-function-why-used-in-gradient-based-optimization-7fef3a4cecec">ReLU : Not a Differentiable Function: Why used in Gradient Based Optimization? and Other Generalizations of ReLU.</a> )</p>
-<p>ReLU 的優點除了可以有效「減輕」梯度消失外<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>，計算成本也大幅下降，也有相關學者提出 ReLU 也很接近生物神經元的激活模型<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>，這種種優點也使 ReLU 在深度學習中被廣泛應用，成為 activation function 的優先選擇之一。</p>
+<p>ReLU 的優點除了可以有效「減輕」梯度消失外<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>，計算成本也大幅下降，也有相關學者提出 ReLU 也很接近生物神經元的激活模型<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>，這種種優點也使 ReLU 在深度學習中被廣泛應用，成為 activation function 的優先選擇之一。</p>
 <p>ReLU 函數的稀疏性 ( Sparsity )，使得整個神經網路變得更輕巧、更多樣性，但卻不會使梯度變得越來越小。</p>
 <p><img src="https://i.imgur.com/di2NKzI.png" /></p>
-<p>如同本文註釋<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>中提到的，ReLU 並非完全沒有缺點，為了改善大量神經元壞死的狀況，便有人提出了改進版本的 ReLU --- Leaky ReLU &amp; Parametric Relu。</p>
+<p>如同本文註釋<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>中提到的，ReLU 並非完全沒有缺點，為了改善大量神經元壞死的狀況，便有人提出了改進版本的 ReLU --- Leaky ReLU &amp; Parametric Relu。</p>
 <p><img src="https://i.imgur.com/OhIc8Xq.png" /></p>
 <p>值得一提的是，這些改進版本並不一定會表現得比 ReLU 還要好，當 <span class="math inline">\(\alpha\)</span> 值過小時，仍然會有梯度消失的情況出現。再來，這兩者改進版本跟 Sigmoid 不同都是無上下界函數，如果遇到很深的神經網路，碰到極多的權重及連續乘積後，縱使 Leaky (Parametric) ReLU 導數為1或小於1的數，仍有可能造成梯度爆炸的狀況出現。</p>
 <h2 id="maxout">Maxout</h2>
@@ -311,16 +313,16 @@
 <p>Maxout 概念也衍生出了 Convolution Neural Network ( CNN )架構中的 Pooling Layer ( 池化層 )。</p>
 <p>總結來說，基本上，梯度消失的原因出現在 Backpropagation 中的連乘項，這當中導致梯度消失的原因不會只有 activation function 導數是否小於1，梯度消失算是一個非常綜合性的問題，即使改善 activation function 也只是稍微減緩某一個造成梯度消失的原因。就目前現有的 activation function 來說，ReLU 仍是一個不錯的優先選擇。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>假如現在有一個 L 層 Deep Neural network ，activation function 為 sigmoid， 第 <span class="math inline">\(l\)</span> 層中，從前一層第 <span class="math inline">\(i\)</span> 個neuron到此層第 <span class="math inline">\(j\)</span> 個 neuron 之權重為 <span class="math inline">\(w_{ij}^l\)</span> 第 <span class="math inline">\(l\)</span> 層第 <span class="math inline">\(j\)</span> 個neuron 輸入為 <span class="math inline">\(s_j^l=\sum\limits_{i=0}^{d^{l-1}}w_{ij}^lx_i^{l-1}\)</span>，輸出為 <span class="math inline">\(x_j^l=\theta(s_j^l)\)</span> <embed src="https://i.imgur.com/T4tZkaW.png%20=450x" /> 根據反向傳播法 Backpropagation 針對某分量權重來看權重的更新 <span class="math display">\[
+<li id="fn1" role="doc-endnote"><p>假如現在有一個 L 層 Deep Neural network ，activation function 為 sigmoid， 第 <span class="math inline">\(l\)</span> 層中，從前一層第 <span class="math inline">\(i\)</span> 個neuron到此層第 <span class="math inline">\(j\)</span> 個 neuron 之權重為 <span class="math inline">\(w_{ij}^l\)</span> 第 <span class="math inline">\(l\)</span> 層第 <span class="math inline">\(j\)</span> 個neuron 輸入為 <span class="math inline">\(s_j^l=\sum\limits_{i=0}^{d^{l-1}}w_{ij}^lx_i^{l-1}\)</span>，輸出為 <span class="math inline">\(x_j^l=\theta(s_j^l)\)</span> <img src="https://i.imgur.com/T4tZkaW.png%20=450x" /> 根據反向傳播法 Backpropagation 針對某分量權重來看權重的更新 <span class="math display">\[
 w_{ij}^l\leftarrow w_{ij}^l-\eta\cdot\displaystyle{\frac{\partial L}{\partial w_{ij}^l}}\]</span> 其中 <span class="math display">\[
 \displaystyle{\frac{\partial L}{\partial w_{ij}^l}}=\displaystyle{\frac{\partial L}{\partial s_j^l}\cdot\frac{\partial s_j^l}{\partial w_{ij}^l}}=\displaystyle{\frac{\partial L}{\partial s_j^l}}\cdot x_i^{l-1}=\sum\limits_{k=1}^{d^{l+1}}\displaystyle{\frac{\partial L}{\partial s_k^{l+1}}\cdot\frac{\partial s_k^{l+1}}{\partial x_j^l}\cdot\frac{\partial x_j^l}{\partial s_j^l}}=\sum\limits_{k=1}^{d^{l+1}}\displaystyle{\frac{\partial L}{\partial s_k^{l+1}}\cdot\frac{\partial s_k^{l+1}}{\partial x_j^l}}\cdot\theta&#39;(s_j^l)
-\]</span> 從上式我們可以知道，當我們層數很多的時候 ( <span class="math inline">\(l\)</span>極大 ) ，<span class="math inline">\(\displaystyle{\frac{\partial L}{\partial w_{ij}^l}}\)</span> 這一項會產生非常多的 <span class="math inline">\(\theta&#39;\)</span> 相乘，而每一個 <span class="math inline">\(\theta&#39;&lt;1\)</span> ，最後這個項就會幾乎趨近於 0 ，導致權重的更新十分緩慢。<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>ReLU 並非完全沒有梯度消失的問題，輸入值若為負數，輸出便為0，導致某些神經元不會被 activate，這是優點也是缺點，雖然能讓整個神經網路訓練速度、計算成本都大幅降低，也能讓整個神經網路更多樣性，但也會造成層數過多時，有很高比例的神經元將會沒有運作，造成跟梯度消失類似的效果。 參考 : <a target="_blank" rel="noopener" href="https://www.jqr.com/article/000284">深度学习解密：我的梯度怎么消失了？</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>參考 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/neopenx/p/4453161.html">ReLu(Rectified Linear Units)激活函数</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>ReLU 並非完全沒有梯度消失的問題，輸入值若為負數，輸出便為0，導致某些神經元不會被 activate，這是優點也是缺點，雖然能讓整個神經網路訓練速度、計算成本都大幅降低，也能讓整個神經網路更多樣性，但也會造成層數過多時，有很高比例的神經元將會沒有運作，造成跟梯度消失類似的效果。 參考 : <a target="_blank" rel="noopener" href="https://www.jqr.com/article/000284">深度学习解密：我的梯度怎么消失了？</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+\]</span> 從上式我們可以知道，當我們層數很多的時候 ( <span class="math inline">\(l\)</span>極大 ) ，<span class="math inline">\(\displaystyle{\frac{\partial L}{\partial w_{ij}^l}}\)</span> 這一項會產生非常多的 <span class="math inline">\(\theta&#39;\)</span> 相乘，而每一個 <span class="math inline">\(\theta&#39;&lt;1\)</span> ，最後這個項就會幾乎趨近於 0 ，導致權重的更新十分緩慢。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>ReLU 並非完全沒有梯度消失的問題，輸入值若為負數，輸出便為0，導致某些神經元不會被 activate，這是優點也是缺點，雖然能讓整個神經網路訓練速度、計算成本都大幅降低，也能讓整個神經網路更多樣性，但也會造成層數過多時，有很高比例的神經元將會沒有運作，造成跟梯度消失類似的效果。 參考 : <a target="_blank" rel="noopener" href="https://www.jqr.com/article/000284">深度学习解密：我的梯度怎么消失了？</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>參考 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/neopenx/p/4453161.html">ReLu(Rectified Linear Units)激活函数</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>ReLU 並非完全沒有梯度消失的問題，輸入值若為負數，輸出便為0，導致某些神經元不會被 activate，這是優點也是缺點，雖然能讓整個神經網路訓練速度、計算成本都大幅降低，也能讓整個神經網路更多樣性，但也會造成層數過多時，有很高比例的神經元將會沒有運作，造成跟梯度消失類似的效果。 參考 : <a target="_blank" rel="noopener" href="https://www.jqr.com/article/000284">深度学习解密：我的梯度怎么消失了？</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -391,7 +393,7 @@ w_{ij}^l\leftarrow w_{ij}^l-\eta\cdot\displaystyle{\frac{\partial L}{\partial w_
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

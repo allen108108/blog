@@ -145,13 +145,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -308,21 +308,21 @@
 <p>事實上整個 shortcut connections 擴大了解空間 ( solution space )，讓更優解變的可能，因此，整個模型的表現便不限制只會趨近於淺層網路，更可能找到更好的解。</p>
 <p>Residual mapping 我們也可以藉由網路結構的變更來實現</p>
 <p><img width=500 src="https://i.imgur.com/a1eMhwP.png" ></p>
-<p>旁邊這一條稱之為 &quot;Identity Shortcut connection&quot; ，作用在於讓信息可以跨過數層往下傳遞，這樣的設計不須額外的參數也不會增加計算複雜度，且可以使用一般的 Library 利用 SGD 來進行 BP，而不需修改 solver。</p>
+<p>旁邊這一條稱之為 "Identity Shortcut connection" ，作用在於讓信息可以跨過數層往下傳遞，這樣的設計不須額外的參數也不會增加計算複雜度，且可以使用一般的 Library 利用 SGD 來進行 BP，而不需修改 solver。</p>
 <p>論文中利用 Residual Network 針對 ImageNet、CIFAR-10、COCO dataset 上進行實驗都能取得相當好的表現，尤其在 ImageNet 上深度達到 152 層的 Residual Net 不僅表現上優於 VGG Net，整個複雜度也較 VGG Net 還要低，這些都顯示了 Residual Learning 在各種任務上的通用性。</p>
 <h2 id="相關工作-related-work">相關工作 Related Work</h2>
 <h3 id="residual-representations">Residual Representations</h3>
-<p>VLAD ( Vector of Locally Aggregated Descriptors )，是一種圖像的特徵表示法<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>，而 Fisher Vector 則可視為 VLAD 的機率版本，這兩種方式是圖像檢索及分類非常有用的表示法。</p>
+<p>VLAD ( Vector of Locally Aggregated Descriptors )，是一種圖像的特徵表示法<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>，而 Fisher Vector 則可視為 VLAD 的機率版本，這兩種方式是圖像檢索及分類非常有用的表示法。</p>
 <p>而偏微分方程的求解是低層次電腦視覺及電腦圖像上經常使用的方法，其中多重網格法 ( Multigrid method ) 將多尺度任務切成子問題，每一個子問題都可以視為求解大小尺度間的殘差解 ( residual solution ) 。</p>
 <p>另一個取代多重網格法的方法是層級基底預處理 ( Hierarchical Basis Preconditioning )，這樣的方式依賴兩個尺度間殘差向量的變量。</p>
 <p>不管是上述哪一個方法，都被證明其收斂速度比其他不依賴殘差性質的方法來的快，且這樣子的預處理都可以簡化優化過程。</p>
 <h3 id="shortcut-connections">Shortcut Connections</h3>
-<p>Shortcut Connection 這樣的方法已經經過了很長一段時間的實作及理論研究過程。早期的多層感知器 ( Multilayer perceptrons, MLPs ) 在輸入、輸出中間接上線性層 ; 一些研究中於中間層接上輔助分類器 ( auxiliary classifier ) 來避免梯度消失/爆炸的狀況 ; 也有一些研究利用了 Shortcut Connection 來集中層響應 ( layer responces )、梯度以及誤差傳導 ; 在知名的 &quot;Inception&quot; 架構中也是由各分支、shortcut 分支所組成。</p>
-<p>在論文 &quot; Highway Network &quot; 中將 Shortcut Connection 與 gate 機制結合。與 Residual Net 不同的地方在於，Highway Net 的 gate 會由輸入控制，也因而會產生參數，但 Residual Net 完全由 identity shortcut connections 來進行跨層的信息傳輸，並不會產生任何參數，不像 Highway Net，這樣的 shortcut connections 永遠不會被關閉。</p>
+<p>Shortcut Connection 這樣的方法已經經過了很長一段時間的實作及理論研究過程。早期的多層感知器 ( Multilayer perceptrons, MLPs ) 在輸入、輸出中間接上線性層 ; 一些研究中於中間層接上輔助分類器 ( auxiliary classifier ) 來避免梯度消失/爆炸的狀況 ; 也有一些研究利用了 Shortcut Connection 來集中層響應 ( layer responces )、梯度以及誤差傳導 ; 在知名的 "Inception" 架構中也是由各分支、shortcut 分支所組成。</p>
+<p>在論文 " Highway Network " 中將 Shortcut Connection 與 gate 機制結合。與 Residual Net 不同的地方在於，Highway Net 的 gate 會由輸入控制，也因而會產生參數，但 Residual Net 完全由 identity shortcut connections 來進行跨層的信息傳輸，並不會產生任何參數，不像 Highway Net，這樣的 shortcut connections 永遠不會被關閉。</p>
 <p>因此在深層網路結構下， Residual Net 可以有效提升模型的表現，而 Highwat Net 並沒有辦法在極深層網路上有夠好的表現。</p>
 <h2 id="深度殘差學習-deep-residual-learning">深度殘差學習 Deep Residual Learning</h2>
 <h3 id="residual-learning">Residual Learning</h3>
-<p>如果把 <span class="math inline">\(\mathbb{x}\)</span> 視為輸入層，我們可以將數層 ( 局部結構，不一定是整個網路結構 )視作是一個函數 <span class="math inline">\(\mathcal{H}(\mathbb{x})\)</span>，這樣的假設在前面我們已經有提過 ( 但其實在論文 &quot;<em>On the number of linear regions of deep neural networks.</em>&quot; 中有提到，這樣的假設仍然是一個 open question )，那也等同於這些層我們可以用另外一個函數來代替 <span class="math inline">\(\mathcal{F}(\mathbb{x})=\mathcal{H}(\mathbb{x})-\mathbb{x}\)</span>，則原來的函數則為</p>
+<p>如果把 <span class="math inline">\(\mathbb{x}\)</span> 視為輸入層，我們可以將數層 ( 局部結構，不一定是整個網路結構 )視作是一個函數 <span class="math inline">\(\mathcal{H}(\mathbb{x})\)</span>，這樣的假設在前面我們已經有提過 ( 但其實在論文 "<em>On the number of linear regions of deep neural networks.</em>" 中有提到，這樣的假設仍然是一個 open question )，那也等同於這些層我們可以用另外一個函數來代替 <span class="math inline">\(\mathcal{F}(\mathbb{x})=\mathcal{H}(\mathbb{x})-\mathbb{x}\)</span>，則原來的函數則為</p>
 <p><span class="math display">\[
 \mathcal{H}(\mathbb{x})=\mathcal{F}(\mathbb{x})+\mathbb{x}
 \]</span></p>
@@ -370,7 +370,7 @@
 </ul>
 <p><img src="https://i.imgur.com/X7Oj5Bv.png" /></p>
 <h3 id="具體實現-implementation">具體實現 Implementation</h3>
-<p>此論文遵循著 &quot; <em>Imagenet Classification with Deep Convolutional Neural Networks</em> &quot; 以及 &quot; <em>Very deep convolutional networks for large-scale image recognition.</em> &quot; 兩篇論文來進行網路架構的實現。</p>
+<p>此論文遵循著 " <em>Imagenet Classification with Deep Convolutional Neural Networks</em> " 以及 " <em>Very deep convolutional networks for large-scale image recognition.</em> " 兩篇論文來進行網路架構的實現。</p>
 <ul>
 <li>從 <span class="math inline">\([256,480]\)</span> 中隨機抽取進行尺寸增強</li>
 <li>針對圖像或其翻轉後之圖像隨機選取 <span class="math inline">\(224\times 224\)</span> 區域進行資料增強，並同時將每一個 pixel 減去所有 pixel 之平均值。</li>
@@ -398,10 +398,10 @@
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36022126">Image Retrieval之VLAD</a></li>
 </ol>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>VLAD 的概念是 2015年的論文 &quot;<em>Aggregating local descriptors into a compact image representation</em>&quot; 中提出的概念，結合了 BOF (Bag of features) 與 Fisher Kernel 的優點，利用 k-means 對特徵子 (descriptor) 進行 clustering，並找出中心作為 visual word。VLAD 不僅利用 visual word 來代替特徵子，而且同時記錄下每個特徵子與中心的距離，一方面達到圖像特徵表示方式的優化，另一方面也可以使圖像特徵的降維及檢索的優化變得更容易。<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>VLAD 的概念是 2015年的論文 "<em>Aggregating local descriptors into a compact image representation</em>" 中提出的概念，結合了 BOF (Bag of features) 與 Fisher Kernel 的優點，利用 k-means 對特徵子 (descriptor) 進行 clustering，並找出中心作為 visual word。VLAD 不僅利用 visual word 來代替特徵子，而且同時記錄下每個特徵子與中心的距離，一方面達到圖像特徵表示方式的優化，另一方面也可以使圖像特徵的降維及檢索的優化變得更容易。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -472,7 +472,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

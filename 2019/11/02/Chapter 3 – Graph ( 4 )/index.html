@@ -142,13 +142,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -290,7 +290,7 @@
 <p><strong>Proof :</strong></p>
 <p>(<span class="math inline">\(\Longrightarrow\)</span>)</p>
 <p>Suppose to the contrary that <span class="math inline">\(G\)</span> is not a DAG. <span class="math inline">\(\Longrightarrow\exists\)</span> a cycle <span class="math inline">\((v_i,\cdots,v_j,v_i)\)</span> in <span class="math inline">\(G\)</span>, where <span class="math inline">\(v_i\)</span> is the node with smallest index <span class="math inline">\(i\)</span>. <span class="math inline">\(\Longrightarrow j&gt;i\)</span> <span class="math inline">\(\because\)</span> edge <span class="math inline">\((v_j,v_i)\)</span> exists. ( <span class="math inline">\(\because\)</span> cycle <span class="math inline">\((v_i,\cdots,v_j,v_i)\)</span> ) <span class="math inline">\(\therefore j&lt;i\)</span> (<span class="math inline">\(\rightarrow\leftarrow\)</span>)</p>
-<p>(<span class="math inline">\(\Longleftarrow\)</span>) 要利用下面 lemma 才能證明<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>(<span class="math inline">\(\Longleftarrow\)</span>) 要利用下面 lemma 才能證明<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <p>Claim : <span class="math inline">\(G\ is\ a\ DAG\Longrightarrow\exists\ node\ v_k\ doesn&#39;t\ has\ incoming\ edges.\)</span></p>
 <p><strong>Proof :</strong></p>
 <p>Suppose to the contrary that <span class="math inline">\(\exists\)</span> an incoming edge in <span class="math inline">\(v\)</span>, <span class="math inline">\(\forall v\in V\)</span> <span class="math inline">\(\Longrightarrow v\)</span> has an incoming edge <span class="math inline">\((v_1,v)\)</span> <span class="math inline">\(\Longrightarrow v_1\)</span> has an incoming edge <span class="math inline">\((v_2,v_1)\)</span> Continue this process <span class="math inline">\(\Longrightarrow v_n\)</span> has an incoming edge <span class="math inline">\((v_{n+1},v_n)\)</span></p>
@@ -324,16 +324,16 @@
 <p>( b ) 當我對某一個 <span class="math inline">\(indgre(\mathbb{w})=0\)</span> 的 node 進行排序後，它所連結到的 nodes <span class="math inline">\(indgre(\mathbb{w})\)</span> 都會 -1，且我們會直接將 <span class="math inline">\(indgre(\mathbb{w})=0\)</span> 的點放進 <span class="math inline">\(S\)</span> 中，而以排序的點也會同時移出 <span class="math inline">\(S\)</span>。在圖中，粉紅色標記其實就相當於指出了 <span class="math inline">\(S\)</span> 現在有哪些點。因為這些動作都不需要掃過所有 nodes 跟 edges，時間複雜度相當於 <span class="math inline">\(O(1)\)</span>。</p>
 <p>( c )~ 後續就依照這樣的方式重複進行，因此總時間複雜度也就是初始化時候的時間複雜度為 <span class="math inline">\(O(m+n)\)</span></p>
 <p>這樣的方式相當於使用 BFS 來進行 Topological Sorting，其實在一般的課本或是網路上大多使用的是 DFS 來做 Topological Sorting。</p>
-<p>以下是演算法聖經 Cormen 等人所著的 &quot;<em>Introduction To Algorithm</em>&quot; 中利用 DFS 來尋找 Topological Ordering 的演算法</p>
+<p>以下是演算法聖經 Cormen 等人所著的 "<em>Introduction To Algorithm</em>" 中利用 DFS 來尋找 Topological Ordering 的演算法</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">TopologicalOrder(G) :</span><br><span class="line">1. Call DFS(G) to compute finishing times v.f for each vertex v </span><br><span class="line">2. As each vertex is finished, insert it onto the front of a linked list</span><br><span class="line">3. Return the linked list of vertices</span><br></pre></td></tr></table></figure>
 <p>在前面我們有提過，DFS 演算法中，每一個節點都會被進出各一次，我們可以藉此找出每一個節點的進入時間 (discover time, <span class="math inline">\(v.d\)</span> ) 以及離開時間 ( finish time, <span class="math inline">\(v.f\)</span> )。</p>
 <p>尋找 Topological Ordering 的過程，我們先對 <span class="math inline">\(G\)</span> 做一次 DFS，找出所有 nodes 的 finish time <span class="math inline">\(v.f\)</span>，之後再根據這個 <span class="math inline">\(v.f\)</span> 進行排序即可。</p>
 <p><img src="https://i.imgur.com/oIcw0Fq.png" /></p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>原本我想直接利用反證法，不經過 Lemma 來直接證明 Suppose to the contrary that G has no topological ordering 但這樣的證明會遇到一個問題 : 非 topological ordering 的排序並不一定會保證會出現 cycle ，這樣我就無法利用這樣的特性製造矛盾。<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>原本我想直接利用反證法，不經過 Lemma 來直接證明 Suppose to the contrary that G has no topological ordering 但這樣的證明會遇到一個問題 : 非 topological ordering 的排序並不一定會保證會出現 cycle ，這樣我就無法利用這樣的特性製造矛盾。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -404,7 +404,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

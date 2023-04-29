@@ -145,13 +145,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -296,7 +296,7 @@
 <h3 id="algorithm-1">Algorithm</h3>
 <p>我們可以將上面的過程得到下列 GAN 演算法 :</p>
 <ul>
-<li>初始化 <span class="math inline">\(G\)</span> 與 <span class="math inline">\(D\)</span> 的參數 <span class="math inline">\(\theta_g\)</span> 與 <span class="math inline">\(\theta_d\)</span></li>
+<li><p>初始化 <span class="math inline">\(G\)</span> 與 <span class="math inline">\(D\)</span> 的參數 <span class="math inline">\(\theta_g\)</span> 與 <span class="math inline">\(\theta_d\)</span></p></li>
 <li><p>循環迭代進行</p>
 <ul>
 <li>Updeate <span class="math inline">\(D\)</span>
@@ -304,7 +304,7 @@
 <li>從 database 中隨機抽取 <span class="math inline">\(m\)</span> 個真實樣本 <span class="math inline">\(\{x^1,x^2,\cdots,x^m\}\)</span></li>
 <li>從我們給定的分布中隨機抽取 <span class="math inline">\(m\)</span> 個向量 <span class="math inline">\(\{z^1,z^2,\cdots,z^m\}\)</span></li>
 <li>藉由 <span class="math inline">\(\tilde{x}^i=G(z^i)\)</span> 生成 <span class="math inline">\(\{\tilde{x}^1,\tilde{x}^2,\cdots,\tilde{x}^m\}\)</span></li>
-<li>Loss Function <span class="math inline">\(\tilde{V}=\displaystyle{\frac{1}{m}\sum\limits_{i=1}^{m}\log D(x^i)+\frac{1}{m}\sum\limits_{i=1}^{m}\log\big(1-D(\tilde{x}^i)\big)}\)</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></li>
+<li>Loss Function <span class="math inline">\(\tilde{V}=\displaystyle{\frac{1}{m}\sum\limits_{i=1}^{m}\log D(x^i)+\frac{1}{m}\sum\limits_{i=1}^{m}\log\big(1-D(\tilde{x}^i)\big)}\)</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></li>
 <li>藉由最大化 <span class="math inline">\(\tilde{V}\)</span> ( Gradient Ascent ) 來更新權重 <span class="math inline">\(\theta_d\)</span> : <span class="math display">\[
 \theta_d = \theta_d + \eta\cdot\nabla\tilde{V}(\theta_d)
 \]</span></li>
@@ -329,7 +329,7 @@
 <p>這也代表著， Machine 在整個 GAN 學習過程中，必須讓自己的學習能力更強，以圖片生成來說，GAN 不是只需要根據 pixel 生成圖片這樣的局部處理能力，它更必須要有一個看清楚全局的能力，這樣才能在沒有看過的資料底下做事適當的反應。</p>
 <h2 id="can-machine-learn-only-by-generator-or-discriminator">Can machine learn only by Generator or Discriminator ?</h2>
 <h3 id="learn-by-generator">Learn by Generator</h3>
-<p>這樣的方式並不是完全沒有，在 Deep Learning 中，我們碰過的 Auto Encoder<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> 或是 Variational Auto Encoder<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> 其實就是只有 Generator 的技術。</p>
+<p>這樣的方式並不是完全沒有，在 Deep Learning 中，我們碰過的 Auto Encoder<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> 或是 Variational Auto Encoder<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> 其實就是只有 Generator 的技術。</p>
 <p>但是這樣的技術其實有一些問題 : 1. Reconstruction Error 在進行 reconstruction error 時，通常系統考慮的是 pixel level 的錯誤程度，但以一張圖片來說，有時候的確會出現雖然錯誤的 pixel 較多，但是並不影響圖片本身的資訊，然而，有些時候僅出現極少量的錯誤 pixel 卻能讓整張圖片呈現出截然不同的資訊。</p>
 <p><img width=500 src="https://i.imgur.com/mhIxYqP.jpg" ></p>
 <ol start="2" type="1">
@@ -388,15 +388,15 @@
 <h2 id="generator-discriminator">Generator + Discriminator</h2>
 <p>GAN 就是結合上述的優點所形成的方法，利用 Generator 來克服 Discriminator 不易產生圖片的難處，也利用 Discriminator 來幫 Generator 做到全局的掌控。</p>
 <p><img src="https://i.imgur.com/hOKQRJ5.png" /></p>
-<p>在 Mario Lucic 的論文 &quot; <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1711.10337"><em>Are GANs Created Equal? A Large-Scale Study</em></a> &quot; 中針對了幾種 GAN 方式與 VAE 一起做一個整合式的比較，從上圖可以發現，VAE 的確就其他的 GAN 來說的確表現得稍微差了一些。</p>
+<p>在 Mario Lucic 的論文 " <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1711.10337"><em>Are GANs Created Equal? A Large-Scale Study</em></a> " 中針對了幾種 GAN 方式與 VAE 一起做一個整合式的比較，從上圖可以發現，VAE 的確就其他的 GAN 來說的確表現得稍微差了一些。</p>
 <h2 id="註釋">註釋</h2>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Goodfellow, Ian J., Pouget-Abadie, Jean, Mirza, Mehdi, Xu, Bing, Warde-Farley, David, Ozair, Sherjil, Courville, Aaron and Bengio, Yoshua. &quot;<em>Generative Adversarial Networks.</em>&quot; (2014): .<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>原始論文的 Loss Function 是如此設計，事實上也不一定要用這樣的方式，可以自行設計。在這一個式子中，比較直觀的想法是這樣 : 我們希望真實圖片可以獲得高分，而假圖片則是獲得低分 <span class="math inline">\(\Longleftrightarrow \max(D(x^i))\)</span> 並且 <span class="math inline">\(\min(D(\tilde{x}^i))\)</span> <span class="math inline">\(\Longleftrightarrow\max(\log D(x^i))\)</span> 並且 <span class="math inline">\(\max(\log(D(1-\tilde{x}^i)))\)</span> <span class="math inline">\(\Longleftrightarrow\max\Big(\displaystyle{\frac{1}{m}\sum\limits_{i=1}^{m}\log D(x^i)+\frac{1}{m}\sum\limits_{i=1}^{m}\log(1-D(\tilde{x}^i))}\Big)\)</span> <span class="math inline">\(\Longleftrightarrow\max(\tilde{V})\)</span><a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p><a href="/fnFXsGryQr-qP4q_-p5qwA">Unsupervised Learning -- AutoEncoder</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p><a href="/K0V0cQeYRfabsgKKKPwSEg">Unsupervised Learning -- Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>Goodfellow, Ian J., Pouget-Abadie, Jean, Mirza, Mehdi, Xu, Bing, Warde-Farley, David, Ozair, Sherjil, Courville, Aaron and Bengio, Yoshua. "<em>Generative Adversarial Networks.</em>" (2014): .<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>原始論文的 Loss Function 是如此設計，事實上也不一定要用這樣的方式，可以自行設計。在這一個式子中，比較直觀的想法是這樣 : 我們希望真實圖片可以獲得高分，而假圖片則是獲得低分 <span class="math inline">\(\Longleftrightarrow \max(D(x^i))\)</span> 並且 <span class="math inline">\(\min(D(\tilde{x}^i))\)</span> <span class="math inline">\(\Longleftrightarrow\max(\log D(x^i))\)</span> 並且 <span class="math inline">\(\max(\log(D(1-\tilde{x}^i)))\)</span> <span class="math inline">\(\Longleftrightarrow\max\Big(\displaystyle{\frac{1}{m}\sum\limits_{i=1}^{m}\log D(x^i)+\frac{1}{m}\sum\limits_{i=1}^{m}\log(1-D(\tilde{x}^i))}\Big)\)</span> <span class="math inline">\(\Longleftrightarrow\max(\tilde{V})\)</span><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p><a href="/fnFXsGryQr-qP4q_-p5qwA">Unsupervised Learning -- AutoEncoder</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p><a href="/K0V0cQeYRfabsgKKKPwSEg">Unsupervised Learning -- Generation ( PixelRNN、Variational Auto-Encoder ( VAE ) )</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -467,7 +467,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

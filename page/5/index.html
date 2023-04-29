@@ -134,13 +134,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -181,6 +181,215 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/" class="post-title-link" itemprop="url">Deep Reinforcement Learning (3) --- Q-learning (Basic Idea)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-12-04 12:13:34" itemprop="dateCreated datePublished" datetime="2019-12-04T12:13:34+08:00">2019-12-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2019-12-08 00:15:56" itemprop="dateModified" datetime="2019-12-08T00:15:56+08:00">2019-12-08</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/04/Deep Reinforcement Learning (3) — Q-learning (Basic Idea)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="state-value-function-vpis">State-Value function <span class="math inline">\(V^{\pi}(s)\)</span></h2>
+<p>Q-Learning 是 Reinforcement Learning 中一種 Value-Based 的方法，在 Q-Learning 中，並不直接去學習一個 Policy 而是要學習一個評價函數 Critic，來評價某一個 policy <span class="math inline">\(\pi\)</span> 在某一個 state <span class="math inline">\(s\)</span> 中採取行為後，後續得到的期望 Reward 有多少。</p>
+<p>因此，我們可以知道，一個 Critic <span class="math inline">\(V^{\pi}(s)\)</span> 必須配合一個 policy <span class="math inline">\(\pi\)</span> ，才能來計算後續的 Reward 有多少。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(3)%20%E2%80%94%20Q-learning%20(Basic%20Idea)/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(2)%20%E2%80%94%20Proximal%20Policy%20Optimization%20(PPO)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(2)%20%E2%80%94%20Proximal%20Policy%20Optimization%20(PPO)/" class="post-title-link" itemprop="url">Deep Reinforcement Learning (2) --- Proximal Policy Optimization (PPO)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2019-12-04 12:13:24 / 修改時間：12:13:25" itemprop="dateCreated datePublished" datetime="2019-12-04T12:13:24+08:00">2019-12-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(2)%20%E2%80%94%20Proximal%20Policy%20Optimization%20(PPO)/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/04/Deep Reinforcement Learning (2) — Proximal Policy Optimization (PPO)/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="on-policy-off-policy">On Policy &amp; Off Policy</h2>
+<p>我們前面所用的技巧稱為 " On Policy " ，意思就是，我們用來跟 Environment 互動的 Actor 跟我們要訓練的 Actor 是同一個。</p>
+<p>但前面有提到，這樣的訓練其實會花非常多時間，因為每一次參數更新完，就必須要重新讓 Actor 跟 Environment 互動收集新的資料，然後再進行訓練。是不是有辦法可以讓 Actor 跟 Environment 互動收集的資料拿來更新多次參數，省去一直收集資料的冗長過程 ?</p>
+<p>這就是 " Off Policy " 的作用。在 Off Policy 中，我們利用一個不同的 Actor 、Policy <span class="math inline">\(\pi_{\theta}&#39;\)</span> 來跟 Environment 互動收集資料，然後讓我們想要訓練的 Actor 、 Policy <span class="math inline">\(\pi_{\theta}&#39;\)</span> 利用這些資料，一次進行多次參數更新。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(2)%20%E2%80%94%20Proximal%20Policy%20Optimization%20(PPO)/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -255,7 +464,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 &quot; <a href="https://">Reinforcement Learning</a> &quot; 及 &quot; <a target="_blank" rel="noopener" href="http://bit.ly/2D6MEMp">Generative Adversarial Network (9) — Sequence Generation</a> &quot; 這兩篇筆記。</p>
+          <p>作為 Deep Reinforcement Learning 的第一堂課，主要是針對 Machine Learning 中 RL 的部分進行簡單的複習及補充。有些基礎的概念，在 MLDS GAN 系列課程中也已有提及，閱讀此篇筆記前可先看看 " <a href="https://">Reinforcement Learning</a> " 及 " <a target="_blank" rel="noopener" href="http://bit.ly/2D6MEMp">Generative Adversarial Network (9) — Sequence Generation</a> " 這兩篇筆記。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2019/12/04/Deep%20Reinforcement%20Learning%20(1)%20%E2%80%94%20Policy%20Gradient%20(Review)/#more" rel="contents">
@@ -859,7 +1068,7 @@
     <div class="post-body" itemprop="articleBody">
           <h2 id="shortest-paths-dijkstras-algorithm">Shortest Paths ( DijKstra's Algorithm )</h2>
 <h3 id="scenario">Scenario</h3>
-<p><span class="math inline">\(G=(V,E)\ is\ a\ directed\ graph\ and\ I(e)=lenth\ of\ edge\ e\in E,\\ where\ I(e)\geq0\ can\ be\ distance,time\ or\ cost.\)</span> <span class="math inline">\(Find\ the\ shortest\ path\ P(v)\ from\ s\ to\ each\ other\ v\in V-\{s\},\ where\ I(P)=lenth\ of\ P=\sum_{e\in P} I(e)\)</span> 給定一個有向圖以及每個 edge 的 &quot;長度&quot;( 可以是距離、花費時間、花費成本...)，試圖找出從 s 出發距離最短的路徑。</p>
+<p><span class="math inline">\(G=(V,E)\ is\ a\ directed\ graph\ and\ I(e)=lenth\ of\ edge\ e\in E,\\ where\ I(e)\geq0\ can\ be\ distance,time\ or\ cost.\)</span> <span class="math inline">\(Find\ the\ shortest\ path\ P(v)\ from\ s\ to\ each\ other\ v\in V-\{s\},\ where\ I(P)=lenth\ of\ P=\sum_{e\in P} I(e)\)</span> 給定一個有向圖以及每個 edge 的 "長度"( 可以是距離、花費時間、花費成本...)，試圖找出從 s 出發距離最短的路徑。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2019/11/15/Chapter%204%20%E2%80%93%20Greedy%20algorithms%20(%203%20)/#more" rel="contents">
@@ -965,214 +1174,10 @@
     
     <div class="post-body" itemprop="articleBody">
           <h2 id="概要-abstrct">概要 Abstrct</h2>
-<p>深層殘差網路不管在預測準確度以及收斂速度上都有著非常好的表現。在這篇論文中，作者們從前向及反向的信息傳播分析中，提出了將 shortcut connection 以及相加後的 activation 均使用恆等映射 (identity mapping) ，信息能夠藉由前後向傳播在 block 間進行傳遞。這篇論文中，利用一系列的「消融實驗」( ablation experiments )<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>來確定這些恆等映射的重要性。</p>
+<p>深層殘差網路不管在預測準確度以及收斂速度上都有著非常好的表現。在這篇論文中，作者們從前向及反向的信息傳播分析中，提出了將 shortcut connection 以及相加後的 activation 均使用恆等映射 (identity mapping) ，信息能夠藉由前後向傳播在 block 間進行傳遞。這篇論文中，利用一系列的「消融實驗」( ablation experiments )<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>來確定這些恆等映射的重要性。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2019/11/14/%5B%E8%AB%96%E6%96%87%5D%20Identity%20Mappings%20in%20Deep%20Residual%20Networks/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/11/11/Generative%20Adversarial%20Network%20(6)%20%E2%80%94%20WGAN,%20EBGAN/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/allen.jpg">
-      <meta itemprop="name" content="Allen Tzeng">
-      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Math.py">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/blog/2019/11/11/Generative%20Adversarial%20Network%20(6)%20%E2%80%94%20WGAN,%20EBGAN/" class="post-title-link" itemprop="url">Generative Adversarial Network (6) --- WGAN, EBGAN</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2019-11-11 01:15:45" itemprop="dateCreated datePublished" datetime="2019-11-11T01:15:45+08:00">2019-11-11</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新於</span>
-        <time title="修改時間：2021-08-30 18:53:53" itemprop="dateModified" datetime="2021-08-30T18:53:53+08:00">2021-08-30</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分類於</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2019/11/11/Generative%20Adversarial%20Network%20(6)%20%E2%80%94%20WGAN,%20EBGAN/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/11/Generative Adversarial Network (6) — WGAN, EBGAN/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>前面提到了 GAN 利用 JS-Divergence 來進行量測並且逐步改進模型，這樣的闡述看起來似乎很合理，但事實上卻會遇到一些困境。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2019/11/11/Generative%20Adversarial%20Network%20(6)%20%E2%80%94%20WGAN,%20EBGAN/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/11/11/Generative%20Adversarial%20Network%20(5)%20%E2%80%94%20General%20Framework/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/allen.jpg">
-      <meta itemprop="name" content="Allen Tzeng">
-      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Math.py">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/blog/2019/11/11/Generative%20Adversarial%20Network%20(5)%20%E2%80%94%20General%20Framework/" class="post-title-link" itemprop="url">Generative Adversarial Network (5) --- General Framework</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-      
-
-      <time title="創建時間：2019-11-11 01:09:00 / 修改時間：01:12:40" itemprop="dateCreated datePublished" datetime="2019-11-11T01:09:00+08:00">2019-11-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分類於</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2019/11/11/Generative%20Adversarial%20Network%20(5)%20%E2%80%94%20General%20Framework/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/11/Generative Adversarial Network (5) — General Framework/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>從上一個部分的推導，我們可以知道如果我們調整 <span class="math inline">\(V(G,D)\)</span>，最後的結果可能就會是另外一種計算 Divergence 的方式，而不會是 JS-Divergence。那我們能不能找出一個 divergence 通式，直接藉由調整通式來改變我們想要的 Divergence ?</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2019/11/11/Generative%20Adversarial%20Network%20(5)%20%E2%80%94%20General%20Framework/#more" rel="contents">
                 閱讀全文 &raquo;
               </a>
             </div>
@@ -1208,7 +1213,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

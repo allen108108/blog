@@ -147,13 +147,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -279,13 +279,13 @@
     
     <div class="post-body" itemprop="articleBody">
         <blockquote>
-<p>本篇為此系列文中第三篇，若還沒有讀過前文的讀者，建議從&quot; <a target="_blank" rel="noopener" href="https://hackmd.io/s/B1YMZu6wN">Kaggle Case - Santander Customer Transaction Prediction (1)</a> &quot;開始閱讀唷 !</p>
+<p>本篇為此系列文中第三篇，若還沒有讀過前文的讀者，建議從" <a target="_blank" rel="noopener" href="https://hackmd.io/s/B1YMZu6wN">Kaggle Case - Santander Customer Transaction Prediction (1)</a> "開始閱讀唷 !</p>
 </blockquote>
 <span id="more"></span>
 <h2 id="feature-correlation">Feature Correlation</h2>
 <p>雖說Feature Correlation 以及下一部分的 Duplicate values 在Kernel作者的觀點都還算是 Data Exploration的一部分，但是畢竟它已經跨到特徵處理了，我就把這兩部分併到這邊一起來看。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">%%time</span><br><span class="line">correlations = train_df[features].corr().<span class="built_in">abs</span>().unstack().sort_values(kind=<span class="string">&quot;quicksort&quot;</span>).reset_index()</span><br><span class="line"><span class="comment"># DataFrame.倆倆算相關係數.取絕對值.排列(?).排序.重新編號</span></span><br><span class="line">correlations = correlations[correlations[<span class="string">&#x27;level_0&#x27;</span>] != correlations[<span class="string">&#x27;level_1&#x27;</span>]]</span><br><span class="line">correlations.head(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-<p>在這裡，我嘗試過中間的<code>.unstack()</code>替換成<code>.stack()</code>似乎不會影響這部分特徵相關係數的排序，但是不管何者，都不能省略，它是將<code>train_df[features].corr().abs()</code>這個DataFrame變成可排序的一個重要的媒介。<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>在這裡，我嘗試過中間的<code>.unstack()</code>替換成<code>.stack()</code>似乎不會影響這部分特徵相關係數的排序，但是不管何者，都不能省略，它是將<code>train_df[features].corr().abs()</code>這個DataFrame變成可排序的一個重要的媒介。<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">correlations.tail(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">correlations.head(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
 <p>上面輸出的結果(略)，可以發現到除了特徵自己本身的相關係數為1外，其他不同的特徵配對的相關性都非常低 ( 最高也差不多千分之9.9左右 )</p>
@@ -334,10 +334,10 @@
 <p><img src="https://i.imgur.com/pv7OUwJ.png" /></p>
 <p>這樣的表格其實無法排序，所以<code>.unstack()</code>可以說是將整個表格換做可以排序的方式</p>
 <p><img src="https://i.imgur.com/hjnxrvN.png" /></p>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>這個部份我想了有一段時間，若將<code>.unstack()</code>整個拿掉則會出現Traceback,主要還是跟<code>train_df[features].corr().abs()</code>的型態有關<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>這個部份我想了有一段時間，若將<code>.unstack()</code>整個拿掉則會出現Traceback,主要還是跟<code>train_df[features].corr().abs()</code>的型態有關<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -408,7 +408,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

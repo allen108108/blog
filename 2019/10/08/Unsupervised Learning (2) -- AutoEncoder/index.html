@@ -27,13 +27,17 @@
 <meta property="og:site_name" content="Math.py">
 <meta property="og:description" content="Auto-Encoder Auto-Encoder 也是 Dimension Reduction 的一種應用，當我們資料位處高維度，我們會希望可以將其縮到低維度的空間，當然也希望可以將其還原到原本的維度空間中。而這中間則利用一個 Neural Network Encoder &#x2F; Decoder 來進行轉換。">
 <meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/mNDt7Of.png%20=400x">
 <meta property="og:image" content="https://i.imgur.com/YlvhSgI.png">
 <meta property="og:image" content="https://i.imgur.com/2mVam3c.png">
 <meta property="og:image" content="https://i.imgur.com/ECKfgx1.png">
 <meta property="og:image" content="https://i.imgur.com/ygojQXm.png">
+<meta property="og:image" content="https://i.imgur.com/1tPYLb1.png%20=250x">
+<meta property="og:image" content="https://i.imgur.com/BdxZbWm.png%20=250x">
 <meta property="og:image" content="https://i.imgur.com/hgYiWko.jpg">
 <meta property="og:image" content="https://i.imgur.com/JXZ051Z.png">
 <meta property="og:image" content="https://i.imgur.com/5mm4WZg.png">
+<meta property="og:image" content="https://i.imgur.com/6CuKVq8.png%20=300x">
 <meta property="og:image" content="https://i.imgur.com/sqQCeq8.jpg">
 <meta property="og:image" content="https://i.imgur.com/RJRsomN.jpg">
 <meta property="og:image" content="https://i.imgur.com/aGaysLs.png">
@@ -41,7 +45,7 @@
 <meta property="article:modified_time" content="2019-10-22T08:00:22.345Z">
 <meta property="article:author" content="Allen Tzeng">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.imgur.com/YlvhSgI.png">
+<meta name="twitter:image" content="https://i.imgur.com/mNDt7Of.png%20=400x">
 
 
 <link rel="canonical" href="https://allen108108.github.io/blog/2019/10/08/Unsupervised%20Learning%20(2)%20--%20AutoEncoder/">
@@ -148,13 +152,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -286,11 +290,11 @@
         <h2 id="auto-encoder">Auto-Encoder</h2>
 <p>Auto-Encoder 也是 Dimension Reduction 的一種應用，當我們資料位處高維度，我們會希望可以將其縮到低維度的空間，當然也希望可以將其還原到原本的維度空間中。而這中間則利用一個 Neural Network Encoder / Decoder 來進行轉換。</p>
 <span id="more"></span>
-<p><embed src="https://i.imgur.com/mNDt7Of.png%20=400x" /></p>
+<p><img src="https://i.imgur.com/mNDt7Of.png%20=400x" /></p>
 <p>既然是 NN 結構，那我們就乾脆把 Encoder/Decoder 串在一起，利用 Backpropagation 一起訓練。</p>
 <p><img src="https://i.imgur.com/YlvhSgI.png" /></p>
 <p>理想的狀態，我們會希望 Encoder 的 weight matrix 與 Decoder 的 weight matrix 互為轉置，但實務上我們基本上不用給這樣子的條件，反正就丟進去一起訓練就好。</p>
-<p>了解這樣的架構之後，我們可以知道 Auto-Encoder 有幾個特點 : * Auto-Encoder 其實就是在學習出一個近似 identity 的 function，亦即 <span class="math inline">\(g(x)=\hat{x}\approx x\)</span> * 輸入的神經元個數 = 輸出的神經元個數 * 最中間的這一層，有人稱之為 &quot; Coding layer &quot; 則帶有輸入資料的重要資訊在其中，我們稱之為 information preserving。</p>
+<p>了解這樣的架構之後，我們可以知道 Auto-Encoder 有幾個特點 : * Auto-Encoder 其實就是在學習出一個近似 identity 的 function，亦即 <span class="math inline">\(g(x)=\hat{x}\approx x\)</span> * 輸入的神經元個數 = 輸出的神經元個數 * 最中間的這一層，有人稱之為 " Coding layer " 則帶有輸入資料的重要資訊在其中，我們稱之為 information preserving。</p>
 <h2 id="deep-auto-encoder">Deep Auto-Encoder</h2>
 <p>當然，我們也可以將整個 Auto-Encoder 的結構增加更多 Layer 進去，便成為我們所稱的 Deep Autp-Encoder</p>
 <p><img src="https://i.imgur.com/2mVam3c.png" /></p>
@@ -307,7 +311,7 @@ g(x&#39;)=\hat{x}\approx x\ ,\ where\ x&#39;=x+Noise
 <h2 id="auto-encoder-application">Auto-Encoder Application</h2>
 <h3 id="text-retrieval">Text Retrieval</h3>
 <p>在 Natural Language Processing (NLP) 中，處理文本很常會用到的方式就是 Bag of Word (其運作方式就類似 One-Hot Encoding)，利用這樣的方式將 Document 向量化後便可以去跟我們的 Query　進行　Similarity 的比較。</p>
-<p><embed src="https://i.imgur.com/1tPYLb1.png%20=250x" /> <embed src="https://i.imgur.com/BdxZbWm.png%20=250x" /></p>
+<p><img src="https://i.imgur.com/1tPYLb1.png%20=250x" /> <img src="https://i.imgur.com/BdxZbWm.png%20=250x" /></p>
 <p>通常一個 Document 的維度都會非常高，因此我們可以利用 Auto-Encoder 來降維。我們再前面有提到說 Auto-Encoder 有 information preserving 的特色，那麼我們理應可以直接利用 Document 以及 Query 降維後的 code 進行比較。</p>
 <h3 id="similar-image-search">Similar Image Search</h3>
 <p>相同的，我們也可以利用 information preserving 的特性進行相似圖檢索。</p>
@@ -321,19 +325,19 @@ g(x&#39;)=\hat{x}\approx x\ ,\ where\ x&#39;=x+Noise
 <p>現在 CNN 比較常用的是 Max Pooling，因此我們這裡就討論 Max Pooling 的狀況 ( 其實 Aveerage Pooling 的方式並不會有什麼差別 )。</p>
 <p><img src="https://i.imgur.com/5mm4WZg.png" /></p>
 <p>在 Pooling 的過程中，我們只要記得取 Maximun 的位置，在 Unpooling 時，將上一層的值分別補回 Pooling 取值的位置即可 ( 其他位置補 0 )。</p>
-<p><embed src="https://i.imgur.com/6CuKVq8.png%20=300x" /></p>
+<p><img src="https://i.imgur.com/6CuKVq8.png%20=300x" /></p>
 <p>這樣的方式，可以確保能夠最大限度的還原 information</p>
 <h4 id="deconvolution">Deconvolution</h4>
-<p>&quot; Deconvolution &quot; 這樣的名詞其實很有問題，就字面上來看，它應該是一個「逆卷積」的運算，然而我們在這一個部分用的其實也是一種 upsampling，而運算仍然是一般的卷積。( 因此，現在有許多人使用 Transpose Convolution 這樣的稱呼來取代 Deconv )</p>
+<p>" Deconvolution " 這樣的名詞其實很有問題，就字面上來看，它應該是一個「逆卷積」的運算，然而我們在這一個部分用的其實也是一種 upsampling，而運算仍然是一般的卷積。( 因此，現在有許多人使用 Transpose Convolution 這樣的稱呼來取代 Deconv )</p>
 <p><img src="https://i.imgur.com/sqQCeq8.jpg" /></p>
 <p>我們從 Neural Network 的角度來看 ( 而非以滑窗的概念來看 )，在 Deconv 階段，直覺的我們會希望在這個階段的 Neurons 可以藉由當初 Conv 的連結，連結到下一層的　Neurons，而重疊的部分也是順理成章的相加即可。(上圖中)</p>
 <p>然而，其實可以發現到，Deconv 的運算也就只是 Padding 後再做一次 Convolution 而已，它跟 Convolution 的差異只是在於權重的順序相反。</p>
-<p>也因為從 NN 角度來理解這樣 Deconv 的概念，我們可以很清楚地了解權重的改變，這樣也不難理解 &quot; Transpose Convolution &quot; 為什麼比 &quot; Deconvolution &quot; 更適合代表這樣的操作了。</p>
+<p>也因為從 NN 角度來理解這樣 Deconv 的概念，我們可以很清楚地了解權重的改變，這樣也不難理解 " Transpose Convolution " 為什麼比 " Deconvolution " 更適合代表這樣的操作了。</p>
 <h3 id="pre-training">Pre-training</h3>
-<p>我們一樣要再來強調一次 Auto-Encoder 的重點 &quot; information preserving &quot;。</p>
+<p>我們一樣要再來強調一次 Auto-Encoder 的重點 " information preserving "。</p>
 <p>在 Neural Network 中，我們要從頭訓練一個 model，有時候必須要耗費很大的時間、計算成本，很多時候我們會盡量去找一組比較好的初始值，讓整個訓練可以比較快速完成。</p>
 <p>而 Auto-Encoder 便是可以幫助我們順利完成這樣工作的工具之一。</p>
-<p>因為 Auto-Encoder &quot; information preserving &quot; 的特性，因此我們如果可以保留作為初始值，讓每一層都能 preserve information ，這樣的網路應該不算太差，那我們在後續的訓練就不用浪費太多時間，而這樣的方式我們稱之為 &quot; Pre-Training &quot;</p>
+<p>因為 Auto-Encoder " information preserving " 的特性，因此我們如果可以保留作為初始值，讓每一層都能 preserve information ，這樣的網路應該不算太差，那我們在後續的訓練就不用浪費太多時間，而這樣的方式我們稱之為 " Pre-Training "</p>
 <p><img src="https://i.imgur.com/RJRsomN.jpg" /></p>
 <h3 id="decoder-part-.....">Decoder Part .....</h3>
 <p>前面所有的應用，我們都是使用 Encoder 部分，但後半部的 Decoder 也是有一些有趣的特性可以來應用。拿 MNIST 的例子來看，Decoder 的部分就可以生成出各種數字。</p>
@@ -407,7 +411,7 @@ g(x&#39;)=\hat{x}\approx x\ ,\ where\ x&#39;=x+Noise
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

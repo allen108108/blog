@@ -137,13 +137,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -375,7 +375,7 @@
 <h4 id="settings.py">settings.py</h4>
 <p>這部分應該在初期建構 Line Bot 時就已經寫進 <code>setting.py</code> 之中，但有個部分還是要稍微提醒一下。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">&#x27;default&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;ENGINE&#x27;</span>: <span class="string">&#x27;django.db.backends.sqlite3&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;NAME&#x27;</span>: BASE_DIR / <span class="string">&quot;db.sqlite3&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>原本上述的設定，在實際應用上會一直報錯，經查詢過後，需要改為 <code>str(BASE_DIR / &quot;db.sqlite3&quot;)</code> 才可正常運作。</p>
+<p>原本上述的設定，在實際應用上會一直報錯，經查詢過後，需要改為 <code>str(BASE_DIR / "db.sqlite3")</code> 才可正常運作。</p>
 <h4 id="views.py">views.py</h4>
 <p>在 Line Bot 的設計上，筆者希望能將 Line Bot 在群組內外的動作進行切割，這樣可以確保，我們在單獨跟機器人進行溝通的時候可以避免掉喚醒/休眠的機制。</p>
 <p>為了達成這個目的，我們得先了解到 Line Bot 怎麼判斷現在是群組訊息還是個人訊息</p>
@@ -452,7 +452,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

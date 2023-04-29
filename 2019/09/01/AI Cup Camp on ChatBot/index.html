@@ -28,6 +28,8 @@
 <meta property="og:description" content="這是一場以聊天機器人 ( ChatBot ) 為主的座談，地點在台灣大學博理館演講廳，主要與會學者為 : 李宏毅 (台大電機系教授)、蔡宗翰 (智慧型資訊服務研發實驗室指導教授) 、陳縕儂 ( 台大資工系教授 ) 以及陳昱翬 ( Google Health 成員 )。 在這場演講中，我僅針對李宏毅老師的部分作簡單扼要的摘要。">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/prm7NRh.png">
+<meta property="og:image" content="https://i.imgur.com/ON6x9br.png%20=500x">
+<meta property="og:image" content="https://i.imgur.com/AQKff6t.png%20=500x">
 <meta property="article:published_time" content="2019-09-01T15:18:07.000Z">
 <meta property="article:modified_time" content="2019-10-11T02:39:54.824Z">
 <meta property="article:author" content="Allen Tzeng">
@@ -139,13 +141,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
   </nav>
@@ -299,7 +301,7 @@
 <li>第二個問題是有人提出，今天演講的許多技術都用了 GAN，但我們知道 GAN 在訓練過程中非常不穩定，而像 Seq2Seq2Seq 這樣的 Model，再加上 GAN 我們應該如何讓整個訓練過程穩定下來 ?</li>
 </ol>
 <p>李宏毅老師回答，Seq2Seq2Seq 因為中間是 Discrete ，實際上我們用到的除了是 Reinforcement Learning 訓練外，我們還使用了 Step GAN 來讓整個訓練穩定下來，意即，我們不讓整個 Reinforcement Learning 跟 GAN 看完整個文章在來看它夠不夠好，取而代之的是我們在每一個 Time Step 都評估一次，這樣的方式也的確有比較好的結果。</p>
-<p>當然，如果可以找到不用 GAN 可以訓練得比較好的方法也是一種選擇，舉例來說，李宏毅老師實驗室在 Voice Conversion 上最近就利用完全不用 GAN 的方式來訓練，有興趣的可以查詢 &quot; <em>One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization</em> &quot; 論文。</p>
+<p>當然，如果可以找到不用 GAN 可以訓練得比較好的方法也是一種選擇，舉例來說，李宏毅老師實驗室在 Voice Conversion 上最近就利用完全不用 GAN 的方式來訓練，有興趣的可以查詢 " <em>One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization</em> " 論文。</p>
 <h3 id="voice-conversion-語音轉換">Voice Conversion 語音轉換</h3>
 <p>過去進行 Voice Conversion 是採用 Superviced Learning，亦即，如果我們要把 A 的聲音轉成 B 的聲音，我們必須請 A,B 兩人念相同的文字進行標註，再來訓練一組模型 (Seq2Seq) 來做轉換。</p>
 <p>但這樣的做法非常不切實際，我們希望的是未來機器可以不需要經過上述的 Label 過程，即使是兩者不同語系都能直接進行語音轉換。</p>
@@ -320,8 +322,8 @@
 <p>最後解決這問題的方式便是使用一個 Seq2Seq2Seq AutoEncoder Model，讓文章產生摘要再利用摘要產生回一篇文章。這樣也可以省去人工標註摘要的時間。跟上面的問題一樣，可能在中間層的輸出會是一段毫無意義或是人類看不懂的摘要，加入一個 Discriminator 即可。</p>
 <p>這樣的模型就像是一個 GAN + AutoEncoder 的 Model 。</p>
 <p>這裡有幾個舉例，有好有壞 :</p>
-<p><embed src="https://i.imgur.com/ON6x9br.png%20=500x" /></p>
-<p><embed src="https://i.imgur.com/AQKff6t.png%20=500x" /></p>
+<p><img src="https://i.imgur.com/ON6x9br.png%20=500x" /></p>
+<p><img src="https://i.imgur.com/AQKff6t.png%20=500x" /></p>
 <h3 id="qa-system">QA system</h3>
 <p>想要教機器看文章並且回答問題，我們要有相當大量的資料，並且我們必須要想非常多的問題跟答案。但全世界有非常多的語言並沒有這麼大量的語料可供訓練，既然英文上有這麼大量的資料，我們可不可能先在英文上面進行學習，再利用訓練出來的模型運用在別的語種上 ?</p>
 <p>要實現這樣的想法，我們可以利用上面所講到的方法。</p>
@@ -395,7 +397,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
