@@ -134,7 +134,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-count">124</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -181,6 +181,104 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2020/03/02/[%E8%AB%96%E6%96%87]%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2020/03/02/%5B%E8%AB%96%E6%96%87%5D%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/" class="post-title-link" itemprop="url">[論文] Simultaneous Localisation and Mapping (SLAM) : Part I The Essential Algorithm</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2020-03-02 15:35:54 / 修改時間：15:38:06" itemprop="dateCreated datePublished" datetime="2020-03-02T15:35:54+08:00">2020-03-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AB%96%E6%96%87-Paper/" itemprop="url" rel="index"><span itemprop="name">論文 Paper</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/03/02/%5B%E8%AB%96%E6%96%87%5D%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/02/[論文] Simultaneous Localisation and Mapping (SLAM) _ Part I The Essential Algorithm/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="筆者前言">筆者前言</h2>
+<p>此篇論文距今已有十多年歷史，但就初入 SLAM 領域的初心者來說，這仍是一篇入門的論文可讓我們以極短時間了解 SLAM 的整個核心概念與一些經典的解決方法。但雖說入門，仍然需要不少的先備知識 (例如 : 機率統計、卡爾曼濾波器、粒子濾波器....) ，要能完全掌握也必須要花一些時間。</p>
+<p>比較需要注意的是，這篇真的僅是入門，不能作為理解 SLAM 問題的全貌，畢竟在 2006年以後到現在，十多年的時間也發展了不少新技術，更有甚者結合了 Deep Learning 有更好的 performance，但我相信在此論文的基礎下，去了解最新技術會相對來說簡單一些，而這也是我會選擇閱讀此篇論文的主要原因之一。</p>
+<p>另外，本篇論文筆記會加入一些補充資料在其中，以利完全沒有相關經驗及先備知識的讀者在進行論文閱讀時能更加清楚整個論文的內容。因此整篇論文筆記的內容或許會與原文有一些差異，並不會完全相同，在對照原始論文時可能要稍微注意的地方。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2020/03/02/%5B%E8%AB%96%E6%96%87%5D%20Simultaneous%20Localisation%20and%20Mapping%20(SLAM)%20_%20Part%20I%20The%20Essential%20Algorithm/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1085,105 +1183,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(5)%20%E2%80%94%20Q-learning%20(Continuous%20Action)/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/allen.jpg">
-      <meta itemprop="name" content="Allen Tzeng">
-      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Math.py">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/" class="post-title-link" itemprop="url">Deep Reinforcement Learning (4) --- Q-learning (Advanced Tips)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-      
-
-      <time title="創建時間：2019-12-05 12:13:28 / 修改時間：12:13:47" itemprop="dateCreated datePublished" datetime="2019-12-05T12:13:28+08:00">2019-12-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分類於</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning-and-having-it-Deep-and-Structured/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning and having it Deep and Structured</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/05/Deep Reinforcement Learning (4) — Q-learning (Advanced Tips)/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>這一個部分延續上一篇文章，對 Q-Learning 的一些技巧做了更深入的延伸。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2019/12/05/Deep%20Reinforcement%20Learning%20(4)%20%E2%80%94%20Q-learning%20(Advanced%20Tips)/#more" rel="contents">
                 閱讀全文 &raquo;
               </a>
             </div>
