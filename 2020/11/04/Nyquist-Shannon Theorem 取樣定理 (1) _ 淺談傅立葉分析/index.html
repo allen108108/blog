@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://i.imgur.com/b24lApz.gif">
 <meta property="og:image" content="https://i.imgur.com/OO2NHxS.jpg">
 <meta property="article:published_time" content="2020-11-03T22:23:48.000Z">
-<meta property="article:modified_time" content="2021-08-30T07:44:45.567Z">
+<meta property="article:modified_time" content="2023-05-02T07:25:36.903Z">
 <meta property="article:author" content="Allen Tzeng">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.imgur.com/hTpy1pK.png">
@@ -229,7 +229,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新於</span>
-        <time title="修改時間：2021-08-30 15:44:45" itemprop="dateModified" datetime="2021-08-30T15:44:45+08:00">2021-08-30</time>
+        <time title="修改時間：2023-05-02 15:25:36" itemprop="dateModified" datetime="2023-05-02T15:25:36+08:00">2023-05-02</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -289,7 +289,8 @@ f(t)=\frac{a_0}{2}+\sum_{n=1}^{\infty}a_n\cos(nt)+b_n\sin(nt)
 \]</span></p>
 <p>其中 <span class="math inline">\(a_n\)</span>, <span class="math inline">\(b_n\)</span> 我們稱之為傅立葉係數</p>
 <p><span class="math display">\[
-a_n=\displaystyle{\frac{1}{T}\int_{2T}f(t)\cos (nt)dt},\mbox{   }\forall n\in\mathbb{N}\cap\{0\}\\
+a_n=\displaystyle{\frac{1}{T}\int_{2T}f(t)\cos (nt)dt},\mbox{   }\forall n\in\mathbb{N}\cap\{0\}
+\]</span> <span class="math display">\[
 b_n=\displaystyle{\frac{1}{T}\int_{2T}f(t)\sin(nt)dt},\mbox{   }\forall n\in\mathbb{N}\\
 \]</span></p>
 <p>這樣的級數我便是我們所稱的傅立葉級數 (Fourier Series)。證明過程需要有高等微積分作為先備知識，如果有興趣的讀者可以參考筆者所附的參考資料 [10][11][12]。</p>
@@ -308,16 +309,21 @@ e^{i\theta}=\cos\theta+i\sin\theta,\mbox{  }\forall\theta\in\mathbb{R}
 <p>當然可以 (否則就沒有接下來的文章內容了) ! 有別於傅立葉級數，針對非週期性函數，我們稱其為(連續)傅立葉變換 (Fourier Transform)。</p>
 <p>首先我們先考慮函數 <span class="math inline">\(f:\mathbb{R}\rightarrow\mathbb{C}\)</span> 為區間可積之週期函數，且其週期為 <span class="math inline">\(2\pi\)</span>，那麼我們可以利用歐拉公式來對傅立葉級數進行調整。從歐拉公式我們可以推得</p>
 <p><span class="math display">\[
-\cos(nt)=\frac{(e^{int}+e^{-int})}{2}\\
+\cos(nt)=\frac{(e^{int}+e^{-int})}{2}
+\]</span> <span class="math display">\[
 \sin(nt)=\frac{(e^{int}-e^{-int})}{2i}
 \]</span></p>
 <p>將其帶入傅立葉級數後</p>
 <p><span class="math display">\[
-f(t)=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)dt+\sum_{n=1}^{\infty}\big[\cos(nt)\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\cos(nt)dt+\sin(nt)\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\sin(nt)dt\big]\\
-=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)dt+\sum_{n=1}^{\infty}\big[\frac{(e^{int}+e^{-int})}{2}\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)(\frac{(e^{int}+e^{-int})}{2})dt+\frac{(e^{int}-e^{-int})}{2i}\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)(\frac{(e^{int}-e^{-int})}{2i})dt\big]\\
-=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)dt+\frac{1}{4\pi}\sum_{n=1}^{\infty}\big[(e^{int}+e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}+e^{-int})dt-(e^{int}-e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}-e^{-int})dt\big]\\
-=\frac{1}{2\pi}\Big[\int_{-\pi}^{\pi}f(t)dt+\frac{1}{2}\sum_{n=1}^{\infty}\big[(e^{int}+e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}+e^{-int})dt-(e^{int}-e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}-e^{-int})dt\big]\Big]\\
-=\frac{1}{2\pi}\Big[\int_{-\pi}^{\pi}f(t)dt+\frac{1}{2}\sum_{n=1}^{\infty}\big[e^{-int}\int_{-\pi}^{\pi}f(t)e^{int}dt+e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]\Big]\cdots\cdots(1)\\
+f(t)=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)dt+\sum_{n=1}^{\infty}\big[\cos(nt)\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\cos(nt)dt+\sin(nt)\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\sin(nt)dt\big]
+\]</span> <span class="math display">\[
+=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)dt+\sum_{n=1}^{\infty}\big[\frac{(e^{int}+e^{-int})}{2}\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)(\frac{(e^{int}+e^{-int})}{2})dt+\frac{(e^{int}-e^{-int})}{2i}\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)(\frac{(e^{int}-e^{-int})}{2i})dt\big]
+\]</span> <span class="math display">\[
+=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)dt+\frac{1}{4\pi}\sum_{n=1}^{\infty}\big[(e^{int}+e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}+e^{-int})dt-(e^{int}-e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}-e^{-int})dt\big]
+\]</span> <span class="math display">\[
+=\frac{1}{2\pi}\Big[\int_{-\pi}^{\pi}f(t)dt+\frac{1}{2}\sum_{n=1}^{\infty}\big[(e^{int}+e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}+e^{-int})dt-(e^{int}-e^{-int})\int_{-\pi}^{\pi}f(t)(e^{int}-e^{-int})dt\big]\Big]
+\]</span> <span class="math display">\[
+=\frac{1}{2\pi}\Big[\int_{-\pi}^{\pi}f(t)dt+\frac{1}{2}\sum_{n=1}^{\infty}\big[e^{-int}\int_{-\pi}^{\pi}f(t)e^{int}dt+e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]\Big]\cdots\cdots(1)
 \]</span></p>
 <p>而由於其對稱性，我們可以得知</p>
 <p><span class="math display">\[
@@ -329,19 +335,23 @@ e^{-int}\int_{\pi}^{\pi}f(t)e^{int}dt+e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt=2
 \]</span></p>
 <p>將 <span class="math inline">\((1)(2)(3)\)</span> 式相加後</p>
 <p><span class="math display">\[
-2f(t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}\big[e^{-int}\int_{\pi}^{\pi}f(t)e^{int}dt+e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]\\
-=\frac{1}{2\pi}\cdot2\cdot\sum_{n=-\infty}^{\infty}\big[e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]\\
+2f(t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}\big[e^{-int}\int_{\pi}^{\pi}f(t)e^{int}dt+e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]
+\]</span> <span class="math display">\[
+=\frac{1}{2\pi}\cdot2\cdot\sum_{n=-\infty}^{\infty}\big[e^{int}\int_{-\pi}^{\pi}f(t)(e^{-int})dt\big]
 \]</span></p>
 <p>因此可以改寫傅立葉級數為下列型態</p>
 <p><span class="math display">\[
-f(t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}f_n(t)e^{int}\\
+f(t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}f_n(t)e^{int}
+\]</span> <span class="math display">\[
 \mbox{where }f_n(t)=\int_{-\pi}^{\pi}f(t)(e^{-int})dt\cdots\cdots(4)
 \]</span></p>
 <h4 id="週期為-4pi">週期為 <span class="math inline">\(4\pi\)</span></h4>
 <p>現在我們考慮一個狀況，假設 <span class="math inline">\(f(t)\)</span> 為一個區間可積且週期為 <span class="math inline">\(4\pi\)</span> 的週期函數， 那麼上述的傅立葉級數便無法使用。不過我們可以知道 <span class="math inline">\(f(2t)\)</span> 的週期就是 <span class="math inline">\(2\pi\)</span> ，因此</p>
 <p><span class="math display">\[
-g(t)\overset{let}{=}f(2t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}e^{int}\int_{-\pi}^{\pi}g(t)e^{-int}dt\\
-\Longrightarrow f(2t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}e^{int}\int_{-\pi}^{\pi}f(2t)e^{-int}dt\\
+g(t)\overset{let}{=}f(2t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}e^{int}\int_{-\pi}^{\pi}g(t)e^{-int}dt
+\]</span> <span class="math display">\[
+\Longrightarrow f(2t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}e^{int}\int_{-\pi}^{\pi}f(2t)e^{-int}dt
+\]</span> <span class="math display">\[
 \Longrightarrow f(t)=\frac{1}{2\pi}\Big(\frac{1}{2}\sum_{n=-\infty}^{\infty}e^{\frac{int}{2}}\int_{-2\pi}^{2\pi}f(t)e^{\frac{-int}{2}}dt\Big)\\
 \]</span></p>
 <p>同理可證，任何一個週期為 <span class="math inline">\(2k\pi\)</span> 的週期函數 <span class="math inline">\(f(x)\)</span> 均可以下列方式表示</p>
