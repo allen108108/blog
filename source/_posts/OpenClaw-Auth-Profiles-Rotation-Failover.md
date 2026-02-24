@@ -29,6 +29,8 @@ tags:
 
 如果你把所有容錯都押在「跨模型 fallback」，你會付出更高延遲、更高不確定性，甚至更高成本（因為你可能把一個暫時性 rate limit，升級成跨供應商切換）。
 
+<!-- more -->
+
 OpenClaw 的設計其實更像工程系統的兩層保護：
 
 1. **Rotation / Failover（同一 Provider 內：多個 auth profiles）**
