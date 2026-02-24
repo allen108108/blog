@@ -1,0 +1,65 @@
+name: Deploy Blog with Old Posts
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+      
+      - name: Build new posts with Jekyll
+        run: bundle exec jekyll build --baseurl "/blog"
+        env:
+          JEKYLL_ENV: production
+      
+      - name: Checkout gh-pages to get old posts
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: old-site
+      
+      - name: Merge old and new content
+        run: |
+          # 複製舊文章（2019-2023）
+          cp -r old-site/2019 _site/ || true
+          cp -r old-site/2020 _site/ || true
+          cp -r old-site/2021 _site/ || true
+          cp -r old-site/2022 _site/ || true
+          cp -r old-site/2023 _site/ || true
+          
+          # 複製舊的靜態資源
+          cp -r old-site/css _site/ || true
+          cp -r old-site/js _site/ || true
+          cp -r old-site/images _site/ || true
+          cp -r old-site/archives _site/ || true
+          cp -r old-site/categories _site/ || true
+          cp -r old-site/page _site/ || true
+          
+          # 如果舊首頁存在，保留它（或者你可以用新的）
+          # cp old-site/index.html _site/index-old.html || true
+          
+          echo "✅ 舊文章已合併"
+      
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          publish_branch: gh-pages
+          keep_files: false

@@ -1,0 +1,44 @@
+# Site settings
+title: Allen's Tech Blog
+description: 技術筆記與學習紀錄
+author: Allen
+email: your-email@example.com
+url: https://allen108108.github.io/blog
+baseurl: /blog
+
+# Build settings
+markdown: kramdown
+permalink: /:year/:month/:day/:title/
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /:year/:month/:day/:title/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      author: Allen
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .bundle
+  - .sass-cache
+  - .jekyll-cache
+  - .git
+  - README.md
