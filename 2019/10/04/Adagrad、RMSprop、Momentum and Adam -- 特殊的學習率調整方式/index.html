@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文內容節錄自Hung-yi Lee ,  Machine Learning(2017) 課程內容 : Gradient Descent、Tips for training DNN 本文圖片均來自於課程講義內容">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/10/04/Adagrad%E3%80%81RMSprop%E3%80%81Momentum%20and%20Adam%20--%20%E7%89%B9%E6%AE%8A%E7%9A%84%E5%AD%B8%E7%BF%92%E7%8E%87%E8%AA%BF%E6%95%B4%E6%96%B9%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文內容節錄自Hung-yi Lee ,  Machine Learning(2017) 課程內容 : Gradient Descent、Tips for training DNN 本文圖片均來自於課程講義內容">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/e29ZoCj.png">
+<meta property="og:image" content="https://i.imgur.com/lFmmFnb.png">
+<meta property="og:image" content="https://i.imgur.com/gL6dddh.png">
+<meta property="og:image" content="https://i.imgur.com/5N3U3Uy.png">
+<meta property="og:image" content="https://i.imgur.com/V5wDXNv.png">
+<meta property="article:published_time" content="2019-10-04T17:37:03.000Z">
+<meta property="article:modified_time" content="2026-03-13T07:37:50.508Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/e29ZoCj.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/10/04/Adagrad%E3%80%81RMSprop%E3%80%81Momentum%20and%20Adam%20--%20%E7%89%B9%E6%AE%8A%E7%9A%84%E5%AD%B8%E7%BF%92%E7%8E%87%E8%AA%BF%E6%95%B4%E6%96%B9%E5%BC%8F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/10/04/Adagrad%E3%80%81RMSprop%E3%80%81Momentum%20and%20Adam%20--%20%E7%89%B9%E6%AE%8A%E7%9A%84%E5%AD%B8%E7%BF%92%E7%8E%87%E8%AA%BF%E6%95%B4%E6%96%B9%E5%BC%8F/","path":"2019/10/04/Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式/","title":"Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Adagrad-%E2%80%94-%E5%BD%88%E6%80%A7%E4%BD%BF%E7%94%A8-Learning-Rate"><span class="nav-number">1.</span> <span class="nav-text">Adagrad — 彈性使用 Learning Rate</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adagrad-%E7%9A%84%E7%9F%9B%E7%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">Adagrad 的矛盾 ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Adagrad-%E7%9A%84%E5%84%AA%E7%BC%BA%E9%BB%9E"><span class="nav-number">1.2.</span> <span class="nav-text">Adagrad 的優缺點</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%84%AA%E9%BB%9E"><span class="nav-number">1.2.1.</span> <span class="nav-text">優點</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E9%BB%9E"><span class="nav-number">1.2.2.</span> <span class="nav-text">缺點</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RMSprop-%E2%80%94-%E8%99%95%E7%90%86%E8%A4%87%E9%9B%9C-error-surface"><span class="nav-number">2.</span> <span class="nav-text">RMSprop — 處理複雜 error surface</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RMSprop-%E7%9A%84%E5%84%AA%E7%BC%BA%E9%BB%9E"><span class="nav-number">2.1.</span> <span class="nav-text">RMSprop 的優缺點</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%84%AA%E9%BB%9E-1"><span class="nav-number">2.1.1.</span> <span class="nav-text">優點</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E9%BB%9E-1"><span class="nav-number">2.1.2.</span> <span class="nav-text">缺點</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Momentum-%E2%80%94-%E8%B7%B3%E8%84%AB%E5%87%BA-Local-minimum-%E7%9A%84%E5%9B%B0%E5%A2%83"><span class="nav-number">3.</span> <span class="nav-text">Momentum — 跳脫出 Local minimum 的困境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Momentum-%E7%9A%84%E5%84%AA%E7%BC%BA%E9%BB%9E"><span class="nav-number">3.1.</span> <span class="nav-text">Momentum 的優缺點</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%84%AA%E9%BB%9E-2"><span class="nav-number">3.1.1.</span> <span class="nav-text">優點</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E9%BB%9E-2"><span class="nav-number">3.1.2.</span> <span class="nav-text">缺點</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adam-%E2%80%94-%E5%B8%B8%E7%94%A8%E7%9A%84-optimizer"><span class="nav-number">4.</span> <span class="nav-text">Adam — 常用的 optimizer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adam-%E7%9A%84%E5%84%AA%E7%BC%BA%E9%BB%9E"><span class="nav-number">4.1.</span> <span class="nav-text">Adam 的優缺點</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%84%AA%E9%BB%9E-3"><span class="nav-number">4.1.1.</span> <span class="nav-text">優點</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E5%85%A7%E5%AE%B9"><span class="nav-number">4.1.2.</span> <span class="nav-text">參考內容</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">標籤</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/10/04/Adagrad%E3%80%81RMSprop%E3%80%81Momentum%20and%20Adam%20--%20%E7%89%B9%E6%AE%8A%E7%9A%84%E5%AD%B8%E7%BF%92%E7%8E%87%E8%AA%BF%E6%95%B4%E6%96%B9%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-10-05 01:37:03" itemprop="dateCreated datePublished" datetime="2019-10-05T01:37:03+08:00">2019-10-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2026-03-13 15:37:50" itemprop="dateModified" datetime="2026-03-13T15:37:50+08:00">2026-03-13</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9D%8E%E5%AE%8F%E6%AF%85-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">李宏毅 Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/10/04/Adagrad%E3%80%81RMSprop%E3%80%81Momentum%20and%20Adam%20--%20%E7%89%B9%E6%AE%8A%E7%9A%84%E5%AD%B8%E7%BF%92%E7%8E%87%E8%AA%BF%E6%95%B4%E6%96%B9%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/04/Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li>本文內容節錄自Hung-yi Lee ,  <a target="_blank" rel="noopener" href="http://speech.ee.ntu.edu.tw/~tlkagk/courses_ML17_2.html">Machine Learning</a>(2017) 課程內容 : Gradient Descent、Tips for training DNN</li>
+<li>本文圖片均來自於課程講義內容</li>
+</ul>
+</blockquote>
+<span id="more"></span>
+
+<p>在深度學習中，我們進行優化的方式大多使用的是 Gradient Descent，其一般化的形式 </p>
+<p>矩陣型態 : $\boldsymbol{W}^{t+1}\leftarrow\boldsymbol{W}^t-\eta\cdot\nabla L(\boldsymbol{W}^t)$</p>
+<p>我們也可以單看其中一個分量權重 : $w_i^{t+1}\leftarrow w_i^t-\eta\cdot\frac{\partial L}{\partial w_i}$ </p>
+<p>我們曾經在 <a target="_blank" rel="noopener" href="https://hackmd.io/s/ryQypiDK4">Gradient descent 梯度下降</a> 一文中有討論過，若 $\eta$ ( 學習率 )固定時，太大太小都可能讓我們在優化的過程中遇到困難，最好的方式就是讓 $\eta$ 隨著優化的過程逐漸地減少。[^1]</p>
+<p>[^1]: 在 Keras 裡面 ，當我們要進行 model compile 時，需要設置一個 optimizer 參數，系統內提供了許多的優化器可供使用 : RMSprop、SGD、Adagrad、….，這些都是基於 Gradient Descent 之上，但在學習率上面進行不同的設置。</p>
+<h2 id="Adagrad-—-彈性使用-Learning-Rate"><a href="#Adagrad-—-彈性使用-Learning-Rate" class="headerlink" title="Adagrad — 彈性使用 Learning Rate"></a>Adagrad — 彈性使用 Learning Rate</h2><p>$\eta$ 應該怎麼設 ? 跟次數成反比的 $\frac{1}{t}$ decay 是最簡單的方式 $\eta^t&#x3D;\frac{\eta}{\sqrt{t+1}}$ ，但這顯然太過簡單。</p>
+<p>Adagrad 所使用的 $\eta^t&#x3D;\displaystyle{\frac{\eta}{\sqrt{\sum\limits_{n&#x3D;1}^{t}(\displaystyle{\frac{\partial L}{\partial w_i}}(\boldsymbol{W}^n))^2+\epsilon}}}$<br>( 此處的 $\epsilon$ 旨在不讓分母為 0 的情況產生，一般 $\epsilon&#x3D;$ 10e-8 )</p>
+<p>我們稍微調整一下，Adagrad 的參數優化方式可以這樣寫 :</p>
+<p>$w_i^{t+1}\leftarrow w_i^t-\displaystyle{\frac{\eta}{\sigma^t}}g^t$ , whare $g^t&#x3D;\displaystyle{\frac{\partial L}{\partial w_i}}(\boldsymbol{W^t})$ and $\sigma^t&#x3D;\sqrt{\sum\limits_{n&#x3D;1}^{t}(\displaystyle{\frac{\partial L}{\partial w_i}}(\boldsymbol{W}^n))^2+\epsilon}$</p>
+<p><font color="#dd0000"><strong>參數建議 $\eta&#x3D;0.01$</strong></font></p>
+<p>白話一點來說，$g^t$ 代表的是第 $t$ 次的梯度更新值，而 $\sigma^2$ 則代表的是第 $t$ 次以前的所有梯度更新值之平方和開根號。 </p>
+<h3 id="Adagrad-的矛盾"><a href="#Adagrad-的矛盾" class="headerlink" title="Adagrad 的矛盾 ?"></a>Adagrad 的矛盾 ?</h3><p>上式中 $g^t$ 清楚地描繪了「當斜率越大，就必須要跨越大步」的這一個事實，但也別忽略了分母的 $\sigma^2$ 卻會造成相反的結論。</p>
+<p>要了解這一個狀況是否會產生矛盾，我們要從斜率 (一次微分) 與跨多大步的關係來看 : </p>
+<p><img src="https://i.imgur.com/e29ZoCj.png"></p>
+<p>假定 Loss function 為一個二次函數，現有一點 $x_0$，從基本數學來看，最好的一步便是 $\mid x_0+\displaystyle{\frac{b}{2a}}\mid$ 。從這裡我們可以看出來，當一次微分值越大，表示 $x_0$ 距離最低點越遙遠，要跨得步伐便越大。</p>
+<p>然而事情並沒有想像的這麼簡單，倘若在一個高維度空間下，光看一次微分是無法進行跨維度、跨參數的比較</p>
+<p><img src="https://i.imgur.com/lFmmFnb.png"></p>
+<p>上圖中的 a 與 c 單從一次微分來看，無法進行比較。</p>
+<p>從上上一張圖片中，我們其實忽略了 $\mid x_0+\displaystyle{\frac{b}{2a}}\mid&#x3D;\displaystyle{\frac{\mid 2ax_0+b\mid}{2a}}$ 式中分母 $2a$ 其實就是 Loss function 的二次微分值，在單一維度中，這個常數項或許可以被忽略，但要進行跨參數的比較時，這樣一個數值便不可忽略。</p>
+<p>倘若加入這一個分母進行討論，上圖 a 與 c 就可以進行比較了。</p>
+<p><img src="https://i.imgur.com/gL6dddh.png"></p>
+<p>但在 Adagrad 中，為了不增加計算的負擔，我們更進一步的採用一次微分值來對二次微分值進行推估，不僅能達到相同的效果，也不用再一次計算二次微分值。</p>
+<h3 id="Adagrad-的優缺點"><a href="#Adagrad-的優缺點" class="headerlink" title="Adagrad 的優缺點"></a>Adagrad 的優缺點</h3><h4 id="優點"><a href="#優點" class="headerlink" title="優點"></a>優點</h4><ol>
+<li>當 $t$ 持續增加，$\sigma$ 項會約束梯度，也就是說，Adagrad 可以自動調整 learning rate 直至收斂。</li>
+<li>適合處理稀疏梯度</li>
+</ol>
+<h4 id="缺點"><a href="#缺點" class="headerlink" title="缺點"></a>缺點</h4><ol>
+<li>當後期 $\sigma^t$ 值很大的時候，整個梯度會被約束到趨近於 0 ，導致訓練提前結束。</li>
+<li>仍然需要先設置一個全局學習率 $\eta$，且其大小仍然會影響訓練的過程。</li>
+</ol>
+<h2 id="RMSprop-—-處理複雜-error-surface"><a href="#RMSprop-—-處理複雜-error-surface" class="headerlink" title="RMSprop — 處理複雜 error surface"></a>RMSprop — 處理複雜 error surface</h2><p>然而，我們現實中常會碰到的 Loss function 並非都是平穩、簡單的，甚至絕大多數我們遇到的 Error surface 都非常複雜。</p>
+<p><img src="https://i.imgur.com/5N3U3Uy.png"></p>
+<p>如上圖，即使在同一個維度上，學習率都有可能必須要能夠快速的反應、變動，因此 Hinton 提出了一個新的優化方式 : RMSprop</p>
+<p>RMSprop 在 學習率調整上面多了一個參數 $\alpha$ ，可以在新舊梯度上面做調節</p>
+<p>$w_i^{t+1}\leftarrow w_i^t-\displaystyle{\frac{\eta}{\sigma^t}}g^t$ , whare $g^t&#x3D;\displaystyle{\frac{\partial L}{\partial w_i}}(\boldsymbol{W^t})$ and $\sigma^t&#x3D;\sqrt{\alpha(\sigma^{t-1})^2+(1-\alpha)(g^t)^2+\epsilon}$</p>
+<p><font color="#dd0000"><strong>參數建議 $\eta&#x3D;0.001$ , $\alpha&#x3D;0.9$</strong></font></p>
+<p>若 $\alpha$ 上調，便對於舊的梯度有更大的佔比，也就是說在整個調節的過程中較傾向相信舊梯度帶給我們的資訊。</p>
+<h3 id="RMSprop-的優缺點"><a href="#RMSprop-的優缺點" class="headerlink" title="RMSprop 的優缺點"></a>RMSprop 的優缺點</h3><h4 id="優點-1"><a href="#優點-1" class="headerlink" title="優點"></a>優點</h4><ol>
+<li>有效改善 Adagrad 提前結束訓練的問題。</li>
+<li>適合處理複雜的、non-convex 的 error surface。</li>
+</ol>
+<h4 id="缺點-1"><a href="#缺點-1" class="headerlink" title="缺點"></a>缺點</h4><ol>
+<li>仍然需要先設置一個全局學習率 $\eta$</li>
+</ol>
+<h2 id="Momentum-—-跳脫出-Local-minimum-的困境"><a href="#Momentum-—-跳脫出-Local-minimum-的困境" class="headerlink" title="Momentum — 跳脫出 Local minimum 的困境"></a>Momentum — 跳脫出 Local minimum 的困境</h2><p>在 Gradient Descent based algorithm 中，很容易會進入 Local minimum 中而跳脫不出來，雖然說有學者認為 Local minimum 在複雜多維度的 error space 中並不會這麼容易遇到，但 Momentum 或許也能為這個問題找出一個合適的處理方式。</p>
+<p><img src="https://i.imgur.com/V5wDXNv.png"></p>
+<p>Momentum 是利用物理學中動量的概念來進行梯度更新 ( $\lambda$ 為動量因子 )</p>
+<p>$v^0&#x3D;0$<br>$w_i^{t+1}\leftarrow w_i^t+v^t$ , where $v^t&#x3D;\lambda\cdot v^{t-1}-\eta\cdot g^t$ , and $g^t&#x3D;\displaystyle{\frac{\partial L}{\partial w_i}}(\boldsymbol{W^t})$</p>
+<p><font color="#dd0000"><strong>參數建議 $\lambda&#x3D;0.9$</strong></font></p>
+<p>![](<a target="_blank" rel="noopener" href="https://i.imgur.com/pY7ZrkX.png">https://i.imgur.com/pY7ZrkX.png</a> &#x3D;400x)</p>
+<p>(註 : 此圖中的 $\theta^t$ 即本文中 $\boldsymbol{W}^t$)</p>
+<p>這樣的梯度更新包含了前次梯度的量值，也是在某種程度上面保留了原本的動能，如果遇到 local minimum 便有機會可以跳脫出來。</p>
+<h3 id="Momentum-的優缺點"><a href="#Momentum-的優缺點" class="headerlink" title="Momentum 的優缺點"></a>Momentum 的優缺點</h3><h4 id="優點-2"><a href="#優點-2" class="headerlink" title="優點"></a>優點</h4><ol>
+<li>當梯度更新時，$\lambda\cdot v^t$ 這項有助於減緩更新，可以抑制震盪，加快收斂。</li>
+<li>在初期，我們可以藉由較大的 $\lambda$ 來對整個訓練加速</li>
+<li>中後期由於梯度逐漸下降，因為我們有 $\lambda\cdot v^t$ 這項，可以使得擺動幅度加大，有助於跳脫出 Local minimum</li>
+</ol>
+<h4 id="缺點-2"><a href="#缺點-2" class="headerlink" title="缺點"></a>缺點</h4><ol>
+<li>$\lambda$ 、$\eta$ 固定無法隨時調整</li>
+</ol>
+<h2 id="Adam-—-常用的-optimizer"><a href="#Adam-—-常用的-optimizer" class="headerlink" title="Adam — 常用的 optimizer"></a>Adam — 常用的 optimizer</h2><p>Adaptive Moment Estimation ( Adam ) 其實就是加入了動量概念的 RMSprop，且在更新梯度過程中考慮了偏差校正 ( bias-correction )</p>
+<p>$m^0&#x3D;v^0&#x3D;0$</p>
+<p>$w_i^{t+1}\leftarrow w_i^t-\eta\cdot\displaystyle{\frac{\hat{m}^t}{\sqrt{\hat{v}^t}+\epsilon}}$ </p>
+<p>where $m^{t+1}&#x3D;\beta_1\cdot m^{t}+(1-\beta_1)\cdot g^t$ , and $v^{t+1}&#x3D;\beta_2\cdot v^{t}+(1-\beta_2)\cdot (g^t)^2$</p>
+<p>and $\hat{m}^t&#x3D;\displaystyle{\frac{m^t}{1-\beta_1}}$ , $\hat{v}^t&#x3D;\displaystyle{\frac{v^t}{1-\beta_2}}$ , $g^t&#x3D;\displaystyle{\frac{\partial L}{\partial w_i}}(\boldsymbol{W^t})$</p>
+<p><font color="#dd0000"><strong>參數建議 $\beta&#x3D;0.9$</strong> , $\beta_2&#x3D;0.999$</font></p>
+<p>上面的式子看起來有點恐怖，但其實仔細跟 RMSprop 比較一下，不管從更新方向或是更新步伐都帶入了 RMSprop 新舊權衡的概念，而其中參數 $\beta_1$ 及 $\beta_2$ 可以視為每一次更新後方向及不乏上的衰減率。</p>
+<p>比較值得注意的是參數更新的部分是藉由 $\hat{m}^t$ &#x2F; $\hat{v}^t$ 而非 $m^t$ &#x2F; $v^t$ 來進行更新，$\hat{m}^t$ &#x2F; $\hat{v}^t$ 可以視為是對 $m^t$ &#x2F; $v^t$ 的偏差校正。</p>
+<h3 id="Adam-的優缺點"><a href="#Adam-的優缺點" class="headerlink" title="Adam 的優缺點"></a>Adam 的優缺點</h3><h4 id="優點-3"><a href="#優點-3" class="headerlink" title="優點"></a>優點</h4><ol>
+<li>結合了 Adagrad、RMSprop 及 Momentum 的優點</li>
+<li>對內存的需求小</li>
+<li>對所有不同的參數都有新舊之間的權衡調節</li>
+<li>各種狀況均適用，是目前較為推薦的優化方式。</li>
+</ol>
+<hr>
+<h4 id="參考內容"><a href="#參考內容" class="headerlink" title="參考內容"></a>參考內容</h4><ol>
+<li>Hung-yi Lee ,  <a target="_blank" rel="noopener" href="http://speech.ee.ntu.edu.tw/~tlkagk/courses_ML17_2.html">Machine Learning</a>(2017) : Gradient Descent、Tips for training DNN</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/22252270">深度学习最全优化方法总结比较（SGD，Adagrad，Adadelta，Adam，Adamax，Nadam）</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/guoyaohua/p/8542554.html">深度学习——优化器算法Optimizer详解（BGD、SGD、MBGD、Momentum、NAG、Adagrad、Adadelta、RMSprop、Adam）</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014595019/article/details/52989301">深度学习笔记：优化方法总结(BGD,SGD,Momentum,AdaGrad,RMSProp,Adam)</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/10/04/Adagrad%E3%80%81RMSprop%E3%80%81Momentum%20and%20Adam%20--%20%E7%89%B9%E6%AE%8A%E7%9A%84%E5%AD%B8%E7%BF%92%E7%8E%87%E8%AA%BF%E6%95%B4%E6%96%B9%E5%BC%8F/" title="Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式">https://allen108108.github.io/blog/2019/10/04/Adagrad、RMSprop、Momentum and Adam -- 特殊的學習率調整方式/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/04/%E5%BE%9E%E7%B5%B1%E8%A8%88%E5%AD%B8%E7%9A%84%E8%A7%92%E5%BA%A6%20(Bias%20and%20Variance)%20%E4%BE%86%E7%9C%8B%20Machine%20Learning%20Error/" rel="prev" title="從統計學的角度 (Bias and Variance) 來看 Machine Learning Error">
+                  <i class="fa fa-chevron-left"></i> 從統計學的角度 (Bias and Variance) 來看 Machine Learning Error
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/04/Why%20can%20we%20use%20Squre%20Error%20in%20Logistic%20Regression%20_/" rel="next" title="Why can we use Squre Error in Logistic Regression ?">
+                  Why can we use Squre Error in Logistic Regression ? <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

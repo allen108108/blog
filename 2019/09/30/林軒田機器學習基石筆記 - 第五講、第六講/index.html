@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="本文為一系列課程之筆記，建議從” 機器學習基石筆記-1 “開始閱讀  **本文討論內容請參考:   機器學習基石第五講 : Training versus Testing機器學習基石第六講 : Theory of Generalization**  本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林軒田機器學習基石筆記 - 第五講、第六講">
+<meta property="og:url" content="https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%BA%94%E8%AC%9B%E3%80%81%E7%AC%AC%E5%85%AD%E8%AC%9B/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="本文為一系列課程之筆記，建議從” 機器學習基石筆記-1 “開始閱讀  **本文討論內容請參考:   機器學習基石第五講 : Training versus Testing機器學習基石第六講 : Theory of Generalization**  本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/A7RzZrl.png">
+<meta property="og:image" content="https://i.imgur.com/hAG2G5G.png">
+<meta property="og:image" content="https://i.imgur.com/cuNoGXM.png">
+<meta property="og:image" content="https://i.imgur.com/xJrAxfj.png">
+<meta property="article:published_time" content="2019-09-30T14:15:23.000Z">
+<meta property="article:modified_time" content="2026-03-13T07:37:50.517Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/A7RzZrl.png">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%BA%94%E8%AC%9B%E3%80%81%E7%AC%AC%E5%85%AD%E8%AC%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%BA%94%E8%AC%9B%E3%80%81%E7%AC%AC%E5%85%AD%E8%AC%9B/","path":"2019/09/30/林軒田機器學習基石筆記 - 第五講、第六講/","title":"林軒田機器學習基石筆記 - 第五講、第六講"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>林軒田機器學習基石筆記 - 第五講、第六講 | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#2Me-2-epsilon-2N-%E9%80%99%E5%80%8B%E4%B8%8A%E7%95%8C%E5%A4%A0%E5%A5%BD%E5%97%8E"><span class="nav-number">1.</span> <span class="nav-text">$2Me^{-2\epsilon^2N}$這個上界夠好嗎?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C-mathbb-H-%E6%98%AF-infinite-set"><span class="nav-number">2.</span> <span class="nav-text">如果 $\mathbb{H}$ 是 $infinite\ set$ ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B5%90%E8%AB%96"><span class="nav-number">3.</span> <span class="nav-text">結論</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A8%BB%E9%87%8B"><span class="nav-number">4.</span> <span class="nav-text">註釋</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">標籤</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%BA%94%E8%AC%9B%E3%80%81%E7%AC%AC%E5%85%AD%E8%AC%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          林軒田機器學習基石筆記 - 第五講、第六講
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2019-09-30 22:15:23" itemprop="dateCreated datePublished" datetime="2019-09-30T22:15:23+08:00">2019-09-30</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新於</span>
+        <time title="修改時間：2026-03-13 15:37:50" itemprop="dateModified" datetime="2026-03-13T15:37:50+08:00">2026-03-13</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/" itemprop="url" rel="index"><span itemprop="name">課程筆記 Course</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98-Course/%E6%9E%97%E8%BB%92%E7%94%B0-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3/" itemprop="url" rel="index"><span itemprop="name">林軒田 機器學習基石</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%BA%94%E8%AC%9B%E3%80%81%E7%AC%AC%E5%85%AD%E8%AC%9B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/09/30/林軒田機器學習基石筆記 - 第五講、第六講/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<ul>
+<li><p><strong>本文為一系列課程之筆記，建議從” <a href="https://allen108108.github.io/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%80%E8%AC%9B%E3%80%81%E7%AC%AC%E4%BA%8C%E8%AC%9B/">機器學習基石筆記-1</a> “開始閱讀</strong></p>
+</li>
+<li><p>**本文討論內容請參考:</p>
+</li>
+</ul>
+<p>機器學習基石第五講 : Training versus Testing<br>機器學習基石第六講 : Theory of Generalization**</p>
+<ul>
+<li><strong>本篇所有圖片部分由筆者製作，其它均為機器學習基石課程內容講義</strong></li>
+</ul>
+</blockquote>
+<hr>
+<span id="more"></span>
+
+<p>回顧上一篇的結論，只要 Hypothesis set $\mathbb{H}$ 是有限集 (#$\mathbb{H}&#x3D;M$ is finite)，且dataset $\mathbb{D}$ 有夠多的資料(#$\mathbb{D}&#x3D;N$ is large enough)，我們就能確定 :</p>
+<p>$\mathbb{P}(\mid E_{out}(\mathbb{H})-E_{in}(\mathbb{H}) \mid&gt;\epsilon)$ 有一個很小的上界$2Me^{-2\epsilon^2N}$</p>
+<p>$\implies E_{out}$與 $E_{in}$ 夠接近 ( Learning Algorithm 從 $\mathbb{H}$ 選出來的 $g$ ，$E_{out}(g)$與 $E_{in}(g)$ 夠接近 )</p>
+<p>$\implies E_{in}(g) \rightarrow 0$ 則 $E_{out}(g) \rightarrow 0$</p>
+<p>那我們現在有兩個問題要解決 :</p>
+<ol>
+<li><strong>$2Me^{-2\epsilon^2N}$這個上界夠好嗎?</strong></li>
+<li><strong>如果 $\mathbb{H}$ 是 $infinite\ set$ ?</strong></li>
+</ol>
+<p>這兩個問題其實是一體兩面，解決了一個，另外一個也就能順利解決。<br>我們能不能找到一個足以代表 $infinite\ \mathbb{H}$ 的一個 $finite\ number\ -m_{\mathbb{H} }$ 替換掉 $M$ ，形成一個更逼近的上界，也可以處理 $infinite\ \mathbb{H}$沒有上界的情況 ?</p>
+<h3 id="2Me-2-epsilon-2N-這個上界夠好嗎"><a href="#2Me-2-epsilon-2N-這個上界夠好嗎" class="headerlink" title="$2Me^{-2\epsilon^2N}$這個上界夠好嗎?"></a>$2Me^{-2\epsilon^2N}$這個上界夠好嗎?</h3><p>![](<a target="_blank" rel="noopener" href="https://i.imgur.com/GYAMpry.png">https://i.imgur.com/GYAMpry.png</a> &#x3D;200x)</p>
+<p>這是一個簡單的文式圖，如果我們今天要算 $B_1\cup B_2\cup B_3$ 數量的上界，最簡單的莫過於直接把三者數量相加， $B_1+B_2+B_3$ 絕對是 $B_1\cup B_2\cup B_3$的其中一個上界，但我們也很清楚的知道，當三者重疊部分越多，這樣的上界越不逼近。</p>
+<p>但在上一篇的證明中，我們卻利用這樣的方法找出其上界</p>
+<p><img src="https://i.imgur.com/A7RzZrl.png"></p>
+<p>當 $M$ 為 $finite$ 時還行得通，反正我們只要確定有上界即可逼近，但當 $M$ 為 $infinite$ 時就會出現很大的問題。</p>
+<h3 id="如果-mathbb-H-是-infinite-set"><a href="#如果-mathbb-H-是-infinite-set" class="headerlink" title="如果 $\mathbb{H}$ 是 $infinite\ set$ ?"></a>如果 $\mathbb{H}$ 是 $infinite\ set$ ?</h3><hr>
+<p>在處理這個問題以前，我們先定義一些概念:</p>
+<ul>
+<li><p><strong>dichotomy</strong><br>  以 $\mathbb{R}^2$ 為例，在其中有$N$個資料點 $\mathbb{X}_1,\mathbb{X}_2,…,\mathbb{X}_N$，則顯然的能將這 $N$個資料點進行二元分類的 $\mathbb{H}$ 是一個 $infinite\ set$ (任何一條在 $\mathbb{R}^2$ 的直線都是一個 $h$)。<br>  從數學的角度來說， $dichotomy$ 代表的是一個族 ( $family$ )，就 hypothesis $\mathbb{H}$ 來看，若把對 $\mathbb{X}_1,\mathbb{X}_2,…,$family$\mathbb{X}_N$ 進行同一種分類的 $h$ 視為同一族，那麼我們便可以將無限多的 $h$ 變成有限個 $dichotomies$。</p>
+</li>
+<li><p><strong>Growth Function $m_\mathbb{H}(N)$ :</strong> $\mathbb{H}\rightarrow\mathbb{R}^1$<br>   $m_\mathbb{H}(N)&#x3D;\max\limits_{\forall x_i\in\chi}(\mathbb{H}(\mathbb{X}_1,\mathbb{X}_2,…,\mathbb{X}<em>N ))$，這函數白話一點來說，就是所有的 $h$ 到底可以把資料點做出多少種不同的二元分類。在 Machine Learning 的討論中，$N$ 都是有限正整數，那麼$m</em>\mathbb{H}(N)$出來的值也必然會是有限正整數 ( $\leq2^N$ )[^註1]</p>
+</li>
+<li><p><strong>shatter</strong><br>  我們說 $\mathbb{X}_1,\mathbb{X}_2,…,\mathbb{X}<em>N$ 可以被 $shatter$ $\implies m</em>\mathbb{H}(N)&#x3D;2^N$ (所有的分類情況都會發生)。所以在 $\mathbb{R}^2$ 情況下，$\mathbb{X}_1,\mathbb{X}_2,…,\mathbb{X}_N$ 可以被 $shatter$ (當 $N\leq3$)</p>
+<p>  $Mathematical\ \ \ Definition\ :$<br>  $C\ shatters\ A\ \ if\  \ \forall a\in A，\exists c\in        C\ \ s.t\ \ a&#x3D;c\cap A \ i.e.\ \mathbb{P}(A)&#x3D;\left{        c\cap A \mid\ c\in C\right}$</p>
+</li>
+<li><p><strong>Break Point</strong><br>  第一個不會被 $shatter$ 的 $N$，在 $\mathbb{R}^2$ 情況下，$break\ point&#x3D;4$</p>
+<blockquote>
+<p>Break Point是一項很重要的指標，代表著當 $N&gt;Break\ Point$ 時，整個成長會大幅趨緩 ( $O(N)\ll 2^N,when\ N&gt;Break\ Point$ )。    </p>
+</blockquote>
+</li>
+<li><p><strong>Big O</strong> ( Time complexity 、成長速度、無限大漸進概念)</p>
+<p>  $Mathematical\ \ \ Definition\ :$<br>  $Given f(x),g(x)\ \ \\exists\ M,x_0\ \ \forall\ x\geq x_0\ \ s.t.\ \mid f(x)\mid\leq M\mid g(x)\mid \\implies\ f(x)\in O(g(x)) \ or\ f(x)&#x3D;O(g(x))$</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>資料空間 &amp;分類型態[^註2]</th>
+<th>Break Point</th>
+<th>$m_\mathbb{H}(N)$</th>
+<th>O(N)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1-D Positive ray</td>
+<td>2</td>
+<td>N+1</td>
+<td>$O(N)$</td>
+</tr>
+<tr>
+<td>1-D Positive interval</td>
+<td>3</td>
+<td>$\frac{1}{2}N^2+\frac{1}{2}N+1$</td>
+<td>$O(N^2)$</td>
+</tr>
+<tr>
+<td>Convex Set</td>
+<td>$\infty$</td>
+<td>$2^N$</td>
+<td>-</td>
+</tr>
+<tr>
+<td>2-D Perceptron</td>
+<td>4</td>
+<td>$&lt;2^N$ (in some cases)</td>
+<td>$O(N^3)$</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><strong>Bounding Function $B(N,K)&#x3D;\max\limits_{N&gt;K}(m_{\mathbb{H} }),\ where\ K&#x3D;Break\ Point$</strong><br>  這樣看起來還是有點抽象，我引用林軒田與Yaser S . Abu-Mostafa所著的 “ Learning From Data “ 一書的說法比較清楚 :<br>  $$B (N, k)\ is\ the\ maximum\ number\ of\ dichotomies\ on\ N\ points\ such\ that\ no\ subset\ of\ size\ k\ of\ the\ N\ points\ can\ be\ shattered\ by\ these\ dichotomies.$$<br>  在討論Bounding Function時，我們已經不管分類的型態是什麼，單純只看Break Point K為多少。(1-D perceptron 或是 1-D positive ray K值都是3)</p>
+<p>  <img src="https://i.imgur.com/hAG2G5G.png"><br>  (這邊在課堂上都保守的以 $\leq$ 表示，但實際上有更強的 $&#x3D;$ 關係)</p>
+<p>  從上圖我們可以發現Bounding Function的幾個重要性質[^註3] :<br>  $$B(N,K)&#x3D;B(N-1,K)+B(N-1,K-1)$$<br>  $$m_\mathbb{H}(N)\leq B(N,K)$$</p>
+</li>
+</ul>
+<hr>
+<p>現在所有的工具都準備好了，我們該準備來面對上面的問題了~<br>為了避免因為 $infinite\ \mathbb{H}$ 而造成的上界快速擴張狀況，我們用$m_\mathbb{H}(N)$來取代原本的 $M$<br>最後可以得到一個比較逼近的上界[^註4] :<br>$$\mathbb{P}(\mid E_{out}(\mathbb{H})-E_{in}(\mathbb{H}) \mid&gt;\epsilon)\leq 4m_\mathbb{H}(N)e^{\frac{1}{8}\epsilon^2N}$$<br>我們稱之為 $Vapnik-Chervonenkis Bound\ (VC\ Bound)$</p>
+<h3 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h3><p>$\mathbb{P}(\mid E_{in}(g)-E_{out}(g)\mid&gt;\epsilon)$<br>$\leq 4m_\mathbb{H}(2N)\cdot e^{-\frac{1}{8}\epsilon^2N}$<br>$\leq 4(2N)^{K-1}\cdot e^{-\frac{1}{8}\epsilon^2N}\ ,\ if\ N\ is\ large\ enough\ and\ K\ exists.$<br>($\because m_\mathbb{H}(N)\leq B(N,K)\leq N^{K-1}$)</p>
+<p>$\therefore$存在 $Break\ point$ 且 $N$ 夠大的情況下，即使 $infinite\ \mathbb{H}$，演算法從$E_{in}$很小的條件下挑出一個 $g$，都一定會有一個有限上界可以確保$E_{in}$跟$E_{out}$夠接近。</p>
+<h3 id="註釋"><a href="#註釋" class="headerlink" title="註釋"></a>註釋</h3><p>[^註1]:<br>為什麼 $m_\mathbb{H}(N)$ 不一定會等於要取 $\max$ ? 為什麼不等於$2^N$?<br>從排列組合的觀點來看，$N$ 個點的二元分類應該要有 $2^N$ 種，但我們這裡要的是 $”Linear\ separable”$ 所以會有所差異。<br><img src="https://i.imgur.com/cuNoGXM.png"><br>從上圖可以看出來，$N&#x3D;4$ 時，應該會有16種二分法，但是由於我們要求線性可分，因此一定「至少」有兩種 ( 圖中打 X 的狀況以及其對稱情況 )不符合我們的需求。 為什麼是「至少」? 如果這 $N$ 筆資料有特別的排列情況(EX:共線)，當然有可能有更多種狀況會被排除，但，$m_\mathbb{H}(N)$函數要的是「max」，也就是說我現在要看的是被排除最少的情況，所以在 $N&#x3D;4$ 時，$m_\mathbb{H}(4)&#x3D;14$ ( 那兩種被排除的狀況，就是不管四筆資料怎麼分布，絕對都會被排除 )<br>當然，$m_\mathbb{H}(N)$也會跟資料本身處的維度空間有關。</p>
+<p>[^註2]:<br>林軒田教授在課堂上講了四種的資料空間及分類型態 :<br><strong>2-D Preceptron , 1-D Positive Ray , 1-D Positive interval and Convex Set</strong></p>
+<p>![](<a target="_blank" rel="noopener" href="https://i.imgur.com/cuNoGXM.png">https://i.imgur.com/cuNoGXM.png</a> &#x3D;300x)![](<a target="_blank" rel="noopener" href="https://i.imgur.com/hJOlpy9.png">https://i.imgur.com/hJOlpy9.png</a> &#x3D;300x) ![](<a target="_blank" rel="noopener" href="https://i.imgur.com/SFDXhiD.png">https://i.imgur.com/SFDXhiD.png</a> &#x3D;300x)![](<a target="_blank" rel="noopener" href="https://i.imgur.com/A21Tr8u.png">https://i.imgur.com/A21Tr8u.png</a> &#x3D;300x)</p>
+<p>[^註3]:<br>試證明 $B(N,K)&#x3D;B(N-1,K)+B(N-1,K-1)$<br>Claim:$B(N,K)&#x3D;\sum\limits_{j&#x3D;0}^{K-1}{ {N}\choose{j} }$<br>Proof :<br>$B(N,K)\&#x3D;2^N-{ {N}\choose{K} }-{ {N}\choose{K+1} }-…-{ {N}\choose{N} }\&#x3D;{ {N}\choose{0} }+{ {N}\choose{1} }+{ {N}\choose{2} }+…+{ {N}\choose{K-1} }\&#x3D;\sum\limits_{j&#x3D;0}^{K-1}{ {N}\choose{j} }$<br>$B(N,K)$的最高次項為$N^{K-1}$<br>因為最後一項為$\frac{N(N-1)(N-2)…(N-K+1)}{K!}$</p>
+<p>$\because B(N,K)&#x3D;\sum\limits_{j&#x3D;0}^{K-1}{ {N}\choose{j} }&#x3D;{ {N}\choose{0} }+{ {N}\choose{1} }+{ {N}\choose{2} }+…+{ {N}\choose{K-1} }\<br>&#x3D;{ {N}\choose{0} }+({ {N-1}\choose{1} }+{ {N-1}\choose{0} })+({ {N-1}\choose{2} }+{ {N-1}\choose{1} })+…+({ {N-1}\choose{k-1} }+{ {N-1}\choose{k-2} })\<br>&#x3D;{ {N-1}\choose{0} }+({ {N-1}\choose{1} }+{ {N-1}\choose{2} }+..+{ {N-1}\choose{k-1} })+({ {N-1}\choose{0} }+{ {N-1}\choose{1} }+..+{ {N-1}\choose{k-2} })\<br>&#x3D;\sum\limits_{j&#x3D;0}^{K-2}{ {N}\choose{j} }+\sum\limits_{j&#x3D;0}^{K-1}{ {N-1}\choose{j} }$</p>
+<p>[^註4]:<br>證明 $\mathbb{P}(\mid E_{out}(\mathbb{H})-E_{in}(\mathbb{H}) \mid&gt;\epsilon)\leq 4m_\mathbb{H}(N)e^{\frac{1}{8}\epsilon^2N}$<br>Proof :<br>Step1 :<br>Assume $D’$ iid with $D$ is a data set with size N (ghost data)<br>(若$E_{in}$與$E_{out}$離得很遠，則$D$裡面N筆資料大多沒選到error點，那母體種再取N個點($D’$)就會包含比較多的error，$E’<em>{in}$與$E</em>{out}$就會有較大機率會比較靠近)</p>
+<p>PS: $E_{in},E’<em>{in}\ and\ E</em>{out}$，其實就是個別代表著實務上的 $E_{train},E_{val}\ and\ E_{test}$</p>
+<p>Step2 :<br>![](<a target="_blank" rel="noopener" href="https://i.imgur.com/xP147ab.png">https://i.imgur.com/xP147ab.png</a> &#x3D;300x)<br>當$N$足夠大時，$E_{in}(E’<em>{in})$的整體分布狀況會近似於以$E</em>{out}$為中心的常態分佈，$E_{in}$越往右跑，$E’_{in}$會越往左靠</p>
+<p>$\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E’<em>{in}(h)\mid&gt;\frac{\epsilon}{2})$<br>$\geq\mathbb{P}(\sup\limits</em>{h\in\mathbb{H} }\mid E_{in}(h)-E’<em>{in}(h)\mid&gt;\frac{\epsilon}{2}\ and\ \sup\limits</em>{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)$<br>$&#x3D;\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)\times\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E’<em>{in}(h)\mid&gt;\frac{\epsilon}{2}\ \<br>\mid \ \sup\limits</em>{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)$</p>
+<p><img src="https://i.imgur.com/xJrAxfj.png"></p>
+<p>$\therefore\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E’<em>{in}(h)\mid&gt;\frac{\epsilon}{2})\geq(1-2e^{-2({\frac{\epsilon}{2} })^2N})\times\mathbb{P}(\sup\limits</em>{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)$</p>
+<p>Step3 :<br>W.L.O.G assum : $e^{\frac{1}{2}\epsilon^2N}&lt; \frac{1}{4}$<br>(if not ,VC BOund 顯然為真)<br>$\therefore\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E’<em>{in}(h)\mid&gt;\frac{\epsilon}{2})\geq\frac{1}{2}\times\mathbb{P}(\sup\limits</em>{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)$<br>$\therefore 2\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E’<em>{in}(h)\mid&gt;\frac{\epsilon}{2})\geq\mathbb{P}(\sup\limits</em>{h\in\mathbb{H} }\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)$</p>
+<p>Step4 :<br>現在整個母體的機率已經被我們用$D\ and\ D’$限制住<br>$\mathbb{P}(\mid E_{in}(h)-E_{out}(h)\mid&gt;\epsilon)$<br>$\leq2\mathbb{P}(\sup\limits_{h\in\mathbb{H} }\mid E_{in}(h)-E’<em>{in}(h)\mid&gt;\frac{\epsilon}{2})$<br>$\leq 2\sum\limits</em>{h\in\mathbb{H} }\mathbb{P}(\mid E_{in}(h)-E’<em>{in}(h)\mid&gt;\frac{\epsilon}{2})$<br>$&#x3D;2m</em>\mathbb{H}(2N)\times\mathbb{P}(\mid E_{in}(h)-E’<em>{in}(h)\mid&gt;\frac{\epsilon}{2})\mid)$<br>($\because$把$D,D’$作為一個母體來看)<br>$&#x3D;2m</em>\mathbb{H}(2N)\times\mathbb{P}(\mid E_{in}(h)-\frac{E_{in}(h)-E’<em>{in}(h)}{2}\mid&gt;\frac{\epsilon}{2})&gt;\frac{\epsilon}{4}\mid)$<br>($\because E</em>{in}(h)-E’<em>{in}(h)&lt;\frac{\epsilon}{2}\implies\frac{E</em>{in}(h)-E’<em>{in}(h)}{2}&lt;\frac{\epsilon}{4}\implies E</em>{in}(h)-\frac{E_{in}(h)}{2}-\frac{E’<em>{in}(h)}{2}&lt;\frac{\epsilon}{4}$)<br>$\leq 2m</em>\mathbb{H}(2N)\cdot 2\cdot e^{-2e^{-2({\frac{\epsilon}{2} })^2N} }$($\because$針對單一$h$，所以$M&#x3D;1$)<br>$&#x3D;4m_\mathbb{H}(2N)e^{-\frac{1}{8}\epsilon^2N}$得證</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%BA%94%E8%AC%9B%E3%80%81%E7%AC%AC%E5%85%AD%E8%AC%9B/" title="林軒田機器學習基石筆記 - 第五講、第六講">https://allen108108.github.io/blog/2019/09/30/林軒田機器學習基石筆記 - 第五講、第六講/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2019/09/30/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%89%E8%AC%9B%E3%80%81%E7%AC%AC%E5%9B%9B%E8%AC%9B/" rel="prev" title="林軒田機器學習基石筆記 - 第三講、第四講">
+                  <i class="fa fa-chevron-left"></i> 林軒田機器學習基石筆記 - 第三講、第四講
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2019/10/01/%E6%9E%97%E8%BB%92%E7%94%B0%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%9F%BA%E7%9F%B3%E7%AD%86%E8%A8%98%20-%20%E7%AC%AC%E4%B8%83%E8%AC%9B/" rel="next" title="林軒田機器學習基石筆記 - 第七講">
+                  林軒田機器學習基石筆記 - 第七講 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

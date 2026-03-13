@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"allen108108.github.io","root":"/blog/","images":"/blog/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"width":280},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）">
+<meta property="og:url" content="https://allen108108.github.io/blog/2026/03/12/n8n%EF%BD%9CTeams%20%E6%9C%83%E8%AD%B0%E9%80%90%E5%AD%97%E7%A8%BF%E6%91%98%E8%A6%81%E8%87%AA%E5%8B%95%E5%8C%96%EF%BC%88Graph%20+%20Notion%20+%20Email%EF%BC%89/index.html">
+<meta property="og:site_name" content="Math.py">
+<meta property="og:description" content="n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2026-03-12T23:45:26.000Z">
+<meta property="article:modified_time" content="2026-03-13T07:45:26.818Z">
+<meta property="article:author" content="Allen Tzeng">
+<meta property="article:tag" content="n8n">
+<meta property="article:tag" content="Microsoft-Teams">
+<meta property="article:tag" content="Microsoft-Graph">
+<meta property="article:tag" content="OneDrive">
+<meta property="article:tag" content="Transcript">
+<meta property="article:tag" content="Notion">
+<meta property="article:tag" content="Outlook">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://allen108108.github.io/blog/2026/03/12/n8n%EF%BD%9CTeams%20%E6%9C%83%E8%AD%B0%E9%80%90%E5%AD%97%E7%A8%BF%E6%91%98%E8%A6%81%E8%87%AA%E5%8B%95%E5%8C%96%EF%BC%88Graph%20+%20Notion%20+%20Email%EF%BC%89/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://allen108108.github.io/blog/2026/03/12/n8n%EF%BD%9CTeams%20%E6%9C%83%E8%AD%B0%E9%80%90%E5%AD%97%E7%A8%BF%E6%91%98%E8%A6%81%E8%87%AA%E5%8B%95%E5%8C%96%EF%BC%88Graph%20+%20Notion%20+%20Email%EF%BC%89/","path":"2026/03/12/n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）/","title":"n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email） | Math.py</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149442581-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-149442581-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Math.py</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Wir müssen wissen , wir werden wissen</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#n8n%EF%BD%9CTeams-%E6%9C%83%E8%AD%B0%E9%80%90%E5%AD%97%E7%A8%BF%E6%91%98%E8%A6%81%E8%87%AA%E5%8B%95%E5%8C%96%EF%BC%88Graph-Notion-Email%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%A0%E8%A6%81%E9%81%94%E6%88%90%E4%BB%80%E9%BA%BC"><span class="nav-number">1.1.</span> <span class="nav-text">你要達成什麼</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%82%99%E6%A2%9D%E4%BB%B6%EF%BC%88%E4%B8%8D%E7%84%B6%E4%BD%A0%E6%9C%83%E5%8D%A1%E5%9C%A8%E3%80%8CAPI-%E5%9B%9E%E7%A9%BA%E9%99%A3%E5%88%97%E3%80%8D%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">先備條件（不然你會卡在「API 回空陣列」）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#A-Azure-AD-App%EF%BC%88Client-Credentials%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">A) Azure AD App（Client Credentials）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-Microsoft-Graph-%E6%AC%8A%E9%99%90%EF%BC%88%E6%A6%82%E5%BF%B5%E6%B8%85%E5%96%AE%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">B) Microsoft Graph 權限（概念清單）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-%E4%BD%A0%E9%9C%80%E8%A6%81%E7%9F%A5%E9%81%93%E4%B8%89%E5%80%8B-ID%EF%BC%88%E6%9C%83%E9%81%AE%E8%94%BD%E7%AF%84%E4%BE%8B%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">C) 你需要知道三個 ID（會遮蔽範例）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E6%B5%81%E7%A8%8B%E7%B8%BD%E8%A6%BD%EF%BC%88%E7%94%A8%E4%BA%BA%E8%A9%B1%E7%BF%BB%E8%AD%AF%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">全流程總覽（用人話翻譯）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ASCII-%E6%B5%81%E7%A8%8B%E5%9C%96%EF%BC%88End-to-end%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">ASCII 流程圖（End-to-end）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n8n-%E7%AF%80%E9%BB%9E%E9%80%90%E4%B8%80%E6%8B%86%E8%A7%A3%EF%BC%88%E5%90%AB%E9%81%AE%E8%94%BD%E5%8F%83%E6%95%B8%E8%88%87%E5%8F%AF%E9%87%8D%E7%8F%BE%E7%AF%84%E4%BE%8B%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">n8n 節點逐一拆解（含遮蔽參數與可重現範例）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Schedule-Trigger%EF%BC%9A%E5%AE%9A%E6%99%82%E5%9F%B7%E8%A1%8C"><span class="nav-number">1.4.1.</span> <span class="nav-text">1) Schedule Trigger：定時執行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8F%96%E5%BE%97-access-token%EF%BC%88HTTP-Request-POST%EF%BC%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">2) 取得 access token（HTTP Request &#x2F; POST）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-driveid-folderid%EF%BC%88Set%EF%BC%89"><span class="nav-number">1.4.3.</span> <span class="nav-text">3) driveid + folderid（Set）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%8F%96%E5%BE%97%E6%89%80%E6%9C%89%E5%BD%B1%E7%89%87%E8%B3%87%E8%A8%8A%EF%BC%88HTTP-Request-GET%EF%BC%89"><span class="nav-number">1.4.4.</span> <span class="nav-text">4) 取得所有影片資訊（HTTP Request &#x2F; GET）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%8F%96%E5%BE%97%E5%BD%B1%E7%89%87%E9%99%A3%E5%88%97%EF%BC%88Set%EF%BC%89"><span class="nav-number">1.4.5.</span> <span class="nav-text">5) 取得影片陣列（Set）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%8B%86%E5%88%86%E6%88%90%E5%BD%B1%E7%89%87%E6%AA%94%E5%88%97%E8%A1%A8%EF%BC%88Split-Out%EF%BC%89"><span class="nav-number">1.4.6.</span> <span class="nav-text">6) 拆分成影片檔列表（Split Out）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E4%BE%9D%E6%96%B0%E5%88%B0%E8%88%8A%E6%8E%92%E5%88%97%EF%BC%88Sort%EF%BC%89"><span class="nav-number">1.4.7.</span> <span class="nav-text">7) 依新到舊排列（Sort）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E5%8F%96%E6%9C%80%E6%96%B0%E5%BD%B1%E7%89%87%E8%B3%87%E8%A8%8A%EF%BC%88Limit%EF%BC%89"><span class="nav-number">1.4.8.</span> <span class="nav-text">8) 取最新影片資訊（Limit）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-%E6%89%BE%E5%87%BA%E6%97%A5%E6%9B%86%E4%B8%AD%E5%89%8D%E4%B8%80%E5%91%A8%E6%89%80%E6%9C%89%E6%9C%83%E8%AD%B0%EF%BC%88HTTP-Request-GET%EF%BC%89"><span class="nav-number">1.4.9.</span> <span class="nav-text">9) 找出日曆中前一周所有會議（HTTP Request &#x2F; GET）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-%E5%8F%96%E7%9A%84%E6%97%A5%E6%9B%86%E6%9C%83%E8%AD%B0%E9%99%A3%E5%88%97%EF%BC%88Set%EF%BC%89%E2%86%92-11-%E5%88%87%E5%88%86%E6%97%A5%E6%9B%86%E6%9C%83%E8%AD%B0%E9%99%A3%E5%88%97%EF%BC%88Split-Out%EF%BC%89"><span class="nav-number">1.4.10.</span> <span class="nav-text">10) 取的日曆會議陣列（Set）→ 11) 切分日曆會議陣列（Split Out）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-Merge%EF%BC%88Merge%EF%BC%89"><span class="nav-number">1.4.11.</span> <span class="nav-text">12) Merge（Merge）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-%E6%AF%94%E5%B0%8D%E6%9C%83%E8%AD%B0%E8%B3%87%E8%A8%8A%EF%BC%88Code%EF%BC%89"><span class="nav-number">1.4.12.</span> <span class="nav-text">13) 比對會議資訊（Code）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-If1%EF%BC%88If%EF%BC%89"><span class="nav-number">1.4.13.</span> <span class="nav-text">14) If1（If）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-%E8%A3%BD%E4%BD%9C-URL%EF%BC%88Code%EF%BC%89"><span class="nav-number">1.4.14.</span> <span class="nav-text">15) 製作 URL（Code）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-%E5%8F%96%E5%BE%97%E8%A9%B2%E6%9C%83%E8%AD%B0-meetingId%EF%BC%88HTTP-Request-GET%EF%BC%89"><span class="nav-number">1.4.15.</span> <span class="nav-text">16) 取得該會議 meetingId（HTTP Request &#x2F; GET）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-%E5%8F%96%E5%BE%97%E9%80%90%E5%AD%97%E7%A8%BF%E8%B3%87%E8%A8%8A%EF%BC%88HTTP-Request-GET%EF%BC%89"><span class="nav-number">1.4.16.</span> <span class="nav-text">17) 取得逐字稿資訊（HTTP Request &#x2F; GET）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-%E5%8F%96%E5%BE%97%E6%9C%80%E6%96%B0%E9%80%90%E5%AD%97%E7%A8%BF%E8%B3%87%E8%A8%8A%EF%BC%88Code%EF%BC%89"><span class="nav-number">1.4.17.</span> <span class="nav-text">18) 取得最新逐字稿資訊（Code）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-Get-many-database-pages%EF%BC%88Notion%EF%BC%9A%E6%9F%A5%E9%87%8D%EF%BC%89"><span class="nav-number">1.4.18.</span> <span class="nav-text">19) Get many database pages（Notion：查重）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-If%EF%BC%88Notion-%E7%B5%90%E6%9E%9C%E5%88%A4%E6%96%B7%EF%BC%89"><span class="nav-number">1.4.19.</span> <span class="nav-text">20) If（Notion 結果判斷）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#21-%E5%8F%96%E5%BE%97%E9%80%90%E5%AD%97%E7%A8%BF%E5%85%A8%E6%96%87%EF%BC%88HTTP-Request-GET%EF%BC%89"><span class="nav-number">1.4.20.</span> <span class="nav-text">21) 取得逐字稿全文（HTTP Request &#x2F; GET）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-%E6%9C%83%E8%AD%B0%E6%91%98%E8%A6%81%EF%BC%88Anthropic-LLM%EF%BC%89"><span class="nav-number">1.4.21.</span> <span class="nav-text">22) 會議摘要（Anthropic &#x2F; LLM）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-%E7%A2%BA%E8%AA%8D%E8%AA%9E%E6%9C%83%E4%BA%BA%E5%93%A1%E8%B3%87%E8%A8%8A-%E2%86%92-Split-Out-%E2%86%92-%E5%8F%96%E5%BE%97%E8%AA%9E%E5%BD%99%E4%BA%BA%E5%A3%AB-email-%E2%86%92-%E6%94%B6%E4%BB%B6%E4%BA%BA%E6%95%B4%E7%90%86"><span class="nav-number">1.4.22.</span> <span class="nav-text">23) 確認語會人員資訊 → Split Out → 取得語彙人士 email → 收件人整理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-%E5%85%A7%E5%AE%B9%E6%95%B4%E7%90%86%EF%BC%88Code%EF%BC%9A%E5%88%87-Notion-blocks%EF%BC%89"><span class="nav-number">1.4.23.</span> <span class="nav-text">24) 內容整理（Code：切 Notion blocks）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#25-Create-a-database-page%EF%BC%88Notion%EF%BC%9A%E5%BB%BA%E7%AB%8B%E9%A0%81%E9%9D%A2%EF%BC%89"><span class="nav-number">1.4.24.</span> <span class="nav-text">25) Create a database page（Notion：建立頁面）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#26-HTTP-Request%EF%BC%88Notion%EF%BC%9A%E8%BF%BD%E5%8A%A0-children-blocks%EF%BC%89"><span class="nav-number">1.4.25.</span> <span class="nav-text">26) HTTP Request（Notion：追加 children blocks）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#27-Send-a-message%EF%BC%88Outlook%EF%BC%9A%E5%AF%84%E4%BF%A1%EF%BC%89"><span class="nav-number">1.4.26.</span> <span class="nav-text">27) Send a message（Outlook：寄信）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A6%8B%E8%B8%A9%E9%9B%B7%E8%88%87%E6%8E%92%E6%9F%A5%EF%BC%88%E4%BD%A0%E6%9C%83%E7%9C%9F%E7%9A%84%E9%81%87%E5%88%B0%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">常見踩雷與排查（你會真的遇到）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%91%E6%9C%83%E6%80%8E%E9%BA%BC%E5%86%8D%E5%8A%A0%E5%BC%B7%E9%80%99%E6%A2%9D%E6%B5%81%E7%A8%8B%EF%BC%88%E5%8F%AF%E9%81%B8%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">我會怎麼再加強這條流程（可選）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%84%E9%8C%84%EF%BC%9AGraph-%E6%AC%8A%E9%99%90%E3%80%8C%E6%9C%80%E5%B0%8F%E9%9B%86%E5%90%88%E3%80%8D%E8%88%87-Admin-Consent-%E6%AA%A2%E6%9F%A5%E6%B8%85%E5%96%AE"><span class="nav-number">1.7.</span> <span class="nav-text">附錄：Graph 權限「最小集合」與 Admin Consent 檢查清單</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#A-%E5%BB%BA%E8%AD%B0%E7%9A%84-Microsoft-Graph-Application-permissions%EF%BC%88%E6%9C%80%E5%B0%8F%E5%8F%AF%E8%B7%91%E9%80%9A%E9%9B%86%E5%90%88%EF%BC%89"><span class="nav-number">1.7.1.</span> <span class="nav-text">A) 建議的 Microsoft Graph Application permissions（最小可跑通集合）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-Admin-consent-%E6%AA%A2%E6%9F%A5%E6%B8%85%E5%96%AE%EF%BC%88%E4%BD%A0%E6%87%89%E8%A9%B2%E9%80%90%E9%A0%85%E7%A2%BA%E8%AA%8D%EF%BC%89"><span class="nav-number">1.7.2.</span> <span class="nav-text">B) Admin consent 檢查清單（你應該逐項確認）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-%E5%85%B8%E5%9E%8B%E9%8C%AF%E8%AA%A4%E8%88%87%E3%80%8C%E5%B0%8D%E6%87%89%E7%9A%84%E6%AC%8A%E9%99%90-%E8%A8%AD%E5%AE%9A%E3%80%8D"><span class="nav-number">1.7.3.</span> <span class="nav-text">C) 典型錯誤與「對應的權限&#x2F;設定」</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#D-%E5%BB%BA%E8%AD%B0%E7%9A%84%E9%A9%97%E8%AD%89%E9%A0%86%E5%BA%8F%EF%BC%88%E7%B8%AE%E7%9F%AD%E6%8E%92%E6%9F%A5%E6%99%82%E9%96%93%EF%BC%89"><span class="nav-number">1.7.4.</span> <span class="nav-text">D) 建議的驗證順序（縮短排查時間）</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Allen Tzeng"
+      src="/blog/images/allen.jpg">
+  <p class="site-author-name" itemprop="name">Allen Tzeng</p>
+  <div class="site-description" itemprop="description">Study about Mathematics , Programming and Data Science</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">標籤</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://allen108108.github.io/" title="Github page → https:&#x2F;&#x2F;allen108108.github.io&#x2F;"><i class="github-alt fa-fw"></i>Github page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/allen108108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;allen108108" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:allen108108@hotmail.com" title="E-Mail → mailto:allen108108@hotmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://allen108108.github.io/blog/2026/03/12/n8n%EF%BD%9CTeams%20%E6%9C%83%E8%AD%B0%E9%80%90%E5%AD%97%E7%A8%BF%E6%91%98%E8%A6%81%E8%87%AA%E5%8B%95%E5%8C%96%EF%BC%88Graph%20+%20Notion%20+%20Email%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/allen.jpg">
+      <meta itemprop="name" content="Allen Tzeng">
+      <meta itemprop="description" content="Study about Mathematics , Programming and Data Science">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Math.py">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2026-03-13 07:45:26 / 修改時間：15:45:26" itemprop="dateCreated datePublished" datetime="2026-03-13T07:45:26+08:00">2026-03-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%87%AA%E5%8B%95%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">自動化</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%87%AA%E5%8B%95%E5%8C%96/%E5%AF%A6%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">實作</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2026/03/12/n8n%EF%BD%9CTeams%20%E6%9C%83%E8%AD%B0%E9%80%90%E5%AD%97%E7%A8%BF%E6%91%98%E8%A6%81%E8%87%AA%E5%8B%95%E5%8C%96%EF%BC%88Graph%20+%20Notion%20+%20Email%EF%BC%89/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2026/03/12/n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="n8n｜Teams-會議逐字稿摘要自動化（Graph-Notion-Email）"><a href="#n8n｜Teams-會議逐字稿摘要自動化（Graph-Notion-Email）" class="headerlink" title="n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）"></a>n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）</h1><span id="more"></span>
+
+<blockquote>
+<p>背景：新版 Microsoft Teams 的逐字稿常「附著在錄影檔頁面」，UI 可以手動下載，但要自動化就得<strong>先找到錄影檔 → 對應到會議 → 再去 Graph 取 transcript</strong>。這篇把整條 n8n pipeline 拆開講清楚，讓你可以照著重做。</p>
+</blockquote>
+<h2 id="你要達成什麼"><a href="#你要達成什麼" class="headerlink" title="你要達成什麼"></a>你要達成什麼</h2><ul>
+<li>週期性掃描 OneDrive&#x2F;SharePoint 的 <code>Recordings</code> 錄影資料夾</li>
+<li>找到最新的錄影檔，從檔案 metadata 的 <code>iCalUid</code> 回推到日曆事件</li>
+<li>由日曆事件的 <code>onlineMeeting.joinUrl</code> 查到 <code>onlineMeetingId</code></li>
+<li>取得該 meeting 的 transcripts 清單 → 挑最新一筆 → 下載 <code>.vtt</code></li>
+<li>丟給 LLM 生成會議記錄（保留原順序、移除連結）</li>
+<li>寫入 Notion database（避免重複寫入）</li>
+<li>寄出 Email 給與會者（可額外抄送固定收件人）</li>
+</ul>
+<hr>
+<h2 id="先備條件（不然你會卡在「API-回空陣列」）"><a href="#先備條件（不然你會卡在「API-回空陣列」）" class="headerlink" title="先備條件（不然你會卡在「API 回空陣列」）"></a>先備條件（不然你會卡在「API 回空陣列」）</h2><h3 id="A-Azure-AD-App（Client-Credentials）"><a href="#A-Azure-AD-App（Client-Credentials）" class="headerlink" title="A) Azure AD App（Client Credentials）"></a>A) Azure AD App（Client Credentials）</h3><p>你的流程使用 <code>grant_type=client_credentials</code>，意味著：</p>
+<ul>
+<li>你是用「應用程式權限（Application permissions）」去打 Graph</li>
+<li>需要管理員同意（Admin consent）</li>
+</ul>
+<p><strong>請把這些敏感值一律放在 n8n Credentials &#x2F; Environment variables，不要硬寫在流程裡：</strong></p>
+<ul>
+<li><code>TENANT_ID</code>（例：<code>&lt;TENANT_ID&gt;</code>）</li>
+<li><code>CLIENT_ID</code>（例：<code>&lt;CLIENT_ID&gt;</code>）</li>
+<li><code>CLIENT_SECRET</code>（例：<code>&lt;CLIENT_SECRET&gt;</code>）</li>
+</ul>
+<h3 id="B-Microsoft-Graph-權限（概念清單）"><a href="#B-Microsoft-Graph-權限（概念清單）" class="headerlink" title="B) Microsoft Graph 權限（概念清單）"></a>B) Microsoft Graph 權限（概念清單）</h3><p>實際需要的 permission 取決於你用的 endpoint &#x2F; tenant policy，但最低會碰到：</p>
+<ul>
+<li>讀日曆：<code>Calendars.Read</code>（或對應的 application permission）</li>
+<li>讀 online meetings：<code>OnlineMeetings.Read.All</code></li>
+<li>讀 transcripts：<code>OnlineMeetingTranscript.Read.All</code>（或等價權限）</li>
+<li>讀錄影檔：<code>Files.Read.All</code> &#x2F; <code>Sites.Read.All</code>（視錄影檔落點）</li>
+</ul>
+<blockquote>
+<p>你若遇到 transcripts 清單 <code>value=[]</code>：通常是<strong>權限不足</strong>或是該 meeting 根本沒有 transcript。</p>
+</blockquote>
+<h3 id="C-你需要知道三個-ID（會遮蔽範例）"><a href="#C-你需要知道三個-ID（會遮蔽範例）" class="headerlink" title="C) 你需要知道三個 ID（會遮蔽範例）"></a>C) 你需要知道三個 ID（會遮蔽範例）</h3><ul>
+<li><code>USER_ID</code>：你要查的使用者（流程中用 <code>/users/&#123;id&#125;</code>）</li>
+<li><code>DRIVE_ID</code>：錄影檔所在的 drive（OneDrive 或 SharePoint drive）</li>
+<li><code>Recordings</code> 路徑是否一致（你的流程用 <code>root:/Recordings:/children</code>）</li>
+</ul>
+<hr>
+<h2 id="全流程總覽（用人話翻譯）"><a href="#全流程總覽（用人話翻譯）" class="headerlink" title="全流程總覽（用人話翻譯）"></a>全流程總覽（用人話翻譯）</h2><h3 id="ASCII-流程圖（End-to-end）"><a href="#ASCII-流程圖（End-to-end）" class="headerlink" title="ASCII 流程圖（End-to-end）"></a>ASCII 流程圖（End-to-end）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line">                (Schedule Trigger / every N hours)</span><br><span class="line">                             |</span><br><span class="line">                             v</span><br><span class="line">+--------------------+   +---------------------------+</span><br><span class="line">|  Get access token  |--&gt;| Graph: OAuth2 token (AAD) |</span><br><span class="line">+--------------------+   +---------------------------+</span><br><span class="line">            |</span><br><span class="line">            |  Bearer &lt;ACCESS_TOKEN&gt;</span><br><span class="line">            v</span><br><span class="line">      +-----+----------------------------------------------+</span><br><span class="line">      |                 PARALLEL BRANCHES                  |</span><br><span class="line">      +----------------------+-----------------------------+</span><br><span class="line">                             |</span><br><span class="line">          +------------------+------------------+</span><br><span class="line">          |                                     |</span><br><span class="line">          v                                     v</span><br><span class="line">+---------------------------+       +-------------------------------+</span><br><span class="line">| A) List Recordings videos |       | B) List calendar events (7d)  |</span><br><span class="line">| GET /drives/&lt;DRIVE_ID&gt;/   |       | GET /users/&lt;USER_ID&gt;/         |</span><br><span class="line">|   root:/Recordings:/...   |       |   calendarView?...            |</span><br><span class="line">+---------------------------+       +-------------------------------+</span><br><span class="line">          |                                     |</span><br><span class="line">          v                                     v</span><br><span class="line">+---------------------------+       +-------------------------------+</span><br><span class="line">| Sort by createdDateTime   |       | SplitOut events[]             |</span><br><span class="line">| desc + Limit(1) latest    |       | (each has iCalUId, joinUrl)   |</span><br><span class="line">+---------------------------+       +-------------------------------+</span><br><span class="line">          |                                     |</span><br><span class="line">          +------------------+------------------+</span><br><span class="line">                             v</span><br><span class="line">                    +-------------------+</span><br><span class="line">                    | Merge (video+events)</span><br><span class="line">                    +-------------------+</span><br><span class="line">                             |</span><br><span class="line">                             v</span><br><span class="line">                    +-------------------+</span><br><span class="line">                    | Match by iCalUid  |</span><br><span class="line">                    | video.source.iCalUid</span><br><span class="line">                    | == event.iCalUId  |</span><br><span class="line">                    +-------------------+</span><br><span class="line">                             |</span><br><span class="line">                             v</span><br><span class="line">                +-------------------------------+</span><br><span class="line">                | If meeting ended? (end &lt; now) |</span><br><span class="line">                +-------------------------------+</span><br><span class="line">                             |</span><br><span class="line">                             v</span><br><span class="line">                 +------------------------------+</span><br><span class="line">                 | Build onlineMeetings URL     |</span><br><span class="line">                 | filter joinWebUrl == joinUrl |</span><br><span class="line">                 +------------------------------+</span><br><span class="line">                             |</span><br><span class="line">                             v</span><br><span class="line">+---------------------------+       +-------------------------------+</span><br><span class="line">| Get onlineMeetingId       |       | Get attendees (optional path) |</span><br><span class="line">| GET /users/&lt;USER_ID&gt;/     |       | from meeting participants     |</span><br><span class="line">|   onlineMeetings?$filter= |       +-------------------------------+</span><br><span class="line">+---------------------------+</span><br><span class="line">             |</span><br><span class="line">             v</span><br><span class="line">+---------------------------+</span><br><span class="line">| List transcripts           |</span><br><span class="line">| GET /users/&lt;USER_ID&gt;/     |</span><br><span class="line">|  onlineMeetings/&lt;ID&gt;/     |</span><br><span class="line">|  transcripts              |</span><br><span class="line">+---------------------------+</span><br><span class="line">             |</span><br><span class="line">             v</span><br><span class="line">+---------------------------+</span><br><span class="line">| Pick latest transcript     |</span><br><span class="line">| sort createdDateTime desc  |</span><br><span class="line">+---------------------------+</span><br><span class="line">             |</span><br><span class="line">             v</span><br><span class="line">+---------------------------+</span><br><span class="line">| Download VTT               |</span><br><span class="line">| GET &lt;transcriptContentUrl&gt; |</span><br><span class="line">|   ?$format=text/vtt        |</span><br><span class="line">+---------------------------+</span><br><span class="line">             |</span><br><span class="line">             v</span><br><span class="line">+---------------------------+</span><br><span class="line">| LLM summary (meeting note) |</span><br><span class="line">| (keep order, remove links) |</span><br><span class="line">+---------------------------+</span><br><span class="line">             |</span><br><span class="line">             v</span><br><span class="line">+-------------------------------+</span><br><span class="line">| Notion dedup by meetingId      |</span><br><span class="line">| Query DB: meetingId == &lt;...&gt;   |</span><br><span class="line">+-------------------------------+</span><br><span class="line">             |</span><br><span class="line">     +-------+--------+</span><br><span class="line">     | exists?        | not exists</span><br><span class="line">     | (stop)         v</span><br><span class="line">     |         +------------------+</span><br><span class="line">     |         | Create Notion page|</span><br><span class="line">     |         +------------------+</span><br><span class="line">     |                   |</span><br><span class="line">     |                   v</span><br><span class="line">     |         +---------------------------+</span><br><span class="line">     |         | Append blocks (chunk 1900)|</span><br><span class="line">     |         +---------------------------+</span><br><span class="line">     |                   |</span><br><span class="line">     +-------------------+</span><br><span class="line">             |</span><br><span class="line">             v</span><br><span class="line">+---------------------------+</span><br><span class="line">| Send Email (Outlook)      |</span><br><span class="line">| to attendees (+ cc fixed) |</span><br><span class="line">+---------------------------+</span><br></pre></td></tr></table></figure>
+
+
+<ol>
+<li>排程觸發（每小時&#x2F;每幾小時跑一次）</li>
+<li>取 Graph access token</li>
+<li>一路並行做兩件事：<ul>
+<li>A 線：列出錄影檔資料夾下的影片 → 取最新一支</li>
+<li>B 線：抓前 7 天行事曆事件（只抓會議）</li>
+</ul>
+</li>
+<li>用 <code>iCalUid</code> 把「最新錄影檔」對到「對應的日曆會議事件」</li>
+<li>由該事件的 <code>joinUrl</code> 查 <code>onlineMeetingId</code></li>
+<li>用 meetingId 拉 transcripts → 選最新一筆 → 下載 VTT</li>
+<li>交給 LLM 產摘要</li>
+<li>寫 Notion（先查是否已存在 meetingId，避免重複）</li>
+<li>寄 Email</li>
+</ol>
+<hr>
+<h2 id="n8n-節點逐一拆解（含遮蔽參數與可重現範例）"><a href="#n8n-節點逐一拆解（含遮蔽參數與可重現範例）" class="headerlink" title="n8n 節點逐一拆解（含遮蔽參數與可重現範例）"></a>n8n 節點逐一拆解（含遮蔽參數與可重現範例）</h2><p>以下「節點名稱」對應你提供的 workflow。</p>
+<h3 id="1-Schedule-Trigger：定時執行"><a href="#1-Schedule-Trigger：定時執行" class="headerlink" title="1) Schedule Trigger：定時執行"></a>1) Schedule Trigger：定時執行</h3><p><strong>用途</strong>：每隔 N 小時跑一次。</p>
+<p>建議：</p>
+<ul>
+<li>初期 debugging：先改成手動 trigger 或拉長 interval，避免一直打 Graph 被 rate limit。</li>
+</ul>
+<hr>
+<h3 id="2-取得-access-token（HTTP-Request-POST）"><a href="#2-取得-access-token（HTTP-Request-POST）" class="headerlink" title="2) 取得 access token（HTTP Request &#x2F; POST）"></a>2) 取得 access token（HTTP Request &#x2F; POST）</h3><p><strong>用途</strong>：用 Client Credentials 取得 Graph token。</p>
+<p><strong>原流程重點</strong>：</p>
+<ul>
+<li>URL：<code>https://login.microsoftonline.com/&lt;TENANT_ID&gt;/oauth2/v2.0/token</code></li>
+<li>Body（form-urlencoded）：<ul>
+<li><code>grant_type=client_credentials</code></li>
+<li><code>client_id=&lt;CLIENT_ID&gt;</code></li>
+<li><code>client_secret=&lt;CLIENT_SECRET&gt;</code></li>
+<li><code>scope=https://graph.microsoft.com/.default</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>遮蔽範例</strong>：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST https://login.microsoftonline.com/&lt;TENANT_ID&gt;/oauth2/v2.0/token</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line">grant_type=client_credentials&amp;</span><br><span class="line">client_id=&lt;CLIENT_ID&gt;&amp;</span><br><span class="line">client_secret=&lt;CLIENT_SECRET&gt;&amp;</span><br><span class="line">scope=https%3A%2F%2Fgraph.microsoft.com%2F.default</span><br></pre></td></tr></table></figure>
+
+<p>輸出會有：</p>
+<ul>
+<li><code>access_token</code></li>
+<li><code>expires_in</code></li>
+</ul>
+<p>後續所有 Graph 呼叫都用：<br><code>Authorization: Bearer &lt;access_token&gt;</code></p>
+<hr>
+<h3 id="3-driveid-folderid（Set）"><a href="#3-driveid-folderid（Set）" class="headerlink" title="3) driveid + folderid（Set）"></a>3) driveid + folderid（Set）</h3><p><strong>用途</strong>：把 driveId &#x2F; folderId 變成變數，讓後面好引用。</p>
+<p>注意：你這版流程其實只用到 <code>driveId</code>（列 <code>Recordings</code> 走路徑），<code>folderId</code> 未被引用；如果你要改成用 folderId 指向任意資料夾，可以換成：</p>
+<ul>
+<li><code>GET /drives/&#123;driveId&#125;/items/&#123;folderId&#125;/children</code></li>
+</ul>
+<p><strong>遮蔽</strong>：</p>
+<ul>
+<li><code>driveId = &lt;DRIVE_ID&gt;</code></li>
+<li><code>folderId = &lt;FOLDER_ID&gt;</code></li>
+</ul>
+<hr>
+<h3 id="4-取得所有影片資訊（HTTP-Request-GET）"><a href="#4-取得所有影片資訊（HTTP-Request-GET）" class="headerlink" title="4) 取得所有影片資訊（HTTP Request &#x2F; GET）"></a>4) 取得所有影片資訊（HTTP Request &#x2F; GET）</h3><p><strong>用途</strong>：列出 <code>Recordings</code> 底下所有錄影檔。</p>
+<p>Endpoint（你目前用路徑法）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET https://graph.microsoft.com/v1.0/drives/&lt;DRIVE_ID&gt;/root:/Recordings:/children</span><br><span class="line">Authorization: Bearer &lt;access_token&gt;</span><br></pre></td></tr></table></figure>
+
+<p>成功時會回：</p>
+<ul>
+<li><code>value: [ &#123; id, name, createdDateTime, ... , source: &#123; iCalUid &#125; &#125; ]</code></li>
+</ul>
+<blockquote>
+<p>關鍵：你後面要用的是 <code>source.iCalUid</code>。如果你拿到的檔案 metadata 沒有這個欄位，代表你抓到的不是 Teams 錄影檔（或 Graph 回應欄位不一致），需要改策略。</p>
+</blockquote>
+<hr>
+<h3 id="5-取得影片陣列（Set）"><a href="#5-取得影片陣列（Set）" class="headerlink" title="5) 取得影片陣列（Set）"></a>5) 取得影片陣列（Set）</h3><p><strong>用途</strong>：把上一個節點的 <code>value</code> 存到固定欄位，方便 split。</p>
+<p>做法：</p>
+<ul>
+<li><code>value = &#123;&#123;$json.value&#125;&#125;</code></li>
+</ul>
+<hr>
+<h3 id="6-拆分成影片檔列表（Split-Out）"><a href="#6-拆分成影片檔列表（Split-Out）" class="headerlink" title="6) 拆分成影片檔列表（Split Out）"></a>6) 拆分成影片檔列表（Split Out）</h3><p><strong>用途</strong>：把 <code>value[]</code> 拆成一筆一筆 item，讓你能排序與 limit。</p>
+<hr>
+<h3 id="7-依新到舊排列（Sort）"><a href="#7-依新到舊排列（Sort）" class="headerlink" title="7) 依新到舊排列（Sort）"></a>7) 依新到舊排列（Sort）</h3><p><strong>用途</strong>：依 <code>createdDateTime desc</code> 排序。</p>
+<hr>
+<h3 id="8-取最新影片資訊（Limit）"><a href="#8-取最新影片資訊（Limit）" class="headerlink" title="8) 取最新影片資訊（Limit）"></a>8) 取最新影片資訊（Limit）</h3><p><strong>用途</strong>：只留下最新的一筆錄影檔。</p>
+<p>建議（強化版）：</p>
+<ul>
+<li>limit 取 3～5 筆，避免最新一筆不是你要的 meeting（例如測試錄影）。</li>
+</ul>
+<hr>
+<h3 id="9-找出日曆中前一周所有會議（HTTP-Request-GET）"><a href="#9-找出日曆中前一周所有會議（HTTP-Request-GET）" class="headerlink" title="9) 找出日曆中前一周所有會議（HTTP Request &#x2F; GET）"></a>9) 找出日曆中前一周所有會議（HTTP Request &#x2F; GET）</h3><p><strong>用途</strong>：抓過去 7 天的 calendar view，用來跟錄影檔做關聯。</p>
+<p>Endpoint（遮蔽 USER_ID）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET https://graph.microsoft.com/v1.0/users/&lt;USER_ID&gt;/calendarView?</span><br><span class="line">  startDateTime=&lt;ISO-START&gt;&amp;</span><br><span class="line">  endDateTime=&lt;ISO-END&gt;</span><br><span class="line">Authorization: Bearer &lt;access_token&gt;</span><br></pre></td></tr></table></figure>
+
+<p>你用的時間窗是：</p>
+<ul>
+<li>start：<code>now - 7 days</code></li>
+<li>end：<code>now</code></li>
+</ul>
+<hr>
+<h3 id="10-取的日曆會議陣列（Set）→-11-切分日曆會議陣列（Split-Out）"><a href="#10-取的日曆會議陣列（Set）→-11-切分日曆會議陣列（Split-Out）" class="headerlink" title="10) 取的日曆會議陣列（Set）→ 11) 切分日曆會議陣列（Split Out）"></a>10) 取的日曆會議陣列（Set）→ 11) 切分日曆會議陣列（Split Out）</h3><p><strong>用途</strong>：同影片那段，把 <code>value[]</code> 拆成逐筆 event。</p>
+<p>Graph event item 常見欄位：</p>
+<ul>
+<li><code>iCalUId</code></li>
+<li><code>subject</code></li>
+<li><code>start.dateTime</code> &#x2F; <code>end.dateTime</code></li>
+<li><code>onlineMeeting.joinUrl</code></li>
+</ul>
+<hr>
+<h3 id="12-Merge（Merge）"><a href="#12-Merge（Merge）" class="headerlink" title="12) Merge（Merge）"></a>12) Merge（Merge）</h3><p><strong>用途</strong>：把「最新影片」與「一堆日曆 events」合流，交給下一步 code 節點做比對。</p>
+<hr>
+<h3 id="13-比對會議資訊（Code）"><a href="#13-比對會議資訊（Code）" class="headerlink" title="13) 比對會議資訊（Code）"></a>13) 比對會議資訊（Code）</h3><p><strong>用途</strong>：用 iCalUid 對應會議。</p>
+<p>你的邏輯：</p>
+<ul>
+<li>events：挑有 <code>iCalUId</code> 的 item</li>
+<li>latestVideo：找有 <code>source.iCalUid</code> 的 item</li>
+<li>若兩邊 iCalUid（忽略大小寫）相同 → 回傳 matched event</li>
+</ul>
+<p>核心片段（概念）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> videoICalUid = latestVideo.json.source.iCalUid;</span><br><span class="line"><span class="keyword">const</span> matched = events.find(<span class="function"><span class="params">e</span> =&gt;</span> e.json.iCalUId?.toLowerCase() === videoICalUid?.toLowerCase());</span><br></pre></td></tr></table></figure>
+
+<p><strong>這一步是整條 pipeline 的靈魂</strong>：它把「檔案系統世界（OneDrive 的錄影）」與「會議世界（Calendar&#x2F;OnlineMeeting）」串起來。</p>
+<hr>
+<h3 id="14-If1（If）"><a href="#14-If1（If）" class="headerlink" title="14) If1（If）"></a>14) If1（If）</h3><p><strong>用途</strong>：確認會議已結束才往下。</p>
+<p>你這裡用 <code>end.dateTime + 8 hours</code> 與一個固定時間字串比較。</p>
+<p>建議改法（更穩）：</p>
+<ul>
+<li>用「現在時間」比較，而不是硬塞一個固定時間。</li>
+<li>n8n 表達式範例：<ul>
+<li>left：<code>DateTime.fromISO($json.end.dateTime).plus(&#123; hours: 8 &#125;)</code></li>
+<li>right：<code>DateTime.now()</code></li>
+</ul>
+</li>
+</ul>
+<p>避免：</p>
+<ul>
+<li>流程跑久了，固定時間會失效。</li>
+</ul>
+<hr>
+<h3 id="15-製作-URL（Code）"><a href="#15-製作-URL（Code）" class="headerlink" title="15) 製作 URL（Code）"></a>15) 製作 URL（Code）</h3><p><strong>用途</strong>：用 joinUrl 反查 onlineMeeting。</p>
+<p>Graph 這段的技巧是：</p>
+<ul>
+<li>用 <code>$filter=joinWebUrl eq &#39;&lt;joinUrl&gt;&#39;</code></li>
+<li>joinUrl 先 encode</li>
+</ul>
+<p>遮蔽版輸出：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> joinUrl = $json.onlineMeeting.joinUrl;</span><br><span class="line"><span class="keyword">const</span> encodedFilter = <span class="built_in">encodeURIComponent</span>(<span class="string">`joinWebUrl eq &#x27;<span class="subst">$&#123;joinUrl&#125;</span>&#x27;`</span>);</span><br><span class="line"><span class="keyword">const</span> url = <span class="string">`https://graph.microsoft.com/v1.0/users/&lt;USER_ID&gt;/onlineMeetings?$filter=<span class="subst">$&#123;encodedFilter&#125;</span>`</span>;</span><br><span class="line"><span class="keyword">return</span> [&#123; <span class="attr">json</span>: &#123; url, joinUrl &#125; &#125;];</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="16-取得該會議-meetingId（HTTP-Request-GET）"><a href="#16-取得該會議-meetingId（HTTP-Request-GET）" class="headerlink" title="16) 取得該會議 meetingId（HTTP Request &#x2F; GET）"></a>16) 取得該會議 meetingId（HTTP Request &#x2F; GET）</h3><p><strong>用途</strong>：打上一步產生的 URL，取得 <code>onlineMeeting</code> 物件，從 <code>value[0].id</code> 取出 meetingId。</p>
+<p>注意：</p>
+<ul>
+<li>如果 <code>value</code> 不是 1 筆，代表 joinUrl 可能重複或 filter 條件不夠精準。</li>
+<li>如果 <code>value=[]</code>，代表你拿到的 event 沒對上 onlineMeeting（或權限不足）。</li>
+</ul>
+<hr>
+<h3 id="17-取得逐字稿資訊（HTTP-Request-GET）"><a href="#17-取得逐字稿資訊（HTTP-Request-GET）" class="headerlink" title="17) 取得逐字稿資訊（HTTP Request &#x2F; GET）"></a>17) 取得逐字稿資訊（HTTP Request &#x2F; GET）</h3><p><strong>用途</strong>：列出該 meeting 的 transcripts。</p>
+<p>Endpoint（遮蔽）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET https://graph.microsoft.com/v1.0/users/&lt;USER_ID&gt;/onlineMeetings/&lt;MEETING_ID&gt;/transcripts</span><br><span class="line">Authorization: Bearer &lt;access_token&gt;</span><br></pre></td></tr></table></figure>
+
+<p>回傳：</p>
+<ul>
+<li><code>value: [ &#123; id, createdDateTime, transcriptContentUrl, meetingId, ... &#125; ]</code></li>
+</ul>
+<hr>
+<h3 id="18-取得最新逐字稿資訊（Code）"><a href="#18-取得最新逐字稿資訊（Code）" class="headerlink" title="18) 取得最新逐字稿資訊（Code）"></a>18) 取得最新逐字稿資訊（Code）</h3><p><strong>用途</strong>：</p>
+<ul>
+<li>確保 <code>value</code> 不為空</li>
+<li>依 <code>createdDateTime</code> 排序</li>
+<li>取最新 transcript 的 <code>id</code> 與 <code>transcriptContentUrl</code></li>
+<li>額外回傳 <code>debug_top5_dates</code> 幫你在 n8n UI 快速檢查</li>
+</ul>
+<p>你這段已經寫得很工程化了（加 debug 非常實用）。</p>
+<hr>
+<h3 id="19-Get-many-database-pages（Notion：查重）"><a href="#19-Get-many-database-pages（Notion：查重）" class="headerlink" title="19) Get many database pages（Notion：查重）"></a>19) Get many database pages（Notion：查重）</h3><p><strong>用途</strong>：用 <code>meetingId</code> 查 Notion database，避免同一場會議寫入多次。</p>
+<p><strong>遮蔽建議</strong>：</p>
+<ul>
+<li><code>databaseId = &lt;NOTION_DATABASE_ID&gt;</code></li>
+<li>filter：<code>meetingId == &lt;meetingId&gt;</code></li>
+</ul>
+<hr>
+<h3 id="20-If（Notion-結果判斷）"><a href="#20-If（Notion-結果判斷）" class="headerlink" title="20) If（Notion 結果判斷）"></a>20) If（Notion 結果判斷）</h3><p><strong>用途</strong>：如果查不到既有 page（<code>id</code> 不存在），才繼續建立新頁面。</p>
+<hr>
+<h3 id="21-取得逐字稿全文（HTTP-Request-GET）"><a href="#21-取得逐字稿全文（HTTP-Request-GET）" class="headerlink" title="21) 取得逐字稿全文（HTTP Request &#x2F; GET）"></a>21) 取得逐字稿全文（HTTP Request &#x2F; GET）</h3><p><strong>用途</strong>：下載 transcript 內容（VTT）。</p>
+<p>你用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET &lt;transcriptContentUrl&gt;?$format=text/vtt</span><br><span class="line">Authorization: Bearer &lt;access_token&gt;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="22-會議摘要（Anthropic-LLM）"><a href="#22-會議摘要（Anthropic-LLM）" class="headerlink" title="22) 會議摘要（Anthropic &#x2F; LLM）"></a>22) 會議摘要（Anthropic &#x2F; LLM）</h3><p><strong>用途</strong>：把逐字稿整理成「會議記錄」，且要求：</p>
+<ul>
+<li>按順序</li>
+<li>不重新編排</li>
+<li>移除引用連結</li>
+</ul>
+<p>安全建議：</p>
+<ul>
+<li>逐字稿可能包含個資&#x2F;商業資訊：建議加上資料保護與保存期限策略。</li>
+</ul>
+<hr>
+<h3 id="23-確認語會人員資訊-→-Split-Out-→-取得語彙人士-email-→-收件人整理"><a href="#23-確認語會人員資訊-→-Split-Out-→-取得語彙人士-email-→-收件人整理" class="headerlink" title="23) 確認語會人員資訊 → Split Out → 取得語彙人士 email → 收件人整理"></a>23) 確認語會人員資訊 → Split Out → 取得語彙人士 email → 收件人整理</h3><p><strong>用途</strong>：從 meeting participants 抽出 attendee emails，並手動追加固定收件人。</p>
+<p>你目前的 code 會：</p>
+<ul>
+<li>collect <code>attenance</code>（建議拼字改成 <code>attendance</code>&#x2F;<code>attendeeEmail</code> 以免未來維護踩雷）</li>
+<li>filter 空值</li>
+<li><code>validEmails.push(&#39;&lt;YOUR_COPY_EMAIL&gt;&#39;)</code></li>
+</ul>
+<p>遮蔽範例：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">validEmails.push(<span class="string">&#x27;&lt;YOUR_COPY_EMAIL&gt;&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="24-內容整理（Code：切-Notion-blocks）"><a href="#24-內容整理（Code：切-Notion-blocks）" class="headerlink" title="24) 內容整理（Code：切 Notion blocks）"></a>24) 內容整理（Code：切 Notion blocks）</h3><p><strong>用途</strong>：</p>
+<ul>
+<li>從 LLM 節點抓 <code>content[0].text</code>（針對 Claude output 結構）</li>
+<li>從 transcript 節點抓全文</li>
+<li>按 Notion block 長度限制（你設 chunkSize&#x3D;1900）切段</li>
+<li>產出 <code>notionBlocks</code></li>
+</ul>
+<p>這步的價值：</p>
+<ul>
+<li>Notion API 對 rich_text 長度有限制，你切段是必要工。</li>
+</ul>
+<hr>
+<h3 id="25-Create-a-database-page（Notion：建立頁面）"><a href="#25-Create-a-database-page（Notion：建立頁面）" class="headerlink" title="25) Create a database page（Notion：建立頁面）"></a>25) Create a database page（Notion：建立頁面）</h3><p><strong>用途</strong>：在 Notion database 建立一個會議頁。</p>
+<p>你寫入的 properties：</p>
+<ul>
+<li>日期（加 8 小時，Asia&#x2F;Taipei）</li>
+<li>meetingId</li>
+<li>會議名稱</li>
+<li>與會者（目前是空字串 <code>=</code>，可改成 join emails）</li>
+</ul>
+<hr>
+<h3 id="26-HTTP-Request（Notion：追加-children-blocks）"><a href="#26-HTTP-Request（Notion：追加-children-blocks）" class="headerlink" title="26) HTTP Request（Notion：追加 children blocks）"></a>26) HTTP Request（Notion：追加 children blocks）</h3><p><strong>用途</strong>：因為 Notion 建頁與寫內容是兩件事，所以你用 PATCH 把 blocks 塞進 page。</p>
+<p>Endpoint：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PATCH https://api.notion.com/v1/blocks/&lt;PAGE_ID&gt;/children</span><br><span class="line">Notion-Version: 2022-06-28</span><br></pre></td></tr></table></figure>
+
+<p>Body：</p>
+<ul>
+<li><code>children: &lt;內容整理&gt;.notionBlocks</code></li>
+</ul>
+<hr>
+<h3 id="27-Send-a-message（Outlook：寄信）"><a href="#27-Send-a-message（Outlook：寄信）" class="headerlink" title="27) Send a message（Outlook：寄信）"></a>27) Send a message（Outlook：寄信）</h3><p><strong>用途</strong>：</p>
+<ul>
+<li>to：<code>收件人整理.emails</code></li>
+<li>subject：<code>【自動發送】&lt;會議主旨&gt; - 會議記錄</code></li>
+<li>body：LLM 摘要</li>
+</ul>
+<p>遮蔽建議：</p>
+<ul>
+<li>收件人 domain&#x2F;個人信箱一律用 <code>&lt;user@example.com&gt;</code></li>
+</ul>
+<hr>
+<h2 id="常見踩雷與排查（你會真的遇到）"><a href="#常見踩雷與排查（你會真的遇到）" class="headerlink" title="常見踩雷與排查（你會真的遇到）"></a>常見踩雷與排查（你會真的遇到）</h2><ol>
+<li><strong>錄影檔找得到，但 <code>source.iCalUid</code> 沒有</strong><ul>
+<li>你可能抓到的是不同來源的影片，或路徑不是 Teams Recordings。</li>
+</ul>
+</li>
+<li><strong>onlineMeetings filter 回空</strong><ul>
+<li>joinUrl 不同、event 沒 onlineMeeting、或權限不足。</li>
+</ul>
+</li>
+<li><strong>transcripts <code>value=[]</code></strong><ul>
+<li>沒開逐字稿、會議政策禁用、或缺 transcript 權限。</li>
+</ul>
+</li>
+<li><strong>Notion block 寫入失敗</strong><ul>
+<li>多半是單段文字太長、rich_text 格式不符、或 Notion-Version 不一致。</li>
+</ul>
+</li>
+<li><strong>重複寫入</strong><ul>
+<li>查重請以 <code>meetingId</code> 為唯一鍵（你已這樣做，正確）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="我會怎麼再加強這條流程（可選）"><a href="#我會怎麼再加強這條流程（可選）" class="headerlink" title="我會怎麼再加強這條流程（可選）"></a>我會怎麼再加強這條流程（可選）</h2><ul>
+<li>最新錄影檔不可靠：改成「最近 N 支」逐一比對 calendar，再挑最合理的一場。</li>
+<li>產出的摘要做版本控管：把 raw VTT 也存到附件或 S3（依合規需求）。</li>
+<li>收件人白名單&#x2F;黑名單：避免寄給外部訪客。</li>
+<li>把 If1 的固定時間改成 <code>now()</code> 比較，避免流程時間炸裂。</li>
+</ul>
+<hr>
+<h2 id="附錄：Graph-權限「最小集合」與-Admin-Consent-檢查清單"><a href="#附錄：Graph-權限「最小集合」與-Admin-Consent-檢查清單" class="headerlink" title="附錄：Graph 權限「最小集合」與 Admin Consent 檢查清單"></a>附錄：Graph 權限「最小集合」與 Admin Consent 檢查清單</h2><blockquote>
+<p>你以為你卡在流程，其實你先死在權限。</p>
+<p>這條自動化用的是 <code>client_credentials</code>（Application permissions），所以<strong>必須做 admin consent</strong>。另外 Teams&#x2F;OnlineMeeting&#x2F;Transcript 的權限在不同租戶政策下可能更嚴格，下面提供「能跑通」的最小集合與檢查步驟。</p>
+</blockquote>
+<h3 id="A-建議的-Microsoft-Graph-Application-permissions（最小可跑通集合）"><a href="#A-建議的-Microsoft-Graph-Application-permissions（最小可跑通集合）" class="headerlink" title="A) 建議的 Microsoft Graph Application permissions（最小可跑通集合）"></a>A) 建議的 Microsoft Graph Application permissions（最小可跑通集合）</h3><blockquote>
+<p>下面是「概念上」最小集合；實際名稱與可用性會因你租戶是否開放、Graph 版本、以及 Teams policy 而異。原則是：</p>
+<ul>
+<li>讀 OneDrive&#x2F;SharePoint 錄影 → Files&#x2F;Sites</li>
+<li>讀 Calendar → Calendars</li>
+<li>由 joinUrl 反查 onlineMeeting + transcripts → OnlineMeetings &#x2F; Transcripts</li>
+</ul>
+</blockquote>
+<ol>
+<li><p><strong>讀錄影檔（Recordings）</strong></p>
+<ul>
+<li><code>Files.Read.All</code>（Application）</li>
+<li>若錄影在 SharePoint site：可能需要 <code>Sites.Read.All</code></li>
+</ul>
+</li>
+<li><p><strong>讀行事曆 events（calendarView）</strong></p>
+<ul>
+<li><code>Calendars.Read</code>（Application）或 <code>Calendars.Read.All</code></li>
+</ul>
+</li>
+<li><p><strong>讀 Online Meetings（用 joinWebUrl filter 反查 meetingId）</strong></p>
+<ul>
+<li><code>OnlineMeetings.Read.All</code></li>
+</ul>
+</li>
+<li><p><strong>讀 Meeting transcripts</strong></p>
+<ul>
+<li><code>OnlineMeetingTranscript.Read.All</code>（若租戶支援&#x2F;已開放）</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>如果你希望「一開始就別卡」：可以先用較寬鬆的讀取權限把流程跑通，確認 endpoint 沒問題後再往回收斂。</p>
+</blockquote>
+<h3 id="B-Admin-consent-檢查清單（你應該逐項確認）"><a href="#B-Admin-consent-檢查清單（你應該逐項確認）" class="headerlink" title="B) Admin consent 檢查清單（你應該逐項確認）"></a>B) Admin consent 檢查清單（你應該逐項確認）</h3><ol>
+<li>Azure Portal → App registrations → 你的 App</li>
+<li>API permissions：確認上述 permissions 都已加入（Application，不是 Delegated）</li>
+<li>點 <strong>Grant admin consent</strong>（會顯示 Granted）</li>
+<li>Credentials：client secret 未過期（建議用 <code>CLIENT_SECRET=&lt;SECRET&gt;</code> 放 n8n credential，不要硬寫在 workflow）</li>
+</ol>
+<h3 id="C-典型錯誤與「對應的權限-設定」"><a href="#C-典型錯誤與「對應的權限-設定」" class="headerlink" title="C) 典型錯誤與「對應的權限&#x2F;設定」"></a>C) 典型錯誤與「對應的權限&#x2F;設定」</h3><ul>
+<li><code>401 Unauthorized</code> &#x2F; <code>InvalidAuthenticationToken</code><ul>
+<li>token 失效、scope 不對、secret 過期</li>
+</ul>
+</li>
+<li><code>403 Forbidden</code><ul>
+<li>幾乎都是權限不足或租戶 policy 禁止</li>
+</ul>
+</li>
+<li>transcripts <code>value=[]</code><ul>
+<li>逐字稿未啟用 &#x2F; policy 禁用 &#x2F; meeting 沒產生 transcript &#x2F; transcript 權限缺失</li>
+</ul>
+</li>
+</ul>
+<h3 id="D-建議的驗證順序（縮短排查時間）"><a href="#D-建議的驗證順序（縮短排查時間）" class="headerlink" title="D) 建議的驗證順序（縮短排查時間）"></a>D) 建議的驗證順序（縮短排查時間）</h3><ol>
+<li>先驗證 token：<code>GET https://graph.microsoft.com/v1.0/organization</code>（能回資料表示 token OK）</li>
+<li>再驗證 recordings：列出 <code>Recordings</code> children</li>
+<li>再驗證 calendar：<code>calendarView</code> 是否拿到 <code>iCalUId</code> 與 <code>onlineMeeting.joinUrl</code></li>
+<li>再驗證 onlineMeetings filter：joinUrl → meetingId 是否回 <code>value[0].id</code></li>
+<li>最後驗證 transcripts：meetingId → transcripts list → contentUrl 下載 vtt</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>Allen Tzeng
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="https://allen108108.github.io/blog/2026/03/12/n8n%EF%BD%9CTeams%20%E6%9C%83%E8%AD%B0%E9%80%90%E5%AD%97%E7%A8%BF%E6%91%98%E8%A6%81%E8%87%AA%E5%8B%95%E5%8C%96%EF%BC%88Graph%20+%20Notion%20+%20Email%EF%BC%89/" title="n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）">https://allen108108.github.io/blog/2026/03/12/n8n｜Teams 會議逐字稿摘要自動化（Graph + Notion + Email）/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/n8n/" rel="tag"># n8n</a>
+              <a href="/blog/tags/Microsoft-Teams/" rel="tag"># Microsoft-Teams</a>
+              <a href="/blog/tags/Microsoft-Graph/" rel="tag"># Microsoft-Graph</a>
+              <a href="/blog/tags/OneDrive/" rel="tag"># OneDrive</a>
+              <a href="/blog/tags/Transcript/" rel="tag"># Transcript</a>
+              <a href="/blog/tags/Notion/" rel="tag"># Notion</a>
+              <a href="/blog/tags/Outlook/" rel="tag"># Outlook</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2023/04/30/Chat%20GPT%20%E5%AF%A6%E5%8B%99%E6%87%89%E7%94%A8%E4%B8%8A%E7%9A%84%E6%8C%91%E6%88%B0/" rel="prev" title="Chat GPT 實務應用上的挑戰">
+                  <i class="fa fa-chevron-left"></i> Chat GPT 實務應用上的挑戰
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Allen Tzeng</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/motion.js"></script><script src="/blog/js/next-boot.js"></script><script src="/blog/js/pjax.js"></script>
+
+  
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":21351,"color":"#fc6423"}</script>
+  <script src="/blog/js/third-party/rating.js"></script>
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"math-py","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>
